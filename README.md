@@ -9,7 +9,7 @@ It is hoped that these files will be of some help to those professors, students 
 # How to compile
 
 ## System requirements
-The files are to be compiled using XeLaTeX with the xeCJK package. The reader is assumed to work under the UN*X + bash environment.
+The files are to be compiled using XeLaTeX with the xeCJK package. The reader is assumed to work under the UN*X environment.
 
 The recipes below can be tweaked to work under Windows, but this is not recommended. The simplest solution is to go open-source.
 
@@ -39,7 +39,7 @@ Then, either type
 ```
 latexmk -pdf -pdflatex="xelatex -shell-escape -interaction=nonstopmode %O %S" Al-jabr-2
 ```
-under bash, or more simply
+or more simply
 ```
 make
 ```
