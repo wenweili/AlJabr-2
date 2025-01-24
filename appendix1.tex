@@ -1,0 +1,531 @@
+% LaTeX source for book ``代数学方法'' in Chinese
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% To be included
+
+\chapter{关于 Abel 范畴的延伸内容}\label{sec:app-Abel}
+这部分附录是和 Abel 范畴直接或间接相关的一系列内容, 性质近乎``乱炖''. 预设的背景知识原则上不超过\CHref{sec:categories}的前半部, 以及\CHref{sec:Abel-cat}的少部分内容.
+
+开头的 \S\ref{sec:Yoneda} 简要回顾米田嵌入, 其中的稠密性定理 \ref{prop:Yoneda-density} 属于范畴论常识, 然而常被教材遗漏. 这些工具在 \S\ref{sec:ind-pro} 将有频繁应用.
+
+虽然 \S\ref{sec:cpt-objects} 介绍的紧对象和可展示范畴对本书其他部分并非绝对必要, 却是一套方便而常见的语言, 而该处关于正则基数的讨论也为 \S\ref{sec:Grothendieck-cat} 铺平了道路.
+
+后续两节和 Abel 范畴直接相关: \S\ref{sec:GP} 介绍的 Gabriel--Popescu 定理阐明了 Grothendieck 范畴的结构, 而 \S\ref{sec:locally-finite-Abel-cat} 讨论的局部有限 Abel 范畴则为 \S\ref{sec:Tannaka-coend} 所需, 其重点是来自 O.\ Gabber 的命题 \ref{prop:subcat-union}, 证明具有一定的技巧性.
+
+\section{米田嵌入的稠密性}\label{sec:Yoneda}
+首先回顾和米田嵌入相关的理论框架. 对任意范畴 $\mathcal{C}$, 定义函子范畴
+\[ \mathcal{C}^\wedge := \cate{Set}^{\mathcal{C}^{\opp}}, \quad \mathcal{C}^\vee := \left(\cate{Set}^{\opp}\right)^{\mathcal{C}^{\opp}} = \left( \cate{Set}^{\mathcal{C}} \right)^{\opp}. \]
+两者相对偶: $\left(\mathcal{C}^\vee \right)^{\opp} = \left(\mathcal{C}^{\opp}\right)^\wedge$. 相对于事先选定的 Grothendieck 宇宙 $\mathcal{U}$, 除非 $\mathcal{C}$ 是小范畴, 否则 $\mathcal{C}^\wedge$ 和 $\mathcal{C}^\vee$ 一般而言是大范畴. \index{daxiaowenti}
+
+\emph{米田嵌入}意指以下函子
+\begin{align*}
+	h_{\mathcal{C}}: \mathcal{C} & \longrightarrow \mathcal{C}^\wedge & k_{\mathcal{C}}: \mathcal{C} & \longrightarrow \mathcal{C}^\vee \\
+	S & \longmapsto \Hom_{\mathcal{C}}(\cdot, S), & S & \longmapsto \Hom_{\mathcal{C}}(S, \cdot).
+\end{align*}
+\index{mitianqianru@米田嵌入 (Yoneda embedding)}
+
+以下复述 \cite[定理 2.5.1]{Li1}.
+\begin{theorem}[米田信夫]\label{prop:Yoneda}
+	对任意 $S \in \Obj(\mathcal{C})$ 和 $A \in \Obj(\mathcal{C}^\wedge)$, $B \in \Obj(\mathcal{C}^\vee)$, 典范映射
+	\[\begin{tikzcd}[row sep=tiny]
+		\Hom_{\mathcal{C}^\wedge}\left(h_{\mathcal{C}}(S), A \right) \arrow[r] & A(S) \\
+		{\left[ \Hom_{\mathcal{C}}(\cdot, S) \xrightarrow{\phi} A(\cdot) \right]} \arrow[mapsto, r] & \phi_S(\identity_S)
+	\end{tikzcd} \quad \begin{tikzcd}[row sep=tiny]
+		\Hom_{\mathcal{C}^\vee}\left(B, k_{\mathcal{C}}(S) \right) \arrow[equal, d] & \\
+		\Hom_{\cate{Set}^{\mathcal{C}}}\left(k_{\mathcal{C}}(S), B \right) \arrow[r] & B(S) \\
+		{\left[ \Hom_{\mathcal{C}}(S, \cdot) \xrightarrow{\psi} B(\cdot) \right]} \arrow[mapsto, r] & \psi_S(\identity_S)
+	\end{tikzcd}\]
+	皆是双射. 作为推论, $h_{\mathcal{C}}$ 和 $k_{\mathcal{C}}$ 都是全忠实函子.
+\end{theorem}
+
+\begin{definition}\label{def:representable-functor}
+	\index{hanzi!可表 (representable)}
+	在同构意义下来自 $h_{\mathcal{C}}$ (或 $k_{\mathcal{C}}$) 的函子 $\mathcal{C}^{\opp} \to \cate{Set}$ (或 $\mathcal{C} \to \cate{Set}$) 称为\emph{可表函子}.
+\end{definition}
+
+尽管 $\mathcal{C}^\wedge$ (或 $\mathcal{C}^\vee$) 比 $\mathcal{C}$ 大得多, 但其对象总能典范地写成可表函子的 $\varinjlim$ (或 $\varprojlim$). 在陈述这一稠密性定理之前, 我们需要若干定义.
+\begin{itemize}
+	\item 对每个 $A \in \Obj(\mathcal{C}^\wedge)$, 以定义 \ref{def:comma-category} 的方式定义范畴 $(h_{\mathcal{C}} / A)$, 其对象写作资料 $\underline{S} := \left( S, h_{\mathcal{C}}(S) \xrightarrow{\phi_{\underline{S}}} A \right)$, 从 $\underline{S}$ 到 $\underline{S}'$ 的态射是满足 $\phi_{\underline{S}} = \phi_{\underline{S}'} h_{\mathcal{C}}(f)$ 的 $f \in \Hom_{\mathcal{C}}(S, S')$.
+
+	\item 对偶地, 对 $B \in \Obj(\mathcal{C}^\vee)$ 则有范畴 $(B / k_{\mathcal{C}})$, 其对象为资料 $\overline{S} := \left(S, B \xrightarrow{\psi_{\overline{S}}} k_{\mathcal{C}}(S)\right)$, 其中 $\psi_{\overline{S}}$ 视为 $\mathcal{C}^\vee$ 的态射, 而态射 $\overline{S} \to \overline{S}'$ 的定义与先前类似.
+\end{itemize}
+
+\begin{theorem}[稠密性]\label{prop:Yoneda-density}
+	\index{mitianqianru!稠密性 (density)}
+	对于一切 $A \in \Obj(\mathcal{C}^\wedge)$ 和 $B \in \Obj(\mathcal{C}^\vee)$, 上述态射族 $\phi_{\underline{S}}$, $\psi_{\overline{S}}$ 分别在 $\mathcal{C}^\wedge$ 和 $\mathcal{C}^\vee$ 中给出典范同构
+	\[ \varinjlim_{\underline{S}} h_{\mathcal{C}}(S) \rightiso A, \quad B \rightiso \varprojlim_{\overline{S}} k_{\mathcal{C}}(S). \]
+\end{theorem}
+\begin{proof}
+	只论第一式. 对于任意 $A' \in \Obj(\mathcal{C}^\wedge)$, 我们有映射
+	\begin{equation}\label{eqn:Yoneda-density-aux} \begin{aligned}
+			\Hom_{\mathcal{C}^\wedge}(A, A') & \longrightarrow \left\{\begin{array}{l}
+				\text{相容的态射族}\; a'_{\underline{S}}: h_{\mathcal{C}}(S) \to A' , \\
+				\text{其中}\; \underline{S} = (S, \phi_{\underline{S}}) \in \Obj((h_{\mathcal{C}}/A))
+			\end{array}\right\} \\
+			\varphi & \longmapsto \left( a'_{\underline{S}} := \varphi \phi_{\underline{S}}\right)_{\underline{S}} .
+	\end{aligned}\end{equation}
+	
+	定义反向的映射如下. 给定资料 $(a'_{\underline{S}})_{\underline{S}}$, 对任意 $S \in \Obj(\mathcal{C})$ 和 $a_S \in A(S)$, 按定理 \ref{prop:Yoneda} 取对应的 $\phi: h_{\mathcal{C}}(S) \to A$, 从而确定 $\underline{S} := (S, \phi) \in \Obj((h_{\mathcal{C}}/A))$. 于是 $a_S \mapsto a'_{\underline{S}}$ 给出映射 $A(S) \to A'(S)$. 兹断言:
+	\begin{compactitem}
+		\item 当 $S$ 变动, 诸映射 $A(S) \to A'(S)$ 给出 $\mathcal{C}^\wedge$ 的态射 $\varphi: A \to A'$.
+		\item 映射 $(a'_{\underline{S}})_{\underline{S}} \mapsto \varphi$ 与 \eqref{eqn:Yoneda-density-aux} 的映射互逆.
+	\end{compactitem}
+	一如许多关于米田嵌入定理的结果, 细节验证近于同义反复, 在此略过.
+	
+	于是 \eqref{eqn:Yoneda-density-aux} 是双射, 而对于 $A' = A$ 的特例, 它映 $\identity_A$ 为 $(a'_{\underline{S}} = \phi_{\underline{S}})_{\underline{S}}$. 这就验证了 $A$ 和诸 $\phi_{\underline{S}}: h_{\mathcal{C}}(S) \to A$ 具备 $\varinjlim$ 的泛性质.
+\end{proof}
+
+读者也可以参照 \cite[pp.76--77]{ML98} 的处理方式.
+
+\begin{remark}\label{rem:Yoneda-density}
+	关于 $B$ 的同构也可以在 $\cate{Set}^{\mathcal{C}}$ 中改述为 $\varinjlim_{\overline{S}} \Hom_{\mathcal{C}}(S, \cdot) \rightiso B$, 其中 $\overline{S}$ 取遍资料 $(S, \psi'_{\overline{S}})$, 要求 $S \in \Obj(\mathcal{C})$ 而 $\psi'_{\overline{S}}: \Hom_{\mathcal{C}}(S, \cdot) \to B(\cdot)$ 是 $\cate{Set}^{\mathcal{C}}$ 的态射.
+\end{remark}
+
+定理 \ref{prop:Yoneda-density} 的一则应用是延拓定义在小范畴上的函子, 以下仅陈述 $\mathcal{C}^\wedge$ 的版本. 考虑小范畴 $\mathcal{C}$, 余完备范畴 $\mathcal{D}$ (容许是``大''的, 只要求具备小 $\varinjlim$) 以及函子 $F: \mathcal{C} \to \mathcal{D}$. 定义
+\begin{equation}\label{eqn:Yoneda-F-tilde}\begin{aligned}
+	\tilde{F}: \mathcal{C}^\wedge & \to \mathcal{D} \\
+	X & \mapsto \varinjlim_{\underline{S}} F(S),
+\end{aligned}\end{equation}
+其中 $\underline{S} = \left( S, \phi_{\underline{S}}: h_{\mathcal{C}}(S) \to X\right)$ 遍历小范畴 $(h_{\mathcal{C}}/X)$. 当 $X$ 来自 $\mathcal{C}$ 的对象 $T$ 时, 范畴 $(h_{\mathcal{C}}/X)$ 有终对象 $(T, h_{\mathcal{C}}(T) \rightiso X)$, 所以延拓的意涵缘于下图交换, 精确到典范同构:
+\[\begin{tikzcd}
+	\mathcal{C}^\wedge \arrow[r, "{\tilde{F}}"] & \mathcal{D}. \\
+	\mathcal{C} \arrow[u, "{h_{\mathcal{C}}}"] \arrow[ru, "F"'] &
+\end{tikzcd}\]
+
+现在来说明 $\tilde{F}$ 总有右伴随, 从而保所有小 $\varinjlim$. 我们将在 \S\ref{sec:Indization} 用到这一事实.
+
+\begin{proposition}\label{prop:Yoneda-F-tilde}
+	设 $\mathcal{C}$ 是小范畴而 $\mathcal{D}$ 是余完备范畴 (容许是``大''的). 对函子 $F: \mathcal{C} \to \mathcal{D}$ 按 \eqref{eqn:Yoneda-F-tilde} 取典范延拓 $\tilde{F}: \mathcal{C}^\wedge \to \mathcal{D}$, 则 $\tilde{F}$ 有右伴随
+	\[ \iHom(F, \cdot): \mathcal{D} \to \mathcal{C}^\wedge , \]
+	其定义是
+	\begin{itemize}
+		\item 使 $\iHom(F, Y)(S) = \Hom_{\mathcal{D}}(FS, Y)$ 对所有 $S \in \Obj(\mathcal{C})$ 和 $Y \in \Obj(\mathcal{D})$ 成立;
+		\item 态射 $f: Y \to Y'$ 诱导 $\mathcal{C}^\wedge$ 的态射 $f_*: \Hom(F(\cdot), Y) \to \Hom(F(\cdot), Y')$.
+	\end{itemize}
+
+	作为推论, $\tilde{F}$ 保所有小 $\varinjlim$.
+\end{proposition}
+\begin{proof}
+	对于 $X \in \Obj(\mathcal{C}^\wedge)$ 和 $Y \in \Obj(\mathcal{D})$, 我们从 $X = \varinjlim_{\underline{S}} h_{\mathcal{C}}(S)$ 和 $\varinjlim$ 的泛性质得到典范双射
+	\begin{multline*}
+		\Hom_{\mathcal{C}^\wedge}(X, \iHom(F, Y)) \simeq \varprojlim_{\underline{S}} \Hom_{\mathcal{C}^\wedge}(h_{\mathcal{C}}(S), \iHom(F, Y)) \simeq \varprojlim_{\underline{S}} \Hom_{\mathcal{D}}(FS, Y) \\
+		\simeq \Hom_{\mathcal{D}}(\varinjlim_{\underline{S}} FS, Y ) = \Hom_{\mathcal{D}}(\tilde{F}X, Y).
+	\end{multline*}
+	于是 $\iHom(F, \cdot)$ 确实是 $\tilde{F}: \mathcal{C}^\wedge \to \mathcal{D}$ 的右伴随.
+\end{proof}
+
+\section{紧对象和可展示范畴}\label{sec:cpt-objects}
+范畴论的紧性是代数, 几何以及代数几何中许多有限性条件的共同提纯. 本节选定范畴 $\mathcal{C}$; 除非另外说明, 总假设 $\mathcal{C}$ 具备所有的滤过小 $\varinjlim$.
+
+考虑滤过小范畴 $I$ 和函子 $\alpha: I \to \mathcal{C}$. 对于 $X \in \Obj(\mathcal{C})$, 典范态射族 $\iota_i: \alpha(i) \to \varinjlim \alpha$ 诱导一族 $(\iota_i)_*: \Hom(X, \alpha(i)) \to \Hom\left(X, \varinjlim \alpha \right)$, 其中 $i \in \Obj(I)$, 继而诱导典范映射
+\begin{equation}\label{eqn:I-small-gen}
+	\varinjlim_{i \in \Obj(I)} \Hom\left( X, \alpha(i) \right) \to \Hom\left( X, \varinjlim \alpha \right).
+\end{equation}
+
+\begin{definition}\label{def:kappa-filtered}
+	\index{pianxuji!$\kappa$-滤过 ($\kappa$-filtered)}
+	设 $(P, \leq)$ 为非空偏序集, $\kappa$ 为无穷基数. 若任何满足 $|P_0| < \kappa$ 的子集 $P_0$ 在 $P$ 中都有上界, 则称 $(P, \leq)$ 是 $\kappa$-滤过的.
+\end{definition}
+
+若 $\kappa \leq \kappa'$, 则 $\kappa'$-滤过蕴涵 $\kappa$-滤过. 取 $\kappa := \aleph_0 = \omega$ 则复归例 \ref{eg:filtered-poset} 介绍的滤过偏序集.
+
+\begin{definition}\label{def:cpt-objects}
+	\index{jinduixiang@紧对象 (compact object)}
+	\index{jinduixiang!$\kappa$-紧}
+	若 $X \in \Obj(\mathcal{C})$ 使得 \eqref{eqn:I-small-gen} 对所有滤过小范畴 $I$ 和 $\alpha: I \to \mathcal{C}$ 都是同构, 则称 $X$ 为 $\mathcal{C}$ 的\emph{紧对象}.
+	
+	给定小基数 $\kappa$, 若进一步限制 $I$ 为 $\kappa$-滤过偏序小集, 则满足相应条件的 $X$ 称为 \emph{$\kappa$-紧对象}.
+\end{definition}
+
+按定义 \ref{def:create-limit} 的术语, $X$ 是紧对象当且仅当 $\Hom(X, \cdot): \mathcal{C} \to \cate{Set}$ 保滤过小 $\varinjlim$. 若 $\kappa \leq \kappa'$, 则 $\kappa$-紧蕴涵 $\kappa'$-紧.
+
+\begin{remark}\label{rem:filtered-poset}
+	紧对象和 $\aleph_0$-紧对象的定义方式乍看相异, 前者涉及所有滤过小范畴, 后者仅容许滤过偏序小集. 然而有一则不尽平凡的事实 \cite[Theorem 1.5]{AR94}:
+	\begin{center}\begin{minipage}{0.7\textwidth}
+		对所有滤过小范畴 $I$, 存在滤过偏序小集 $(\mathcal{P}, \leq)$ 连同共尾函子 $\mathcal{P} \to I$.
+	\end{minipage}\end{center}
+	由此可以推得紧性等价于 $\aleph_0$-紧性. 证明将在习题部分勾勒.
+\end{remark}
+
+运用滤过范畴的定义和滤过 $\varinjlim$ 在 $\cate{Set}$ 中的具体描述 (命题 \ref{prop:filtered-union}), 可见
+\begin{itemize}
+	\item 映射 \eqref{eqn:I-small-gen} 满 $\iff$ 所有 $f: X \to \varinjlim \alpha$ 都有分解 $X \xrightarrow{f_i} \alpha(i) \xrightarrow{\iota_i} X$;
+	\item 映射 \eqref{eqn:I-small-gen} 单 $\iff$ 对所有 $i \in \Obj(I)$ 和满足 $\iota_i f = \iota_i g$ 的 $f, g \in \Hom(X, \alpha(i))$, 存在 $I$ 中的态射 $i \to j$ 使得 $f$ 和 $g$ 在 $\Hom(X, \alpha(j))$ 中的像相等.
+\end{itemize}
+
+\begin{example}\label{eg:Set-cpt}
+	对于 $\mathcal{C} = \cate{Set}$ 情形, $X$ 是紧对象当且仅当 $X$ 是有限集. ``当''的方向直接来自上述讨论和 $\varinjlim \alpha$ 的具体描述. 至于``仅当''方向, 请将 $X$ 表作其有限子集的滤过 $\varinjlim$ 并考虑 $\identity_X$.
+\end{example}
+
+\begin{example}\label{eg:Mod-cpt}
+	设 $R$ 为环, 则对于 $\mathcal{C} = R\dcate{Mod}$ 情形, $X$ 是紧对象当且仅当 $X$ 具备有限展示, 换言之, 存在 $a, b \in \Z_{\geq 0}$ 和 $R$-模的正合列
+	\[ R^{\oplus b} \to R^{\oplus a} \xrightarrow{p} X \to 0 .\]
+	关于 $R\dcate{Mod}$ 中的滤过 $\varinjlim$, 可见 \cite[注记 6.2.3]{Li1} 的说明. ``仅当''方向留作习题. 且来勾勒``当''的方向. 取 $R^{\oplus a}$ 的标准基的像, 得到 $X$ 的一族生成元 $x_1, \ldots, x_a$. 兹证明 \eqref{eqn:I-small-gen} 单: 设 $f, g \in \Hom(X, \alpha(i))$ 满足 $\iota_i f = \iota_i g$, 则对每个 $x \in \{x_1, \ldots, x_a \}$ 都可以找到 $i \to j_x$ 使得 $f(x)$ 和 $g(x)$ 在 $\alpha(j_x)$ 中的像相等, 继而由滤过范畴的性质得到所求的 $i \to j$, 使 $f$ 和 $g$ 在 $\Hom(X, \alpha(j))$ 中的像相等.
+
+	其次证 \eqref{eqn:I-small-gen} 满: 考虑 $f: X \to \varinjlim \alpha$. 对每个 $x \in \{x_1, \ldots, x_a \}$ 都存在 $j_x$ 和 $m_x \in \alpha(j_x)$ 使得 $f(x) = \iota_{j_x}(m_x)$; 同样地, 滤过性质确保 $j_x$ 有无关于 $x$ 的取法, 记为 $j$. 这就决定了态射 $m: R^{\oplus a} \to \alpha(j)$ 使得 $fp = \iota_j m$. 因为 $b$ 有限, 取足够深的 $j \to i$, 再以 $i$ 代 $j$ 还可以确保 $m$ 限制在 $R^{\oplus b}$ 的像上恒为零, 这就给出所求的 $f_i$.
+\end{example}
+
+对于各类代数结构所确定的紧对象, \cite[1.2 Examples, 3.12 Theorem]{AR94} 有更完整的讨论. 譬如群范畴 $\cate{Grp}$ 的紧对象恰好是具备有限展示的群.
+
+另一类重要的紧对象来自 \S\ref{sec:Yoneda} 回顾的米田嵌入 $h_{\mathcal{D}}: \mathcal{D} \to \mathcal{D}^\wedge$.
+
+\begin{proposition}\label{prop:Ind-cpt}
+	设 $\mathcal{D}$ 为任意范畴, $X \in \Obj(\mathcal{D})$, 则 $h_{\mathcal{D}}(X)$ 在 $\mathcal{D}^\wedge$ 中是紧对象.
+\end{proposition}
+\begin{proof}
+	给定滤过小范畴 $I$ 和函子 $\alpha: I \to \mathcal{D}^\wedge$, 从定理 \ref{prop:Yoneda} 和 $\varinjlim$ 在 $\mathcal{D}^\wedge$ 中的逐点构造 (见 \cite[命题 2.7.8]{Li1}, 该处记之为 $\Yinjlim$), 可得
+	\begin{align*}
+		\varinjlim_i \Hom_{\mathcal{D}^{\wedge}}(h_{\mathcal{D}}(X), \alpha(i)) & \simeq \varinjlim_i \left(\alpha(i)(X)\right) \\
+		& = (\varinjlim \alpha)(X) \\
+		& \simeq \Hom_{\mathcal{D}^\wedge}(h_{\mathcal{D}}(X), \varinjlim \alpha).
+	\end{align*}
+	例行的验证说明这等于 \eqref{eqn:I-small-gen} 的典范映射. 紧性得证.
+\end{proof}
+
+借由对 \eqref{eqn:I-small-gen} 中的滤过范畴 $I$ 作进一步限制, 可以得到紧性的种种变奏. 首先聚焦于 \cite[定义 1.4.10]{Li1} 曾介绍的正则基数, 此处宜作更精细的梳理\footnote{对集合论无感的读者可以跳过以下内容.}. 首先设 $\alpha > 0$ 为任意的无穷序数. 考虑极限序数 $\theta > 0$ 和严格递增的序数列 $(a_\beta)_{\substack{\beta: \text{序数} \\ \beta < \theta}}$, 若 $\sup_{\beta < \theta} a_\beta = \alpha$, 则称此列与 $\alpha$ \emph{共尾}\index{gongwei}. 若 $\alpha$ 是极限序数, 定义
+\[ \mathrm{cf}(\alpha) := \inf\left\{ \theta > 0: \text{极限序数}, \; \exists (a_\beta)_{\beta < \theta}\; \text{如上, 与 $\alpha$ 共尾} \right\}; \]
+此 $\inf$ 有意义, 并且能被所示的某个 $\theta$ 取到; 关于序数的 $\sup$ 和 $\inf$ 详见 \cite[定理 1.2.10]{Li1}. 取 $a_\beta := \beta$ 立见 $\mathrm{cf}(\alpha) \leq \alpha$.
+\index[sym1]{cf@$\mathrm{cf}(\alpha)$}
+
+留意到无穷基数作为序数必然是极限序数, 详见 \cite[引理 1.4.6]{Li1} 之下的讨论.
+
+\begin{definition}\label{def:regular-cardinal}
+	\index{jishu!正则 (regular)}
+	若无穷基数 $\kappa$ 作为序数满足 $\mathrm{cf}(\kappa) = \kappa$, 则称之为\emph{正则基数}.
+\end{definition}
+
+\begin{proposition}\label{prop:cf-generalities}
+	设 $\alpha > 0$ 为极限序数:
+	\begin{enumerate}[(i)]
+		\item $\mathrm{cf}(\mathrm{cf}(\alpha)) = \mathrm{cf}(\alpha)$;
+		\item 若非空子集 $S \subset \alpha$ 满足 $\sup S = \alpha$, 则作为序数有 $|S| \geq \mathrm{cf}(\alpha)$;
+		\item $\mathrm{cf}(\alpha)$ 是正则基数.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	对于 (i), 关键是证 $\mathrm{cf}(\alpha) \leq \mathrm{cf}(\mathrm{cf}(\alpha))$. 设 $(a_\beta)_{\beta < \theta}$ 与 $\alpha$ 共尾, $(b(\gamma))_{\gamma < \psi}$ 与 $\theta$ 共尾, 则 $\left(a_{b(\gamma)}\right)_{\gamma < \psi}$ 与 $\alpha$ 共尾. 由此可见 $\mathrm{cf}(\alpha) \leq \mathrm{cf}(\theta)$. 再取 $\theta = \mathrm{cf}(\alpha)$ 便是.
+	
+	对于 (ii), 任取双射 $f: |S| \to S$. 回忆到 $|S|$ 是序数, 而 $\alpha \notin S$. 兹断言存在极限序数 $\theta$ 和保序嵌入 $i: \theta \hookrightarrow |S|$ (因而 $\theta \leq |S|$), 使得 $S$ 中的序数列 $\left( f(i(\beta)) \right)_{\beta < \theta}$ 严格递增, 而且 $\sup_{\beta < \theta} f(i(\beta)) = \sup S = \alpha$.
+	
+	诚然, 这是超穷递归原理的应用. 详言之, 取
+	\begin{align*}
+		i(0) & := \inf |S| = 0, \\
+		i(n+1) & := \inf\left\{ t \in |S|: f(t) > f(i(n)) \right\}, \quad n \in \omega := \{0, 1, 2, \ldots\}, \\
+		i(\omega) & := \inf\left\{ t \in |S|: \forall k < \omega, \; f(t) > f(i(k)) \right\},
+	\end{align*}
+	依此超穷地类推, 止于 $\theta$. 断言得证. 由之立见 $|S| \geq \theta \geq \mathrm{cf}(\alpha)$.
+	
+	考虑 (iii). 鉴于 (i), 说明 $\mathrm{cf}(\alpha)$ 是基数即可. 假设 $\beta > 0$ 为极限序数, 则 (ii) 蕴涵 $\beta \geq |\beta| \geq \mathrm{cf}(\beta)$; 代入 $\beta = \mathrm{cf}(\alpha)$ 和 (i) 可知 $\mathrm{cf}(\alpha) = |\mathrm{cf}(\alpha)|$, 亦即 $\mathrm{cf}(\alpha)$ 为基数.
+\end{proof}
+
+\begin{proposition}[见 {\cite[Theorem 5.10]{Je03}}]\label{prop:cf-Konig}
+	设 $\lambda$ 为无穷基数, 则 $\mathrm{cf}(2^\lambda) > \lambda$.
+\end{proposition}
+\begin{proof}
+	这是集合论中的标准结果. 给定极限序数 $0 < \alpha \leq \lambda$ 和一列序数 $(a_\beta)_{\beta < \alpha}$, 满足 $a_\beta < 2^\lambda$. 记 $\kappa_\beta := |a_\beta| < 2^\lambda$. 按序数的 $\sup$ 和基数运算的定义,
+	\[ \left| \sup_{\beta < \alpha} a_\beta \right| = \left| \bigcup_{\beta < \alpha} a_\beta \right| \leq \sum_{\beta < \alpha} \kappa_\beta. \]
+	关于基数运算的 König 引理 (参考 \cite[习题 1.6]{Li1}, 或 \cite[Theorem 5.10]{Je03}) 蕴涵
+	\begin{align*}
+		\sum_{\beta < \alpha} \kappa_\beta & < \prod_{\beta < \alpha} 2^\lambda = (2^\lambda)^{|\alpha|} \\
+		& = 2^{\lambda \cdot |\alpha|} \leq 2^{\lambda \cdot \lambda} = 2^\lambda ;
+	\end{align*}
+	最后一步用到了 \cite[定理 1.4.8]{Li1}. 这就表明不可能有 $\lambda \geq \mathrm{cf}(2^\lambda)$.
+\end{proof}
+
+\begin{lemma}\label{prop:enough-regular-cardinal}
+	设 $T$ 为小集, 则存在正则小基数 $\mu$ 使得 $\mu > |T|$.
+\end{lemma}
+\begin{proof}
+	回忆到 Grothendieck 宇宙 $\mathcal{U}$ 已经选定. 问题仅关乎 $|T|$, 不妨设 $T \in \mathcal{U}$ 无穷. 于是其幂集 $P(T) \in \mathcal{U}$. 记 $\lambda := |T|$. 命题 \ref{prop:cf-Konig} 断言 $\mathrm{cf}(2^\lambda) > \lambda$. 由于 $\mathrm{cf}(2^\lambda)$ 既是正则基数 (命题 \ref{prop:cf-generalities} (iii)), 又能嵌为 $2^\lambda = |P(T)|$ 的子集, 故 $\mu := \mathrm{cf}(2^\lambda)$ 即所求.
+\end{proof}
+
+现在切回范畴论的主线. 以下概念源于 \cite{GU71}, 教科书则是 \cite[Chapters 1, 2]{AR94}.
+
+\begin{definition}[P.\ Gabriel, F.\ Ulmer]\label{def:presentable-cat}
+	\index{fanchou!$\kappa$-可达 ($\kappa$-accessible)}
+	\index{fanchou!$\kappa$-可展示 ($\kappa$-presentable)}
+	\index{hanzi!$\kappa$-可达 ($\kappa$-accessible)}
+	设范畴 $\mathcal{C}$ 如前所述, 而 $\kappa$ 是正则小基数.
+	\begin{enumerate}
+		\item 满足以下条件的 $\mathcal{C}$ 称为 \emph{$\kappa$-可达范畴}:
+		\begin{compactitem}
+			\item $\mathcal{C}$ 具有所有 $\kappa$-滤过小 $\varinjlim$ (定义 \ref{def:kappa-filtered});
+			\item 存在由 $\kappa$-紧对象 (定义 \ref{def:cpt-objects}) 构成的小子集 $S \subset \Obj(\mathcal{C})$, 使得每个 $X \in \Obj(\mathcal{C})$ 皆可表成 $S$ 的元素的 $\kappa$-滤过小 $\varinjlim$.
+		\end{compactitem}
+		\item 若 $\kappa$-可达范畴之间的函子保 $\kappa$-滤过小 $\varinjlim$, 则称之为 $\kappa$-可达函子.
+		\item 余完备的 $\kappa$-可达范畴称为 \emph{$\kappa$-可展示范畴}\footnote{一度被 Gabriel 称为代数范畴, 文献 \cite{AR94, GU71} 称之为局部可展示范畴, 此处从 \cite[A.1.1]{Lu09} 改名.}.
+	\end{enumerate}
+
+	当 $\kappa$ 越大, 条件便越松弛, 对某个正则小基数 $\kappa$ 是 $\kappa$-可达 (或 $\kappa$-可展示) 的范畴称为可达 (或可展示) 范畴. 类似地, 如果可展示范畴之间的函子对某个正则小基数 $\kappa$ 是 $\kappa$-可达的, 则称之为可达函子.
+\end{definition}
+
+可以验证例 \ref{eg:Set-cpt} 和 \ref{eg:Mod-cpt} 讨论的范畴 $\cate{Set}$ 和 $R\dcate{Mod}$ 都是可展示的, 事实上它们是 $\aleph_0$-可展示的; 亦见习题.
+
+对于以下重要结果, 此处仅能给予部分的证明.
+
+% Reference: nLab, page on Adjoint Functor Theorem
+\begin{theorem}[P.\ Gabriel, F.\ Ulmer]
+	设 $\kappa$ 为正则小基数, $F: \mathcal{C} \to \mathcal{D}$ 为可展示范畴之间的函子, 则
+	\begin{enumerate}[(i)]
+		\item $F$ 有右伴随当且仅当它保小 $\varinjlim$;
+		\item $F$ 有左伴随当且仅当它可达而且保小 $\varprojlim$.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	断言 (i) 的``仅当''方向是熟知的, 另一方向则导自特殊伴随函子定理 \ref{prop:SAFT} 和以下事实. 第一, 引理 \ref{prop:generator-via-limit} 蕴涵定义 \ref{def:presentable-cat} 中的 $S$ 是 $\mathcal{C}$ 的生成系; 其次, 可展示范畴总是余良幂的, 见 \cite[1.58 Theorem]{AR94}.
+	
+	断言 (ii) 导自 Freyd 的伴随函子定理 \ref{prop:GAFT}, 详见 \cite[1.66 Theorem]{AR94}.
+\end{proof}
+
+\section{Gabriel--Popescu 定理}\label{sec:GP}
+本节是 \S\ref{sec:Grothendieck-cat} 的延续与补充. 选定 Grothendieck 范畴 $\mathcal{A}$, 并且将 $\Hom_{\mathcal{A}}$ 简记为 $\Hom$. 以 $X^{\oplus I}$ 代表 $I$ 份对象 $X$ 在 $\mathcal{A}$ 中的直和, $I$ 是小集.
+
+Gabriel--Popescu 定理将说明 $\mathcal{A}$ 总能实现为某个右模范畴 $\cated{Mod}R$ 的反射局部化 (注记 \ref{rem:reflexive-localization}), 环 $R$ 和涉及的函子取决于生成元 $s$. 以下取法 L.\ Kuhn \cite{Ku94} 的证明, 其中一步需要导出函子的经典理论, 见 \S\ref{sec:derived-primer}.
+
+取 $s \in \Obj(\mathcal{A})$. 命 $R := \End(s)$ 并且考虑函子
+\begin{align*}
+	G: \mathcal{A} & \to \cated{Mod}R \\
+	X & \mapsto \Hom(s, X),
+\end{align*}
+其中 $R$ 按态射的合成右作用于 $\Hom(s, X)$. 易见 $G$ 是 Abel 范畴之间的加性函子, 保所有小 $\varprojlim$. 今后记 $\Hom_R := \Hom_{\cated{Mod}R}$ 以区别于 $\Hom := \Hom_{\mathcal{A}}$.
+
+对所有 $r \in R$, 定义 $\End_R(R)$ 的元素 $\lambda_r: x \mapsto rx$. 请留意到 $G(s) = R$, 而 $\lambda_r: R \to R$ 无非是态射 $r: s \to s$ 对函子 $G$ 的像.
+
+\begin{lemma}\label{prop:GP-prep}
+	上述函子 $G: \mathcal{A} \to \cated{Mod}R$ 有左伴随 $P: \cated{Mod}R \to \mathcal{A}$. 伴随对的余单位 $\varepsilon: PG \to \identity$ 使得 $\varepsilon_s: PG(s) = P(R) \to s$ 为同构, 而且下图交换
+	\[\begin{tikzcd}[column sep=small]
+		\lambda_r \arrow[phantom, r, "\in" description] & \End_R(R) \arrow[r, "P"] & \End(P(R)) \arrow[d, "\sim" sloped] & \varphi \arrow[phantom, l, "\ni" description] \arrow[mapsto, d] \\
+		r \arrow[phantom, r, "\in" description] \arrow[mapsto, u] & R \arrow[u, "\sim" sloped] \arrow[equal, r] & \End(s) & \varepsilon_s \varphi \varepsilon_s^{-1} \arrow[phantom, l, "\ni" description] .
+	\end{tikzcd}\]
+\end{lemma}
+\begin{proof}
+	左伴随 $P$ 的存在性源自特殊伴随函子定理 \ref{prop:SAFT} 和推论 \ref{prop:Grothendieck-cat-wellpowered}. 其次, 对任意 $Y \in \Obj(\mathcal{A})$, 兹断言下图交换:
+	\[\begin{tikzcd}
+		& \Hom(PG(s), Y) \arrow[d, "\sim" sloped] & \\
+		\Hom(s, Y) \arrow[ru, "{\varepsilon_s^*}"] \arrow[r, "G"] \arrow[rd, "\identity"'] & \Hom_R(G(s), G(Y)) \arrow[d, "\sim" sloped] & \psi \arrow[phantom, l, "\ni" description, sloped] \arrow[mapsto, d] \\
+		& G(Y) & \psi(1_R). \arrow[phantom, l, "\ni" description, sloped]
+	\end{tikzcd}\]
+	\begin{itemize}
+		\item 上半部交换是关于伴随对 $(P, G)$ 的一般性质: 任给 $f \in \Hom(s, Y)$, 则 $f\varepsilon_s: PGs \to Y$ 对应到 $G(f\varepsilon_s) \circ \eta_{Gs}: Gs \to GY$, 见 \cite[(2.5)]{Li1}; 而根据伴随对的三角等式, 后者又等于 $(Gf) \circ \left((G\varepsilon_s) \eta_{Gs}\right) = Gf$.
+		\item 从 $G$ 的定义可直接检验下半部交换.
+	\end{itemize}
+	
+	于是 $\varepsilon_s^*$ 是同构. 进一步取 $Y$ 为推论 \ref{prop:Grothendieck-cat-cogenerator} 提供的内射余生成元, 则可见 $\varepsilon_s$ 为同构. 最后, 关于图表交换的断言相当于说
+	\[\begin{tikzcd}
+		P(R) \arrow[r, "{P(\lambda_r)}"] \arrow[d, "{\varepsilon_s}"'] & P(R) \arrow[d, "{\varepsilon_s}"] \\
+		s \arrow[r, "r"'] & s
+	\end{tikzcd} \quad (r \in R) \]
+	交换; 但是 $R = Gs$ 而 $\lambda_r = Gr$, 故 $\varepsilon$ 的自然性确保上图交换.
+\end{proof}
+
+如何描述 $P$? 对任意右 $R$-模 $M$, 存在小集 $I$, $J$ 和正合列
+\[ R^{\oplus J} \to R^{\oplus I} \to M \to 0; \]
+取 $P$ 保小 $\varinjlim$, 于是 $PM \simeq \Coker\left[ s^{\oplus J} \to s^{\oplus I} \right]$.
+
+以下结果的表述涉及 Abel 范畴的 Serre 商, 详见定理 \ref{prop:Serre-quotient}; Serre 商是局部化的一种特例.
+
+\begin{theorem}[P.\ Gabriel, N.\ Popescu, L.\ Kuhn]\label{prop:GP}
+	取 $s$ 为 Grothendieck 范畴 $\mathcal{A}$ 的生成元. 以下性质成立:
+	\begin{itemize}
+		\item 函子 $G = \Hom(s, \cdot): \mathcal{A} \to \cated{Mod}R$ 有正合的左伴随 $P$;
+		\item $G$ 是全忠实的, 伴随对的余单位态射给出同构 $\varepsilon: PG \rightiso \identity_{\cated{Mod}R}$;
+		\item $P$ 诱导范畴的等价 $\cated{Mod}R / \Ker(P) \rightiso \mathcal{A}$.
+	\end{itemize}
+\end{theorem}
+\begin{proof}
+	引理 \ref{prop:GP-prep} 已说明 $G$ 有左伴随 $P$. 兹断言若 $u: M \to GX$ 是 $\cated{Mod}R$ 的单态射, 则对应的 $v := \varepsilon_X \circ Pu : PM \to X$ (见 \cite[(2.5)]{Li1}) 是 $\mathcal{A}$ 的单态射. 将 $M$ 写成有限生成 $R$-子模的滤过 $\varinjlim$. 由于 $P$ 保 $\varinjlim$ 而 $\mathcal{A}$ 中的滤过 $\varinjlim$ 正合, 问题化约到 $M$ 有限生成的情形.
+	
+	以同构 $\varepsilon_s$ 等同 $s$ 与 $P(R)$. 取有限集 $I$ 连同 $R^{\oplus I} \twoheadrightarrow M$. 这给出 $e: s^{\oplus I} \twoheadrightarrow PM$. 若能证明 $\Ker(ve) = \Ker(e)$ 即可推导 $v$ 单. 基于生成元的性质 (例如命题 \ref{prop:Abel-strong-generator}), 问题进一步化约为说明任何态射 $f: s \to s^{\oplus I}$ 若满足 $vef = 0$, 则 $ef = 0$. 作两点观察:
+	\begin{itemize}
+		\item 按构造, $e$ 来自 $P$ 作用于态射的像, 而因为 $I$ 有限, 将 $f$ 表作 $R^{\oplus I}$ 的元素, 逐一考察各个分量, 则引理 \ref{prop:GP-prep} 的交换图表确保 $f$ 也来自 $P$ 的像;
+		\item 其次, 若 $\cated{Mod}R$ 的态射 $\psi: N \to M$ 满足 $v \circ P\psi = 0$, 则 $\psi = 0$. 这是基于 $u$ 的单性和 $\cate{Ab}$ 中的交换图表
+		\[\begin{tikzcd}[column sep=small]
+			v \arrow[phantom, r, "\in" description]& \Hom(PM, X) \arrow[r, "\sim"] \arrow[d, "{(P\psi)^*}"'] & \Hom_R(M, GX) \arrow[d, "{\psi^*}"] & u \arrow[phantom, l, "\ni" description] \\
+			& \Hom(PN, X) \arrow[r, "\sim"'] & \Hom_R(N, GX) . &
+		\end{tikzcd}\]
+	\end{itemize}
+	于是 $ef: s \to PM$ 总来自于 $P$ 的像, 而 $vef = 0$ 蕴涵 $ef=0$. 断言得证.
+	
+	伴随对的余单位态射 $\varepsilon$ 为同构等价于 $G$ 全忠实, 这则一般事实是\CHref{sec:categories}的习题. 以下来证明 $\varepsilon$ 为同构. 命 $X \in \Obj(\mathcal{A})$. 既然 $\varepsilon_X: PG(X) \hookrightarrow X$ 对应 $\identity_{GX}$, 于前一步代入 $u = \identity_{GX}$ 可知 $\varepsilon_X$ 单. 至于满性, 命题 \ref{prop:Abel-strong-generator} 将此化约为证明任意 $\alpha: s \to X$ 都通过 $\varepsilon_X: PG(X) \hookrightarrow X$ 分解, 而下图给出所求分解:
+	\[\begin{tikzcd}
+		PG(s) \arrow[r, "\sim"', "\varepsilon_s"] \arrow[d, "{PG(\alpha)}"'] & s \arrow[d, "\alpha"] \\
+		PG(X) \arrow[r, "{\varepsilon_X}"'] & X
+	\end{tikzcd}\]
+	
+	接着证明 $P$ 正合. 已知 $P$ 右正合, 再证左导出函子 $\mathrm{L}_1 P = 0$ 即可. 对任意右 $R$-模 $M$, 取短正合列
+	\[ 0 \to K \xrightarrow{u} F \to M \to 0, \quad F: \text{自由模}. \]
+	基于移维技巧 (命题 \ref{prop:dimension-shifting}), 可见
+	\[ \mathrm{L}_1 P (M) \simeq \Ker[Pu: P(K) \to P(F)]. \]
+	问题遂归结为证 $Pu$ 单. 将 $F$ 表作有限秩自由子模 $F'$ 的滤过 $\varinjlim$ (亦可写作递增并), 相应地 $K = \varinjlim_{F'} (F' \cap K)$; 因为 $P$ 保 $\varinjlim$ 而 $\mathcal{A}$ 中的滤过 $\varinjlim$ 正合, 问题化约到 $F = R^{\oplus I} \simeq G(s^{\oplus I})$ 的情形, $I$ 为有限集. 然而证明之初业已说明: 若 $u: K \to G(s^{\oplus I})$ 单, 则 $v = \varepsilon_{s^{\oplus I}} \circ Pu : P(K) \to s^{\oplus I}$ 单, 因而 $Pu$ 单. 正合性得证.
+	
+	最后, 将定理 \ref{prop:Serre-quotient} 给予的泛性质用于 $P$, 可将 $P$ 通过忠实加性函子 $\overline{P}: \cated{Mod}R / \Ker(P) \to \mathcal{A}$ 分解. 记 $\overline{G}$ 为合成 $\mathcal{A} \xrightarrow{G} \cated{Mod}R \to \cated{Mod}R / \Ker(P)$, 则 $\overline{P} \circ \overline{G} \simeq P \circ G \simeq \identity_{\mathcal{A}}$. 由此知 $\overline{P}$ 还是全忠实本质满的, 以 $\overline{G}$ 为拟逆. 明所欲证.
+\end{proof}
+
+\begin{remark}
+	基于 Gabriel--Popescu 定理 \ref{prop:GP}, 可以推出 Grothendieck 范畴是定义 \ref{def:presentable-cat} 意义下的可展示范畴. 这是因为 $\cated{Mod}R \simeq R^{\opp}\dcate{Mod}$ 已知是可展示的; 应用 \cite[1.40 Corollary]{AR94} 即可将此性质``反射''到 $\mathcal{A}$ 上.
+\end{remark}
+
+\section{局部有限 Abel 范畴}\label{sec:locally-finite-Abel-cat}
+本节的目的是介绍 Abel 范畴上的一类有限性条件, 这为 \S\ref{sec:Tannaka-coend} 提供了必要的技术支持. 建议读者先掌握定义 \ref{def:essentially-small-cat}, 定义 \ref{def:locally-finite} 和命题 \ref{prop:subcat-union} 的陈述, 但略过后续的引理和证明. 我们选定 Grothendieck 宇宙 $\mathcal{U}$ 以探讨何谓小集和小范畴.
+
+\begin{definition}\label{def:essentially-small-cat}
+	\index{fanchou!本质小 (essentially small)}
+	\index{daxiaowenti}
+	若范畴 $\mathcal{C}$ 与某个小范畴等价, 或等价地说 $\Obj(\mathcal{C})/\simeq$ 是小集, 则称 $\mathcal{C}$ 是\emph{本质小}的.
+\end{definition}
+
+以下选定域 $\Bbbk$, 我们考虑的 Abel 范畴 $\mathcal{A}$ 都默认为 $\Bbbk$-线性的.
+
+\begin{definition}\label{def:locally-finite}
+	\index{Abel fanchou!局部有限 (locally finite)}
+	相对于选定的域 $\Bbbk$, 若本质小 Abel 范畴 $\mathcal{A}$ (定义 \ref{def:essentially-small-cat}) 具备以下性质, 则称 $\mathcal{A}$ \emph{局部有限}:
+	\begin{equation*}
+		\forall X, Y \in \Obj(\mathcal{A}) \quad
+		\left\{\begin{array}{l}
+			X\; \text{是有限长度对象 (定义 \ref{def:finite-length-object})}, \\
+			\dim_{\Bbbk} \Hom_{\mathcal{A}}(X, Y) < \infty.
+		\end{array}\right.
+	\end{equation*}
+\end{definition}
+
+\begin{convention}
+	\index[sym1]{X-bracket@$\lrangle{X}$}
+	对于 Abel 范畴 $\mathcal{A}$ 和 $X \in \Obj(\mathcal{A})$, 定义 $\mathcal{A}$ 的子 Abel 范畴 $\lrangle{X}$ 使得
+	\[ Y \in \Obj(\lrangle{X}) \iff \exists n \in \Z_{\geq 0} \; \text{使得}\; Y \;\text{是}\; X^{\oplus n} \;\text{的子商}. \]
+\end{convention}
+
+不难看出 $\mathcal{A}$ 是所有子范畴 $\lrangle{X}$ 的并, 而且由 $\lrangle{X} \subset \lrangle{X \oplus Y} \supset \lrangle{Y}$ 可见此并是滤过的. 我们关心的是形如 $\lrangle{X}$ 的局部有限 Abel 范畴.
+
+\begin{proposition}[O.\ Gabber]\label{prop:subcat-union}
+	设 Abel 范畴 $\mathcal{A}$ 局部有限, 而且存在 $X \in \Obj(\mathcal{A})$ 使得 $\mathcal{A} = \lrangle{X}$, 则 $\mathcal{A}$ 有投射生成元.
+\end{proposition}
+
+证明需要若干准备.
+
+\begin{definition}
+	\index{shizhikuozhang@实质扩张 (essential extension)}
+	在任意 Abel 范畴中, 若 $\alpha: E \twoheadrightarrow Y$ 是满态射, 而且不存在 $E$ 的真子对象 $E'$ 使 $\alpha|_{E'}$ 满, 则称 $\alpha$ 为\emph{实质扩张}.
+\end{definition}
+
+\begin{lemma}\label{prop:essential-ext-aux0}
+	设 $S$ 是任意 Abel 范畴中的单对象, $\alpha: E \twoheadrightarrow S$ 是实质扩张, 则对于任意单对象 $T$, 拉回映射 $\alpha^*: \Hom(S, T) \to \Hom(E, T)$ 是同构.
+\end{lemma}
+\begin{proof}
+	沿着满态射 $\alpha$ 拉回总是单的, 以下证其为满. 设 $\phi \in \Hom(E, T) \smallsetminus \{0\}$, 由于 $\alpha|_{\Ker(\phi)}$ 非满, 故 $S$ 单蕴涵 $\Ker(\phi) \subset \Ker(\alpha)$. 诱导态射 $T \simeq E/\Ker(\phi) \twoheadrightarrow E/\Ker(\alpha) \simeq S$ 必然是同构, 故 $\Ker(\phi) = \Ker(\alpha)$. 于是存在 $\phi' \in \Hom(S, T)$ 使得 $\phi = \phi' \alpha = \alpha^*(\phi')$.
+\end{proof}
+
+对于 Abel 范畴中的有限长度对象 $Y$, 其合成因子构成的带重数集记为 $\mathrm{JH}(Y)$ (定义--定理 \ref{def:JH}).
+
+\begin{lemma}\label{prop:essential-ext}
+	设 $\mathcal{A}$ 为 Abel 范畴, $X$ 为有限长度对象. 考虑 $\lrangle{X}$ 的单对象 $S$ 和实质扩张 $\alpha: E \twoheadrightarrow S$. 对所有 $Y \in \Obj(\lrangle{X})$, 记 $\ell_S(Y)$ 为 $\mathrm{JH}(Y)$ 中同构于 $S$ 的合成因子个数 (计重数), 则有
+	\begin{equation}\label{eqn:essential-ext-aux}
+		\dim_{\Bbbk} \Hom(E, Y) \leq \ell_S(Y) \dim_{\Bbbk} \End(S);
+	\end{equation}
+	若 $Y$ 是单对象, 则等号成立.
+	
+	此外, 以下陈述相互等价:
+	\begin{enumerate}[(i)]
+		\item $E$ 是 $\lrangle{X}$ 的投射对象;
+		\item \eqref{eqn:essential-ext-aux} 的等号对于所有 $Y \in \Obj(\lrangle{X})$ 成立;
+		\item \eqref{eqn:essential-ext-aux} 的等号对于 $Y = X$ 成立.
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	所求不等式 \eqref{eqn:essential-ext-aux} 的右侧作为 $Y$ 的函数, 对短正合列 $0 \to Y' \to Y \to Y'' \to 0$ 具有加性. 另一方面, $\Hom(E, \cdot)$ 左正合故 \eqref{eqn:essential-ext-aux} 的左侧具有``次加性''
+	\[ \dim_{\Bbbk} \Hom(E, Y) \leq \dim_{\Bbbk} \Hom(E, Y') + \dim_{\Bbbk} \Hom(E, Y''). \]
+	上式的等号对所有短正合列成立当且仅当 $E$ 是 $\lrangle{X}$ 的投射对象.
+	
+	若 $Y$ 是单对象, 则引理 \ref{prop:essential-ext-aux0} 蕴涵当 $Y \simeq S$ 时 \eqref{eqn:essential-ext-aux} 左侧为 $\dim_{\Bbbk} \End(S)$, 否则为 $0$; 但右侧也有相同性质, 故此时 \eqref{eqn:essential-ext-aux} 等号成立. 对于一般的 $Y$, 考虑其合成列并应用第一段的讨论, 便同时给出不等式 \eqref{eqn:essential-ext-aux} 和 (i) $\implies$ (ii). 反之若 \eqref{eqn:essential-ext-aux} 的等号成立, 则 $\dim_{\Bbbk} \Hom(E, \cdot)$ 具有加性, 由此知 (ii) $\implies$ (i).
+	
+	显然 (ii) $\implies$ (iii). 以下说明 (iii) $\implies$ (ii). 既然不等式 \eqref{eqn:essential-ext-aux} 业已确立, 第一段的讨论说明若其中等号对 $Y$ 成立, 则对 $Y'$ 和 $Y''$ 亦然. 已知等号对 $X$ 成立, 故对所有 $X^{\oplus n}$ 及其子商皆成立, 由此得到 (ii).
+\end{proof}
+
+现在回到本节目标.
+
+\begin{proof}[命题 \ref{prop:subcat-union}]
+	不妨设 $X \neq 0$. 首先说明如果对 $\mathrm{JH}(X)$ 的每个元素 $S$ (不计重数), 皆有满态射 $P_S \twoheadrightarrow S$ 使得 $P_S$ 是 $\lrangle{X}$ 的投射对象, 则这些 $P_S$ 的直和 $P$ 是 $\lrangle{X}$ 的投射生成元.
+	
+	诚然, 直和 $P$ 在 $\lrangle{X}$ 中自动是投射的; 基于命题 \ref{prop:injective-cogenerator}, 再对所有 $Y \in \Obj(\lrangle{X})$ 证明 $Y \neq 0 \implies \Hom(P, Y) \neq 0$ 即可. 取单商 $Y \twoheadrightarrow S$, 则 $P_S$ 的投射性质将 $P_S \twoheadrightarrow S$ 分解为 $P_S \to Y \twoheadrightarrow S$, 这便给出非零之 $P \xrightarrow{\text{投影}} P_S \to Y$.
+	
+	以下选定 $\lrangle{X}$ 的单对象 $S$ 并构造 $P_S \twoheadrightarrow S$. 取 $X$ 的合成列
+	\[ X = X_0 \supsetneq \cdots \supsetneq X_r = 0, \quad r \geq 1. \]
+	今将对 $i = 1, \ldots, r$ 递归地构造一列实质扩张 $P_i \twoheadrightarrow S$ 使得
+	\[ \dim_{\Bbbk} \Hom(P_i, X/X_i) = \ell_S(X/X_i) \dim_{\Bbbk} \End(S). \]
+	一旦证得这点, 则引理 \ref{prop:essential-ext} 说明 $P_r$ 是 $\lrangle{X}$ 的投射对象, 而 $P_S := P_r \twoheadrightarrow S$ 即所求.
+
+	取 $P_1 = S$, 命题 \ref{prop:essential-ext} 说明等式成立. 现在设 $1 \leq i < r$ 而 $P_i$ 已经构造. 取 $\Hom(P_i, X/X_i)$ 在 $\Bbbk$ 上的基 $\phi_1, \ldots, \phi_n$. 构作纤维积
+	\[\begin{tikzcd}
+		Q_j \arrow[d] \arrow[r, "{\psi_j}"] & X/X_{i+1} \arrow[twoheadrightarrow, d] \\
+		P_i \arrow[r, "{\phi_j}"'] & X/X_i \arrow[phantom, lu, "\Box" description]
+	\end{tikzcd} \quad 1 \leq j \leq n.\]
+	留意到 $Q_j \twoheadrightarrow P_i$ (命题 \ref{prop:Abel-cat-pull-push}). 取 $Q$ 为 $Q_1, \ldots, Q_n$ 在 $P_i$ 上的纤维积. 由于纤维积可以分步作, 故基于相同理由, $Q \to P_i$ 满. 现在可以任取 $Q$ 的子对象 $P_{i+1}$ 使得 $P_{i+1} \hookrightarrow Q \to P_i$ 的合成 $p^{i+1}_i$ 为满, 而且 $P_{i+1}$ 对此性质而言是极小的. 按此构造, $P_{i+1} \xrightarrow{p^{i+1}_i} P_i \twoheadrightarrow S$ 的合成是实质扩张. 另记 $P_{i+1} \hookrightarrow Q \xrightarrow{\text{投影}} Q_j$ 的合成为 $t_j$.
+	
+	兹断言 $(p^{i+1}_i)^*: \Hom(P_i, X/X_i) \to \Hom(P_{i+1}, X/X_i)$ 是同构. 首先它是单的, 其次, 左侧维数已知为 $\ell_S(X/X_i) \dim_{\Bbbk} \End(S)$, 右侧维数则以此为上界 (引理 \ref{prop:essential-ext}). 断言得证.
+	
+	且记 $\Hom(P_{i+1}, X/X_{i+1}) \to \Hom(P_{i+1}, X/X_i)$ 为 $\Phi_i$. 基于上述断言, 我们可以合理地定义反向的 $\Bbbk$-线性映射 $\Psi_i$, 使得 $\phi_j p^{i+1}_i$ 被映为 $\psi_j t_j$, 其中 $1 \leq j \leq n$. 现在验证 $\Phi_i \Psi_i = \identity$: 考虑它在每个 $\phi_j p^{i+1}_i$ 上的作用, 易见有交换图表
+	\[\begin{tikzcd}
+		P_{i+1} \arrow[r, "{t_j}"] \arrow[d, "{p^{i+1}_i}"'] & Q_j \arrow[r, "{\psi_j}"] \arrow[ld] & X/X_{i+1} \arrow[twoheadrightarrow, d] \\
+		P_i \arrow[rr, "{\phi_j}"'] & & X/X_i ,
+	\end{tikzcd}\]
+	这也相当于说 $\Phi_i(\psi_j t_j) = \phi_j p^{i+1}_i$. 验证到位.
+	
+	综上, 我们有分裂短正合列
+	\[\begin{tikzcd}[row sep=tiny, column sep=small]
+		0 \arrow[r] & \Hom(P_{i+1}, \underbracket{X_i/X_{i+1}}_{\text{单对象}}) \arrow[r] & \Hom(P_{i+1}, X/X_{i+1}) \arrow[r, "{\Phi_i}"] & \Hom(P_{i+1}, X/X_i) \arrow[r] & 0. \\
+		& & & \Hom(P_i , X/X_i) \arrow[u, "\sim" sloped] &
+	\end{tikzcd}\]
+	命题 \ref{prop:essential-ext} 和递归假设表明左右两端的维数分别是
+	\[ \ell_S(X_i/X_{i+1}) \dim_{\Bbbk} \End(S), \quad \ell_S(X/X_i) \dim_{\Bbbk} \End(S). \]
+	基于 $\ell_S(\cdot)$ 的加性, 中项因而取到所需的维数. 明所欲证.
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%
+\begin{Exercises}
+	\item 在 \S\ref{sec:Yoneda} 的讨论中, 取定交换环 $\Bbbk$, 要求 $\mathcal{C}$ 是 $\Bbbk\dcate{Mod}$-范畴 (定义 \ref{def:cat-k-linear}), 在 $\mathcal{C}^\wedge$ 和 $\mathcal{C}^\vee$ 的定义中以 $\Bbbk\dcate{Mod}$ 代 $\cate{Set}$, 并且要求函子都是 $\Bbbk$-线性的. 试为定理 \ref{prop:Yoneda} 和 \ref{prop:Yoneda-density} 给出对应的 $\Bbbk$-线性版本.
+	
+	\item 补全例 \ref{eg:Mod-cpt} 的``仅当''部分.
+	\begin{hint}
+		任何 $R$-模都能写成有限展示 $R$-模的滤过 $\varinjlim$ (未必是其子模), 简单起见写作 $X = \varinjlim \alpha$. 考虑 $\identity_X$ 在 \eqref{eqn:I-small-gen} 下的原像, 可得 $f_i \in \Hom(X, \alpha(i))$ 使得 $\iota_i f_i = \identity_X$. 这给出分解 $\alpha(i) \simeq X \oplus N$. 由于 $N$ 同构于 $\alpha(i)$ 的商, 它是有限生成 $R$-模. 问题归结为有限展示 $R$-模对有限生成子模的商仍具备有限展示.
+	\end{hint}
+	
+	\item 阐明 \S\ref{sec:cpt-objects} 介绍的共尾序数列和定义 \ref{def:cofinal} 的共尾子范畴之间的联系.
+	
+	\item (J.\ Adámek, J.\ Rosický) 按照以下方式证明注记 \ref{rem:filtered-poset} 提及的事实: 对所有滤过小范畴 $I$, 存在滤过偏序小集 $(\mathcal{P}, \leq)$ 连同共尾函子 $\mathcal{P} \to I$.
+	\begin{enumerate}[(i)]
+		\item 设滤过小范畴 $I$ 具有以下性质: 任何有限子范畴 $\mathcal{A}$ 都能嵌入某个有限子范畴 $\mathcal{A}'$, 使得 $\mathcal{A}'$ 有唯一的终对象 (注意: 子范畴未必是全子范畴, 而有限范畴意谓其对象和态射集皆有限). 命 $\mathcal{I}$ 为所有具有唯一终对象的子范畴构成的集合, 按包含关系 $\subset$ 赋偏序. 说明可定义函子
+		\[ H: \mathcal{I} \to I, \]
+		映对象 $\mathcal{A}$ 为其唯一终对象 $H\mathcal{A}$, 映态射 $\mathcal{A}_1 \subset \mathcal{A}_2$ 为 $\mathcal{A}_2$ 中唯一的态射 $H\mathcal{A}_1 \to H\mathcal{A}_2$.
+		\item 承上, 说明 $(\mathcal{I}, \subset)$ 是滤过偏序小集, $H$ 是共尾函子.
+		\item 现在设 $I$ 是一般的滤过小范畴. 说明积范畴 $I \times \omega$ 具有 (i) 预设的性质, 而投影函子 $I \times \omega \to I$ 共尾. 此处 $\omega$ 是非负整数构成的全序集.
+		
+		\begin{hint}
+			易见 $I \times \omega$ 滤过. 给定 $I \times \omega$ 的有限子范畴 $\mathcal{A}$, 说明存在 $I \times \omega$ 的对象 $(i, n)$, 连同以包含函子 $\mathcal{A} \to I \times \omega$ 为底, 以 $(i, n)$ 为顶点的锥 (约定 \ref{con:limit-cone}). 向 $\mathcal{A}$ 添入对象 $(i, n+1)$, 其恒等态射, 以及锥中所有态射 $(j, k) \to (i, n)$ 和自明态射 $(i, n) \to (i, n+1)$ 的合成, 以获得有限子范畴 $\mathcal{A}'$, 它有唯一的终对象 $(i, n+1)$.
+		\end{hint}
+	
+		\item 从 (iii) 证明存在所需的共尾函子 $\mathcal{P} \to I$.
+	\end{enumerate}
+	
+	\item 设范畴 $\mathcal{C}$ 可达.
+	\begin{enumerate}[(i)]
+		\item 选定定义 \ref{def:presentable-cat} 的小子集 $S \subset \Obj(\mathcal{C})$, 记它生成的全子范畴记为 $\mathcal{S}$. 证明米田嵌入限制为全忠实函子 $\mathcal{C} \to \cate{Set}^{\mathcal{S}^{\opp}}$.
+		\item 证明 $\mathcal{C}$ 良幂 (定义 \ref{def:well-powered}).
+		\begin{hint}
+			对 $\cate{Set}^{\mathcal{S}^{\opp}}$ 的任意对象 $F$ 和 $X \in S$, 集合 $FX$ 及其幂集皆是小集, 由此论证 $\mathrm{Sub}_F$ 是小集.
+		\end{hint}
+	\end{enumerate}
+
+	% Reference: Deligne, Categories tannakiennes, 2.18
+	\item 选定域 $\Bbbk$, 设 $\mathcal{A}$ 是局部有限 $\Bbbk$-线性 Abel 范畴, 而 $\mathcal{A}'$ 是其子 Abel 范畴, 记包含函子为 $i: \mathcal{A}' \to \mathcal{A}$. 假设子集 $\Obj(\mathcal{A}') \subset \Obj(\mathcal{A})$ 对同构封闭.
+	\begin{enumerate}[(i)]
+		\item 说明对所有 $X \in \Obj(\mathcal{A})$, 商对象偏序集 $\mathrm{Quot}_X$ (或子对象偏序集 $\mathrm{Sub}_X$) 和 $\mathcal{A}'$ 的交有唯一的极大元, 记为 $i^*(X)$ (或 $i^!(X)$), 而且 $i^*$ (或 $i^!$) 给出 $i$ 的左 (或右) 伴随函子.
+		\item 设 $\mathcal{A}$ 有投射生成元 $s$. 证明 $s' := i^*(s)$ 是 $\mathcal{A}'$ 的投射生成元.
+		\item 对于 $s, s'$ 如上, 命 $A := \End(s)$, $A' := \End(s')$. 证明
+		\[ A = \Hom(s, s) \to \Hom(s, s') \leftiso \Hom(s', s') = A' \]
+		使 $A'$ 成为 $A$ 的商环, 记为 $A' = A/\mathfrak{a}$. 证明 $\mathcal{A}$ 和 $s$ 符合定理 \ref{prop:identify-ModR-fg} 的条件, 从而 $\mathcal{A}$ 等同于 $\catesubd{Mod}{\mathrm{fg}}A$, 而且 $\mathcal{A}'$ 等同于被双边理想 $\mathfrak{a}$ 零化的模所截出的全子范畴.
+	\end{enumerate}
+\end{Exercises}

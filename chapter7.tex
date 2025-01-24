@@ -1,0 +1,3002 @@
+% LaTeX source for book ``代数学方法'' in Chinese
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% To be included
+\chapter{单子论}\label{sec:monads}
+本章的起点 \S\ref{sec:alg-in-monoidal-cat} 是幺半范畴 $(\mathcal{V}, \otimes)$ 上的代数, 这是指带有乘法 $\mu: A \otimes A \to A$ 和幺元态射 $\eta: \mathbf{1} \to A$ 的对象 $A \in \Obj(\mathcal{V})$, 满足结合律和幺元律. 代数的概念以幺半群为原型, 交换环 $\Bbbk$ 上的 $\Bbbk$-代数则是典型例子. 这些代数构成范畴 $\cate{Alg}(\mathcal{V})$; 当 $(\mathcal{V}, \otimes)$ 具有更强的交换性, $\cate{Alg}(\mathcal{V})$ 便有更多的结构和性质可言, 其中最优的是 $\mathcal{V}$ 为对称幺半范畴的场景, 此时 $\cate{Alg}(\mathcal{V})$ 也是对称幺半范畴.
+
+给定代数 $A$, 左 $A$-模是 $\mathcal{V}$ 的对象 $M$ 连同纯量乘法态射 $\mu_M: A \otimes M \to M$, 满足结合律和幺元律; 类似地定义右模和双模. 既然本书主角是复形, 自然的考量是取具有可数余积的 Abel 范畴 $\mathcal{A}$ 和右正合加性双函子 $\otimes: \mathcal{A} \times \mathcal{A} \to \mathcal{A}$, 以全复形将 $\otimes$ 延拓到复形层次, 然后考虑幺半范畴 $(\cate{C}(\mathcal{A}), \otimes)$, 其上通常赋予 Koszul 辫结构 \eqref{eqn:Koszul-braiding}. 于是在理论的延长线上自然出现了 dg-代数和 dg-模, dg 是``微分分次''的缩写; 这些是 \S\ref{sec:dga-monoidal} 的主题.
+
+我们还知道 $\cate{C}(\mathcal{A})$ 中的 $\Hom$ 集可以升级为 $\Hom$ 复形, 而态射合成升级到 $\Hom$ 复形层次; 特别地, 对象 $X$ 的自同态复形 $\End^\bullet(X)$ 成为 dg-代数. 推广这些观察, 便引出 dg-范畴的观念 (定义 \ref{def:dgCat}), 而在 dg-范畴之间可以谈论何谓 dg-函子. 在 \S\ref{sec:closed-monoidal} 简介闭幺半范畴的概念之后, 我们将在 \S\ref{sec:dg-closed} 说明全体 dg-小范畴构成的范畴 $\cate{dgCat}$ 是闭的; 这相当于说任两个 dg-小范畴 $\mathcal{C}$, $\mathcal{D}$ 之间的全体 dg-函子也能升级为一个 dg-范畴 $\iHom(\mathcal{C}, \mathcal{D})$.
+
+各种 dg-结构既源出自然, 又是研究线性代数的重要手段, 但是本章的介绍点到为止, \S\ref{sec:bialgebra} 将目光转向幺半范畴 $\mathcal{V}$ 上的余代数和余模, 它们无非是相反幺半范畴 $\mathcal{V}^{\opp}$ 上的代数和模; 稍加具体地说, 余代数 $C$ 带有余乘法 $\Delta: C \to C \otimes C$ 和余幺元态射 $\epsilon: C \to \munit$, 而左余模 $M$ 带有纯量余乘法 $\rho: M \to C \otimes M$, 结合律和幺元律都有箭头倒转的版本.
+
+当 $\mathcal{V}$ 是辫幺半范畴时, 对象 $A$ 上相互兼容的代数和余代数结构 $(A, \mu, \eta, \Delta, \epsilon)$ 称为双代数, 而带有对极的双代数称为 Hopf 代数 (定义 \ref{def:Hopf-algebra}). 在 $\mathcal{V} = \Bbbk\dcate{Mod}$ 的具体情形, 这些概念受几何与拓扑学的启发. 譬如 Lie 群或更广泛的 H-群的上同调自然地成为 Hopf 代数, 所谓量子群则是 Hopf 代数的另一类重要实例; 此外, 任意群 $G$ 的群代数 $\Bbbk[G]$ 也是 Hopf 代数.
+
+现在介绍 \S\ref{sec:Beck} 的主角, 同时也是本章的标题: 单子. 对任意范畴 $\mathcal{C}$, 自函子范畴 $\mathcal{C}^{\mathcal{C}}$ 对合成运算成为严格幺半范畴, 单子无非是 $\mathcal{C}^{\mathcal{C}}$上的代数, 余单子则是其对偶版本. 这一概念尽管简单, 却在代数, 几何与计算机科学的研究中扮演要角. 单子的一个突出功能是解释同调代数中的种种``标准解消'', 例如 \S\ref{sec:HH} 曾出现的 $\mathsf{B}R$ 或 \S\ref{sec:G-mod} 的 $\mathsf{L}$; 我们将在 \S\ref{sec:bar-resolution} 探究这一方面.
+
+单子和余单子主要源自伴随对
+\[\begin{tikzcd}
+	F: \mathcal{C} \arrow[shift left, r] & \mathcal{D}: G \arrow[shift left, l].
+\end{tikzcd}\]
+它确定 $\mathcal{C}$ 上的单子 $T$ 和 $\mathcal{D}$ 上的余单子 $L$, 通过伴随对的单位 $\eta$ 和余单位态射 $\varepsilon$ 表为
+\[\begin{array}{|c|c|}\hline
+	\text{单子} & \text{余单子} \\ \hline
+	T := GF & L := FG \\
+	\mu := \left[ T^2 \xrightarrow{G\varepsilon F} T \right] & \delta := \left[ L \xrightarrow{F\eta G} L^2 \right] \\
+	\eta : \identity_{\mathcal{C}} \to T & \varepsilon: L \to \identity_{\mathcal{D}} \\ \hline 
+\end{array}\]
+伴随对自然地诱导函子 $\mathbb{K}: \mathcal{D} \to \mathcal{C}^T$ (或 $\mathcal{C} \to \mathcal{D}^L$), 其中 $\mathcal{C}^T$ (或 $\mathcal{D}^L$) 代表单子作用下的模 (或其余单子版本) 构成的范畴. 若 $\mathbb{K}$ 是等价, 则称此伴随对是单子 (或余单子) 的; 这相当于说 $\mathcal{D}$ (或 $\mathcal{C}$) 的信息可以从单子 (或余单子) 在另一侧的作用来重构. Beck 定理 \ref{prop:Beck} 为单子性提供了一个方便的刻画.
+
+下一步是 \S\ref{sec:Morita} 探讨的森田理论, 它是环论的经典主题. 第一部分是探讨左或右模范畴之间保小 $\varinjlim$ (或 $\varprojlim$) 的函子; 定理 \ref{prop:Morita} 表明它们都来自对某个双模 $P$ 取张量积 (或 $\Hom$), 这也从侧面坐实了双模在环论和模论中的特殊地位 --- 它们为``环的变换''提供充分的手段. 由此可以进一步给出左模范畴 $A\dcate{Mod}$ 和 $B\dcate{Mod}$ 相互等价的模论刻画, 也称为森田等价 (定义--命题 \ref{def:Morita-equiv}); 左模和右模情形的刻画全然相同.
+
+对于由 $(A, B)$-双模 $P$ 确定的伴随对, 我们在第二部分顺势研究相应的单子和余单子, 以及对应的模. 在 $P$ 是有限生成投射 $B$-模的前提下, 命题 \ref{prop:Morita-comonad} 将它们分别由幺半范畴 $(A, A)\dcate{Mod}$ 和 $(B, B)\dcate{Mod}$ 中的代数和余代数显式表出. 以此为基础, 便容易得到森田等价的精细化 (定理 \ref{prop:Morita-refined}, 推论 \ref{prop:Morita-refined-symm}).
+
+森田理论关心的是给定的模范畴. 作为补充, 我们在 \S\ref{sec:module-cat} 研究如何使一个 Abel 范畴 $\mathcal{A}$ 等价于某个环 $R$ 的右模范畴, 答案涉及 $\mathcal{A}$ 的紧投射生成元 (定理 \ref{prop:identify-ModR}). 我们也将为有限生成的版本给出一则充分条件 (定理 \ref{prop:identify-ModR-fg}).
+
+回到 Beck 单子性定理, \S\ref{sec:descent-modules} 的前半部将在模论场景下给出一则简单应用, 称为模的平坦下降: 对于交换环的同态 $K \to L$, 这说明如何从环变换余单子 $\mathbf{L}$ 作用下的 $L$-模重构 $K$-模. 下降的技术在几何中应用广泛, 而 \S\ref{sec:descent-modules} 后半部将把 $\mathbf{L}$ 作用的条件改述为几何中常用的形式. 这一切是基于 \S\ref{sec:Morita} 的铺垫.
+
+作为平坦下降的特例, \S\ref{sec:descent-Galois} 取 $L|K$ 为域的 Galois 扩张, 以 Galois 群 $\Gal(L|K)$ 的作用改述先前的结果. 这种下降技巧称为 Galois 下降, 其主定理 \ref{prop:Galois-descent} 说明 $K$-向量空间范畴等价于带有光滑半线性 $\Gal(L|K)$-作用的 $L$-向量空间范畴. 习题将给出另一种直接证明.
+
+在平坦下降或其特例 Galois 下降的基础上, 能够进一步下降代数和模等各种结构. 我们在 \S\ref{sec:Galois-H1} 考虑一类以向量空间及其张量幂表述的资料, 然后基于 Galois 下降和群的上同调技巧, 将这些资料的分类化到一类非交换群上同调 $\Hm^1$. 尽管本意只是演示技巧, 但它已经有助于澄清代数学中的若干基本问题, 譬如非退化二次型的分类.
+
+\begin{wenxintishi}
+	本章大致分三部分. 第一部分 (\S\S\ref{sec:alg-in-monoidal-cat}---\ref{sec:bialgebra}) 简介幺半范畴上的代数, dg-结构和 Hopf 代数; 这些主题在代数学中占有自然而重要的位置. 第二部分 (\S\S\ref{sec:Beck}---\ref{sec:module-cat}) 围绕单子和相关的森田理论作展开. 第三部分 (\S\S\ref{sec:descent-modules}---\ref{sec:Galois-H1}) 探讨下降法. 三者大致是前后相继的, 不过 dg-结构和 dg-范畴对后续讨论并非必要. 本书的\CHref{sec:simplicial}和\CHref{sec:duality}将动用第二部分的若干结果. 其他延伸素材请见本章习题.
+\end{wenxintishi}
+
+\section{幺半范畴上的代数}\label{sec:alg-in-monoidal-cat}
+对于选定的交换环 $\Bbbk$, 我们知道 $\Bbbk$-代数是叠架在 $\Bbbk$-模上的乘法结构, 其定义可以用 $\Bbbk\dcate{Mod}$ 上的张量积双函子 $\otimes = \otimes_{\Bbbk}$ 和交换图表加以表述, 重点在于 $(\Bbbk\dcate{Mod}, \otimes)$ 构成幺半范畴, 以 $\munit := \Bbbk$ 为其幺元. 而在探讨交换 $\Bbbk$-代数及其种种变体时, 起枢纽作用的是此幺半范畴上的辫结构 $c(X, Y): X \otimes Y \rightiso Y \otimes X$, 具有对称性 $c(Y,X)c(X,Y) = \identity$. 相关讨论见诸 \cite[\S 7.4]{Li1}.
+
+\index{yaobanfanchou@幺半范畴 (monoidal category)}
+一旦用合适的语言表述, 这些理论便可以涵摄一般的\emph{幺半范畴}及\emph{对称幺半范畴}. 追随 \cite[定义 3.1.1, 3.1.2]{Li1}, 本节的惯例\footnote{其他文献的定义或稍异, 但幺半范畴的概念终归是等价的.}是将幺半范畴定义为以下资料 $(\mathcal{V}, \otimes, a, \munit, \iota)$, 常简记为 $\mathcal{V}$ 或 $(\mathcal{V}, \otimes)$, 此处
+\begin{compactitem}
+	\item $\otimes: \mathcal{V} \times \mathcal{V} \to \mathcal{V}$ 是双函子;
+	\item $a(X, Y, Z): (X \otimes Y) \otimes Z \rightiso X \otimes (Y \otimes Z)$ 是称为结合约束的典范态射 ($X, Y, Z \in \Obj(\mathcal{V})$), 满足五角形公理;
+	\item $\munit = \munit_{\mathcal{V}} \in \Obj(\mathcal{V})$ 是幺元;
+	\item $\iota: \munit \otimes \munit \rightiso \munit$.
+\end{compactitem}
+由此可以得到一族典范同构 $\munit \otimes X \xrightarrow[\sim]{\lambda_X} X \xleftarrow[\sim]{\rho_X} X \otimes \munit$; 根据 \cite[引理 3.1.5]{Li1}, 它们满足 $\lambda_{\munit} = \iota = \rho_{\munit}$. 这些同构称为幺约束, 此后不再标明.
+
+幺半范畴上的\emph{辫结构}是双函子之间的同构
+\[ c = \left( c(X, Y): X \otimes Y \rightiso Y \otimes X\right)_{X, Y \in \Obj(\mathcal{V})}, \]
+要求它与结合约束和幺约束相容, 详见 \cite[定义 3.3.1]{Li1}. 带有给定辫结构的幺半范畴称为\emph{辫幺半范畴}; 若 $c(Y, X) c(X, Y) = \identity_{X \otimes Y}$ 恒成立, 则称这些资料构成\emph{对称幺半范畴}.
+\index{bianjiegou@辫结构 (braid structure)}
+\index[sym1]{cXY@$c(X, Y)$}
+\index{yaobanfanchou!辫 (braided)}
+\index{yaobanfanchou!对称 (symmetric)}
+
+\begin{definition}[代数]\label{def:algebra-monoidal}
+	\index{daishu@代数 (algebra)}
+	幺半范畴 $\mathcal{V}$ 上的代数意谓资料 $(A, \mu, \eta)$, 其中
+	\[ A \in \Obj(\mathcal{V}), \quad \mu = \mu_A: A \otimes A \to A, \quad \eta = \eta_A: \munit \to A, \]
+	使下列图表交换:
+	\begin{equation*}\begin{gathered}
+		\begin{tikzcd}
+			\munit \otimes A \arrow[r, "{\eta \otimes \identity}"] \arrow[rd, "\sim"' sloped] & A \otimes A \arrow[d, "\mu"] & A \otimes \munit \arrow[l, "{\identity \otimes \eta}"'] \arrow[ld, "\sim"' sloped] \\
+			& A &
+		\end{tikzcd} \quad
+		\begin{tikzcd}[column sep=tiny]
+			(A \otimes A) \otimes A \arrow[rr, "{a(A, A, A)}", "\sim"'] \arrow[d, "{\mu \otimes \identity}"'] & & A \otimes (A \otimes A) \arrow[d, "{\identity \otimes \mu}"] \\
+			A \otimes A \arrow[r, "\mu"'] & A & A \otimes A \arrow[l, "\mu"] .
+		\end{tikzcd}
+	\end{gathered}\end{equation*}
+	因此 $\mu$ 可视作 $A$ 上的乘法运算, 而 $\eta$ 可视作 $A$ 的幺元.
+	
+	从代数 $(A, \mu, \eta)$ 到 $(A', \mu', \eta')$ 的态射定义为 $\mathcal{V}$ 的态射 $\phi: A \to A'$, 要求使下图交换:
+	\[\begin{tikzcd}
+		\munit \arrow[r, "\eta"] \arrow[rd, "{\eta'}"'] & A \arrow[d, "\phi"] \\
+		& A'
+	\end{tikzcd} \quad \begin{tikzcd}
+		A \otimes A \arrow[d, "\mu"'] \arrow[r, "{\phi \otimes \phi}"] & A' \otimes A' \arrow[d, "{\mu'}"] \\
+		A \arrow[r, "\phi"'] & A' .
+	\end{tikzcd}\]
+\end{definition}
+
+我们常将 $(A, \mu, \eta)$ 简记为 $A$. 在一些文献中, 代数也被称为 $\mathcal{V}$ 上的环或幺半群, 有时又称结合代数, 以突出第二个交换图表所示的结合律.
+
+模的概念也有相应的推广.
+
+\begin{definition}[模]\label{def:module-algebra}
+	\index{mo@模 (module)}
+	设 $(A, \mu, \eta)$ 是 $\mathcal{V}$ 上的代数. 定义左 $A$-模为资料 $(M, \mu_M)$, 其中
+	\[ M \in \Obj(\mathcal{V}), \quad \mu_M: A \otimes M \to M, \]
+	要求它们使以下图表交换:
+	\[\begin{tikzcd}
+		\munit \otimes M \arrow[r, "{\eta \otimes \identity}"] \arrow[rd, "\sim"' sloped] & A \otimes M \arrow[d, "{\mu_M}"] \\
+		& M
+	\end{tikzcd} \quad \begin{tikzcd}[column sep=small]
+		(A \otimes A) \otimes M \arrow[rr, "{a(A, A, M)}", "\sim"'] \arrow[d, "{\mu_M \otimes \identity}"'] & & A \otimes (A \otimes M) \arrow[d, "{\identity \otimes \mu_M}"] \\
+		A \otimes M \arrow[r, "{\mu_M}"'] & M & A \otimes M \arrow[l, "{\mu_M}"] .
+	\end{tikzcd}\]
+	因此 $\mu_M$ 可视作模的纯量乘法.
+	
+	惯例是将模 $(M, \mu_M)$ 简记为 $M$. 从 $M$ 到 $M'$ 的态射定义为 $\mathcal{V}$ 的态射 $\psi: M \to M'$, 要求使下图交换:
+	\[\begin{tikzcd}
+		A \otimes M \arrow[d, "{\mu_M}"'] \arrow[r, "{\identity \otimes \psi}"] & A \otimes M' \arrow[d, "{\mu_{M'}}"] \\
+		M \arrow[r, "\psi"'] & M' .
+	\end{tikzcd}\]
+	
+	按类似方法定义右 $A$-模. 若 $M$ 兼具左 $A$-模和右 $B$-模的结构, 使得下图交换
+	\[\begin{tikzcd}[column sep=small]
+		(A \otimes M) \otimes B \arrow[rr, "{a(A, M, B)}", "\sim"'] \arrow[d, "{\mu_M^A \otimes \identity}"'] & & A \otimes (M \otimes B) \arrow[d, "{\identity \otimes \mu_M^B}"] \\
+		M \otimes B \arrow[r, "{\mu_M^B}"'] & M & A \otimes M , \arrow[l, "{\mu_M^A}"]
+	\end{tikzcd}\]
+	则称之为 $(A, B)$-双模, 其间的态射是兼为左 $A$-模和右 $B$-模态射的 $\psi: M \to M'$.
+\end{definition}
+
+若 $M$ 是左 $A$-模而  $N$ 是右 $B$-模, 则 $M \otimes N$ 自然地成为 $(A, B)$-双模.
+
+\begin{remark}[幺元作为代数]\label{rem:unit-algebra}
+	举例明之, $\munit$ 对 $\mu_{\munit} := \iota$ 和 $\eta_{\munit} := \identity_{\munit}$ 成为代数. 所需的交换图表归结为 $\munit$ 和 $\iota: \munit \otimes \munit \rightiso \munit$ 的标准性质, 见 \cite[引理 3.1.5]{Li1}. 对任何代数 $A$ 都存在唯一的态射 $\munit \to A$, 取法能且仅能是 $\eta_A$.
+	
+	类似地, 易见任何 $M \in \Obj(\mathcal{V})$ 都具有唯一的左 (或右) $\munit$-模结构, 方式是取 $\mu_M: \munit \otimes M \to M$ 为 $\mathcal{V}$ 的幺约束.
+\end{remark}
+
+接下来的目标是探讨代数的
+\begin{inparaenum}[(a)]
+	\item 交换性,
+	\item 张量积.
+\end{inparaenum}
+两者密切相关, 而且都需要 $\mathcal{V}$ 有辫结构. 我们且先从交换性入手.
+
+\begin{definition}\label{def:opposite-braided-algebra}
+	\index[sym1]{Aop}
+	利用辫结构的种种自然性质, 可见 $A$ 是辫幺半范畴 $\mathcal{V}$ 上的代数, 则以 $\mu \circ c(A, A)$ 代 $\mu$, 其余不变, 给出的依然是 $\mathcal{V}$ 上的代数, 定义为 $A$ 的\emph{相反代数} $A^{\opp}$. 验证繁而不难, 留作本章习题.
+\end{definition}
+
+基于辫结构的函子性, 可见若 $\phi: A_1 \to A_2$ 是态射, 则它也是 $A_1^{\opp}$ 到 $A_2^{\opp}$ 的态射.
+
+\begin{definition}\label{def:calg-monoidal}
+	\index{daishu!交换 (commutative)}
+	对于辫幺半范畴 $\mathcal{V}$ 上的代数 $A$, 若下图在 $\mathcal{V}$ 中交换, 则称 $A$ 为\emph{交换代数}:
+	\[\begin{tikzcd}
+		A \otimes A \arrow[rd, "{\mu_A}"'] \arrow[rr, "{c(A, A)}", "\sim"'] & & A \otimes A . \arrow[ld, "{\mu_A}"] \\
+		& A &
+	\end{tikzcd}\]
+	换言之, 我们要求乘法 $\mu_A$ 具交换律. 等价的表述则是 $A = A^{\opp}$.
+\end{definition}
+
+注记 \ref{rem:unit-algebra} 的代数 $\munit$ 是交换代数的简单例子, 所需的交换图表归结为辫结构 $c$ 和幺约束的相容性.
+
+依然设 $\mathcal{V}$ 是辫幺半范畴. 一如交换环上的情形, 对于任两个代数 $A$ 和 $B$, 可以借助辫结构 $c$ 赋予 $A \otimes B$ 典范的代数结构:
+\begin{itemize}
+	\item 乘法 $\mu_{A \otimes B}$ 取为合成
+	\begin{multline*}
+		(A \otimes B) \otimes (A \otimes B) \rightiso (A \otimes (B \otimes A)) \otimes B \\
+		\xrightarrow{(\identity_A \otimes c(B, A)) \otimes \identity_B} (A \otimes (A \otimes B)) \otimes B \\
+		\rightiso (A \otimes A) \otimes (B \otimes B) \xrightarrow{\mu_A \otimes \mu_B} A \otimes B ,
+	\end{multline*}
+	未标注的箭头都来自结合约束, 以辫图示意如下:
+	\begin{center}\begin{tikzpicture}[baseline=(braid)]
+		\pic[
+			braid/number of strands=4,
+			braid/every strand/.style={black},
+			name prefix=braid
+		]
+		at (0, 0) {braid = {s_2}};
+		\coordinate (braid) at ($(braid-1-s)!0.5!(braid-1-e)$);
+		\node[above] at (braid-1-s) {$A$};
+		\node[above] at (braid-2-s) {$B$};
+		\node[above] at (braid-3-s) {$A$};
+		\node[above] at (braid-4-s) {$B$};
+		
+		\coordinate (MA) at ($(braid-1-e)!0.5!(braid-3-e)$);
+		\draw[->] (MA) -- ($(MA) + (0, -2em)$) node[below] {$A$};
+		\draw[fill=white] ([yshift=0.5em, xshift=-0.5em] braid-1-e) rectangle ([yshift=-1em, xshift=0.5em] braid-3-e);
+		\node at ([yshift=-0.25em] MA) {$\mu_A$};
+		
+		\coordinate (MB) at ($(braid-2-e)!0.5!(braid-4-e)$);
+		\draw[->] (MB) -- ($(MB) + (0, -2em)$) node[below] {$B$};
+		\draw[fill=white] ([yshift=0.5em, xshift=-0.5em] braid-2-e) rectangle ([yshift=-1em, xshift=0.5em] braid-4-e);
+		\node at ([yshift=-0.25em] MB) {$\mu_B$};
+	\end{tikzpicture}\end{center}
+	
+	\item 幺元 $\eta_{A \otimes B}$ 取为合成
+	\[ \munit \xrightarrow[\sim]{\iota^{-1}} \munit \otimes \munit \xrightarrow{\eta_A \otimes \eta_B} A \otimes B. \]
+\end{itemize}
+
+为了验证这确实是代数, 定义 \ref{def:algebra-monoidal} 的条件可以简单地运用 $c$ (调换 $\otimes$ 顺序), $\iota$ (复制幺元) 和结合约束 (调整括号顺序) 来化约到 $(A, \mu_A, \eta_A)$ 和 $(B, \mu_B, \eta_B)$ 的对应性质.
+
+若 $M$ 是左 $A$-模, $N$ 是左 $B$-模, 则 $M \otimes N$ 自然地成为左 $A \otimes B$-模; 构造及验证和上一段无异, 需要用到 $c$ 来调换位置. 右模情形亦然.
+
+对于注记 \ref{rem:unit-algebra} 定义的代数 $\munit$, 显然有 $\munit \otimes A \simeq A \simeq A \otimes \munit$, 同构由 $\mathcal{V}$ 的幺约束给出.
+
+\begin{remark}\label{rem:Alg-otimes-functorial}
+	上述构造对 $A$, $B$ 具有函子性: 若 $A \to A'$ 和 $B \to B'$ 是代数之间的态射, 则相应的 $A \otimes B \to A' \otimes B'$ 亦然. 另一个繁而不难的事实则是当 $A$, $B$, $C$ 全为代数时, 结合约束 $(A \otimes B) \otimes C \rightiso A \otimes (B \otimes C)$ 是代数之间的态射,
+\end{remark}
+
+\begin{lemma}\label{prop:CAlg-mu}
+	设 $A$ 是辫幺半范畴 $\mathcal{V}$ 上的代数, 则 $A$ 交换当且仅当 $A$ 的乘法 $\mu_A: A \otimes A \to A$ 是代数之间的态射.
+\end{lemma}
+\begin{proof}
+	为了使 $\mu_A$ 成为代数之间的态射, 需要两则条件. 关于幺元的条件等价于
+	\[\begin{tikzcd}[column sep=large]
+		\munit \otimes \munit \arrow[d, "\iota"'] \arrow[r, "{\eta_A \otimes \eta_A}"] & A \otimes A \arrow[d, "{\mu_A}"] \\
+		\munit \arrow[r, "{\eta_A}"'] & A
+	\end{tikzcd}\]
+	交换, 既然 $A$ 是代数, 这自动成立. 余下条件则是图表
+	\begin{equation*}
+		\begin{tikzcd}[column sep=large]
+			(A \otimes A) \otimes (A \otimes A) \arrow[r, "{\mu_A \otimes \mu_A}"] \arrow[d, "{\mu_{A \otimes A}}"'] & A \otimes A \arrow[d, "{\mu_A}"] \\
+			A \otimes A \arrow[r, "{\mu_A}"'] & A
+		\end{tikzcd}
+	\end{equation*}
+	交换. 将左上角通过结合约束等同于 $A \otimes (A \otimes A) \otimes A$. 根据 $\mu_A$ 的结合律, 图表按
+	\begin{tikzpicture}[scale=0.5, baseline=(O)]
+		\draw[->] (0, 0) -- (1, 0) -- (1, -0.7);
+		\coordinate (O) at (0, -0.5);
+	\end{tikzpicture}
+	合成等于
+	\[ A \otimes (A \otimes A) \otimes A \xrightarrow{\identity \otimes \mu_A \otimes \identity} A \otimes A \otimes A \xrightarrow{\text{相乘}} A . \]
+	另一方面, $\mu_{A \otimes A}$ 的定义和 $\mu_A$ 的结合律表明图表按
+	\begin{tikzpicture}[scale=0.5, baseline=(O)]
+		\draw[->] (0, 0) -- (0, -0.7) -- (1, -0.7);
+		\coordinate (O) at (0, -0.5);
+	\end{tikzpicture}
+	合成等于
+	\[ A \otimes (A \otimes A) \otimes A \xrightarrow{\identity \otimes (\mu_A c(A,A) ) \otimes \identity} A \otimes A \otimes A \xrightarrow{\text{相乘}} A . \]
+	由此可知 $\mu_A c(A, A) = \mu_A$ 蕴涵原图交换, 亦即 $\mu_A$ 是代数之间的态射.
+	
+	至于反向蕴涵, 令 $f \in \left\{ \mu_A, \mu_A c(A, A) \right\}$, 则有简单的交换图表
+	\[\begin{tikzcd}
+		A \otimes (A \otimes A) \otimes A \arrow[r, "{\identity \otimes f \otimes \identity}"] & A \otimes A \otimes A \arrow[r, "{\text{相乘}}"] & A . \\
+		A \otimes A \arrow[u, "{\eta_A \otimes \identity \otimes \eta_A}"] \arrow[r, "f"'] & A \arrow[ru, "\identity"'] \arrow[u, "{\eta_A \otimes \identity \otimes \eta_A}"] &
+	\end{tikzcd}\]
+	若 $\mu_A$ 是代数之间的态射, 则先前讨论说明第一行对 $f$ 的两种选取都给出同样的合成, 再考察第二行即得 $\mu_A = \mu_A c(A, A)$.
+\end{proof}
+
+\begin{lemma}\label{prop:c-as-isom-alg}
+	设 $A$ 和 $B$ 为对称幺半范畴 $\mathcal{V}$ 上的代数, 则 $c(A, B): A \otimes B \to B \otimes A$ 是代数之间的同构.
+\end{lemma}
+\begin{proof}
+	必须对 $c(A, B)$ 验证两个交换图表. 第一个图表是
+	\[\begin{tikzcd}[row sep=tiny]
+		& \munit \otimes \munit \arrow[ld, "\sim" sloped] \arrow[dd, "{c(\munit, \munit)}"] \arrow[r, "{\eta_A \otimes_B}"] & A \otimes B \arrow[dd, "{c(A, B)}"] \\
+		\munit & & \\
+		& \munit \otimes \munit \arrow[lu, "\sim"' sloped] \arrow[r, "{\eta_B \otimes \eta_A}"'] & B \otimes A
+	\end{tikzcd}\]
+	右部交换归结于 $c$ 的函子性, 左部交换归结为 $c$ 和幺约束相容 \cite[(3.12)]{Li1}. 关于 $c(A, B)$ 保乘法的第二个图表, 其论证是基于辫结构的对称性, 和 \cite[\S 7.4]{Li1} 结尾处完全相同.
+\end{proof}
+
+\begin{proposition}
+	设 $A$ 和 $B$ 是对称幺半范畴 $\mathcal{V}$ 上的交换代数, 则 $A \otimes B$ 亦然.
+\end{proposition}
+\begin{proof}
+	说明乘法 $\mu_{A \otimes B}$ 是代数之间的态射即可. 回顾 $\mu_{A \otimes B}$ 的定义, 并应用引理 \ref{prop:c-as-isom-alg} (处理 $c(B, A)$), 关于 $A$, $B$ 交换的前提 (用引理 \ref{prop:CAlg-mu} 处理 $\mu_A$, $\mu_B$), 和关于 $\otimes$ 的函子性的注记 \ref{rem:Alg-otimes-functorial}, 可知其中每一段都是代数之间的态射.
+\end{proof}
+
+以上定义了代数, 模和其间的态射. 这些结构皆可作成范畴, 记法为
+\begin{center}\begin{tabular}{|c|c|c|c|c|c|} \hline
+	结构 & 代数 & 交换代数 & 左 $A$-模 & 右 $B$-模 & $(A,B)$-双模 \\ \hline
+	所成范畴 & $\cate{Alg}(\mathcal{V})$ & $\cate{CAlg}(\mathcal{V})$ & $A\dcate{Mod}$ & $\cated{Mod}B$ & $(A,B)\dcate{Mod}$ \\ \hline
+	条件 & {\small $\mathcal{V}$: 幺半范畴} & {\small $\mathcal{V}$: 辫幺半范畴} & {\small $A$: 代数} & {\small $B$: 代数} & {\small $A, B$: 代数} \\ \hline
+\end{tabular}\end{center}
+\index[sym1]{Alg@$\cate{Alg}(\cdot)$}
+\index[sym1]{CAlg@$\cate{CAlg}(\cdot)$}
+\index[sym1]{Mod}
+
+上述讨论还指明 $\cate{Alg}(\mathcal{V})$ 和 $\cate{CAlg}(\mathcal{V})$ 的结构一般要少于 $\mathcal{V}$, 以数字标注结构多寡, 则可约略图解为
+\[\begin{tikzcd}[row sep=small]
+	0 & 1 & 2 & \infty \\
+	\text{范畴} & \text{幺半范畴} \arrow[l, "{\cate{Alg}}"'] & \text{辫幺半范畴} \arrow[shift right, l, "{\cate{Alg}}"'] \arrow[shift left, bend left, ll, "{\cate{CAlg}}"'] & \text{对称幺半范畴} \arrow[loop right, "{\cate{Alg}, \cate{CAlg}}"]
+\end{tikzcd}\]
+此外, 只要 $\cate{Alg}(\mathcal{V})$ 或 $\cate{CAlg}(\mathcal{V})$ 对 $\otimes$ 成幺半范畴, 则它总以 $\munit$ 为幺元.
+
+回忆到引理 \ref{prop:CAlg-mu} 说明辫幺半范畴 $\mathcal{V}$ 上的交换代数自动给出幺半范畴 $\cate{Alg}(\mathcal{V})$ 上的代数, 方式是取 $A \otimes A \to A$ 为 $A$ 的乘法. 事实上这是唯一可能的取法, 而且由此引出一则简单, 有趣且重要的观察: 我们有范畴的等价
+\begin{equation}\label{eqn:AlgAlg-CAlg}
+	\cate{Alg}\left(\cate{Alg}(\mathcal{V}) \right) \simeq \cate{CAlg}(\mathcal{V}), \quad \mathcal{V}:\;\text{辫幺半范畴}.
+\end{equation}
+这些事实是基于所谓的 \emph{Eckmann--Hilton 论证}, 谨留作附有提示的本章习题.
+
+\begin{example}\label{eg:Cartesius-monoidal}
+	设范畴 $\mathcal{C}$ 具备有限积; 特别地, 存在空积, 亦即终对象, 记为 $\munit$; 对任两个对象 $X, Y$ 都有典范同构 $c(X, Y): X \times Y \rightiso Y \times X$. 由此将 $(\mathcal{C}, \times)$ 作成以 $\munit$ 为幺元的对称幺半范畴. 依此探讨 $\mathcal{C}$ 上的代数, 或称 $\mathcal{C}$ 上的幺半群对象\footnote{对于这类范畴, \cite[\S 4.11]{Li1} 还探讨了群对象, 但其中的逆元性质无法在一般的幺半范畴中表述.}, 及其交换版本.
+	\begin{itemize}
+		\item 取 $\mathcal{C} = \cate{Set}$, 则独点集为幺元 $\munit$. 对应的代数是幺半群, 对应的交换代数则是交换幺半群.
+		\item 取 $\mathcal{C} = \cate{Top}$, 则对应的代数是拓扑幺半群, 对应的交换代数是交换拓扑幺半群.
+	\end{itemize}
+
+	另一方面, 取交换环 $\Bbbk$, 以 $\otimes = \otimes_{\Bbbk}$ 赋予 $\Bbbk\dcate{Mod}$ 对称幺半范畴的结构, 以 $\Bbbk$ 为幺元 $\munit$, 以 $x \otimes y \mapsto y \otimes x$ 确定辫结构, 则对应的代数 (或交换代数) 即是代数意义下的代数 (或交换代数), 见 \cite[定义 7.1.1]{Li1}.
+\end{example}
+
+在这些具体情境下, 代数 $A$ 的乘法往往直接写成元素相乘 $xy = x \cdot y$, 幺元直接等同于元素 $1_A$, 可以省去 $\mu_A$, $\eta_A$ 等符号.
+
+\begin{example}[分次模与分次代数]\label{eg:graded-module}
+	\index{fencimo@分次模, 分次代数 (graded module, graded algebra)}
+	取定 Abel 范畴 $\mathcal{A}$ 和非空集 $I$. 我们称 $\mathcal{A}^I$ 的对象为 $I$-分次对象, 表作 $M = (M^i)_{i \in I}$ 之形, 其间的态射则表作 $(f^i: M^i \to N^i)_{i \in I}$; 习惯称 $M^i \in \Obj(\mathcal{A})$ (或 $f^i \in \Mor(\mathcal{A})$) 为 $M$ (或 $f$) 的 $i$ 次项. 对于 $I = \Z$ 或 $\Z^n$ 的特例, 这在 \S\ref{sec:additive-cplx}, \S\ref{sec:triangular-def}, \S\ref{sec:grading-filtration} 等处已经反复说明.
+	
+	具体起见, 暂取 $\mathcal{A} := \Bbbk\dcate{Mod}$, 其中 $\Bbbk$ 是交换环; $\mathcal{A}$ 的 $I$-分次对象又称 $I$-分次模. 以下设 $I$ 为幺半群, 在范畴 $\mathcal{A}^I$ 上定义双函子 $\otimes$ 如下:
+	\begin{equation}\label{eqn:graded-module}
+		(M \otimes N)^i := \bigoplus_{jk=i} M^j \otimes N^k, \quad (f \otimes g)^i := \bigoplus_{jk=i} f^j \otimes g^k .
+	\end{equation}
+	另外定义 $\munit$ 为集中在 $i = 1_I$ (即 $I$ 的幺元) 项的 $\Bbbk$. 这些资料使得 $\mathcal{A}^I$ 成为幺半范畴. 关于幺元的条件 $\eta_A: \munit = \Bbbk \to A$ 自动确保 $1_A := \eta_A(1) \in A^0$.
+	
+	对于 $I$ 交换的特例, 我们回归 \cite[定义 7.4.1]{Li1} 介绍的 $I$-分次模和 $I$-分次代数.
+
+	依然设 $\mathcal{A} = \Bbbk\dcate{Mod}$, 并要求 $(I, +)$ 为交换幺半群. 任何加法同态 $\epsilon: I \to \Z/2\Z$ 都使 $\Bbbk\dcate{Mod}^I$ 成为对称幺半范畴, 具有下式所刻画的 \emph{Koszul 辫结构}:
+	\begin{equation}\label{eqn:Koszul-braiding}\begin{aligned}
+		M^a \otimes N^b & \to N^b \otimes M^a \\
+		x \otimes y & \mapsto (-1)^{\epsilon(a)\epsilon(b)} y \otimes x ,
+	\end{aligned}\end{equation}
+	其中 $a, b \in I$. 对应的交换代数即是 \cite[定义 7.4.3]{Li1} 所称的 $\epsilon$-交换代数. 由此衍生的各种等式或定义统称为 \emph{Koszul 符号律}. 每当交换张量位置时都须依此变号.
+	\index{Koszul fuhaolv@Koszul 符号律 (Koszul sign rule)}
+	
+	举例明之, 使 $A$ 成为交换代数的条件具体写作
+	\[ x y = (-1)^{\epsilon(a) \epsilon(b)} yx, \quad x \in A^a, \; y \in A^b. \]
+	
+	典型场景是
+	\[ I \in \{\Z, \Z_{\geq 0} \}, \quad \epsilon(a) := a \;\bmod 2 , \]
+	对应的 $\epsilon$-交换代数在前引书中被称为反交换分次代数; 由于这一辫结构在 $\Z$-分次对象的研究中处处出现, 改称\emph{分次交换}是实至名归的.
+	
+	现在回到更一般的 Abel 范畴 $\mathcal{A}$ 和如上的 $(I, +, \epsilon)$, 为了推广上述构造, 所需的是将 $\mathcal{A}$ 扩充为对称幺半范畴 $(\mathcal{A}, \otimes)$, 使得
+	\begin{itemize}
+		\item $\mathcal{A}$ 是 Abel 范畴, 形如 \eqref{eqn:graded-module} 的余积 (亦即直和) 存在,
+		\item $\otimes: \mathcal{A} \times \mathcal{A} \to \mathcal{A}$ 对每个变元都是加性函子.
+	\end{itemize}
+	此时 $\mathcal{A}^I$ 上的 $\otimes$ 和 Koszul 辫结构仍可按相同方式定义, 使 $(\mathcal{A}^I, \otimes)$ 成为对称幺半范畴. 它的幺元仍由 $\mathcal{A}$ 的幺元 $\munit$ 给出, 视作集中在零次项的 $I$-分次对象.
+	
+	对于一般的 $(\mathcal{A}, \otimes)$, 一切验证和 $\Bbbk\dcate{Mod}$ 的情形无异. 唯一差别是在一般情形下, 对象的``元素''不再有意义. 
+\end{example}
+
+\begin{convention}
+	对于 $\mathcal{A} = \Bbbk\dcate{Mod}$ 的特例, 通行的惯例是将 $I$-分次模 $(M^i)_{i \in I}$ 看作带有直和分解 $M = \bigoplus_{i \in I} M^i$ 的模, 其间的态射要求保持直和项.
+\end{convention}
+
+\begin{example}\label{eg:superspace}
+	\index{chaoxiangliangkongjian@超向量空间 (super vector space)}
+	在上述构造中 ($\mathcal{A} = \Bbbk\dcate{Mod}$) 取 $\Bbbk$ 为满足 $\mathrm{char}(\Bbbk) \neq 2$ 的域, $I = \Z/2\Z = \{0, 1\}$ 而 $\epsilon = \identity_{\Z/2\Z}$. 对应的对称幺半范畴记为 $\cate{Vect}^-_{\Z/2\Z}(\Bbbk)$, 其对象可视同带有直和分解 $V = V_0 \oplus V_1$ 的 $\Bbbk$-向量空间, 又称为\emph{超向量空间}, 由此就产生了线性代数和数学物理中常见的超代数, 交换超代数等种种说法.
+\end{example}
+
+最后来讨论松幺半函子对代数的效果.
+
+\begin{definition}\label{def:lax-monoidal}
+	\index{hanzi!幺半, 松幺半, 右松幺半 (monoidal, lax monoidal, right lax monoidal)}
+	设 $\mathcal{V}$ 和 $\mathcal{V}'$ 为幺半范畴. 根据 \cite[注记 3.1.8]{Li1}, 从 $\mathcal{V}$ 到 $\mathcal{V}'$ 的右松幺半函子, 在此简称\emph{松幺半函子}, 意谓资料 $(F, \xi_F, \varphi_F)$, 其中 $F: \mathcal{V} \to \mathcal{V}$ 是函子, 而态射
+	\[ \xi_F: F(\cdot) \otimes F(\cdot) \to F(\cdot \otimes \cdot), \quad \varphi_F: \munit_{\mathcal{V}'} \to F\left( \munit_{\mathcal{V}} \right), \]
+	服从于一系列和幺半结构的相容条件. 资料 $(F, \xi_F, \varphi_F)$ 经常简记为 $F$.
+	
+	若 $\mathcal{V}$ 和 $\mathcal{V}'$ 都是辫 (或对称) 幺半范畴, 而 $F$ 进一步使下图交换, 则称 $F$ 是辫函子, 或者称它兼容于辫结构:
+	\[\begin{tikzcd}[column sep=huge]
+		F(X) \otimes F(Y) \arrow[r, "{\xi_F(X, Y)}"] \arrow[d, "{c'(FX, FY)}"'] & F(X \otimes Y) \arrow[d, "{Fc(X, Y)}"] \\
+		F(Y) \otimes F(X) \arrow[r, "{\xi_F(Y, X)}"'] & F(Y \otimes X) .
+	\end{tikzcd}\]
+
+	若松幺半函子资料中的 $\xi_F$ 和 $\varphi_F$ 皆为同构, 则称之为\emph{幺半函子}.
+\end{definition}
+
+当然, 我们还可以进一步探讨从松幺半函子之间的态射, 或称自然变换:
+\[ \theta = (\theta_X)_{X \in \Obj(\mathcal{V})}: F \to G, \quad F, G: \mathcal{V} \to \mathcal{V}' . \]
+除了自然变换所需的条件, 我们还要求 $\theta$ 使下图交换:
+\[\begin{tikzcd}[column sep=huge]
+	F(X) \otimes F(Y) \arrow[r, "{\xi_F(X, Y)}"] \arrow[d, "{\theta_X \otimes \theta_Y}"'] & F(X \otimes Y) \arrow[d, "{\theta_{X \otimes Y}}"] \\
+	G(X) \otimes G(Y) \arrow[r, "{\xi_G(X, Y)}"'] & G(X \otimes Y)
+\end{tikzcd} \quad \begin{tikzcd}
+	\munit_{\mathcal{V}'} \arrow[r, "{\varphi_F}"] \arrow[rd, "{\varphi_G}"'] & F(\munit_{\mathcal{V}}) \arrow[d, "{\theta_{\munit_{\mathcal{V}}}}"] \\
+	& G(\munit_{\mathcal{V}}) .
+\end{tikzcd}\]
+
+当 $F$ 和 $G$ 为幺半函子时, 上述定义实则等价于 \cite[定义 3.1.10]{Li1}; 此处的 $\varphi_F$ 和 $\varphi_G$ 在该处被称作``标准''同构. 由此遂可探讨幺半范畴或辫幺半范畴之间的等价.
+
+\begin{proposition}\label{prop:lax-monoidal-Alg}
+	松幺半函子 $F$ 诱导函子 $\cate{Alg}(\mathcal{V}) \to \cate{Alg}(\mathcal{V}')$; 若 $A$ 是 $\mathcal{V}$ 上的代数, 则 $F$ 诱导 $A\dcate{Mod} \to F(A) \dcate{Mod}$, 依此类推.
+
+	若进一步要求 $\mathcal{V}$ 和 $\mathcal{V}'$ 是辫幺半范畴, 而 $F$ 是辫函子, 则 $F$ 还诱导 $\cate{CAlg}(\mathcal{V}) \to \cate{CAlg}(\mathcal{V}')$, 而且此时 $\cate{Alg}(\mathcal{V}) \to \cate{Alg}(\mathcal{V}')$ 是松幺半函子; 若进一步要求 $\mathcal{V}, \mathcal{V}'$ 皆对称, 则 $\cate{CAlg}(\mathcal{V}) \to \cate{CAlg}(\mathcal{V}')$ 亦然.
+\end{proposition}
+\begin{proof}
+	设 $A$ 为 $\mathcal{V}$ 上的代数. 乘法 $\mu_{FA}$ 定为 $FA \otimes FA \to F(A \otimes A) \xrightarrow{F\mu_A} FA$, 幺元 $\eta_{FA}$ 定为 $\munit_{\mathcal{V}'} \to F(\munit_{\mathcal{V}}) \xrightarrow{F\eta_A} FA$. 其余验证全是例行公事.
+\end{proof}
+
+\begin{example}\label{eg:ev0-monoidal}
+	考虑例 \ref{eg:graded-module} 中的对称幺半 Abel 范畴 $\mathcal{A}$ 和 $\mathcal{A}^I$. 定义函子
+	\[ \mathrm{ev}_0: \mathcal{A}^I \to \mathcal{A}, \quad \left(M^i\right)_{i \in I} \mapsto M^0. \]
+	这是正合函子, 同时也是对称松幺半函子: 仅须取
+	\[ \xi_{\mathrm{ev}_0}(M, N): M^0 \otimes N^0 \to (M \otimes N)^0 := \bigoplus_{i+j=0} M^i \otimes N^j \]
+	为自明的态射, 而 $\varphi_{\mathrm{ev}_0}: \munit \to \munit$ 是恒等. 于是 $A \mapsto A^0$ 便诱导松幺半函子
+	\[ \cate{Alg}(\mathcal{A}^I) \to \cate{Alg}(\mathcal{A}), \quad \cate{CAlg}(\mathcal{A}^I) \to \cate{CAlg}(\mathcal{A}). \]
+\end{example}
+
+下一则注记探讨一般的幺半范畴 $\mathcal{V}$ 上的代数. 回忆到有限序数和 $\Z_{\geq 0}$ 一一对应, $n$ 对应的有限序数 $\mathbf{n}$ 等同于含 $n$ 个元素的全序集 $\{0, \ldots, n-1\}$, 其中 $0 \leq 1 \leq 2 \leq \cdots$.
+
+\begin{remark}[游走代数]\label{rem:walking-algebra}
+	\index{daishu!游走 (walking)}
+	\index[sym1]{FinOrd@$\cate{FinOrd}$}
+	偏序集之间的映射 $f: A \to B$ 若满足 $a \leq a' \implies f(a) \leq f(a')$, 则称为保序的. 今后记 $\cate{FinOrd}$ 为有限序数范畴, 态射是序数之间的保序映射. 它对 $\mathbf{n} \otimes \mathbf{m} := \mathbf{n} + \mathbf{m}$ 成为严格幺半范畴, 态射 $f \otimes g: \mathbf{n} \otimes \mathbf{m} \to \mathbf{n}' \otimes \mathbf{m}'$ 将前 $n$ 个 (或后 $m$ 个) 元素以 $f$ (或 $g$) 映射, 对象 $\mathbf{0}$ 为幺元\footnote{此处 $\mathbf{1}$ 均指序数; 幺半范畴 $\mathcal{V}$ 的幺元另记为 $\munit_{\mathcal{V}}$.}. 将 $\mathbf{1}$ 作成 $\cate{FinOrd}$ 上的代数: 取幺元为 $\emptyset = \mathbf{0} \hookrightarrow \mathbf{1}$ 而乘法为 $\mathbf{1} \otimes \mathbf{1} = \mathbf{2} \twoheadrightarrow \mathbf{1}$, 相关交换图表的验证没有丝毫困难.
+	
+	序数 $\mathbf{1}$ (或 $\mathbf{2}$) 可视同``游走''的对象 (或态射), 这是因为对任意范畴 $\mathcal{C}$, 指定函子 $\mathbf{1} \to \mathcal{C}$ (或 $\mathbf{2} \to \mathcal{C}$) 相当于指定 $\mathcal{C}$ 的对象 (或态射). 现在考虑幺半范畴 $\mathcal{V}$. 兹断言有范畴之间的同构
+	\[
+		\left\{ \mathcal{V}\;\text{上的代数}\; A \right\} \simeq \left\{ \text{幺半函子}\; F: \cate{FinOrd} \to \mathcal{V} \right\},
+	\]
+	这也相当于说 $\cate{FinOrd}$ 是``游走的代数''. 首先, 对幺半函子 $F: \cate{FinOrd} \to \mathcal{V}$ 定义 $A := F(\mathbf{1})$, 作为命题 \ref{prop:lax-monoidal-Alg} 的简单特例, $A$ 自然地成为 $\mathcal{V}$ 上的代数: $\mu: A \otimes A \to A$ 是 $F(\mathbf{2} \twoheadrightarrow \mathbf{1})$, 而 $\eta: \munit_{\mathcal{V}} \to A$ 是 $F(\mathbf{0} \hookrightarrow \mathbf{1})$.
+	
+	反之给定 $\mathcal{V}$ 上的代数 $(A, \mu, \eta)$, 定义幺半函子 $F: \cate{FinOrd} \to \mathcal{V}$ 使得
+	\[ F(\mathbf{n}) = A^{\otimes n} := \underbracket{A \otimes (A \otimes (\cdots))}_{n\;\text{份}\; A}, \quad A^{\otimes 0} := \munit_{\mathcal{V}}, \]
+	对于 $f: \mathbf{n} \to \mathbf{m}$, 若 $f$ 单则 $F(f): A^{\otimes n} \to A^{\otimes m}$ 相当于在 $f$ 的值域之外补上 $\eta: \munit_{\mathcal{V}} \to A$, 若 $f$ 满则 $F(f)$ 相当于用 $\mu: A \otimes A \to A$ 逐步合并纤维里的项; 幺半范畴的结合约束等性质说明这些运算良定义. 一般的 $f$ 可以唯一地作满--单分解, 依此在对象层次定义 $F$. 它在态射层次的定义则是明白的. 不难验证双向构造互逆.
+\end{remark}
+
+\section{实例: 微分分次结构}\label{sec:dga-monoidal}
+承接例 \ref{eg:graded-module} 的讨论, 考虑具有可数余积的对称幺半 Abel 范畴 $(\mathcal{A}, \otimes)$. 本节进一步假定 $\otimes$ 对每个变元都是右正合的. 典型例子自然是 $\mathcal{A} = \Bbbk\dcate{Mod}$.
+
+先前已经讨论 $\mathcal{A}$ 上的 $\Z$-分次代数, 或者说是幺半范畴 $(\mathcal{A}^{\Z}, \otimes)$ 上的代数; 精确地说, 这在例 \ref{eg:graded-module} 的框架下相当于取 $I = \Z$ 和 $\epsilon(a) = a \bmod\; 2$ 所对应的 Koszul 辫结构 \eqref{eqn:Koszul-braiding}. 以下将 $\Z$-分次简称为分次. 本节的重点是加入``微分''结构; 相关内容和 \S\ref{sec:multiplicative-SS} 略有重叠.
+
+平移函子 $T: \mathcal{A}^{\Z} \to \mathcal{A}^{\Z}$ 定义为 $(TM)^n = M^{n+1}$, $(Tf)^n = f^{n+1}$; 这使 $\left(\mathcal{A}^{\Z}, T\right)$ 成为带平移的 Abel 范畴, 其上的微分对象 (定义 \ref{def:differential-object}) 简称 $\mathcal{A}$ 上的\emph{微分分次对象}. 事实上, 微分分次对象构成的 Abel 范畴 $\left(\mathcal{A}^{\Z}, T\right)_d$ 典范地同构于复形范畴 $\cate{C}(\mathcal{A})$. 这是在 \S\ref{sec:additive-cplx} 便已知晓的事实.
+\index{weifenfenciduixiang}
+
+有鉴于此, 今后将不加区分地等同 $\mathcal{A}$ 上的微分分次对象和复形.
+
+现在赋予 $\cate{C}(\mathcal{A})$ 对称幺半范畴的结构. 对任意复形 $M$ 和 $N$, 双函子 $\otimes: \mathcal{A} \times \mathcal{A} \to \mathcal{A}$ 给出双复形 $M^\bullet \otimes N^\bullet$, 再以直和取全复形得出
+\[ M \otimes N := \tot_{\oplus}\left( M^\bullet \otimes N^\bullet \right), \quad (M \otimes N)^n = \bigoplus_{a+b=n} M^a \otimes N^b. \]
+
+对于 $\mathcal{A} = \Bbbk\dcate{Mod}$ 的实例, 复形 (或等价地说, 微分对象) 的微分态射 $d = d_{M \otimes N}$ 在元素的层次写作
+\begin{equation*}
+	d(x \otimes y) = (d_M x) + (-1)^a x (d_N y), \quad x \in M^a, \; y \in N^b.
+\end{equation*}
+这些定义使 Koszul 辫结构 \eqref{eqn:Koszul-braiding} 给出复形之间的态射; 请读者直接验证, 或归结为命题 \ref{prop:double-cplx-swap}.
+
+此外, $(\mathcal{A}, \otimes)$ 的幺元 $\munit$ 作为集中在零次项的复形, 显然给出幺半范畴 $(\cate{C}(\mathcal{A}), \otimes)$ 的幺元. 以下事实是明白的: 对任意 $X = (X^n, d_X^n)_n \in \Obj(\cate{C}(\mathcal{A}))$, 我们有
+\begin{equation}\label{eqn:unit-map-into-cplx}
+	\Hom_{\cate{C}(\mathcal{A})}(\munit, X) \simeq \Hom_{\mathcal{A}}\left( \munit, \Ker\left(d_X^0 \right) \right).
+\end{equation}
+
+\begin{definition}\label{def:dg-algebra}
+	\index{weifenfencidaishu}
+	\index{dg daishu}
+	相对于前述对称幺半结构, 我们将 $\cate{Alg}\left(\cate{C}(\mathcal{A})\right)$ 的对象称为 $\mathcal{A}$ 上的\emph{微分分次代数}, 简称 \emph{dg-代数}, 而 $\cate{CAlg}\left(\cate{C}(\mathcal{A})\right)$ 的对象则称为 $\mathcal{A}$ 上的交换微分分次代数, 简称交换 dg-代数.
+\end{definition}
+
+由此起步, 也可以对给定的微分分次代数 $A$ 探讨左 (或右) $A$-模 $M$, 乃至于双模; 它们都构成 Abel 范畴. 此时也称 $M$ 是 $A$ 上的\emph{微分分次模}, 简称 \emph{dg-模}. 这是复形与模论的综合体, 用途广泛, 本章习题将有更多介绍, 读者也可以参阅 \cite{Yek20} 等专著. 为了突出微分分次结构, 今后将 dg-模构成的范畴另记为 $A\dcate{dgMod}$, 依此类推.
+\index{weifenfencimo@微分分次模 (differential graded module)}
+\index{dg mo@dg-模}
+\index[sym1]{A-dgMod@$A\dcate{dgMod}$}
+
+忘却函子 $\cate{C}(\mathcal{A}) \to \mathcal{A}^{\Z}$ 保 $\otimes$, 故命题 \ref{prop:lax-monoidal-Alg} 说明它保持代数 (或交换代数) 的结构. 对于 $\mathcal{A} = \Bbbk\dcate{Mod}$ 的情形, 说 $A$ 是 dg-代数相当于说 $A$ 本身是分次代数, 带有微分态射 $d$, 而且其乘法服从 Leibniz 律
+\[ d(xy) = (dx)y + (-1)^a x (dy), \quad x \in A^a, \; y \in A^b. \]
+代入 $x = 1_A = y$ 遂有 $d(1_A) = 0$. 对应的相反代数 $A^{\opp}$ 相当于将乘法改成 $x \cdot^{\opp} y := (-1)^{ab} y x$.
+
+类似地, 当 $\mathcal{A} = \Bbbk\dcate{Mod}$ 时, 左 $A$-模 $M$ 相当于一个分次 $\Bbbk$-模 $M$ 连同纯量乘法态射 $A \otimes M \to M$, 满足结合律等种种性质, 并且带有微分态射 $d$, 服从 Leibniz 律
+\[ d(tm) = (dt)m + (-1)^a t (dm), \quad t \in A^a, \; m \in M^b; \]
+对于右 $A$-模 $M$, Leibniz 律变为
+\[ d(mt) = (dm)t + (-1)^b m (dt), \quad t \in A^a, \; m \in M^b. \]
+对于一般的 $(\mathcal{A}, \otimes)$, 上述性质皆有不涉及元素的表述方式, 譬如代数 $A$ 的幺元对应到 $\mathcal{A}$ 的态射 $\munit \to \Ker\left(d_A^0\right)$, 见 \eqref{eqn:unit-map-into-cplx}.
+
+取上同调给出加性函子 $\Hm = \left( \Hm^n \right)_{n \in \Z}: \cate{C}(\mathcal{A}) \to \mathcal{A}^{\Z}$. 以下结果表明复形的乘法诱导上同调的乘法.
+
+\begin{proposition}\label{prop:Hm-lax-monoidal}
+	函子 $\Hm$ 诱导
+	\[ \cate{Alg}\left(\cate{C}(\mathcal{A})\right) \to \cate{Alg}\left(\mathcal{A}^{\Z}\right),
+	\quad \cate{CAlg}\left(\cate{C}(\mathcal{A})\right) \to \cate{CAlg}\left(\mathcal{A}^{\Z}\right). \]
+	若 $A$ 是 dg-代数, 而 $M$ 是左 (或右, 或双) $A$-模, 则 $\Hm(M)$ 是左 (或右, 或双) $\Hm(A)$-模.
+\end{proposition}
+\begin{proof}
+	鉴于命题 \ref{prop:lax-monoidal-Alg}, 说明 $\Hm$ 是松幺半函子即可. 所需的典范态射
+	\[ \xi_{\Hm}(M, N): \Hm(M) \otimes \Hm(N) \to \Hm(M \otimes N) \]
+	近乎自明: 它来自定理 \ref{prop:Kunneth-homology} 或命题 \ref{prop:bifunctor-cup} 之上论及的态射 $\kappa$. 另一方面,
+	\[ \varphi_{\Hm}: \munit \to \Hm(\munit) = \munit \quad \text{(集中于零次项)} \]
+	则取为 $\identity$.
+\end{proof}
+
+我们还可以进一步取例 \ref{eg:ev0-monoidal} 的松幺半函子 $\mathrm{ev}_0: \mathcal{A}^{\Z} \to \mathcal{A}$; 同样由命题 \ref{prop:lax-monoidal-Alg} 可知这映分次代数 (或交换分次代数) 为代数 (或交换代数), 映模为模. 留意到 $\mathrm{ev}_0 \Hm = \Hm^0$. 实际应用中, $\cate{C}(\mathcal{A}) \xrightarrow{\Hm} \mathcal{A}^{\Z} \xrightarrow{\mathrm{ev}_0} \mathcal{A}$ 在每一段都会丢失信息, 最丰富的结构仍在 dg-代数本身.
+
+\begin{example}\label{eg:k-linear-A-enrich}
+	设 $\Bbbk$ 为交换环. 对于任意 $\Bbbk$-线性范畴 $\mathcal{A}$, 考虑 $\Hom$ 复形层次的乘法 \eqref{eqn:Hom-cplx-multiplication}:
+	\[ \Hom^a(Y, Z) \times \Hom^b(X, Y) \to \Hom^{a+b}(X, Z), \quad X, Y, Z \in \Obj(\cate{C}(\mathcal{A})). \]
+	
+	由于乘法满足 Leibniz 律 (引理 \ref{prop:Hom-cplx-Leibniz}), 它确定 $\cate{C}(\Bbbk\dcate{Mod})$ 的态射
+	\[ \Hom^\bullet(Y, Z) \otimes \Hom^\bullet(X, Y) \to \Hom^\bullet(X, Z). \]
+	此外它还具有结合律, 于是 $\End^\bullet(X) := \Hom^\bullet(X, X)$ 成为 $(\cate{C}(\Bbbk\dcate{Mod}), \otimes)$ 上的代数, 以 $\identity_X \in \End^0(X)$ 为其幺元. 进一步, $\Hom^\bullet(X, Y)$ 成为 $(\End^\bullet(Y), \End^\bullet(X))$-双模.
+	
+	取 $\Hom^\bullet(X, Y)$ 的上同调 $\Hm = (\Hm^n)_n$, 产物只是
+	\[ \bigoplus_{n \in \Z} \Hom_{\cate{K}(\mathcal{A})}(X, Y[n]); \]
+	而对 $\Hom^\bullet(X, Y)$ 应用 \eqref{eqn:unit-map-into-cplx} 可见 $\Hom_{\cate{C}(\mathcal{A})}$ 可以通过
+	\[ \Hom_{\cate{C}(\Bbbk\dcate{Mod})}\left( \Bbbk, \Hom^\bullet(X, Y) \right) \simeq \Hom_{\cate{C}(\mathcal{A})}(X, Y)  \]
+	来重构, 此处 $\Bbbk$ 充当了 $(\cate{C}(\Bbbk\dcate{Mod}), \otimes)$ 的幺元.
+\end{example}
+
+因此 $\cate{C}(\mathcal{A})$ 中的 $\Hom_{\cate{C}(\mathcal{A})}$ 及态射合成仅是 $\Hom$ 复形及其乘法的一道影子, 来自于取 $\Hom_{\cate{C}(\Bbbk\dcate{Mod})}(\Bbbk, \cdot)$.
+
+\index{fanchou!充实 (enriched)}
+\index[sym1]{Hom-internal@$\iHom$}
+由 $\cate{C}(\mathcal{A})$ 的例子入手, 自然地提炼出微分分次范畴的概念. 这涉及 \cite[定义 3.4.1]{Li1} 介绍的 $\mathcal{V}$-\emph{充实范畴}. 简言之, 对任意幺半范畴 $\mathcal{V}$, 一个 $\mathcal{V}$-充实范畴 $\mathcal{C}$ 仍由对象和态射组成, 然而 $\Hom$ 集须代换为 $\mathcal{V}$ 中的 $\Hom$ 对象, 记为 $\iHom = \iHom_{\mathcal{C}}$ 以资区别; 态射的合成代换为 $\mathcal{V}$ 的态射
+\[ \iHom(Y, Z) \otimes \iHom(X, Y) \to \iHom(X, Z), \]
+而恒等态射 $\identity_X \in \Hom(X, X)$ 代换为 $\identity_X: \munit \to \iHom(X, X)$, 这些都是 $\mathcal{V}$ 的态射, 相应的性质都由 $\mathcal{V}$ 的交换图表表述.
+
+关于充实版本的函子及其间的态射, 详见 \cite[定义 3.4.1, 3.4.2, 3.4.4]{Li1}, 它们都是按显然方式定义的; 简言之, 充实版本的函子将 $\Hom$ 集之间的映射升级为 $\iHom$ 之间的态射.
+
+举例明之, $\Bbbk\dcate{Mod}$-范畴无非是 $(\Bbbk\dcate{Mod}, \otimes)$-充实范畴.
+
+与此相对, 姑且将未充实的范畴称作普通范畴. 倘若略去集合大小的问题, 则普通范畴也相当于 $(\cate{Set}, \times)$-充实范畴.
+
+\begin{definition}\label{def:dgCat}
+	\index{fanchou!微分分次 (differential graded)}
+	\index{dgfanchou@dg-范畴}
+	设 $\Bbbk$ 为交换环. 考虑相应的对称幺半范畴 $(\cate{C}(\Bbbk\dcate{Mod}), \otimes)$, 则 $(\cate{C}(\Bbbk\dcate{Mod}), \otimes)$-充实范畴称为 $\Bbbk$ 上的\emph{微分分次范畴}, 简称 $\Bbbk$ 上的 \emph{dg-范畴}. 这些范畴之间的函子及函子之间的态射按充实范畴的方式定义\footnote{许多涉及无穷范畴的文献提及了 DG-范畴以及它们构成的范畴 $\cate{DGCat}$, 有时符号也和本书重叠; 尽管它们和此处铺陈的 dg-范畴密切相关, 但并非一回事.}.
+\end{definition}
+
+按定义, dg-范畴的对象 $X$ 给出 dg-代数 $\End^\bullet(X)$.
+
+\begin{example}\label{eg:CA-dg-cat}
+	先前的例 \ref{eg:k-linear-A-enrich} 相当于说 $\cate{C}(\mathcal{A})$ 自然地成为 $\Bbbk$ 上的 dg-范畴, 此处 $\mathcal{A}$ 是任意 $\Bbbk$-线性范畴. 譬如对于任何 $\Bbbk$-代数 $R$, 左 (或右) $R$-模的复形范畴自动是 $\Bbbk$ 上的 dg-范畴.
+\end{example}
+
+\begin{example}\label{eg:dg-Hom-cplx}
+	\index{Hom fuxing}
+	\index[sym1]{Hom-A-bullet@$\Hom^{\bullet}_A$}
+	设 $\Bbbk$ 为交换环, $A$ 为 $\mathcal{A} := \Bbbk\dcate{Mod}$ 上的 dg-代数. 对于左 $A$-模 $M$ 和 $N$, 定义 $\Hom^\bullet_{\Bbbk}(M, N)$ 的子复形如下
+	\[ \Hom^p_A(M, N) := \left\{\begin{array}{r|l}
+		f \in \Hom^p_{\Bbbk}(M, N) & \forall m \in M, \; \forall k \in \Z, \; \forall t \in A^k, \\
+		& f(tm) = (-1)^{pk} tf(m)
+	\end{array}\right\}. \]
+	给定左 $A$-模 $L$, $M$, $N$, 复形 $\Hom^\bullet_{\Bbbk}$ 上的合成运算诱导复形之间的态射
+	\[ \Hom^p_A(M, N) \otimes \Hom^q_A(L, M) \to \Hom^{p+q}_A(L, N). \]
+	这使左 $A$-模范畴 $A\dcate{dgMod}$ 升级为 dg-范畴. 对于右 $A$-模, $\Hom^p_A(M, N)$ 定义中的条件应当改为 $f(mt) = f(m)t$ (思之). 双模的情形依此类推.
+	
+	上述定义也有不依赖于集合元素的表法, 因而可以扩及一般的 $\mathcal{A}$.
+\end{example}
+
+更精确地说, dg-范畴将普通范畴的 $\Hom$ 集全部升级为复形 $\Hom^\bullet$, 而 dg-版本的函子与态射皆须在 $\cate{C}(\Bbbk\dcate{Mod})$ 中表述. 详言之,
+\begin{itemize}
+	\item dg-范畴之间的 \emph{dg-函子} $F: \mathcal{C} \to \mathcal{D}$ 由对象集之间的映射 $F: \Obj(\mathcal{C}) \to \Obj(\mathcal{D})$ 和 $\Hom$ 复形之间的态射 $\Hom^\bullet_{\mathcal{C}}(X, Y) \to \Hom^\bullet_{\mathcal{D}}(FX, FY)$ 确定, 后者是 $\cate{C}(\Bbbk\dcate{Mod})$ 的态射, 要求使以下两个图表交换:
+	\begin{equation*}\begin{gathered}
+		\begin{tikzcd}[column sep=small]
+			\Hom_{\mathcal{C}}^\bullet(Y, Z) \otimes \Hom_{\mathcal{C}}^\bullet(X, Y) \arrow[r] \arrow[d] & \Hom_{\mathcal{C}}^\bullet(X, Z) \arrow[d] \\
+			\Hom_{\mathcal{D}}^\bullet(FY, FZ) \otimes \Hom_{\mathcal{D}}^\bullet(FX, FY) \arrow[r] & \Hom_{\mathcal{D}}^\bullet(FX, FZ)
+		\end{tikzcd} \\
+		\begin{tikzcd}[column sep=small]
+			\Bbbk \arrow[r] \arrow[rd] & \Hom_{\mathcal{C}}^\bullet(X, X) \arrow[d] \\
+			& \Hom_{\mathcal{D}}^\bullet(FX, FX) ;
+		\end{tikzcd}
+	\end{gathered}\end{equation*}
+	\index{dghanzi@dg-函子}
+	\item 经典意义下, dg-函子 $F, G: \mathcal{C} \to \mathcal{D}$ 之间的态射或称自然变换 $\phi$ 是一族元素
+	\begin{multline*}
+		\phi_X \in \Ker\left[ \Hom_{\mathcal{D}}^0(FX, GX) \to \Hom_{\mathcal{D}}^1(FX, GX) \right] \\
+		\xlongequal{\text{\eqref{eqn:unit-map-into-cplx}}} \Hom_{\cate{C}(\Bbbk\dcate{Mod})}\left(\Bbbk, \Hom_{\mathcal{D}}^\bullet(FX, GX) \right) ,
+	\end{multline*}
+	其中 $X$ 遍历 $\Obj(\mathcal{C})$, 使得对所有 $m \in \Z$ 和 $f \in \Hom_{\mathcal{C}}^m(X, Y)$ 皆有
+	\[ (Gf) \phi_X = \phi_Y (Ff) \; \in \Hom_{\mathcal{D}}^m(FX, GY), \]
+	此处的乘法在 $\Hom$ 复形上理解.
+\end{itemize}
+按此遂可谈论 dg-范畴之间的同构, 等价和伴随等等概念. 我们有时称 $\Hom^n_{\mathcal{C}}(X, Y)$ 的元素为从 $X$ 到 $Y$ 的 \emph{$n$ 次态射}.
+
+对于一般的幺半范畴 $\mathcal{V}$, 不妨将 $\Hom_{\mathcal{V}}(\munit, M)$ 设想为 $M \in \Obj(\mathcal{V})$ 的``元素''集; 这点至少在 $\mathcal{V} = \cate{Set}$ 或 $\Bbbk\dcate{Mod}$ 的情形是合理的. 循此思路, 任意 $\mathcal{V}$-充实范畴 $\mathcal{C}$ 可按
+\[ \Hom_{\mathcal{C}}(X, Y) := \Hom_{\mathcal{V}}\left( \munit, \iHom_{\mathcal{C}}(X, Y) \right) \]
+降级为普通范畴, 仍记为 $\mathcal{C}$; 细节见 \cite[注记 3.4.3]{Li1}. 对于 dg-范畴 $\cate{C}(\mathcal{A})$ 的例子, 降级的产物是普通的复形范畴 $\cate{C}(\mathcal{A})$. 因此我们的符号是一致的.
+
+另一种操作来自松幺半函子. 以下陈述一般的版本.
+
+\begin{proposition}\label{prop:lax-monoidal-enriched}
+	设  $F: \mathcal{V} \to \mathcal{V}'$ 为幺半范畴之间的松幺半函子. 对任意 $\mathcal{V}$-充实范畴 $\mathcal{C}$, 定义 $\mathcal{V}'$-充实范畴 $F(\mathcal{C})$ 如下: 命 $\Obj(F(\mathcal{C})) = \Obj(\mathcal{C})$, 而对于任意对象 $X, Y$, 命
+	\begin{gather*}
+		\iHom_{F(\mathcal{C})}(X, Y) := F\iHom_{\mathcal{C}}(X, Y), \\
+		\identity_X: \munit_{\mathcal{V}'} \xrightarrow{\varphi_F} F(\munit_{\mathcal{V}}) \to F\iHom_{\mathcal{C}}(X, X).
+	\end{gather*}
+	态射的合成由
+	\begin{multline*}
+		F\iHom_{\mathcal{C}}(Y, Z) \otimes F\iHom_{\mathcal{C}}(X, Y) \\
+		\xrightarrow{\xi_F} F\left( \iHom_{\mathcal{C}}(Y, Z) \otimes \iHom_{\mathcal{C}}(X, Y) \right)
+		\to F\iHom_{\mathcal{C}}(X, Z)
+	\end{multline*}
+	确定, 而且这在对应的普通范畴间给出普通意义的函子 $\mathcal{C} \to F(\mathcal{C})$.
+\end{proposition}
+\begin{proof}
+	松幺半函子 $(F, \xi_F, \varphi_F)$ 的结构提供态射合成所需的一切性质. 普通范畴层次的函子在对象上是恒等映射, 在态射集上则将任意 $f: \munit_{\mathcal{V}} \to \iHom_{\mathcal{C}}(X, Y)$ 映为 $\munit_{\mathcal{V}'} \xrightarrow{\varphi_F} F(\munit_{\mathcal{V}}) \xrightarrow{Ff} F\iHom_{\mathcal{C}}(X, Y)$ 的合成.
+\end{proof}
+
+将此与命题 \ref{prop:lax-monoidal-Alg} 的构造相比较, 可见 $\iHom_{F(\mathcal{C})}(X, X)$ 作为 $\cate{Alg}(\mathcal{V})$ 的对象是从 $\iHom_{\mathcal{C}}(X, X)$ 诱导的, $\iHom$ 上的双模结构亦复如是.
+
+\begin{remark}\label{rem:dg-homotopy-cat}
+	\index{fanchou!同伦 (homotopy)}
+	命题 \ref{prop:lax-monoidal-enriched} 引出从 dg-范畴过渡到普通范畴的另一种进路. 对 $\Bbbk$ 上的任意 dg-范畴 $\mathcal{C}$ 应用命题 \ref{prop:Hm-lax-monoidal} 的松幺半函子 $\Hm$, 得到 $(\Bbbk\dcate{Mod}^{\Z}, \otimes)$-充实范畴 $\Hm(\mathcal{C})$, 满足
+	\[ \Obj(\Hm(\mathcal{C})) = \Obj(\mathcal{C}), \quad \iHom_{\Hm(\mathcal{C})}(X, Y) = \left( \Hm^n \Hom^\bullet(X, Y) \right)_{n \in \Z}. \]
+	从中截下 $n=0$ 的部分, 或者说对 $\mathcal{C}$ 应用松幺半函子 $\Hm^0$, 相应地得到普通的 $\Bbbk\dcate{Mod}$-范畴, 称为 $\mathcal{C}$ 的\emph{同伦范畴} $\mathrm{h}(\mathcal{C})$. 它满足
+	\[ \Obj(\mathrm{h}\mathcal{C}) = \Obj(\mathcal{C}), \quad \Hom_{\mathrm{h}\mathcal{C}}(X, Y) = \Hm^0 \Hom^\bullet(X, Y). \]
+	对于 $\mathcal{C} = \cate{C}(\mathcal{A})$ 的特例, 代入定义 \ref{def:cplx-homotopy-cat} 立见
+	\[ \mathrm{h}(\cate{C}(\mathcal{A})) = \cate{K}(\mathcal{A}). \]
+\end{remark}
+
+如上所见, dg-范畴的世界里容许种种具有同伦意味的操作, 其意义归根结底需要由实践来说明, 也将涉及模型范畴的抽象语言. 以下仅勾勒简单概念, 不再拓展.
+
+\begin{definition}
+	设 $F: \mathcal{C} \to \mathcal{D}$ 是 dg-范畴之间的 dg-函子. 如果
+	\[ \Hom^\bullet_{\mathcal{C}}(X, Y) \to \Hom^\bullet_{\mathcal{D}}(FX, FY) \]
+	对所有 $X, Y \in \Obj(\mathcal{C})$ 都是拟同构, 则称 $F$ 是\emph{拟全忠实}的; 如果诱导函子 $\mathrm{h}F: \mathrm{h}\mathcal{C} \to \mathrm{h}\mathcal{D}$ 本质满, 则称 $F$ 是\emph{拟本质满}的. 既是拟全忠实又是拟本质满的 dg-函子称为\emph{拟等价}.
+\end{definition}
+
+因此, 拟等价的 dg-范畴 $\mathcal{C}$, $\mathcal{D}$ 拥有等价的同伦范畴.
+
+我们将在 \S\ref{sec:dg-closed} 继续关于 dg-范畴的粗浅讨论.
+
+\section{闭幺半范畴}\label{sec:closed-monoidal}
+设 $\Bbbk$ 是交换环, 则 $\Bbbk\dcate{Mod}$ 对 $\otimes := \otimes_{\Bbbk}$ 成为对称幺半范畴. 它具有如下的封闭性.
+\begin{itemize}
+	\item 自充实: 同态集 $\Hom(X, Y)$ 自然地带有 $\Bbbk$-模的结构;
+	\item 关于张量积的常识给出 $\Bbbk\dcate{Mod}$ 中的典范同构
+	\[ \Hom(X \otimes Y, Z) \simeq \Hom(X, \Hom(Y, Z)). \]
+\end{itemize}
+将上述性质扩及一般的幺半范畴, 便催生以下概念.
+
+\begin{definition}\label{def:closed-monoidal-cat}
+	\index{yaobanfanchou!闭 (closed)}
+	设 $\mathcal{C}$ 为幺半范畴. 当以下条件成立时, 称 $\mathcal{C}$ 为右 (或左) 闭幺半范畴: 对所有对象 $Y$, 函子 $(\cdot) \otimes Y: \mathcal{C} \to \mathcal{C}$ (或 $Y \otimes (\cdot): \mathcal{C} \to \mathcal{C}$) 带有指定的右伴随. 兼为左闭和右闭的幺半范畴称为\emph{闭幺半范畴}.
+\end{definition}
+
+尔后考虑的幺半范畴都是辫幺半范畴, 不再区分左闭和右闭; 这时 $(\cdot) \otimes Y$ 的右伴随记为 $[Y, \cdot]: \mathcal{C} \to \mathcal{C}$.
+
+回忆到一个范畴 $\mathcal{C}$ 如果具备有限积, 则它对 $\times$ 构成对称幺半范畴, 以终对象为其幺元 $\munit$ (例 \ref{eg:Cartesius-monoidal}).
+
+\begin{definition}\label{def:Cartesian-closed}
+	\index{fanchou!Cartesius 闭 (Cartesian closed)}
+	设 $\mathcal{C}$ 是具备有限积的范畴. 如果 $(\mathcal{C}, \times)$ 是闭幺半范畴, 则称 $\mathcal{C}$ 为 \emph{Cartesius 闭范畴}.
+\end{definition}
+
+一般而言, 对任意范畴 $\mathcal{C}_1$ 和 $\mathcal{C}_2$ 之间的两对伴随函子 $(F, G)$ 和 $(F', G')$, 任何 $\varphi: F \to F'$ 都自然地诱导 $\psi: G' \to G$; 相反地, 任何 $\psi: G' \to G$ 都自然地诱导 $\varphi: F \to F'$. 无论在哪种情形, 诱导态射都由交换图表
+\[\begin{tikzcd}
+	\Hom(F' X, Y) \arrow[r, "\sim"] \arrow[d, "{(\varphi_X)^*}"'] & \Hom(X, G'Y) \arrow[d, "{(\psi_Y)_*}"] \\
+	\Hom(FX, Y) \arrow[r, "\sim"'] & \Hom(X, GY)
+\end{tikzcd}\]
+刻画; 这不外是米田引理的简单应用, 读者也不妨尝试以伴随对的单位和余单位写下所求的诱导态射.
+
+作为应用, 闭幺半范畴中的任何态射 $Y \to Y'$ 皆诱导 $[Y', \cdot] \to [Y, \cdot]$. 所以闭幺半范畴的性质相当于说存在双函子 $[\cdot, \cdot]: \mathcal{C}^{\opp} \times \mathcal{C} \to \mathcal{C}$ 及一族典范双射
+\begin{equation}\label{eqn:closed-monoidal-adj0}
+	\Hom(X \otimes Y, Z) \simeq \Hom(X, [Y, Z]),
+\end{equation}
+它对三个变元皆有函子性.
+
+双函子 $[\cdot, \cdot]$ 也称为闭幺半范畴 $\mathcal{C}$ 的\emph{内 $\Hom$}. 定义还导致以下结论:
+\begin{itemize}
+	\item 从 $\Hom(X, Z) \simeq \Hom(X \otimes \munit, Z) \simeq \Hom(X, [\munit, Z])$ 和米田引理可见 $Z \simeq [\munit, Z]$;
+	\item 伴随对的单位态射给出 $\mathrm{coev}_{X, Y}: X \to [Y, X \otimes Y]$, 余单位态射给出 $\mathrm{ev}_{Y,X}: [Y, X] \otimes Y \to X$;
+	\item 从合成
+	\[ [Y, Z] \otimes ([X, Y] \otimes X) \xrightarrow{\identity \otimes \mathrm{ev}_{X, Y}} [Y, Z] \otimes Y \xrightarrow{\mathrm{ev}_{Y, Z}} Z \]
+	以及伴随性质和结合约束可得
+	\[ [Y, Z] \otimes [X, Y] \to [X, Z]; \]
+	\item 取 $\mathrm{coev}_{\munit, X}$ 可得态射 $\munit \to [X, X]$.
+\end{itemize}
+
+关于内 $\Hom$ 的术语和上述性质明示了一则事实: 闭幺半范畴是自充实的. 我们首先演示如何从内 $\Hom$ 得到经典意义下的 $\Hom$.
+
+\begin{proposition}
+	设 $\mathcal{C}$ 是闭幺半范畴, 则有一族典范双射
+	\[ \Hom(X, Y) \simeq \Hom(\munit, [X, Y]), \quad X, Y \in \Obj(\mathcal{C}). \]
+\end{proposition}
+\begin{proof}
+	由 \eqref{eqn:closed-monoidal-adj0} 知 $\Hom(\munit, [X, Y]) \simeq \Hom(\munit \otimes X, Y) \simeq \Hom(X, Y)$.
+\end{proof}
+
+为了说明 $\mathcal{C}$ 是自充实的, 还必须证明 $[Y, Z] \otimes [X, Z] \to [Y, Z]$ 和 $\munit \to [X, X]$ 满足结合律等公理. 这点可以用单位和余单位的标准性质来检验; 由于细节比较琐碎, 留作本章习题.
+
+以下说明伴随性质 \eqref{eqn:closed-monoidal-adj0} 也自动内化到 $\mathcal{C}$.
+
+\begin{proposition}\label{prop:closed-monoidal-adj}
+	设 $\mathcal{C}$ 是闭幺半范畴, 则有一族典范同构
+	\[ [X \otimes Y, Z] \simeq [X, [Y, Z]]; \]
+	更精确地说, 这是从 $\mathcal{C}^{\opp} \times \mathcal{C}^{\opp} \times \mathcal{C}$ 到 $\mathcal{C}$ 的函子之间的同构.
+\end{proposition}
+\begin{proof}
+	选定 $X$, $Y$, $Z$. 对所有对象 $T$, 从 \eqref{eqn:closed-monoidal-adj0} 和 $\mathcal{C}$ 的结合约束得到自然双射
+	\begin{multline*}
+		\Hom(T, [X \otimes Y, Z]) \simeq \Hom(T \otimes (X \otimes Y), Z) \simeq \Hom((T \otimes X) \otimes Y, Z) \\
+		\simeq \Hom(T \otimes X, [Y, Z]) \simeq \Hom(T, [X, [Y, Z]]).
+	\end{multline*}
+	既然 $T$ 是任意的, 米田引理给出所求的同构.
+\end{proof}
+
+以下介绍的几个初步例子涉及 \S\ref{sec:alg-in-monoidal-cat} 介绍的几种对称幺半范畴.
+
+\begin{itemize}
+	\item 集合范畴 $\cate{Set}$ 是 Cartesius 闭的: 取 $[X, Y]$ 为映射集 $Y^X = \left\{ \text{映射}\; X \to Y \right\}$, 则 \eqref{eqn:closed-monoidal-adj0} 或命题 \ref{prop:closed-monoidal-adj} 给出的升级版本是自然双射 $Z^{X \times Y} \xrightarrow{1:1} (Z^X)^Y$. 在计算机科学中, 这种双射或它们在一般的闭幺半范畴中的推广常被称为 \emph{Curry 化}.
+	
+	\item 所有小范畴及其间的函子构成范畴 $\cate{Cat}$, 其中的积是范畴的积 $\mathcal{C}_1 \times \cdots \times \mathcal{C}_2$, 而空积是范畴 $\mathbf{1}$. 范畴 $\cate{Cat}$ 是 Cartesius 闭的, 这相当于以下的简单论断: 指定双函子 $\mathcal{A} \times \mathcal{B} \to \mathcal{C}$ 相当于指定函子 $\mathcal{A} \to \mathcal{B}^{\mathcal{C}}$, 也相当于指定 $\mathcal{B} \to \mathcal{C}^{\mathcal{A}}$.
+	
+	\item 拓扑空间范畴 $\cate{Top}$ 尽管具有许多良好性质, 并且对积 $\times$ 成为对称幺半范畴, 但它不是 Cartesius 闭的; 见 \cite[\S 1.5]{Kel05} 结尾的说明. 考虑到映射空间 $X^Y$ 在拓扑学中俯拾即是, 放弃闭性质的代价未免太过高昂; 一个方便的替代品是紧生成 Hausdorff 空间\footnote{紧生成 Hausdorff 空间意谓满足以下性质的 Hausdorff 空间 $X$: 若子集 $A \subset X$ 和任何紧子集 $K \subset X$ 的交皆闭, 则 $A$ 也是闭的.}范畴 $\cate{CGHaus}$; 它是 $\cate{Top}$ 的全子范畴, 本身也是 Cartesius 闭范畴; 可证明存在伴随对
+	$\begin{tikzcd}
+		\cate{CGHaus} \arrow[shift left, r, "\text{包含函子}"] & \cate{Top} \arrow[shift left, l, "k"]
+	\end{tikzcd}$,
+	包含函子保 $\varinjlim$ 而不保积.
+	
+	\item 取群 $G$ 和交换环 $\Bbbk$, 命题 \ref{prop:Gmod-monoidal} 介绍的对称幺半范畴 $G\dcate{Mod}$ 是闭的: 内 $\Hom$ 正是 \S\ref{sec:G-mod} 引入的 $\Hom$ 模, 所需的伴随关系则不外乎 \eqref{eqn:G-mod-tensor-Hom}.
+	
+	\item 仍考虑交换环 $\Bbbk$ 和 $\mathcal{A} := \Bbbk\dcate{Mod}$. 如 \S\ref{sec:dga-monoidal} 所见, 复形范畴 $\cate{C}(\mathcal{A})$ 成为对称幺半范畴, 它是闭的: 内 $\Hom$ 由 $\Hom$ 复形确定. 所求的伴随关系 \eqref{eqn:closed-monoidal-adj0} 化为 $\Hom$ 和 $\otimes$ 在复形层次的伴随; 具体地说, 这是命题 \ref{prop:tensor-Hom-cplx} 在 $A = R = B = \Bbbk$ 情形的推论. 对应的单位和余单位态射是
+	\[\begin{tikzcd}[row sep=tiny]
+		\mathrm{ev}_{X, Y}: \Hom^n(X, Y) \dotimes{\Bbbk} X^m \arrow[r] & Y^{n+m} \\
+		f \otimes x \arrow[mapsto, r] & f(x), \\
+		\mathrm{coev}_{X, Y}: X^n \arrow[r] & \Hom^n(Y, X \otimes Y) \\
+		x \arrow[mapsto, r] & {[y \mapsto x \otimes y]}.
+	\end{tikzcd}\]
+\end{itemize}
+
+最后一则例子说明 $\Hom$ 复形的定义 \ref{def:Hom-cplx} 是纯乎天然的, 前提是我们按上述方式赋予 $\cate{C}(\mathcal{A})$ 对称幺半结构.
+
+\section{案例研究: dg-范畴的闭结构}\label{sec:dg-closed}
+先前讨论了 $\cate{Cat}$ 的闭幺半范畴结构, 其中的 $\otimes$ 来自普通范畴的积 $\mathcal{C}_1 \times \mathcal{C}_2$. 另一方面, 相对于选定的交换环 $\Bbbk$, 定义 \ref{def:dgCat} 介绍了何谓 dg-范畴, 亦即 $(\cate{C}(\Bbbk\dcate{Mod}), \otimes)$-充实范畴. 本节旨在说明全体 dg-小范畴也构成闭幺半范畴 $\cate{dgCat}_{\Bbbk}$, 它可以视作 $\cate{Cat}$ 的线性化以及复形化的版本, 在许多场合自然且管用. 所需的只是一些繁而不难的操作.
+
+第一步是将普通范畴的积升级为 dg-范畴的张量积, 这点涉及 $(\cate{C}(\Bbbk\dcate{Mod}), \otimes)$ 上的对称辫结构.
+
+\begin{definition}\label{def:dgCat-tensor}
+	设 $\mathcal{C}_1$ 和 $\mathcal{C}_2$ 为 $\Bbbk$ 上的 dg-范畴, 定义新的 dg-范畴 $\mathcal{C}_1 \otimes \mathcal{C}_2$ 使得
+	\begin{align*}
+		\Obj(\mathcal{C}_1 \otimes \mathcal{C}_2) & := \Obj(\mathcal{C}_1) \times \Obj(\mathcal{C}_2), \\
+		\Hom_{\mathcal{C}_1 \otimes \mathcal{C}_2}^\bullet((X, X'), (Y, Y')) & := \Hom_{\mathcal{C}_1}^\bullet(X, Y) \otimes \Hom_{\mathcal{C}_2}^\bullet(X', Y'),
+	\end{align*}
+	而 $\Hom_{\mathcal{C}_1 \otimes \mathcal{C}_2}^\bullet((X, X'), (X, X'))$ 的幺元定为 $\identity_X \otimes \identity_{X'}$. 态射合成以
+	\[\begin{tikzcd}
+		\left( \Hom_{\mathcal{C}_1}^\bullet(Y, Z) \otimes \Hom_{\mathcal{C}_2}^\bullet(Y', Z')\right) \otimes
+		\left( \Hom_{\mathcal{C}_1}^\bullet(X, Y) \otimes \Hom_{\mathcal{C}_2}^\bullet(X', Y') \right) \arrow[d, "\sim" sloped] \\
+		\left( \Hom_{\mathcal{C}_1}^\bullet(Y, Z) \otimes \Hom_{\mathcal{C}_1}^\bullet(X, Y) \right) \otimes
+		\left( \Hom_{\mathcal{C}_2}^\bullet(Y', Z') \otimes \Hom_{\mathcal{C}_2}^\bullet(X', Y') \right) \arrow[d] \\
+		\Hom_{\mathcal{C}_1}^\bullet(X, Z) \otimes \Hom_{\mathcal{C}_2}^\bullet(X', Z')
+	\end{tikzcd}\]
+	来定义; 此处的同构来自 Koszul 辫结构和结合约束.
+\end{definition}
+
+从辫结构的对称性可以验证 $\mathcal{C}_1 \otimes \mathcal{C}_2$ 自然地等价于 $\mathcal{C}_2 \otimes \mathcal{C}_1$. 记 $\Bbbk$ 为仅有一个对象, 以 $\Bbbk$ 为其自同态复形的 dg-范畴; 易证 $\Bbbk \otimes \mathcal{C}$ 等价于 $\mathcal{C} \otimes \Bbbk$.
+
+\begin{definition}\label{def:dgCat-as-cat}
+	\index[sym1]{dgCat@$\cate{dgCat}_{\Bbbk}$}
+	设 $\Bbbk$ 是交换环. 记 $\cate{dgCat}_{\Bbbk}$ 为 $\Bbbk$ 上的全体 dg-小范畴构成的范畴, 它是一个对称幺半范畴, 以 $\Bbbk$ 为幺元.
+\end{definition}
+
+之所以只论小范畴, 当然是为了避免集合论的麻烦, 主要好处是给定的小范畴 $\mathcal{C}$ 和 $\mathcal{D}$ 之间的所有函子构成一个小集.
+
+第二步是将 dg-函子之间的 $\Hom$ 集升级为复形.
+
+\begin{definition}
+	设 $F, G: \mathcal{C} \to \mathcal{D}$ 是 dg-范畴之间的 dg-函子. 对所有 $n \in \Z$, 从 $F$ 到 $G$ 的 $n$ 次态射定义为以下资料
+	\[ \phi = \left( \phi_X \right)_{X \in \Obj(\mathcal{C})}, \quad \phi_X \in \Hom_{\mathcal{D}}^n(FX, GX), \]
+	条件是对于所有 $m \in \Z$, $X, Y \in \Obj(\mathcal{C})$ 和 $f \in \Hom^m_{\mathcal{C}}(X, Y)$, 我们有 $\Hom^{n+m}_{\mathcal{D}}(FX, GY)$ 中的等式
+	\[ (Gf) \phi_X = (-1)^{nm} \phi_Y (Ff); \]
+	上式的合成理解为 $\Bbbk\dcate{Mod}$ 中的态射
+	\begin{gather*}
+		\Hom^m_{\mathcal{D}}(GX, GY) \otimes \Hom^n_{\mathcal{D}}(FX, GX) \to \Hom^{m+n}_{\mathcal{D}}(FX, GY), \\
+		\Hom^n_{\mathcal{D}}(FY, GY) \otimes \Hom^m_{\mathcal{D}}(FX, FY) \to \Hom^{m+n}_{\mathcal{D}}(FX, GY).
+	\end{gather*}
+	全体 $n$ 次态射 $\phi: F \to G$ 构成的 $\Bbbk$-模记为 $\iHom^n(F, G)$.
+\end{definition}
+
+不妨将上述条件理解为带次数的态射构成的图表
+\[\begin{tikzcd}
+	FX \arrow[r, "{\phi_X}"] \arrow[d, "Ff"'] & GX \arrow[d, "Gf"] \\
+	FY \arrow[r, "{\phi_Y}"'] & GY
+\end{tikzcd} \quad
+\begin{array}{cc}
+	\phi: n\;\text{次} \\
+	f: m\;\text{次}
+\end{array}\]
+精确到 Koszul 符号律所要求的 $(-1)^{nm}$ 是交换的, 尽管``带次数的态射''严格来说并非态射, 只能理解为 $\Hom$ 复形的元素.
+
+\begin{definition-proposition}
+	对于 dg-函子 $F, G: \mathcal{C} \to \mathcal{D}$ 和任意 $n \in \Z$, 可按以下方式定义同态
+	\[ d^n = d^n_{\iHom^\bullet(F, G)}: \iHom^n(F, G) \to \iHom^{n+1}(F, G). \]
+	
+	对所有 $\phi = (\phi_X)_{X \in \Obj(\mathcal{C})}$, 命
+	\[ (d^n \phi)_X := d^n_{\Hom^\bullet(FX, GX)}(\phi_X). \]
+	这使 $\left(\iHom^n(F, G), d^n \right)_{n \in \Z}$ 成为复形 $\iHom^\bullet(F, G)$.
+\end{definition-proposition}
+\begin{proof}
+	首先验证 $d^n \phi$ 确实属于 $\iHom^{n+1}(F, G)$. 设 $f \in \Hom^m_{\mathcal{C}}(X, Y)$, 对 $(Gf) \phi_X = (-1)^{nm} \phi_Y (Ff)$ 两边同取 $d^{m+n}$ (省略下标 $\Hom^\bullet(FX, GY)$), 得
+	\begin{align*}
+		d^{m+n}((Gf) \phi_X) & = (d^m Gf) \phi_X + (-1)^m (Gf) (d^n \phi_X) \\
+		& = G (d^m f) \phi_X + (-1)^m (Gf) (d^n \phi)_X \\
+		& = (-1)^{n(m+1)} \phi_Y F(d^m f) + (-1)^m (Gf) (d^n \phi)_X, \\
+		(-1)^{nm} d^{m+n}(\phi_Y (Ff)) & = (-1)^{nm} (d^n \phi_Y) Ff + (-1)^{nm+n} \phi_Y d^n(Ff) \\
+		& = (-1)^{nm} (d^n \phi)_Y Ff + (-1)^{nm+n} \phi_Y F(d^m f).
+	\end{align*}
+	由两式相等立见 $(Gf) (d^n \phi)_X = (-1)^{(n+1)m} (d^n \phi)_Y Ff$.
+	
+	其次, $\Hom^\bullet(FX, GX)$ 是复形, 故
+	\begin{align*}
+		(d^{n+1} d^n \phi)_X & = d^{n+1}_{\Hom^\bullet(FX, GX)}((d^n \phi)_X) \\
+		& = d^{n+1}_{\Hom^\bullet(FX, GX)} d^n_{\Hom^\bullet(FX, GX)} \phi_X = 0.
+	\end{align*}
+	于是得到复形 $\iHom^\bullet(F, G)$.
+\end{proof}
+
+对于三个 dg-函子 $F, G, H: \mathcal{C} \to \mathcal{D}$, 我们有合成运算
+\begin{equation}\label{eqn:dgfct-iHom}\begin{aligned}
+	\iHom^a(G, H) \otimes \iHom^b(F, G) & \to \iHom^{a+b}(F, H) \\
+	\psi \otimes \phi & \mapsto \psi\phi := \left( \psi_X \phi_X \right)_{X \in \Obj(\mathcal{C})},
+\end{aligned}\end{equation}
+其中 $a, b \in \Z$. 这也满足结合律以及 $d^{a+b} (\psi\phi) = (d^a \psi) \phi + (-1)^a \psi (d^b \phi)$, 按定义, 一切都容易化约到 $\Hom^\bullet_{\mathcal{D}}$ 上来检验. 这种合成应当理解为带次数的态射的纵合成, 图解为
+\[\begin{tikzcd}
+	\mathcal{C}
+	\arrow[bend left=70, rr, "F", ""' name=U]
+	\arrow[rr, "G" name=MM, ""' name=M]
+	\arrow[bend right=70, rr, "" name=D, "H"'] & &
+	\arrow[Rightarrow, to path=(U) -- (MM) \tikztonodes, "\phi"] \arrow[Rightarrow, to path=(M) -- (D) \tikztonodes, "\psi"] \mathcal{D}
+\end{tikzcd}  \quad \text{合成为} \quad \begin{tikzcd}
+	\mathcal{C}
+	\arrow[bend left=50, rr, "F", ""' name=U]
+	\arrow[bend right=50, rr, "" name=D, "H"']
+	& & \arrow[Rightarrow, to path=(U) -- (D) \tikztonodes, "\psi \phi"] \mathcal{D} .
+\end{tikzcd}\]
+
+请考虑特例 $n=0$. 关于 $\phi = (\phi_X)_X \in \iHom^0(F, G)$ 的条件相当于是说 $(Gf) \phi_X = \phi_Y (Ff)$ 对所有 $f \in \Hom^m(X, Y)$ 成立, 而条件 $d^0 \phi = 0$ 相当于说 $\phi_X \in \Ker\left(d^0_{\Hom^\bullet(FX, GX)}\right)$ 对所有 $X \in \Obj(\mathcal{C})$ 成立. 由此见得 $\Bbbk$-模
+\[ \Ker\left[ \iHom^0(F, G) \xrightarrow{d^0} \iHom^1(F, G) \right] \]
+的元素正是 dg-函子 $F$, $G$ 之间在经典意义下的态射 $\phi: F \to G$.
+
+下一步是将 dg-范畴之间的函子范畴升级为 dg 版本.
+
+\begin{definition}
+	对任意 dg-范畴 $\mathcal{C}$ 和 $\mathcal{D}$, 定义 dg-范畴 $\iHom(\mathcal{C}, \mathcal{D})$ 使得
+	\begin{itemize}
+		\item 其对象是所有 dg-函子 $F: \mathcal{C} \to \mathcal{D}$;
+		\item 对于任意 dg-函子 $F, G: \mathcal{C} \to \mathcal{D}$, 定义其间的 $\Hom$ 复形为先前定义的 $\iHom^\bullet(F, G)$;
+		\item 合成运算 $\iHom^\bullet(G, H) \otimes \iHom^\bullet(F, G) \to \iHom^\bullet(F, H)$ 按 \eqref{eqn:dgfct-iHom} 所述的方式定义, 即所谓的纵合成.
+	\end{itemize} 
+\end{definition}
+
+如果 $\mathcal{C}$ 和 $\mathcal{D}$ 都是 dg-小范畴, 则 $\iHom(\mathcal{C}, \mathcal{D})$ 亦然: 它的对象集是小集.
+
+我们在定义 \ref{def:dgCat-tensor} 定义了两个 dg-范畴的张量积, 使得定义 \ref{def:dgCat-as-cat} 中的范畴 $\cate{dgCat}_{\Bbbk}$ 对 $\otimes$ 成为对称幺半范畴. 现在可以明确 $\otimes$ 和 $\iHom$ 的关系如下.
+
+\begin{proposition}\label{prop:dgCat-closed}
+	对称幺半范畴 $\cate{dgCat}_{\Bbbk}$ 是闭的, 内 $\Hom$ 由以上定义的 $\iHom(\mathcal{C}, \mathcal{D})$ 给出, 其中 $\mathcal{C}$, $\mathcal{D}$ 取遍 dg-小范畴.
+\end{proposition}
+\begin{proof}
+	要点在于给出典范同构
+	\[ \Hom_{\cate{dgCat}_{\Bbbk}}(\mathcal{C} \otimes \mathcal{D}, \mathcal{E}) \simeq \Hom_{\cate{dgCat}_{\Bbbk}}(\mathcal{C}, \iHom(\mathcal{D}, \mathcal{E}) ). \]
+	
+	如果不顾 dg-结构, 问题是容易的: 指定 $F: \mathcal{C} \times \mathcal{D} \to \mathcal{E}$ 相当于指定函子 $\mathcal{C} \to \mathcal{E}^{\mathcal{D}}$, 后者映对象 $X$ 为函子 $F(X, \cdot): \mathcal{D} \to \mathcal{E}$. 关键在于 dg-函子在 $\Hom$ 层次的条件.
+	
+	按定义, 使 $F$ 成为 dg-函子相当于升级 $\Hom$ 集上的映射为复形的态射
+	\[ F_{X, Y, Z, W}: \Hom^\bullet_{\mathcal{C}}(X, Y) \otimes \Hom^\bullet_{\mathcal{D}}(Z, W) \to \Hom^\bullet_{\mathcal{E}}(F(X, Z), F(Y, W)), \]
+	要求对四个变元都有函子性. 分别讨论 $F$ 的两个变元, 则此资料可以拆成两份:
+	\begin{itemize}
+		\item 对每个 $X \in \Obj(\mathcal{C})$, 函子 $F(X, \cdot)$ 都升级为 dg-函子;
+		\item 指定态射族 $F_{X, Y, Z}: \Hom^\bullet_{\mathcal{C}}(X, Y) \to \Hom^\bullet_{\mathcal{E}}(F(X, Z), F(Y, Z))$, 对三个变元都有函子性.
+	\end{itemize}
+	举例明之, $F_{X, Y, Z, W}(f \otimes g)$ 可以实现为 $F_{X, Y, Z}(f)$ 用 $F(Y, \cdot)$ 通过 $g \in \Hom^b_{\mathcal{D}}(Z, W)$ 推出的产物. 第二项列出的资料相当于一族态射
+	\[ \Hom^\bullet_{\mathcal{C}}(X, Y) \to \iHom^\bullet(F(X, \cdot), F(Y, \cdot)), \]
+	对 $X$, $Y$ 具有函子性. 综上, 指定 dg-函子 $F$ 相当于指定从 $\mathcal{C}$ 到 $\iHom(\mathcal{D}, \mathcal{E})$ 的 dg-函子.
+\end{proof}
+
+配合 \S\ref{sec:closed-monoidal} 的理论, 综上可见 $\cate{dgCat}_{\Bbbk}$ 是自充实的: 对任意 dg-小范畴 $\mathcal{C}$ 和 $\mathcal{D}$, 其间的 $\iHom$ 依然是一个 dg-范畴.
+
+由于 $\otimes$ 和 $\iHom$ 通过伴随关系 \eqref{eqn:closed-monoidal-adj0} 相互确定, 只要承认 $\otimes$ 或 $\iHom$ 之中任何一者的定义, 则另一者的定义也至少是同样地合理的.
+
+\begin{remark}
+	既有命题 \ref{prop:dgCat-closed} 在手, 关于闭幺半范畴的一般性质表明对任三个 dg-小范畴 $\mathcal{C}$, $\mathcal{D}$, $\mathcal{E}$, 函子的合成可以升级为 dg-函子
+	\[ \iHom(\mathcal{D}, \mathcal{E}) \otimes \iHom(\mathcal{C}, \mathcal{D}) \to \iHom(\mathcal{C}, \mathcal{E}). \]
+	它在对象层次映 $(G, F)$ 为 $GF$, 在 $\Hom$ 复形的层次则写作
+	\begin{equation}\begin{gathered}\label{eqn:dgCat-fct-compose}
+		\begin{tikzcd}[row sep=small, column sep=small]
+			\iHom^\bullet(G_1, G_2) \otimes \iHom^\bullet(F_1, F_2) \arrow[r] \arrow[equal, d] & \iHom^\bullet(G_1 F_1, G_2 F_2) \\
+			\Hom^\bullet_{ \iHom(\mathcal{D}, \mathcal{E}) \otimes \iHom(\mathcal{C}, \mathcal{D}) }((G_1, F_1), (G_2, F_2)) &
+		\end{tikzcd} \\
+		F_i: \mathcal{C} \to \mathcal{D}, \quad G_i: \mathcal{D} \to \mathcal{E}, \quad i = 1, 2 .
+	\end{gathered}\end{equation}
+
+	上述运算不妨设想为 dg-函子之间的态射作横合成, 图解如
+	\[ \begin{tikzcd}
+		\mathcal{C} \arrow[bend left=50, r, "F_1", ""' name=LU] \arrow[bend right=50, r, "" name=LD, "F_2"'] &
+		\mathcal{D} \arrow[bend left=50, r, "G_1", ""' name=RU] \arrow[bend right=50, r, "" name=RD, "G_2"'] &
+		\arrow[Rightarrow, to path=(LU) -- (LD) \tikztonodes, "\phi"] \arrow[Rightarrow, to path=(RU) -- (RD) \tikztonodes, "\psi"] \mathcal{E}
+	\end{tikzcd} \quad \text{合成为} \quad \begin{tikzcd}
+		\mathcal{C}
+		\arrow[bend left=50, rr, "G_1 F_1", ""' name=U]
+		\arrow[bend right=50, rr, "" name=D, "G_2 F_2"']
+		& & \arrow[Rightarrow, to path=(U) -- (D) \tikztonodes, "\psi \phi"] \mathcal{E} .
+	\end{tikzcd} \]
+	既然这给出函子, \eqref{eqn:dgCat-fct-compose} 必然
+	\begin{inparaenum}[(a)]
+		\item 满足结合律,
+		\item 与沿着 dg-范畴 $\iHom(\mathcal{D}, \mathcal{E})$ (或 $\iHom(\mathcal{C}, \mathcal{D})$) 中的带次数态射的拉回 (或推出) 相交换.
+	\end{inparaenum}
+	然而 (b) 的运算无非是 \eqref{eqn:dgfct-iHom} 介绍的纵合成; 于是我们看到纵横两种合成可以交换顺序.
+	
+	对于一般范畴之间的函子, 其间的态射也有相交换的纵横两种合成, 这可以理解为 Cartesius 闭范畴 $\cate{Cat}$ (或视作 $2$-范畴, 见 \cite[例 3.5.3]{Li1}) 的性质, 而关于 $\cate{dgCat}_{\Bbbk}$ 的上述性质则是其 dg-版本, 或谓线性代数的版本.
+\end{remark}
+
+\section{从余代数到 Hopf 代数}\label{sec:bialgebra}
+本节的第一个目标是将代数的定义 \ref{def:algebra-monoidal} 对偶化. 为此, 首先观察到幺半范畴的定义自对偶: 设 $\mathcal{V}$ 是幺半范畴, 则对 $\mathcal{V}^{\opp}$ 仍可沿用原有的双函子 $\otimes$ 和幺元 $\munit$, 但将 \cite[定义 3.1.1]{Li1} 中的结合约束 $a$ 和 $\iota: \munit \otimes \munit \rightiso \munit$ 替换成逆, 以使 $\mathcal{V}^{\opp}$ 成为幺半范畴.
+
+同理, 若 $\mathcal{V}^{\opp}$ 带有辫结构 $c$, 如 \cite[定义 3.3.1]{Li1}, 则取逆给出 $\mathcal{V}^{\opp}$ 上相应的辫结构; 在此对应下, $\mathcal{V}$ 是对称幺半范畴当且仅当 $\mathcal{V}^{\opp}$ 亦然.
+
+\begin{definition}[余代数]\label{def:cogebra-monoidal}
+	\index{yudaishu@余代数 (coalgebra)}
+	设 $\mathcal{V}$ 是幺半范畴, 则 $\mathcal{V}^{\opp}$ 上的代数称为 $\mathcal{V}$ 上的余代数. 换言之, 余代数是资料 $(C, \Delta, \epsilon)$, 其中
+	\[ C \in \Obj(\mathcal{V}), \quad \Delta = \Delta_C: C \to C \otimes C, \quad \epsilon = \epsilon_C: C \to \munit, \]
+	服从于和定义 \ref{def:algebra-monoidal} 相对偶的交换图表
+	\[\begin{tikzcd}
+			\munit \otimes C & C \otimes C \arrow[r, "{\identity \otimes \epsilon}"] \arrow[l, "{\epsilon \otimes \identity}"'] & C \otimes \munit \\
+			& C \arrow[lu, "\sim"' sloped] \arrow[ru, "\sim"' sloped] \arrow[u, "\Delta"'] &
+	\end{tikzcd} \quad
+	\begin{tikzcd}[column sep=tiny]
+		(C \otimes C) \otimes C & & C \otimes (C \otimes C) \arrow[ll, "\sim"] \\
+		C \otimes C \arrow[u, "{\Delta \otimes \identity}"] & C \arrow[l, "\Delta"] \arrow[r, "\Delta"'] & C \otimes C . \arrow[u, "{\identity \otimes \Delta}"']
+	\end{tikzcd}\]
+
+	惯常称 $\Delta$ 为 $C$ 的余乘法, 称 $\epsilon$ 为 $C$ 的余幺元.
+	
+	从余代数 $(C, \Delta, \epsilon)$ 到 $(C', \Delta', \epsilon')$ 的态射按照和定义 \ref{def:algebra-monoidal} 相对偶的方式定义: 这是使下图交换的态射 $\phi: C \to C'$
+	\[\begin{tikzcd}
+		\munit & C \arrow[d, "\phi"] \arrow[l, "\epsilon"']  \\
+		& C' \arrow[lu, "{\epsilon'}"]
+	\end{tikzcd} \quad \begin{tikzcd}
+		C \otimes C \arrow[r, "{\phi \otimes \phi}"] & C' \otimes C' \\
+		C \arrow[r, "\phi"'] \arrow[u, "\Delta"] & C' . \arrow[u, "{\Delta'}"']
+	\end{tikzcd}\]
+	
+	在 $\mathcal{V}$ 有辫结构 $c$ 的前提下, 若 $c \Delta = \Delta$, 则称 $(C, \Delta, \epsilon)$ 余交换.
+\end{definition}
+
+以下不过是定义 \ref{def:module-algebra} 的对偶.
+
+\begin{definition}[余模]\label{def:comodule-cogebra}
+	\index{yumo@余模 (comodule)}
+	设 $(C, \Delta, \epsilon)$ 是 $\mathcal{V}$ 上的余代数. 定义左余 $C$-模为资料 $(M, \rho)$, 其中
+	\[ M \in \Obj(\mathcal{V}), \quad \rho = \rho_M : M \to C \otimes M, \]
+	可将 $\rho$ 理解为左余模的纯量余乘法, 条件是以下图表交换:
+	\[\begin{tikzcd}
+		\munit \otimes M & C \otimes M \arrow[l, "{\epsilon \otimes \identity}"'] \\
+		& M \arrow[u, "{\rho}"'] \arrow[lu, "\sim" sloped]
+	\end{tikzcd} \quad \begin{tikzcd}[column sep=small]
+		(C \otimes C) \otimes M & & C \otimes (C \otimes M) \arrow[ll, "\sim"'] \\
+		C \otimes M \arrow[u, "{\Delta \otimes \identity}"] & M \arrow[l, "{\rho}"] \arrow[r, "{\rho}"'] & C \otimes M. \arrow[u, "{\identity \otimes \rho}"']
+	\end{tikzcd}\]
+	从左余模 $(M, \rho)$ 到 $(M', \rho')$ 的同态是满足 $(\identity \otimes f) \rho = \rho' f$ 的态射 $f: M \to M'$. 按照类似方法定义右 $C$-余模, 乃至于双模, 以及其间的同态等.
+\end{definition}
+
+一则初步然而重要的例子是 $C$ 本身对 $\rho_C := \Delta: C \to C \otimes C$ 成为左余模, 也成为右余模.
+
+尽管余模的定义看似与习惯相颠倒, 但实际操作未必比模复杂. 举 $\mathcal{V} = \Bbbk\dcate{Mod}$ 的情形为例, 其中 $\Bbbk$ 是交换环. 设 $M$ 是以 $(v_i)_{i \in I}$ 为基的自由 $\Bbbk$-模, 指定 $\rho: M \to M \dotimes{\Bbbk} C$ 相当于指定 $C$ 的一族元素 $(t_{ij})_{(i, j) \in I^2}$, 使得对所有 $i \in I$ 皆有
+\begin{equation*}
+	\rho(v_i) = \sum_{j \in I} v_j \otimes t_{ji} \quad \text{(有限和)},
+\end{equation*}
+而余模的条件表达为对所有 $i$:
+\begin{equation*}
+	v_i = \sum_j \epsilon(t_{ji}) v_j, \quad \sum_j v_j \otimes \Delta(t_{ji}) = \sum_{j, k} v_k \otimes t_{kj}  \otimes t_{ji}.
+\end{equation*}
+适当将下标重命名, 这又进一步简化为对所有 $i, j$:
+\begin{equation}\label{eqn:comodule-matrix}
+	\begin{aligned}
+		\epsilon(t_{ji}) & = \delta_{j, i}, \\
+		\Delta(t_{ji}) & = \sum_k t_{jk} \otimes t_{ki};
+	\end{aligned}
+\end{equation}
+此处 $\delta_{j, i}$ 为 Kronecker 的 $\delta$ 符号, 当 $j=i$ 时定义为 $1$, 否则定义为 $0$.
+\index{Kronecker-delta@Kronecker 的 $\delta$ 符号 (Kronecker delta)}
+\index[sym1]{delta-ij@$\delta_{ij}$}
+
+承上, 若将右余模之间的 $\Bbbk$-线性映射 $f: M \to M'$ 按照选定的基表达为 $f(v_i) = \sum_j r_{ji} v'_j$, 亦即表为矩阵, 其中 $r_{ji} \in \Bbbk$, 则同理可证 $f$ 是余模的同态当且仅当对所有 $i, k$,
+\begin{equation*}\begin{gathered}
+	\sum_j r_{kj} t_{ji} = \sum_j r_{ji} t'_{kj},
+\end{gathered}\end{equation*}
+其中 $\Bbbk$ 以纯量乘法左作用于 $C$. 左余模的版本自不待言.
+
+我们将在 \S\ref{sec:Morita} 继续讨论余模理论的若干面向.
+
+\begin{remark}\label{rem:coalgebra-convolution}
+	\index{juanji@卷积 (convolution)}
+	若 $(C, \Delta, \epsilon)$ 是 $\mathcal{V}$ 上的余代数, $(A, \mu, \eta)$ 是 $\mathcal{V}$ 上的代数, 则 $\Hom(C, A)$ 带有称为\emph{卷积}的二元运算 $\star$ 如下:
+	\[ f \star g := \mu (f \otimes g) \Delta, \quad f, g \in \Hom(C, A). \]
+	从 $\Delta$ 和 $\mu$ 的诸般性质易见 $\star$ 满足结合律, 而以下交换图表足以说明 $(\Hom(C, A), \star)$ 是以 $\eta\epsilon \in \Hom(C, A)$ 为幺元的幺半群:
+	\[\begin{tikzcd}[column sep=large]
+		A \otimes \munit \arrow[r, "{\mu(\identity \otimes \eta)}"] & A & \munit \otimes A \arrow[l, "{\mu(\eta \otimes \identity)}"'] \\
+		C \otimes \munit \arrow[r] \arrow[u, "{f \otimes \identity}"] & C \arrow[u, "f"] & \munit \otimes C \arrow[l] \arrow[u, "{\identity \otimes f}"'] \\
+		C \otimes C \arrow[u, "{\identity \otimes \epsilon}"] & C \arrow[l, "\Delta"] \arrow[r, "\Delta"'] \arrow[equal, u] & C \otimes C . \arrow[u, "{\epsilon \otimes \identity}"']
+	\end{tikzcd}\]
+	标准论证说明若 $\varphi: C' \to C$ 是余代数之间的态射, $\psi: A \to A'$ 是代数之间的态射, 则
+	\begin{equation}\label{eqn:convolution-functorial}
+		\Hom(C, A) \to \Hom(C', A'), \quad f \mapsto \psi f \varphi
+	\end{equation}
+	是卷积幺半群之间的同态.
+\end{remark}
+
+今后设 $\mathcal{V}$ 为辫幺半范畴, 辫结构照例记为
+\[ c(X, Y): X \otimes Y \to Y \otimes X \]
+的形式. 根据 \S\ref{sec:alg-in-monoidal-cat}, 代数范畴 $\cate{Alg}(\mathcal{V})$ (或余代数范畴 $\cate{Alg}(\mathcal{V}^{\opp})^{\opp}$) 具有幺半结构, 以 $\munit$ 为幺元. 由此遂可考虑其中的余代数 (或代数). 一则简单却饶富兴味的观察是这两者引向同样的资料 $(A, \mu, \eta, \Delta, \epsilon)$, 其中 $A \in \Obj(\mathcal{V})$, 而 $\mathcal{V}$ 中态射 $A \xrightarrow{\Delta} A \otimes A \xrightarrow{\mu} A$ 和 $\munit \xrightarrow{\eta} A \xrightarrow{\epsilon} \munit$ 所需的条件是:
+\begin{enumerate}[(i)]
+	\item $(A, \mu, \eta)$ 是代数,
+	\item $(A, \Delta, \epsilon)$ 是余代数,
+	\item 余乘法 $\Delta: A \to A \otimes A$ 和余幺元 $\epsilon: A \to \munit$ 是代数之间的态射,
+	\item 乘法 $\mu: A \otimes A \to A$ 和幺元 $\eta: \munit \to A$ 是余代数之间的态射.
+\end{enumerate}
+一旦假设 (i) 和 (ii) 成立, 则 (iii) 和 (iv) 相等价, 择一验证即可; 两者的内容都是 $(\Delta, \epsilon)$ 和 $(\mu, \eta)$ 之间的兼容性, 共有四种组合四个交换图表, 或写作
+\begin{equation*}\begin{gathered}
+	\Delta \mu = (\mu \otimes \mu)(\identity_A \otimes c(A, A) \otimes \identity_A) (\Delta \otimes \Delta), \\
+	\Delta \eta = \eta \otimes \eta, \quad \epsilon \mu = \epsilon \otimes \epsilon, \quad \epsilon \eta = \identity_{\munit}.
+\end{gathered}\end{equation*}
+
+\begin{definition}[双代数]
+	\index{shuangdaishu@双代数 (bialgebra)}
+	设 $\mathcal{V}$ 是辫幺半范畴.	如果 $A$ 是 $\mathcal{V}$ 上的余代数范畴里的代数, 或者等价地说是 $\mathcal{V}$ 上的代数范畴里的余代数, 则称之为 $\mathcal{V}$ 上的双代数. 具体地说, 双代数由资料 $(A, \mu, \eta, \Delta, \epsilon)$ 构成.
+	
+	若 $A$ 和 $A'$ 都是双代数, 而 $\phi: A \to A'$ 同时是代数和双代数之间的态射, 则称之为从双代数 $A$ 到 $A'$ 的态射.
+\end{definition}
+
+我们经常将双代数的全套资料简记为 $A$.
+
+若 $\Bbbk$ 是交换环而 $\mathcal{V} = \Bbbk\dcate{Mod}$, 则 $\mathcal{V}$ 上的代数, 余代数, 双代数也称为 $\Bbbk$-代数, $\Bbbk$-余代数, $\Bbbk$-双代数, 依此类推.
+
+\begin{example}\label{eg:monoid-bialgebra}
+	设 $M$ 是幺半群, $\Bbbk$ 是交换环. 构造幺半群 $\Bbbk$-代数 $\Bbbk[M]$; 见 \cite[定义 5.6.1]{Li1}. 定义 $\Bbbk$-模同态
+	\begin{align*}
+		\Delta: \Bbbk[M] & \to \Bbbk[M] \dotimes{\Bbbk} \Bbbk[M] \\
+		m & \mapsto m \otimes m, \quad m \in M
+	\end{align*}
+	和 $\epsilon: \Bbbk[M] \to \Bbbk$, 使 $\epsilon$ 映所有 $m \in M$ 为 $1$. 以下来验证这给出 $\Bbbk$-双代数.
+
+	首先 $(\Bbbk[M], \Delta, \epsilon)$ 是余代数, 这是因为对所有 $m \in M$ 皆有
+	\begin{gather*}
+		(\identity \otimes \epsilon)(\Delta(m)) = m = (\epsilon \otimes \identity)(\Delta(m)), \\
+		(\Delta \otimes \identity)(\Delta(m)) = m \otimes m \otimes m = (\identity \otimes \Delta)(\Delta(m)).
+	\end{gather*}
+	注意到 $\Bbbk[M]$ 总是余交换的, 但 $\Bbbk[M]$ 交换当且仅当 $M$ 交换.
+	
+	其次验证 $\epsilon$ 和 $\Delta$ 都是 $\Bbbk$-代数的同态. 这归结为对所有 $m, m' \in M$ 验证
+	\begin{gather*}
+		\epsilon(mm') = 1 = \epsilon(m)\epsilon(m'), \quad \epsilon(1) = 1, \\
+		\Delta(mm') = mm' \otimes mm' = (m \otimes m)(m' \otimes m') = \Delta(m) \Delta(m'), \\
+		\Delta(1) = 1 \otimes 1.
+	\end{gather*}
+\end{example}
+
+对于 $\mathcal{V}$ 上的代数 $A$, 定义 \ref{def:module-algebra} 说明了何谓左 $A$-模. 若 $A$ 是双代数, 则可以进一步作如下定义.
+\begin{enumerate}
+	\item 对左 $A$-模 $\munit$ 定义态射 $\mu_{\munit}: A \otimes \munit \to \munit$ 为 $A \otimes \munit \rightiso A \xrightarrow{\epsilon} \munit$ 的合成.
+	\item 对左 $A$-模 $M_i$, 记对应的纯量乘法态射为 $\mu_i$ (此处 $i=1, 2$). 定义态射 $\mu_{M_1 \otimes M_2}: A \otimes (M_1 \otimes M_2) \to M_1 \otimes M_2$ 为
+	\begin{multline*}
+		A \otimes M_1 \otimes M_2 \xrightarrow{\Delta \otimes \identity_{M_1 \otimes M_2}} A \otimes A \otimes M_1 \otimes M_2 \\
+		\xrightarrow{\identity_A \otimes c(A, M_1) \otimes \identity_{M_2}} A \otimes M_1 \otimes A \otimes M_2 \xrightarrow{\mu_1 \otimes \mu_2} M_1 \otimes M_2
+	\end{multline*}
+	的合成; 此处省略 $\otimes$ 运算的括号以及结合约束, 亦即视 $\mathcal{V}$ 为严格幺半范畴, 以简化符号.
+\end{enumerate}
+
+定义旨在赋予 $\mathcal{V}$ 的对象 $\munit$ 和 $M_1 \otimes M_2$ 左 $A$-模结构. 右 $A$-模的情形自然是类似的.
+
+\begin{proposition}\label{prop:bialgebra-Mod-monoidal}
+	\index[sym1]{Comod@$\cate{Comod}$}
+	设 $A$ 是辫幺半范畴 $\mathcal{V}$ 上的双代数. 以上定义使左 $A$-模范畴 $A\dcate{Mod}$ 成为幺半范畴, 以 $(\munit, \mu_{\munit})$ 为幺元. 对于右 $A$-模范畴 $\cated{Mod}A$ 亦复如是.
+	
+	对偶地, 应用 $A$ 的乘法和幺元可以使左 $A$-余模范畴 $A\dcate{Comod}$ 和右 $A$-余模范畴 $\cated{Comod}A$ 成为幺半范畴.
+	
+	无论对上述哪一种范畴, 映向 $\mathcal{V}$ 的忘却函子总是幺半函子. 
+\end{proposition}
+\begin{proof}
+	基于对偶性, 证前半部即可. 检验繁而不难, 略述如下. 首务是验证纯量乘法符合定义 \ref{def:module-algebra} 的交换图表. 对于 $(\munit, \mu_{\munit})$, 这些性质归结为 $\epsilon: A \to \munit$ 是代数的态射. 对于 $M_1 \otimes M_2$ 的模结构, 关于以幺元作纯量乘法的交换图表归结为 $\Delta: A \to A \otimes A$ 是代数的态射, 特别地, 它和 $\eta$, $\eta \otimes \eta$ 兼容. 对纯量乘法结合律稍加思索, 可见问题在于验证从 $A \otimes A \otimes M_1 \otimes M_2$ 按两种方式映至 $M_1 \otimes M_2$ 是相等的:
+	\begin{enumerate}[(a)]
+		\item 先作 $\Delta \otimes \Delta \otimes \identity_{M_1} \otimes \identity_{M_1}$, 再将 $A \otimes A \otimes (A \otimes A \otimes M_1 \otimes M_2)$ 的第一和第三 (或第二和第四) 个 $A$ 依序左乘入 $M_1$ (或 $M_2$), 精确到辫结构;
+		\item 先对前两个位置作 $\mu: A \otimes A \to A$, 再作 $\mu_{M_1 \otimes M_2}$. 因为
+		\[ \Delta\mu = (\mu \otimes \mu) (\identity \otimes c(A, A) \otimes \identity)(\Delta \otimes \Delta), \]
+		这等于合成
+		\begin{multline*}
+			A \otimes A \otimes M_1 \otimes M_2 \xrightarrow{\Delta \otimes \Delta \otimes \identity_{M_1} \otimes \identity_{M_2}} A \otimes A \otimes A \otimes A \otimes M_1 \otimes M_2 \\
+			\xrightarrow{\identity_A \otimes c(A, A) \otimes \identity_A \otimes \identity_{M_1} \otimes \identity_{M_2}} \boxed{A \otimes A \otimes A \otimes A} \otimes M_1 \otimes M_2 \\
+			\xrightarrow{\mu \otimes \mu \otimes \identity_{M_1} \otimes \identity_{M_2}} A \otimes A \otimes M_1 \otimes M_2 \\
+			\xrightarrow{\identity_A \otimes c(A, M_1) \otimes \identity_{M_2}} A \otimes M_1 \otimes A \otimes M_2 \xrightarrow{\mu_1 \otimes \mu_2} M_1 \otimes M_2.
+		\end{multline*}
+		纯量乘法 $\mu_1$ 和 $\mu_2$ 各自有结合律而 $c$ 有函子性, 故上式的最后三个箭头也相当于加框部分的第一, 二 (或第三, 四) 个 $A$ 依序左乘入 $M_1$ (或 $M_2$), 精确到辫结构.
+	\end{enumerate}
+
+	以辫图帮助理解, 如 \cite[\S 7.4 最后]{Li1}, 证明 (a) = (b) 归结为证\footnote{一点无害的差异: 上引文献中, 态射由下到上作合成, 此处相反.}
+	\begin{center}\begin{tikzpicture}
+		[baseline=(braid), yscale=0.8]
+		\pic[
+			braid/number of strands = 6,
+			braid/every strand/.style={black},
+			name prefix=braid
+		] at (0, 0) {braid={s_4 s_2 s_3}};
+		\coordinate (braid) at ($(braid-1-s)!0.5!(braid-1-e)$);
+		\node[above] at (braid-1-s) {$A$};
+		\node[below=0.3em] (P) at (braid-1-e) {$A$};
+		\node[above] at (braid-2-s) {$A$};
+		\node[below=0.3em] (R) at (braid-2-e) {$A$};
+		\node[above] at (braid-3-s) {$A$};
+		\node[below=0.3em] at (braid-3-e) {$A$};
+		\node[above] at (braid-4-s) {$A$};
+		\node[below=0.3em] at (braid-4-e) {$A$};
+		\node[above] at (braid-5-s) {$M_1$};
+		\node[below=0.3em] (Q) at (braid-5-e) {$M_1$};
+		\node[above] at (braid-6-s) {$M_2$};
+		\node[below=0.3em] (S) at (braid-6-e) {$M_2$};
+	
+		\node (X) [draw, fit=(P) (Q)] {};
+		\node[below=0.2em of X] {乘入\; $M_1$};
+		\node (Y) [draw, fit=(R) (S)] {};
+		\node[below=0.2em of Y] {乘入\; $M_2$};
+	\end{tikzpicture} \; = \begin{tikzpicture}
+		[baseline=(braid), yscale=0.8]
+		\pic[
+			braid/number of strands=6,
+			braid/every strand/.style = {black},
+			name prefix=braid
+		] at (0, 0) {braid={s_2 s_4 s_3}};
+		\coordinate (braid) at ($(braid-1-s)!0.5!(braid-1-e)$);
+		\node[above] at (braid-1-s) {$A$};
+		\node[below=0.3em] (P) at (braid-1-e) {$A$};
+		\node[above] at (braid-2-s) {$A$};
+		\node[below=0.3em] (R) at (braid-2-e) {$A$};
+		\node[above] at (braid-3-s) {$A$};
+		\node[below=0.3em] at (braid-3-e) {$A$};
+		\node[above] at (braid-4-s) {$A$};
+		\node[below=0.3em] at (braid-4-e) {$A$};
+		\node[above] at (braid-5-s) {$M_1$};
+		\node[below=0.3em] (Q) at (braid-5-e) {$M_1$};
+		\node[above] at (braid-6-s) {$M_2$};
+		\node[below=0.3em] (S) at (braid-6-e) {$M_2$};
+		
+		\node (X) [draw, fit=(P) (Q)] {};
+		\node[below=0.2em of X] {乘入\; $M_1$};
+		\node (Y) [draw, fit=(R) (S)] {};
+		\node[below=0.2em of Y] {乘入\; $M_2$};
+	\end{tikzpicture}\end{center}
+	一目了然.
+
+	为了说明 $A\dcate{Mod}$ 为幺半范畴, 尚须证 $\otimes$ 的结合约束和幺元约束都是左 $A$-模的态射. 前者不难, 后者所需的是余代数的性质 $(\identity \otimes \epsilon) \Delta = \identity_A = (\epsilon \otimes \identity) \Delta$, 前提是等同 $A \otimes \munit \simeq A \simeq \munit \otimes A$.
+\end{proof}
+
+对双代数 $A$ 还能追问幺半范畴 $A\dcate{Mod}$ 有无辫结构, 以及它是否对称. 朴素的想法是应用 $\mathcal{V}$ 的辫结构 $c(M_1, M_2)$, 但这一般不是 $A\dcate{Mod}$ 中的态射; 对于 $\mathcal{V} = \Bbbk\dcate{Mod}$ 的特例, 问题的解答已经涉及\emph{拟三角双代数}的概念, 一言难尽. 以下仅表述一则平凡到略带误导性的例子.
+
+\begin{proposition}\label{prop:bialgebra-mod-symmetry}
+	设 $\mathcal{V}$ 是对称幺半范畴.
+	\begin{enumerate}[(i)]
+		\item 若 $A$ 是 $\mathcal{V}$ 上的余交换双代数, 则幺半范畴 $A\dcate{Mod}$ 和 $\cated{Mod}A$ 对 $c(M_1, M_2):  M_1 \otimes M_2 \rightiso M_2 \otimes M_1$ 成为对称幺半范畴.
+	
+		\item 对偶地, 若 $A$ 是 $\mathcal{V}$ 上的交换双代数, 则 $A\dcate{Comod}$ 和 $\cated{Comod}A$ 是对称幺半范畴.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	只论余交换情形. 沿用先前符号, 说明 $c(M_1, M_2)$ 是 $A\dcate{Mod}$ 的态射相当于验证下图外框交换
+	\[\begin{tikzcd}[row sep=large]
+		A \otimes M_1 \otimes M_2 \arrow[r, "{\Delta \otimes \identity \otimes \identity}" inner sep=0.6em] \arrow[d, "{\identity \otimes c(M_1, M_2)}" description] & A \otimes A \otimes M_1 \otimes M_2 \arrow[r, "{\identity \otimes c(A, M_1) \otimes \identity}" inner sep=0.6em] \arrow[d, "{c(A, A) \otimes c(M_1, M_2)}" description] & A \otimes M_1 \otimes A \otimes M_2 \arrow[r, "{\mu_1 \otimes \mu_2}" inner sep=0.6em] \arrow[d, "{c(A \otimes M_1, A \otimes M_2)}" description] & M_1 \otimes M_2 \arrow[d, "{c(M_1, M_2)}" description] \\
+		A \otimes M_2 \otimes M_1 \arrow[r, "{\Delta \otimes \identity \otimes \identity}"' inner sep=0.6em] & A \otimes A \otimes M_2 \otimes M_2 \arrow[r, "{\identity \otimes c(A, M_2) \otimes \identity}"' inner sep=0.6em] & A \otimes M_2 \otimes A \otimes M_1 \arrow[r, "{\mu_2 \otimes \mu_1}"' inner sep=0.6em] & M_2 \otimes M_1 .
+	\end{tikzcd}\]
+
+	左侧方块因 $A$ 余交换而交换. 右侧方块因 $c$ 的函子性而交换. 绘图可见
+	\begin{multline*}
+		c(A \otimes M_1, A \otimes M_2) = \\
+		(\identity_A \otimes c(A, M_2) \otimes \identity_{M_1}) (c(A, A) \otimes c(M_1, M_2)) (\identity_A \otimes c(A, M_1) \otimes \identity_{M_2}),
+	\end{multline*}
+	而 $\mathcal{V}$ 是对称幺半范畴, 故中间方块交换. 关于 $A\dcate{Mod}$ 的对称幺半结构的其他性质都化约到 $\mathcal{V}$ 上验证.
+\end{proof}
+
+现在引入 Hopf 代数的概念. 设 $\mathcal{V}$ 为辫幺半范畴.
+
+\begin{definition}\label{def:Hopf-algebra}
+	\index{Hopf daishu@Hopf 代数 (Hopf algebra)}
+	\index{duiji@对极 (antipode)}
+	设资料 $(A, \mu, \eta, \Delta, \epsilon)$ 是 $\mathcal{V}$ 上的双代数 $A$. 如果 $\mathcal{V}$ 中的同构 $S: A \rightiso A$ 使下图交换
+	\[\begin{tikzcd}
+		A \otimes A \arrow[d, "\mu"'] & A \otimes A \arrow[r, "{S \otimes \identity_A}"] \arrow[l, "{\identity_A \otimes S}"'] & A \otimes A \arrow[d, "\mu"] \\
+		A & A \arrow[u, "\Delta"] \arrow[r, "\eta\epsilon"'] \arrow[l, "\eta\epsilon"] & A ,
+	\end{tikzcd}\]
+	亦即
+	\[ \mu (\identity_A \otimes S) \Delta = \eta\epsilon = \mu (S \otimes \identity_A) \Delta, \]
+	则称 $S$ 为 $A$ 的\emph{对极}. 带有对极的双代数称为 \emph{Hopf 代数}. Hopf 代数之间的态射定义为它们作为双代数的态射.
+\end{definition}
+
+举例明之, $\munit$ 是 Hopf 代数, 其对极取为 $\identity_{\munit}$.
+
+如以注记 \ref{rem:coalgebra-convolution} 的卷积来解释, 对极 $S$ 便相当于 $\identity_A \in \End(A)$ 对 $\star$ 的双边逆元. Hopf 代数定义中的对极若存在则是唯一的, 这是下述结果施于 $f = \identity_A$ 的立即结论, 它也说明态射总是保对极.
+
+\begin{proposition}\label{prop:antipode-homo}
+	设 $A$ 和 $A'$ 为 $\mathcal{V}$ 上的 Hopf 代数, 分别有对极 $S$ 和 $S'$, 则对于任何 Hopf 代数之间的态射 $f: A \to A'$ 皆有 $S' f = f S$.
+\end{proposition}
+\begin{proof}
+	基于卷积 $\star$ 的函子性 \eqref{eqn:convolution-functorial}, 映射
+	\[\begin{tikzcd}
+		\Hom(A', A') \arrow[r, "{g \mapsto gf}"] & \Hom(A, A')
+	\end{tikzcd}, \quad \begin{tikzcd}
+		\Hom(A, A) \arrow[r, "{h \mapsto fh}"] & \Hom(A, A')
+	\end{tikzcd}\]
+	皆是卷积幺半群的同态. 因此 $S'f$ 和 $fS$ 同为 $f \in \Hom(A, A')$ 的卷积逆.
+\end{proof}
+
+考虑到 $\mathcal{V}$ 的辫结构给出 $\mathcal{V}^{\opp}$ 的辫结构, 双代数的概念显然自对偶. 以下说明对极的定义亦然.
+
+\begin{proposition}\label{prop:bialgebra-duality}
+	若 $(A, \mu, \eta, \Delta, \epsilon)$ 是 $\mathcal{V}$ 上的双代数, 则 $(A, \eta, \mu, \epsilon, \Delta)$ 是 $\mathcal{V}^{\opp}$ 上的双代数. 若 Hopf 代数 $(A, \mu, \eta, \Delta, \epsilon)$ 有对极 $S$, 则 $S^{-1}$ 是 $(A, \eta, \mu, \epsilon, \Delta)$ 是 $\mathcal{V}^{\opp}$ 的对极; 特别地, 后者是 $\mathcal{V}^{\opp}$ 上的 Hopf 代数.
+\end{proposition}
+\begin{proof}
+	定义 \ref{def:Hopf-algebra} 的图表自对偶, 但 $S$ 走向逆转.
+\end{proof}
+
+\begin{proposition}\label{prop:Hopf-antiautomorphism}
+	\index[sym1]{Acop@$A_{\mathrm{cop}}, A^{\mathrm{op}}_{\mathrm{cop}}$}
+	对于双代数 $A$, 按照定义 \ref{def:opposite-braided-algebra},
+	\begin{compactitem}
+		\item 以辫结构 $c(A, A)$ 翻转 $A$ 的乘法, 得到代数 $A^{\mathrm{op}}$;
+		\item 以 $c(A, A)^{-1}$ 翻转 $A$ 的余乘法, 得到余代数 $A_{\mathrm{cop}}$.
+	\end{compactitem}
+	两种操作一道给出双代数 $A^{\mathrm{op}}_{\mathrm{cop}}$. 若 $A$ 有对极 $S$, 则 $S$ 也是 $A^{\mathrm{op}}_{\mathrm{cop}}$ 的对极, 此时 $S: A \rightiso A^{\mathrm{op}}_{\mathrm{cop}}$ 是双代数的同构.
+\end{proposition}
+\begin{proof}
+	例行的验证表明 $A^{\mathrm{op}}_{\mathrm{cop}}$ 确实是双代数, 以 $S$ 为其对极, 细节不赘. 余下断言可以成两部分. 首先是 $S$ 保幺元和余幺元. 这是容易的: 在命题 \ref{prop:antipode-homo} 中分别取 $A = \munit$ 和 $A' = \munit$ 即可.
+	
+	其次是 $S$ 保持乘法和余乘法. 一般版本的证明比较复杂, 详见 \cite[\S 9, Proposition 2]{JS91} 或 \cite[Proposition 1.22]{AM10}, 此处仅简述 $\mathcal{V} = \Bbbk\dcate{Mod}$, $\otimes = \otimes_{\Bbbk}$ 连同其标准辫结构的特例, 这也是稍后唯一需要的情形.
+	
+	回忆 \S\ref{sec:alg-in-monoidal-cat} 可见 $A \otimes A$ 自然地成为余代数. 按注记 \ref{rem:coalgebra-convolution} 赋予 $\Hom(A \otimes A, A)$ 卷积, 记为 $\ast$, 并考虑其元素
+	\[ f := \mu, \quad g := \mu c(A, A) (S \otimes S), \quad h := S \mu. 
+	\]
+	问题归结为证 $h \ast f = \eta_A \epsilon_{A \otimes A} = f \ast g$, 这将说明 $f$ 是幺半群 $(\Hom(A \otimes A, A), \ast)$ 的可逆元, 从而说明 $h = g$. 设 $a, b \in A$, 写下展开式
+	\begin{gather*}
+		\Delta(a) = \sum_i a_i^{(1)} \otimes a_i^{(2)}, \quad
+		\Delta(b) = \sum_j b_j^{(1)} \otimes b_j^{(2)}.
+	\end{gather*}
+	将 $\mu$ 直接写作乘法. 基于 $\Bbbk\dcate{Mod}$ 的标准辫结构, 可以推得
+	\begin{align*}
+		(h \ast f)(a \otimes b) & = \sum_{i, j} h\left(a^{(1)}_i \otimes b^{(1)}_j\right) f\left(a^{(2)}_i \otimes b^{(2)}_j\right) \\
+		& = \sum_{i, j} S\left( a^{(1)}_i b^{(1)}_j \right) a^{(2)}_i b^{(2)}_j \\
+		& = (\underbracket{S \star \identity_A}_{\End(A)\;\text{的卷积}})(ab) = \eta_A \epsilon_A (ab), \\
+		(f \ast g)(a \otimes b) & = \cdots = \sum_{i, j} a^{(1)}_i b^{(1)}_j S\left( b^{(2)}_j \right) S\left( a^{(2)}_i \right) \\
+		& = \sum_i a^{(1)}_i \eta_A \epsilon_A(b) S\left( a^{(2)}_i \right) \\
+		& = \eta_A \epsilon_A (a) \cdot \eta_A \epsilon_A (b) = \eta_A \epsilon_A(ab), \\
+		\eta_A \epsilon_{A \otimes A}(a \otimes b) & = \eta_A\left( \epsilon_A(a)\epsilon_A(b) \right) = \eta_A \epsilon_A(ab),
+	\end{align*}
+	断言得证, 故 $S$ 保持双代数的乘法. 类似的论证说明 $S$ 保余乘法.
+\end{proof}
+
+特别地, 若 $\mathcal{V}$ 是对称幺半范畴, 则 $S^2$ 是 $A$ 的自同构.
+
+\begin{corollary}\label{prop:Hopf-involution}
+	设 Hopf 代数 $A$ 以 $S$ 为对极. 若 $A$ 是交换或余交换的, 则 $S^2 = \identity$.
+\end{corollary}
+\begin{proof}
+	相对于 $\End(A)$ 的卷积 $\star$ (注记 \ref{rem:coalgebra-convolution}), 我们有
+	\[ S \star S^2 = \mu (S \otimes S^2) \Delta = \mu (S \otimes S)(\identity \otimes S) \Delta. \]
+	
+	若 $A$ 交换, 则 $\mu c(A, A) = \mu$ 而命题 \ref{prop:Hopf-antiautomorphism} 化上式为
+	\[ \mu c(A, A) (S \otimes S) (\identity \otimes S)\Delta = S\mu (\identity \otimes S)\Delta = S(\identity \star S). \]
+	对极的定义表明 $\identity \star S = \eta\epsilon$, 而上述命题蕴涵 $S\eta = \eta$, 最终得到 $\eta\epsilon$.
+	
+	若 $A$ 余交换, 则 $c(A, A) \Delta = \Delta$ 而辫结构的函子性化 $S \star S^2$ 为
+	\[ \mu (S \otimes S)(\identity \otimes S) c(A, A) \Delta = \mu c(A, A) (S \otimes S)(S \otimes \identity)\Delta, \]
+	相同的论证继而化之为 $S(S \star \identity) = \eta\epsilon$.
+	
+	综上可见 $S^2$ 是 $S$ 的卷积逆, 故 $S^2 = \identity$.
+\end{proof}
+
+以下的例子都取 $\mathcal{V} = \Bbbk\dcate{Mod}$ 和 $\otimes = \otimes_{\Bbbk}$, 其中 $\Bbbk$ 是交换环.
+
+\begin{example}\label{eg:group-Hopf-algebra}
+	设 $G$ 是群. 构造群 $\Bbbk$-代数 $\Bbbk[G]$. 例 \ref{eg:monoid-bialgebra} 赋予 $\Bbbk[G]$ 双代数的结构. 定义 $\Bbbk$-模自同构 $S: \Bbbk[G] \to \Bbbk[G]$, 使得
+	\[ S(g) = g^{-1}, \quad g \in G. \]
+	容易验证它满足对极所需的交换图表. 故 $\Bbbk[G]$ 是 Hopf 代数.
+\end{example}
+
+\begin{example}[H.\ Hopf]
+	\index{H-space@H-空间, H-群 (H-space, H-group)}
+	记 $\{\mathrm{pt}\}$ 为独点集. 若拓扑空间 $X$ 带有连续映射 $m: X \times X \to X$ (乘法) 和 $e: \{\mathrm{pt}\} \to X$ (相当于指定 $X$ 的元素, 即幺元, 仍记为 $e$), 使两者满足乘法结合律和幺元所需性质, 精确到同伦, 则称 $(X, m, e)$ 为 \emph{H-空间}. 若再指定连续映射 $i: X \to X$ (取逆), 精确到同伦满足取逆所需性质, 则称 $(X, m, e, i)$ 为 \emph{H-群}.
+
+	拓扑幺半群 (或拓扑群) 当然是 H-空间 (或 H-群), 但是 H-空间或 H-群的条件较此宽松许多. 一个自然的范例是环路空间: 对于拓扑空间 $M$ 和选定的基点 $x_0 \in M$, 满足 $\gamma(0) = x_0 = \gamma(1)$ 的连续映射 $\gamma: [0,1] \to M$ 称为 $M$ 中的环路; 全体环路自然地成为拓扑空间 $\Omega(M, x_0)$; 若取 $m$ 为两条环路的头尾接合, $e$ 为常值映射 $x_0$, 而 $i$ 为环路逆行, 则直观可见 $\Omega(M, x_0)$ 形成 H-群; 关键是结合律和逆元性质仅在同伦意义下方得成立.
+	
+	今起考虑所有 CW 复形\footnote{拓扑术语, 和线性代数中定义的复形不尽相同.}在 $\cate{Top}$ 中构成的全子范畴, 记为 $\cate{S}$; 它包含几何中常见的流形等空间. 设 $\Bbbk$ 为域. 系数在 $\Bbbk$ 上的上同调函子 $\Hm^\bullet$ 给出从 $\cate{S}^{\opp}$ 到分次 $\Bbbk$-向量空间范畴 $\cate{Vect}(\Bbbk)^{\Z_{\geq 0}}$ 的函子. 赋予 $\cate{Vect}(\Bbbk)^{\Z_{\geq 0}}$ 由 Koszul 符号律 \eqref{eqn:Koszul-braiding} 确定的辫结构 (按照该处符号, 取 $\epsilon(a) = a \bmod\; 2$), 则上同调的杯积 $\mu := \cup$ 使函子 $\Hm^\bullet$ 通过 $\cate{CAlg}\left( \cate{Vect}(\Bbbk)^{\Z_{\geq 0}}\right)$ 分解 --- 简言之, 上同调是 $\cate{Vect}(\Bbbk)^{\Z_{\geq 0}}$ 上的交换代数.
+
+	另一方面, 赋予 $\cate{S}$ 由乘积空间确定的幺半结构, 以 $\{\mathrm{pt}\}$ 为幺元. 拓扑学中的 Künneth 公式说明 $\Hm^\bullet$ 是幺半函子; 此外, 映射的同伦不影响上同调层次的诱导映射. 综上可见若 $X \in \Obj(\cate{S})$ 是 H-空间, 则 $\Hm^\bullet(X)$ 还是 $\cate{Vect}(\Bbbk)^{\Z_{\geq 0}}$ 上的余代数.
+
+	对于了解代数拓扑学的读者, 应该不难得出 $\Hm^\bullet(X)$ 带有的代数和余代数结构兼容, 给出 $\cate{Vect}(\Bbbk)^{\Z_{\geq 0}}$ 上的双代数; 若进一步要求 $X$ 是 H-群, 并且记映射 $i$ 诱导的自同构为 $S \in \Aut(\Hm^\bullet(X))$, 则 $\Hm^\bullet(X)$ 成为 Hopf 代数.
+
+	事实上, $\Hm^\bullet(X)$ 的乘法 (杯积) 不过是对角嵌入 $\mathrm{diag}: X \to X \times X$ 通过 Künneth 公式的反映, 而幺元则是 $X \to \{\mathrm{pt}\}$ 的反映. 双代数和对极所需要的一切性质因而能在拓扑空间的层次作验证, 精确到同伦. 譬如对极等式 $\mu (S \otimes \identity) \Delta = \eta\epsilon$ 便源自
+	\[ \left[ X \xrightarrow{\mathrm{diag}} X \times X \xrightarrow{(i, \identity)} X \times X \xrightarrow{m} X\right] \;\text{同伦等价于}\; \left[ X \to \{\mathrm{pt}\} \xrightarrow{e} X \right]. \]
+	
+	于是 H-群的上同调自然地成为交换 Hopf 代数, 携带丰富的结构. 这是 Hopf 研究这类代数的原初动机.
+\end{example}
+
+习题将给出 Hopf 代数的更多例子, 它们多数或者交换, 或者余交换, 但也存在许多 Hopf 代数两者皆非, 其中最重要的一类是\emph{量子群}. 相关讨论需要 Lie 理论的铺垫, 本书不论.
+
+\section{Beck 单子性定理}\label{sec:Beck}
+设 $\mathcal{C}$ 是范畴. 考虑以所有自函子 $T: \mathcal{C} \to \mathcal{C}$ 为对象, 以自函子之间的态射构成的函子范畴 $\mathcal{C}^{\mathcal{C}}$. 它自然地成为一个幺半范畴, 其乘法 $\otimes$ 是函子的合成运算, 幺元 $\munit$ 是恒等函子. 因为函子的合成满足严格结合律, 它还是严格幺半范畴.
+
+\begin{definition}[单子和余单子]\label{def:monad}
+	\index{danzi@单子 (monad)}
+	\index{yudanzi@余单子 (comonad)}
+	设 $\mathcal{C}$ 为范畴. 幺半范畴 $\mathcal{C}^{\mathcal{C}}$ 中的代数 (定义 \ref{def:algebra-monoidal}) 称为 $\mathcal{C}$ 上的单子. 对偶地, $\mathcal{C}^{\opp}$ 上的单子称为 $\mathcal{C}$ 上的余单子.
+\end{definition}
+
+对自函子范畴 $\mathcal{C}^{\mathcal{C}}$ 展开定义 \ref{def:algebra-monoidal}, 可知单子是资料 $(T, \mu, \eta)$, 其中 $T: \mathcal{C} \to \mathcal{C}$ 是函子, $\mu: T^2 \to T$ 和 $\eta: \identity_{\mathcal{C}} \to T$ 是态射, 使得下图交换
+\begin{equation*}\begin{gathered}
+	\begin{tikzcd}
+		T \arrow[r, "{\eta T}"] \arrow[rd, "\identity"'] & T^2 \arrow[d, "\mu"] & T \arrow[l, "{T\eta}"'] \arrow[ld, "\identity"] \\
+		& T &
+	\end{tikzcd} \quad
+	\begin{tikzcd}
+		T^3 \arrow[r, "\mu T"] \arrow[d, "T\mu"'] & T^2 \arrow[d, "\mu"] \\
+		T^2 \arrow[r, "\mu"'] & T.
+	\end{tikzcd}
+\end{gathered}\end{equation*}
+
+相较于原定义, 此处不再需要结合约束, 而 $\eta \otimes \identity$ (或 $\identity \otimes \eta$) 则被翻译为 $\eta T$ (或 $T\eta$), 依此类推.
+
+对偶地, 余单子 $(L, \delta, \epsilon)$ 由函子 $L: \mathcal{C} \to \mathcal{C}$, 态射 $\delta: L \to L^2$ 和 $\epsilon: L \to \identity_{\mathcal{C}}$ 组成, 条件是使下图交换.
+\begin{equation*}\begin{gathered}
+	\begin{tikzcd}
+		L  & L^2 \arrow[l, "{\epsilon L}"'] \arrow[r, "{L\epsilon}"] & L \\
+		& L \arrow[lu, "\identity"] \arrow[ru, "\identity"'] \arrow[u, "\delta"] &
+	\end{tikzcd} \quad
+	\begin{tikzcd}
+		L^3 & L^2 \arrow[l, "\delta L"'] \\
+		L^2 \arrow[u, "L\delta"] & L \arrow[u, "\delta"'] \arrow[l, "\delta"]
+	\end{tikzcd}
+\end{gathered}\end{equation*}
+
+我们习惯将资料 $(T, \mu, \eta)$ (或 $(L, \delta, \epsilon)$) 简记为 $T$ (或 $L$). 单子和余单子的主要来源是伴随对.
+
+\begin{example}[伴随对确定单子]\label{eg:adjunction-monad}
+	考虑一对伴随函子
+	\[\begin{tikzcd}
+		F: \mathcal{C} \arrow[shift left, r] & \mathcal{D}: G \arrow[shift left, l],
+	\end{tikzcd}\]
+	以及相应的单位 $\eta: \identity_{\mathcal{C}} \to GF$ 和余单位 $\varepsilon: FG \to \identity_{\mathcal{D}}$ 态射. 今将定义 $\mathcal{C}$ 上的单子 $(T, \mu, \eta)$ 和 $\mathcal{D}$ 上的余单子 $(L, \delta, \varepsilon)$ 如下.
+	\[\begin{array}{|c|c|}\hline
+		T := GF & L := FG \\
+		\mu := \left[ GFGF \xrightarrow{G\varepsilon F} GF \right] & \delta := \left[ FG \xrightarrow{F\eta G} FGFG \right] \\
+		\eta : \identity_{\mathcal{C}} \to GF & \varepsilon: FG \to \identity_{\mathcal{D}} \\ \hline 
+	\end{array}\]
+
+	基于对偶性, 就 $(T, \mu, \eta)$ 的情形验证单子的公理即可. 首先是关于幺元的图表
+	\[\begin{tikzcd}[column sep=large]
+		GF \arrow[r, "{\eta GF}"] \arrow[equal, rd] & GFGF \arrow[d, "{G\varepsilon F}"] & GF \arrow[l, "{GF\eta}"'] \arrow[equal, ld] \\
+		& GF &
+	\end{tikzcd}\]
+	其交换性来自三角等式 $(G\varepsilon)(\eta G) = \identity_G$ 和 $(\varepsilon F)(F\eta) = \identity_F$. 结合律图表是
+	\[\begin{tikzcd}[column sep=large]
+		GFGFGF \arrow[d, "{G\varepsilon FGF}"'] \arrow[r, "{GFG\varepsilon F}"] & GFGF \arrow[d, "G\varepsilon F"] \\
+		GFGF \arrow[r, "G\varepsilon F"'] & GF
+	\end{tikzcd}\]
+	它是交换的: 两路合成同样图解为
+	\[\begin{tikzcd}
+		\mathcal{C} \arrow[r, "F"] & \mathcal{D} \arrow[r, "G"] \arrow[rr, bend right=60, ""{name=A}, "{\identity}"'] & \mathcal{C} \arrow[r, "F"] \arrow[Rightarrow, to=A, "\varepsilon"] &
+		\mathcal{D} \arrow[r, "G"] \arrow[rr, bend right=60, ""{name=B}, "{\identity}"'] & \mathcal{C} \arrow[r, "F"] \arrow[Rightarrow, to=B, "\varepsilon"] & \mathcal{D} \arrow[r, "G"] & \mathcal{C}
+	\end{tikzcd}\]
+	只是两个弓形区域的合成次序不同, 其产物则相同; 这是态射纵横合成的互换律 \cite[引理 2.2.7]{Li1} 的一则特例.
+\end{example}
+
+由于自函子作用在 $\mathcal{C}$ 上, 我们希望在 $\mathcal{C}$ 中探讨在单子 $T$ 作用下的``模''. 由于历史的原因, 这种结构也被称为 $T$-代数.
+
+\begin{definition}[S.\ Eilenberg, J.\ C.\ Moore]\label{def:T-Alg}
+	\index{mo}
+	设 $(T, \mu, \eta)$ 是 $\mathcal{C}$ 上的单子. 所谓 $T$-模, 系指资料 $(M, a)$, 其中 $M \in \Obj(\mathcal{C})$ 而 $a$ 是 $\mathcal{C}$ 的态射 $T(M) \to M$, 使得下图交换
+	\[\begin{tikzcd}
+		T^2 (M) \arrow[r, "Ta"] \arrow[d, "\mu_M"'] & T(M) \arrow[d, "a"] \\
+		T(M) \arrow[r, "a"'] & M
+	\end{tikzcd} \quad \begin{tikzcd}
+		M \arrow[r, "\eta_M"] \arrow[rd, "{\identity_M}"'] & T(M) \arrow[d, "a"] \\
+		& M .
+	\end{tikzcd}\]
+
+	所有 $T$-模构成范畴 $\mathcal{C}^T$: 从 $(M, a)$ 到 $(M', a')$ 的态射定为 $\mathcal{C}$ 中使得下图交换的态射 $f: M \to M'$
+	\[\begin{tikzcd}
+		T(M) \arrow[r, "a"] \arrow[d, "Tf"'] & M \arrow[d, "f"] \\
+		T(M')  \arrow[r, "{a'}"'] & M' .
+	\end{tikzcd}\]
+
+	对偶地, 设 $(L, \delta, \epsilon)$ 是 $\mathcal{C}$ 上的余单子, 所谓 $L$-余模是资料 $(N, b)$, 其中 $b$ 是态射 $N \to L(N)$, 条件是有与先前相对偶的交换图表. 我们将 $L$-余模范畴记为 $\mathcal{C}^L$.
+\end{definition}
+
+关于 $T$-模的两个交换图表应当分别被设想为 $T$ 作用下的结合律和幺元律. 今后的例子和性质主要针对单子及其上的模加以陈述, 余单子和余模的版本纯然是对偶的.
+
+\begin{example}\label{eg:Mon-monad}
+	记 $\cate{Mon}$ 为幺半群构成的范畴, 按惯例默认实现在小集上, 并考虑伴随对
+	\[\begin{tikzcd}
+		\mathbf{M}: \cate{Set} \arrow[r, shift left] & \cate{Mon}: U, \arrow[l, shift left]
+	\end{tikzcd}\]
+	其中 $\mathbf{M}$ 映集合 $X$ 为自由幺半群 $\mathbf{M}(X)$, 其定义和构造见 \cite[定义 4.8.1, 引理 4.8.4]{Li1}, 而 $U$ 是忘却函子. 相应地
+	\[ T := U\mathbf{M}: \cate{Set} \to \cate{Set}, \quad T(X) = \bigsqcup_{n \geq 0} X^n, \]
+	换言之 $T(X)$ 的元素是一串``字'' $(x_1, \cdots, x_n)$, $n \in \Z_{\geq 0}$. 伴随对的单位 $\eta_X: X \to U\mathbf{M}(X)$ 映 $x \in X$ 为长度为 $1$ 的字 $(x)$; 对于幺半群 $A$, 余单位 $\varepsilon_A: \mathbf{M}U(A) \to A$ 映字 $(a_1, \ldots, a_n)$ 为乘积 $a_1 \cdots a_n \in A$. 既然 $\mathbf{M}(X)$ 的乘法是接字, 故单子 $T$ 对应的 $\mu_X = U \varepsilon \mathbf{M}: T^2(X) \to T(X)$ (或视作映射 $\mathbf{M}(\mathbf{M}(X)) \to \mathbf{M}(X)$) 其效果是将``字的字''摊开, 或者说是将一串列表接合, 如
+	\[ \left( (x_1, \ldots, x_n), (y_1, \ldots, y_m), \ldots \right) \mapsto \left( x_1, \ldots, x_n, y_1, \ldots, y_m, \ldots \right). \]
+	
+	对 $T = U\mathbf{M}$ 指定 $T$-模 $(M, a)$ 相当于对集合 $M$ 上的任何一个字 $(m_1, \ldots, m_n)$ 指定 $m_1 \cdots m_n := a(m_1, \ldots, m_n)$, 使得 $a(m) = m$ 而结合律
+	\[ a\left( a(x_1, \ldots, x_n), a(y_1, \ldots, y_m), \ldots \right) = a\left( x_1, \ldots, x_n, y_1, \ldots, y_m, \ldots \right) \]
+	成立. 一句话, $T$-模无非是幺半群, 以空字 ($n=0$) 对 $a$ 的像为幺元. 容易验证 $T$-模的态射也无非是幺半群同态.
+	
+	群范畴 $\cate{Grp}$ 的情形完全类似, 要点是以自由群函子 $\mathbf{F}$ 代替 $\mathbf{M}$. 对应的 $T$-模就是群.
+\end{example}
+
+\begin{example}\label{eg:Mod-monad}
+	记 $R$ 为环, 考虑伴随对
+	\[\begin{tikzcd}
+		\mathbf{F}: \cate{Set} \arrow[r, shift left] & R\dcate{Mod}: U, \arrow[l, shift left]
+	\end{tikzcd}\]
+	其中 $\mathbf{F}$ 映 $X$ 为自由左 $R$-模 $R^{\oplus X}$, 而 $U$ 是忘却函子, 由此得到 $\cate{Set}$ 上的单子 $(T, \mu, \eta)$. 和例 \ref{eg:Mon-monad} 类似, $T = U\mathbf{F}$ 映集合 $X$ 为作为集合的 $R^{\oplus X}$, 其元素是 $X$ 的形式有限 $R$-线性组合 $\text{\textquotedblleft} r_1 x_1 + \cdots + r_n x_n \text{\textquotedblright}$, 单位 $\eta_X$ 映 $x \in X$ 为 $\text{\textquotedblleft} x \text{\textquotedblright}$, 而 $\mu_X: R^{\oplus (R^{\oplus} X)} \to R^{\oplus X}$ 将双层线性组合摊开, 即
+	\begin{multline*}
+		\text{\textquotedblleft} \alpha (\text{\textquotedblleft} r_1 x_1 + \cdots + r_n x_n \text{\textquotedblright}) + \beta (\text{\textquotedblleft} s_1 y_1 + \cdots + s_m y_m \text{\textquotedblright}) + \cdots \text{\textquotedblright} \\
+		\mapsto \text{\textquotedblleft} (\alpha r_1) x_1 + \cdots + (\alpha r_n) x_n + (\beta s_1) y_1 + \cdots + (\beta s_m) y_m + \cdots \text{\textquotedblright} .
+	\end{multline*}
+	指定 $T$-模 $(M, a)$ 相当于指定集合 $M$ 以及映形式线性组合为 $M$ 的元素的一种规则, 映 $\text{\textquotedblleft} x \text{\textquotedblright}$ 为 $x$, 对加法和纯量乘法有结合律, 而且 $1 \in R$ 的纯量乘法是恒等映射. 一句话, $T$-模无非是左 $R$-模. 易见 $T$-模的态射即模同态.
+\end{example}
+
+回到一般理论. 我们有忘却函子 $U^T: \mathcal{C}^T \to \mathcal{C}$ 映对象 $(M, a)$ 为 $M$. 以下给出忘却的左伴随: 自由.
+
+\begin{definition-proposition}[自由 $T$-模]\label{def:free-T-Alg}
+	\index{mo!自由 (free)}
+	设 $(T, \mu, \eta)$ 是 $\mathcal{C}$ 上的单子. 定义函子
+	\[ \mathrm{Free}^T: \mathcal{C} \to \mathcal{C}^T , \quad
+	\begin{array}{rl}
+		(\text{对象}\; M) & \mapsto (TM, \mu_M: T^2 M \to TM), \\
+		(\text{态射}\; f: M \to M') & \mapsto Tf: TM \to TM'.
+	\end{array}\]
+	这给出伴随对
+	\[\begin{tikzcd}
+		\mathrm{Free}^T : \mathcal{C} \arrow[shift left, r] & \mathcal{C}^T: U^T \arrow[shift left, l],
+	\end{tikzcd}\]
+	而此伴随对在 $\mathcal{C}$ 上确定的单子正是 $(T, \mu, \eta)$.
+\end{definition-proposition}
+\begin{proof}
+	为了验证 $(TM, \mu_M)$ 是 $T$-模, 需要的是交换图表
+	\[\begin{tikzcd}
+		T^3 (M) \arrow[r, "T\mu_M"] \arrow[d, "\mu_{T(M)}"'] & T^2(M) \arrow[d, "\mu_M"] \\
+		T^2 (M) \arrow[r, "\mu_M"'] & T(M)
+	\end{tikzcd} \quad \begin{tikzcd}
+		T(M) \arrow[r, "\eta_{T(M)}"] \arrow[rd, "\identity"'] & T^2(M) \arrow[d, "\mu_M"] \\
+		& T(M)
+	\end{tikzcd}\]
+	然而这是将定义 \ref{def:monad} 的函子图表在对象 $M$ 上取值的结果. 函子性是清晰的.
+	
+	其次, 留意到 $U^T \mathrm{Free}^T = T$. 取 $T$ 自带的 $\eta: \identity_{\mathcal{C}} \to T$, 并且定义
+	\[ \epsilon: \mathrm{Free}^T U^T \to \identity_{\mathcal{C}^T}, \quad
+	\epsilon_{(M, a)}: (TM, \mu_M) \xrightarrow{a} (M, a) \in \Obj(\mathcal{C}^T). \]
+	定义 \ref{def:T-Alg} 的左图说明 $\epsilon_{(M, a)}$ 是 $\mathcal{C}^T$ 中的态射. 它的函子性同样清楚.
+	
+	例行的验证说明 $(\mathrm{Free}^T, U^T)$ 构成分别以 $\eta$ 和 $\epsilon$ 为单位和余单位的伴随对, 细节不赘. 此外
+	\begin{equation*}\begin{aligned}
+		\left(U^T \epsilon \mathrm{Free}^T\right)_M & = U^T \epsilon_{(TM, \mu_M)} \\
+		& = \left[ \mu_M: T^2(M) \to T(M)\right],
+	\end{aligned}\end{equation*}
+	这便说明伴随对 $(\mathrm{Free}^T, U^T)$ 在 $\mathcal{C}$ 上确定的单子是 $(T, \mu, \eta)$.
+\end{proof}
+
+对于例 \ref{eg:Mon-monad}, \ref{eg:Mod-monad} 的单子, 函子 $\mathrm{Free}^T$ 分别对应到自由幺半群和自由模的构造.
+
+对偶地, 范畴 $\mathcal{D}$ 上的余单子 $L$ 也给出自由--忘却伴随对, 不用多言.
+
+\begin{lemma}\label{prop:T-comparison}
+	考虑来自伴随对 $(F, G)$ 的单子 $T$ 和余单子 $L$. 设 $N \in \Obj(\mathcal{D})$, 则资料
+	\[ M := G(N) \in \Obj(\mathcal{C}), \quad a: T(M) = GFG(N) \xrightarrow{G\varepsilon_N} G(N) = M \]
+	给出 $(M, a) \in \Obj(\mathcal{C}^T)$. 由此得到函子 $\mathbb{K}: \mathcal{D} \to \mathcal{C}^T$, 满足 $G = U^T \mathbb{K}$.
+	
+	对偶地, $F$ 也有典范分解 $\mathcal{C} \xrightarrow{\mathbb{K}} \mathcal{D}^L \to \mathcal{D}$, 今后写作 $F = U^L \mathbb{K}$, 其中 $U^L$ 是忘却函子\footnote{采用相同符号 $\mathbb{K}$ 不至于引起太大的混淆, 因为本书不会同时考虑单子和余单子.}.
+\end{lemma}
+\begin{proof}
+	只论 $T$ 的情形. 定义 \ref{def:T-Alg} 的图表对此化为
+	\[\begin{tikzcd}
+		GFGFG(N) \arrow[r, "GFG\varepsilon" inner sep=0.5em] \arrow[d, "{G\varepsilon FG}"'] & GFG(N) \arrow[d, "G\varepsilon"] \\
+		GFG(N) \arrow[r, "G\varepsilon"'] & G(N)
+	\end{tikzcd} \quad \begin{tikzcd}
+		G(N) \arrow[r, "\eta G"] \arrow[equal, rd] & GFG(N) \arrow[d, "{G\varepsilon}"] \\
+		& G(N),
+	\end{tikzcd} \]
+	交换性的验证和例 \ref{eg:adjunction-monad} 如出一辙, 不必重复; $N \mapsto (M, a)$ 的函子性是自明的.
+\end{proof}
+
+对于给定伴随对 $(F, G)$, 应用函子是一个丢失结构的过程. 引理 \ref{prop:T-comparison} 将 $G$ (或 $F$) 拆成 $U^T \mathbb{K}$ (或 $U^L \mathbb{K}$). 我们想明白结构是否只被第二步的忘却函子 $U^T$ 丢失, 如果答案是肯定的, 过程中丢失的信息便能借助单子 $T$ (或余单子 $L$) 来重构. 这就启发了以下概念.
+
+\begin{definition}\label{def:monadic}
+	考虑一对伴随函子
+	$\begin{tikzcd}
+		F: \mathcal{C} \arrow[shift left, r] & \mathcal{D}: G \arrow[shift left, l]
+	\end{tikzcd}$,
+	以此定义 $\mathcal{C}$ 上的单子 $T$ 和 $\mathcal{D}$ 上的余单子 $L$.
+	\begin{itemize}
+		\item 若引理 \ref{prop:T-comparison} 的函子 $\mathbb{K}: \mathcal{D} \to \mathcal{C}^T$ 是范畴等价, 则称此伴随对是\emph{单子的}.
+		\item 若对偶版本 $\mathbb{K}: \mathcal{C} \to \mathcal{D}^L$ 是范畴等价, 则称此伴随对是\emph{余单子}的.
+	\end{itemize}
+\end{definition}
+
+举例明之, 例 \ref{eg:Mon-monad}, \ref{eg:Mod-monad} 中的自由--遗忘伴随对都是单子的; 仔细检验可以发现其中的 $\mathbb{K}$ 还是范畴的同构.
+
+行将介绍的 Beck 定理又称单子性定理或 Barr--Beck 定理, 它刻画单子性. 这涉及一些预备工作.
+
+\begin{definition-proposition}
+	\index{fenliecha@分裂叉 (split fork)}
+	考虑任意范畴 $\mathcal{C}$ 中的图表
+	\begin{equation*}\label{eqn:split-coeq}\begin{tikzcd}[column sep=large]
+		A \arrow[shift left, r, "u"] \arrow[shift right, r, "v" description] & B \arrow[r, "h"] \arrow[dashed, l, bend left, "t"] & Z \arrow[dashed, l, bend left, "s"]
+	\end{tikzcd}\end{equation*}
+	使得实线部分交换, 亦即 $hu = hv$, 而且 $h$ 和 $v$ 各自有虚线所示的截面 (亦即右逆) $s$ 和 $t$, 满足 $sh = ut \in \End(B)$. 具此性质的实线部分图表称为\emph{分裂叉}. 它自动给出 $u$ 和 $v$ 在 $\mathcal{C}$ 中的余等化子.
+\end{definition-proposition}
+\begin{proof}
+	考虑以下场景
+	\[\begin{tikzcd}[row sep=small]
+		& & W \\
+		A \arrow[shift left, r, "u"] \arrow[shift right, r, "v"'] & B \arrow[r, "h"'] \arrow[ru, "k"] & Z
+	\end{tikzcd} \qquad \begin{array}{ll}
+		W \in \Obj(\mathcal{C}) \\
+		ku = kv.
+	\end{array} \]
+	若存在 $\varphi: Z \to W$ 使得 $\varphi h = k$, 则 $\varphi = \varphi hs = ks$; 反之, $\varphi := ks$ 确实满足 $\varphi h = ksh = kut = kvt = k$. 这就验证了泛性质.
+\end{proof}
+
+不同于一般的余等化子, 分裂叉是``绝对''的: 它们对任意函子的像仍是分裂叉.
+
+\begin{example}\label{eg:T-split-fork}
+	设 $(T, \mu, \eta)$ 是 $\mathcal{C}$ 上的单子, 则任何 $(M, a) \in \Obj(\mathcal{C}^T)$ 都给出 $\mathcal{C}$ 中的分裂叉
+	\begin{equation*}\begin{tikzcd}[column sep=large]
+			T^2(M) \arrow[shift left, r, "Ta"] \arrow[shift right, r, "\mu_M" description] & T(M) \arrow[r, "a"] \arrow[dashed, bend left, l, "\eta_{TM}"] & M \arrow[dashed, bend left, l, "\eta_M"]
+		\end{tikzcd} \quad \begin{array}{ll}
+			a (Ta) = a \mu_M , & \eta_M a = (Ta) \eta_{TM}, \\
+			a \eta_M = \identity_M , & \mu_M \eta_{TM} = \identity_{TM}.
+	\end{array}\end{equation*}
+	右侧列出的等式是定义 \ref{def:monad} 和 \ref{def:T-Alg} 的内容; 例如 $\eta_M a = (Ta) \eta_{TM}$ 缘于 $\eta: \identity_{\mathcal{C}} \to T$ 的自然性. 特别地, 上图将 $M$ 实现为 $Ta$ 和 $\mu_M$ 的余等化子.
+\end{example}
+
+\begin{definition}\label{def:Beck-split-pair}
+	考虑函子 $G: \mathcal{D}\to \mathcal{C}$ 和 $\mathcal{D}$ 的一对态射 $f, g: X \rightrightarrows Y$. 如果存在态射 $h: G(Y) \to Z$ 使得图表
+	\begin{equation*}\begin{tikzcd}
+			G(X) \arrow[shift left, r, "Gf"] \arrow[shift right, r, "Gg"'] & G(Y) \arrow[r, "h"] & Z
+	\end{tikzcd}\end{equation*}
+	是 $\mathcal{C}$ 中的分裂叉, 则称 $(f, g)$ 是 $\mathcal{D}$ 中的 $G$-分裂对.
+\end{definition}
+
+设 $(f, g)$ 是 $G$-分裂对. 既然 $(Gf, Gg)$ 有余等化子, 一个自然的问题是能否将之提升为 $(f, g)$ 在 $\mathcal{D}$ 中的等化子, 以及此提升是否唯一. 余等化子是 $\varinjlim$ 的特例, 定义 \ref{def:create-limit} 关于函子生 $\varinjlim$ 或保 $\varinjlim$ 的概念为此提供了一套方便的术语.
+
+留意到忘却函子 $U^T: \mathcal{C}^T \to \mathcal{C}$ 是定义 \ref{def:conservative} 所谓的保守函子.
+
+\begin{lemma}\label{prop:UT-split-fork}
+	设 $(T, \mu, \eta)$ 是 $\mathcal{C}$ 上的单子, 则函子 $U^T$ 生 $U^T$-分裂对的余等化子.
+\end{lemma}
+\begin{proof}
+	设有 $\mathcal{C}^T$ 中的一对态射 $u, v: (M, a) \rightrightarrows (M', a')$ 和 $\mathcal{C}$ 中的分裂叉
+	\begin{equation*}\begin{tikzcd}[column sep=large]
+		M \arrow[shift left, r, "u"] \arrow[shift right, r, "v" description] & M' \arrow[r, "h"] \arrow[dashed, l, bend left, "t"] & M'' \arrow[dashed, l, bend left, "s"].
+	\end{tikzcd}\end{equation*}
+	由于上图给出 $\mathcal{C}$ 中的等化子, 问题归结为将 $M''$ 唯一地扩充为 $(M'', a'') \in \Obj(\mathcal{C}^T)$, 使得 $h$ 是 $\mathcal{C}^T$ 中的态射, 然后说明这给出 $u$ 和 $v$ 在 $\mathcal{C}^T$ 中的余等化子.
+	
+	分裂叉对任意函子的像仍是分裂叉, 故在实线部分的交换图表
+	\[\begin{tikzcd}
+		T(M) \arrow[shift left, r, "Tu"] \arrow[shift right, r, "Tv"'] \arrow[d, "a"'] & T(M') \arrow[r, "Th"] \arrow[d, "{a'}"] & T(M'') \arrow[dashed, d, "{a''}"] \\
+		M \arrow[shift left, r, "Tu"] \arrow[shift right, r, "Tv"'] & M' \arrow[r, "h"'] & M''
+	\end{tikzcd}\]
+	中, 两行都是 $\mathcal{C}$ 中的余等化子, 从而泛性质给出唯一的 $a''$ 使得全图交换. 如能说明 $(M'', a'')$ 是 $T$-代数, 则上图右部交换相当于说 $h$ 是 $\mathcal{C}^T$ 中的态射.
+	
+	为此, 问题在于验证以下交换图表
+	\[\begin{tikzcd}
+		M'' \arrow[r, "{\eta_{M''}}"] \arrow[equal, rd] & T(M'') \arrow[d, "{a''}"] \\
+		& T(M'')
+	\end{tikzcd} \quad
+	\begin{tikzcd}
+		T^2(M'') \arrow[r, "{\mu_{M''}}"] \arrow[d, "{Ta''}"'] & T(M'') \arrow[d, "{a''}"] \\
+		T(M'') \arrow[r, "{a''}"'] & M'' .
+	\end{tikzcd}\]
+	余等化子图表说明 $h$ 和 $Th$ 满 (同理, $T^2 h$ 满), 故易从 $M$ 和 $M'$ 的相应交换图表说明上图确实交换.
+	
+	最后来说明 $h$ 给出 $u$ 和 $v$ 在 $\mathcal{C}^T$ 中的余等化子. 设有 $\mathcal{C}^T$ 的态射 $k: (M'', a'') \to (W, b)$ 满足 $ku = kv$, 则在 $\mathcal{C}$ 中存在唯一态射 $\varphi: M'' \to W$ 使得 $\varphi h = k$. 问题归结为证明 $\varphi$ 实则是 $\mathcal{C}^T$ 的态射. 考虑图表:
+	\[\begin{tikzcd}
+		T(M') \arrow[r, "Th"] \arrow[d, "{a'}"'] & T(M'') \arrow[r, "T\varphi"] \arrow[d, "{a''}"] & T(W) \arrow[d, "b"] \\
+		M' \arrow[r, "h"'] & M'' \arrow[r, "\varphi"'] & W
+	\end{tikzcd}\]
+	上下两行分别合成为 $Tk$ 和 $k$, 因为 $h$ 和 $k$ 是 $\mathcal{C}^T$ 中的态射, 图表的整个外框和左方块皆交换, 故右侧方块和 $Th$ 合成以后交换. 已知 $Th$ 满, 故右侧方块本身交换, 这就说明了 $\varphi$ 是 $\mathcal{C}^T$ 中的态射.
+\end{proof}
+
+\begin{lemma}\label{prop:Beck-FG-coeq}
+	设函子 $G: \mathcal{D} \to \mathcal{C}$ 有左伴随 $F$, 而且 $G$ 对所有 $G$-分裂对 $f, g: X \rightrightarrows Y$ (定义 \ref{def:Beck-split-pair}) 都生相应的余等化子, 则下图给出余等化子:
+	\begin{equation*}\begin{tikzcd}[column sep=large]
+		FGFG(N) \arrow[shift left, r, "FG\varepsilon_N"] \arrow[shift right, r, "\varepsilon_{FG(N)}"'] & FG(N) \arrow[r, "\varepsilon_N"] & N,
+	\end{tikzcd}\end{equation*}
+	其中 $N \in \Obj(\mathcal{D})$.
+\end{lemma}
+\begin{proof}
+	对图表取 $G$ 给出例 \ref{eg:T-split-fork} 在 $(M, a) := (G(N), G\varepsilon_N) = \mathbb{K}(N)$ 情形的分裂叉, 而 $G$ 生相应的余等化子. 故原图是余等化子.
+\end{proof}
+
+\begin{theorem}[J.\ M.\ Beck]\label{prop:Beck}
+	\index{Beck dingli@Beck 定理}
+	设函子 $G: \mathcal{D} \to \mathcal{C}$ 有左伴随 $F$. 以下陈述等价:
+	\begin{enumerate}[(i)]
+		\item 伴随对 $(F, G)$ 是单子的 (定义 \ref{def:monadic});
+		\item $G$ 对所有 $G$-分裂对 $f, g: X \rightrightarrows Y$ 都生相应的余等化子;
+		\item $G$ 是保守的 (定义 \ref{def:conservative}), 所有 $G$-分裂对 $f, g: X \rightrightarrows Y$ 在 $\mathcal{D}$ 中都有余等化子 $X \rightrightarrows Y \to Z$, 而且后者在 $G$ 之下的像给出 $(Gf, Gg)$ 的余等化子.
+	\end{enumerate}
+
+	当以上任一条件成立时, $\mathbb{K}: \mathcal{D} \to \mathcal{C}^T$ 的一个拟逆函子 $\mathbb{L}$ 可以按以下方式描述: 设 $(M, a) \in \Obj(\mathcal{C}^T)$, 则有余等化子图表
+	\begin{equation}\label{eqn:Beck-aux1}\begin{tikzcd}
+		FGF(M) \arrow[shift left, r, "Fa"] \arrow[shift right, r, "\varepsilon_{FM}"'] & F(M) \arrow[r] & \mathbb{L}(M, a).
+	\end{tikzcd}\end{equation}
+
+	对于由 $(F, G)$ 确定的余单子, 判准完全是对偶的.
+\end{theorem}
+\begin{proof}
+	我们先证明 (i) $\implies$ (ii). 设 $\mathbb{K}: \mathcal{D} \to \mathcal{C}^T$ 有拟逆函子 $\mathbb{L}$. 由于分裂对, 分裂叉, 生 $\varinjlim$ 等性质不受范畴等价影响, 而 $G = U^T \mathbb{K}$, 于是问题归结为证 $U^T: \mathcal{C}^T \to \mathcal{C}$ 对所有 $U^T$-分裂对生相应的余等化子, 这正是引理 \ref{prop:UT-split-fork} 的内容.
+	
+	其次有 (i) $\implies$ (iii). 既然已知 (i) $\implies$ (ii), 唯一任务是说明若 $G$ 是单子的, 则 $G$ 是保守的. 然而 $G = U^T \mathbb{K}$, 而 $\mathbb{K}$ 是范畴等价, $U^T$ 显然保守, 故 $G$ 也保守.
+	
+	以下证明 (ii) $\implies$ (i), 目标是构造 $\mathbb{K}$ 的拟逆函子 $\mathbb{L}$. 给定 $(M, a) \in \Obj(\mathcal{C}^T)$, 考虑 $\mathcal{D}$ 中的态射对
+	$\begin{tikzcd}
+		FGF(M) \arrow[shift left, r, "Fa"] \arrow[shift right, r, "\varepsilon_{FM}"'] & F(M).
+	\end{tikzcd}$
+	它们对 $G$ 的像
+	$\begin{tikzcd}
+		T^2(M) \arrow[shift left, r, "Ta"] \arrow[shift right, r, "\mu_M"'] & T(M)
+	\end{tikzcd}$\!
+	按例 \ref{eg:T-split-fork} 扩充为分裂叉, 因此 $(Fa, \varepsilon_{FM})$ 是 $G$-分裂对, 从而原图可扩充为 $\mathcal{D}$ 中的余等化子图表, 亦即断言中的 \eqref{eqn:Beck-aux1}.
+	
+	从 \eqref{eqn:Beck-aux1} 和余等化子的泛性质可见若有 $\mathcal{C}^T$ 的态射 $(M, a) \xrightarrow{\varphi} (M', a')$, 则有唯一态射 $\mathbb{L}(M, a) \to \mathbb{L}(M', a')$ 使下图交换:
+	\begin{equation*}\begin{tikzcd}
+		FGF(M) \arrow[shift left, r, "Fa"] \arrow[shift right, r, "\varepsilon_{FM}"'] \arrow[d, "FGF\varphi"'] & F(M) \arrow[r] \arrow[d, "F\varphi"] & \mathbb{L}(M, a) \arrow[d] \\
+		FGF(M') \arrow[shift left, r, "{Fa'}"] \arrow[shift right, r, "\varepsilon_{FM'}"'] & F(M') \arrow[r] & \mathbb{L}(M', a'). 
+	\end{tikzcd}\end{equation*}
+	因此 $(M, a) \mapsto \mathbb{L}(M, a)$ 成为函子 $\mathbb{L}: \mathcal{C}^T \to \mathcal{D}$.
+	
+	兹证明 $\mathbb{L}\mathbb{K} \simeq \identity_{\mathcal{C}}$. 对所有 $N \in \Obj(\mathcal{D})$, 上述构造给出余等化子图表
+	\begin{equation*}\begin{tikzcd}[column sep=large]
+		FGFG(N) \arrow[shift left, r, "FG\varepsilon_N"] \arrow[shift right, r, "\varepsilon_{FG(N)}"'] & FG(N) \arrow[r] & \mathbb{L}\mathbb{K}(N).
+	\end{tikzcd}\end{equation*}
+
+	将此和引理 \ref{prop:Beck-FG-coeq} 的余等化子图表相比较, 立得典范同构 $\mathbb{L}\mathbb{K} \simeq \identity_{\mathcal{C}}$.
+	
+	接着验证 $\mathbb{K}\mathbb{L} \simeq \identity_{\mathcal{C}^T}$. 易见 $\mathbb{K}F = \mathrm{Free}^T$, 两者都映对象 $M$ 为 $(GF(M), G\varepsilon_{FM})$. 按照定义和 $\mu := G\epsilon F$, 对 \eqref{eqn:Beck-aux1} 应用 $\mathbb{K}$ 的结果是
+	\begin{equation}\label{eqn:Beck-aux3}
+		\begin{tikzcd}[row sep=small]
+			(T^2(M), \ldots) \arrow[shift left, r, "Ta"] \arrow[shift right, r, "\mu_M"'] & (T(M), \ldots) \arrow[r] & \mathbb{K}\mathbb{L}(M, a). \\
+			\mathrm{Free}^T(T(M)) \arrow[equal, u] & \mathrm{Free}^T(M) \arrow[equal, u] &
+		\end{tikzcd}
+	\end{equation}
+
+	对 \eqref{eqn:Beck-aux3} 左边两项运用忘却函子 $U^T$ 得到
+	$\begin{tikzcd}
+		T^2(M) \arrow[shift left, r, "{Ta}"] \arrow[shift right, r, "{\mu_M}"'] & T(M)
+	\end{tikzcd}$,
+	例 \ref{eg:T-split-fork} 将之延长为以 $M$ 为余等化子的分裂叉. 然而 $U^T$ 生此余等化子 (引理 \ref{prop:UT-split-fork}), 回顾定义 \ref{def:create-limit} 可知 \eqref{eqn:Beck-aux3} 也是余等化子图表.
+	
+	另一方面, 将引理 \ref{prop:Beck-FG-coeq} 施于伴随对 $(\mathrm{Free}^T, U^T)$ 和对象 $N = (M, a)$, 耐心展开此伴随对的详细刻画, 可得余等化子图表
+	\[\begin{tikzcd}[row sep=tiny]
+		\mathrm{Free}^T(T(M)) \arrow[shift left, r, "Ta"] \arrow[shift right, r, "\mu_M"'] & \mathrm{Free}^T(M) \arrow[r] & (M, a).
+	\end{tikzcd}\]
+	和上一段相比较立得 $\mathbb{K}\mathbb{L} \simeq \identity_{\mathcal{C}^T}$.
+	
+	最后说明 (iii) $\implies$ (ii). 注意到 (iii) 的后半部相当于说 $G$-分裂对皆有余等化子, 而且 $G$ 保此余等化子. 既然 $G$ 是保守函子, 注记 \ref{rem:conservative-reflect} 说明 (ii) 成立.
+	
+	若将一切态射倒转, 但函子走向不变, 亦即以 $\mathcal{C}^{\opp}$ 和 $\mathcal{D}^{\opp}$ 代 $\mathcal{C}$ 和 $\mathcal{D}$, 便可以得到余单子性的刻画. 此处不赘.
+\end{proof}
+
+\begin{corollary}
+	考虑一对伴随函子
+	$\begin{tikzcd}
+		F: \mathcal{C} \arrow[shift left, r] & \mathcal{D}: G \arrow[shift left, l]
+	\end{tikzcd}$
+	和相应的单位 $\eta$ 和余单位态射 $\varepsilon$. 若这是单子伴随对, 则图表
+	\[\begin{tikzcd}[column sep=large]
+		FGFG(N) \arrow[shift left, r, "FG\varepsilon_N"] \arrow[shift right, r, "\varepsilon_{FG(N)}"'] & FG(N) \arrow[r, "\varepsilon_N"] & N
+	\end{tikzcd}\]
+	对所有 $N \in \Obj(\mathcal{D})$ 都是余等化子.
+\end{corollary}
+\begin{proof}
+	结合引理 \ref{prop:Beck-FG-coeq} 和定理 \ref{prop:Beck} (ii).
+\end{proof}
+
+实践中经常需要	Beck 定理的线性版本. 具体地说, 设 $\Bbbk$ 为交换环, $(F, G)$ 是 $\Bbbk\dcate{Mod}$-范畴之间的伴随对, 两者都是 $\Bbbk$-线性函子; 详见定义 \ref{def:cat-k-linear} 和命题 \ref{prop:automatic-k-morphism}. 不难看出 $\mathcal{C}^T$ 自然地成为 $\Bbbk\dcate{Mod}$-范畴, 两段函子 $\mathcal{D} \xrightarrow{\mathbb{K}} \mathcal{C}^T \xrightarrow{U^T} \mathcal{C}$ 按定义也都是 $\Bbbk$-线性的. 如果 Beck 定理 \ref{prop:Beck} 的条件 (ii) 或 (iii) 成立, 则从图表 \eqref{eqn:Beck-aux1} 的刻画易见 $\mathbb{K}$ 的拟逆函子 $\mathbb{L}$ 也是 $\Bbbk$-线性的. 这就给出 $\Bbbk$-线性的等价 $\mathbb{K}: \mathcal{D} \to \mathcal{C}^T$.
+
+\section{森田理论}\label{sec:Morita}
+本节选定 Grothendieck 宇宙 $\mathcal{U}$ 和交换环 $\Bbbk$. 相对于 $\mathcal{U}$, 所有的环都默认是小的. 对于 $\Bbbk$-线性范畴之间的函子同样默认 $\Bbbk$-线性, 如定义 \ref{def:cat-k-linear}, \ref{def:k-linear-cat} 所述. 当 $\Bbbk = \Z$ 时, $\Bbbk$-线性也就是加性.
+
+对于 $\Bbbk$-线性范畴 $\mathcal{C}$ 和 $\mathcal{D}$, 符号 $\mathrm{Fct}(\mathcal{C}, \mathcal{D})$ 或 $\mathcal{D}^{\mathcal{C}}$ 代表所有函子 $F: \mathcal{C} \to \mathcal{D}$ 构成的范畴. 尽管 $\mathrm{Fct}(\mathcal{C}, \mathcal{D})$ 未必是 $\mathcal{U}$-范畴, 由于我们不在其中作极限等构造, 这不会对往后的讨论造成任何困难.
+
+\begin{definition}
+	\index[sym1]{Fctc@$\mathrm{Fct}^c, \mathrm{Fct}_c$}
+	设 $\mathcal{C}$ 和 $\mathcal{D}$ 为 $\Bbbk$-线性范畴.
+	\begin{itemize}
+		\item 设 $\mathcal{C}$ 和 $\mathcal{D}$ 余完备, 定义 $\mathrm{Fct}(\mathcal{C}, \mathcal{D})$ 的全子范畴 $\mathrm{Fct}^c(\mathcal{C}, \mathcal{D})$, 由全体保小 $\varinjlim$ 的函子组成;
+		\item 设 $\mathcal{C}$ 和 $\mathcal{D}$ 完备, 定义 $\mathrm{Fct}(\mathcal{C}, \mathcal{D})$ 的全子范畴 $\cate{Fct}_c(\mathcal{C}, \mathcal{D})$, 由全体保小 $\varprojlim$ 的函子组成.
+	\end{itemize}
+	一些文献称 $\mathrm{Fct}_c$ (或 $\mathrm{Fct}^c$) 的对象为连续 (或余连续) 函子.
+\end{definition}
+
+我们沿用 \S\ref{sec:otimesL} 的符号, 对任意 $\Bbbk$-代数 $A$ 和 $B$, 定义
+\begin{align*}
+	(A, B)\dcate{Mod} & := (A, B)\text{-双模范畴}, \\
+	A\dcate{Mod} & := \text{左}\; A\text{-模范畴} \simeq (A, \Bbbk)\dcate{Mod}, \\
+	\cated{Mod}B & := \text{右}\; B\text{-模范畴} \simeq (\Bbbk, B)\dcate{Mod}.
+\end{align*}
+它们是 $\Bbbk$-线性范畴的简单例子.
+
+回忆以下的模论常识: $(A, B)$-双模 $P$ 典范地诱导保小 $\varinjlim$ 的函子
+\[ P \dotimes{B} (\cdot): B\dcate{Mod} \to A\dcate{Mod}, \quad (\cdot) \dotimes{A} P : \cated{Mod}A \to \cated{Mod}B, \]
+而 $(B, A)$-双模 $Q$ 典范地诱导保小 $\varprojlim$ 的函子
+\[ \Hom_{\cated{Mod}B}(Q, \cdot): B\dcate{Mod} \to A\dcate{Mod}, \quad \Hom_{\cated{Mod}A}(Q, \cdot): \cated{Mod}A \to \cated{Mod}B, \]
+若改取函子 $\Hom(\cdot, R)$, 其中 $R$ 是 $(B, A)$-双模, 则其定义域须换为相反范畴如 $(B\dcate{Mod})^{\opp}$ 等, 使函子依然保小 $\varprojlim$.
+
+\begin{theorem}[S.\ Eilenberg, C.\ E.\ Watts]\label{prop:Morita}
+	对于任意 $\Bbbk$-代数 $A$ 和 $B$, 我们有以下等价
+	\[\begin{tikzcd}[row sep=tiny]
+		\mathrm{Fct}^c\left(B\dcate{Mod}, A\dcate{Mod}\right) & (A, B)\dcate{Mod} \arrow[l, "\sim"'] \arrow[r, "\sim"] & \mathrm{Fct}^c\left(\cated{Mod}A, \cated{Mod}B\right) \\
+		P \dotimes{B} (\cdot) & P \arrow[mapsto, l] \arrow[mapsto, r] & (\cdot) \dotimes{A} P \\
+		\mathrm{Fct}_c\left(B\dcate{Mod}, A\dcate{Mod}\right) & (B, A)\dcate{Mod} \arrow[l, "\sim"'] \arrow[r, "\sim"] & \mathrm{Fct}_c\left(\cated{Mod}A, \cated{Mod}B\right) \\
+		\Hom_{B\dcate{Mod}}(Q, \cdot) & Q \arrow[mapsto, l] \arrow[mapsto, r] & \Hom_{\cated{Mod}A}(Q, \cdot) \\
+		\mathrm{Fct}_c\left((B\dcate{Mod})^{\opp}, \cated{Mod}A \right) & (B, A)\dcate{Mod} \arrow[l, "\sim"'] \arrow[r, "\sim"] & \mathrm{Fct}_c\left((\cated{Mod}A)^{\opp}, B\dcate{Mod}\right) \\
+		\Hom_{B\dcate{Mod}}(\cdot, R) & R \arrow[mapsto, l] \arrow[mapsto, r] & \Hom_{\cated{Mod}A}(\cdot, R).
+	\end{tikzcd}\]
+
+	对于第一和第二个等价, 函子的合成对应到双模的张量积, 而 $A=B$ 时恒等函子来自作为 $(A, A)$-双模的 $A$, 精确到同构.
+\end{theorem}
+\begin{proof}
+	各种等价的论证方式类似, 以下仅讨论
+	\[ (A, B)\dcate{Mod} \to \mathrm{Fct}^c(B\dcate{Mod}, A\dcate{Mod}). \]
+	定理之前的讨论已说明 $P \dotimes{B} (\cdot)$ 确实是 $\mathrm{Fct}^c(B\dcate{Mod}, A\dcate{Mod})$ 的对象, 而且双模同态 $P \to P'$ 显然地诱导函子同态 $P \dotimes{B} (\cdot) \to P' \dotimes{B} (\cdot)$. 以下便来构造它的拟逆函子.
+	
+	对 $\mathrm{Fct}^c(B\dcate{Mod}, A\dcate{Mod})$ 的对象 $F$, 视 $B$ 为左 $B$-模以定义 $P := F(B)$. 由于 $B$ 也以右乘作用在 $B$ 上, 而 $F$ 是 $\Bbbk$-线性函子, 故 $P$ 自然地升级为 $(A, B)$-双模. 典范同构 $P \dotimes{B} B \simeq P$ 说明
+	\[ (A, B)\dcate{Mod} \to \mathrm{Fct}^c\left(B\dcate{Mod}, A\dcate{Mod} \right) \xrightarrow{F \mapsto P} (A, B)\dcate{Mod} \;\text{的合成}\; \simeq \identity. \]
+	
+	对于反向的合成, 给定函子 $F$ 如上, 命 $P := F(B)$. 对任意左 $B$-模 $M$, 我们有典范满同态
+	\[ \bigoplus_{\varphi \in \Hom(B, M)} B \twoheadrightarrow M; \]
+	留意到 $\bigoplus_\varphi$ 是``小''的. 对满同态的核重复上述操作, 便对 $M$ 得到典范正合列
+	\begin{equation}\label{eqn:Morita-aux0}
+		\bigoplus_\psi B \to \bigoplus_\varphi B \to M \to 0,
+	\end{equation}
+	它的第一段可以设想为右乘一个取值在 $B = \End_{B\dcate{Mod}}(B)$ 的无穷矩阵.	由于 $F$ 和 $P \dotimes{B} (\cdot)$ 皆保小 $\varinjlim$, 对 \eqref{eqn:Morita-aux0} 取像给出 $A\dcate{Mod}$ 中的正合列
+	\begin{gather*}
+		\bigoplus_\psi P \to \bigoplus_\varphi P \to F(M) \to 0, \\
+		\bigoplus_\psi P \to \bigoplus_\varphi P \to P \dotimes{B} M \to 0,
+	\end{gather*}
+	两行的 $\bigoplus_\psi P \to \bigoplus_\varphi P$ 来自同一个矩阵 (取值在 $B$), 由此得到典范同构 $F(M) \simeq P \dotimes{B} M$.
+	
+	根据张量积的结合约束, 第一个等价 $(A, B)\dcate{Mod} \to \mathrm{Fct}^c(B\dcate{Mod}, A\dcate{Mod})$ 将双模张量积对应到函子的合成, 精确到同构. 对于第二个等价, 相应的陈述归结为张量积和 $\Hom$ 的伴随关系, 见 \cite[定理 6.6.5]{Li1}. 两种情形下, 都容易看出 $(A, A)$-双模 $A$ 对应到恒等函子, 精确到同构. 
+\end{proof}
+
+现在便容易控制函子范畴的大小.
+
+\begin{corollary}
+	对于任意 $\Bbbk$-代数 $A$ 和 $B$, 定理 \ref{prop:Morita} 所涉及的函子范畴 $\mathrm{Fct}^c(\cdots)$, $\mathrm{Fct}_c(\cdots)$ 都是 $\mathcal{U}$-范畴.
+\end{corollary}
+\begin{proof}
+	这是因为 $(A, B)\dcate{Mod}$ 和 $(B, A)\dcate{Mod}$ 都是 $\mathcal{U}$-范畴.
+\end{proof}
+
+\begin{definition-proposition}\label{def:Morita-equiv}
+	\index{sentiandengjia@森田等价 (Morita equivalence)}
+	对于任意 $\Bbbk$-代数 $A$ 和 $B$, 以下陈述等价.
+	\begin{enumerate}[(i)]
+		\item $A\dcate{Mod}$ 和 $B\dcate{Mod}$ 等价.
+		\item 存在 $(A, B)$-双模 $P$ 和 $(B, A)$-双模 $Q$ 使得存在
+		\begin{compactitem}
+			\item $(A, A)$-双模的同构 $P \dotimes{B} Q \simeq A$,
+			\item $(B, B)$-双模的同构 $Q \dotimes{A} P \simeq B$.
+		\end{compactitem}
+		\item $\cated{Mod}A$ 和 $\cated{Mod}B$ 等价.
+	\end{enumerate}
+	当以上任一条件成立时, 我们称 $A$ 和 $B$ 是\emph{森田等价}的.
+\end{definition-proposition}
+\begin{proof}
+	等价必然保 $\varinjlim$ 和 $\varprojlim$. 从定理 \ref{prop:Morita} 可得 (i) $\iff$ (ii) 和 (iii) $\iff$ (ii).
+\end{proof}
+
+条件 (ii) 简洁而欠明确, 本节末尾的定理 \ref{prop:Morita-refined} 将作细化. 在此之前, 有必要先介绍一些例子和相关理论.
+
+\begin{example}
+	对于交换 $\Bbbk$-代数, 森田等价和代数的同构是一回事. 这是基于典范同构 $Z(A\dcate{Mod}) \simeq Z(A)$, 左式是 Abel 范畴的中心, 右式是 $\Bbbk$-代数的中心.
+\end{example}
+
+\begin{example}
+	设 $n \in \Z_{\geq 1}$, 任意 $\Bbbk$-代数 $A$ 皆和 $n \times n$ 矩阵代数 $\mathrm{M}_n(A)$ 森田等价. 为了说明这点, 我们以矩阵运算定义
+	\begin{align*}
+		P & := (A, \mathrm{M}_{n \times n}(A))\text{-双模}\; A^n \quad \text{(行向量)}, \\
+		Q & := (\mathrm{M}_{n \times n}(A), A)\text{-双模}\; A^n \quad \text{(列向量)}.
+	\end{align*}
+	矩阵乘法给出所需的同构
+	\begin{gather*}
+		P \dotimes{\mathrm{M}_{n \times n}(A)} Q \rightiso A \quad \text{(作为 $(A,A)$-双模)}, \\
+		Q \dotimes{A} P \rightiso \mathrm{M}_{n \times n}(A) \quad \text{(作为 $(\mathrm{M}_{n \times n}(A), \mathrm{M}_{n \times n}(A))$-双模)}.
+	\end{gather*}
+\end{example}
+
+回到一般情形. 对任意 $(A, B)$-双模 $P$, 模论的常识 \cite[定理 6.6.5]{Li1} 给出伴随对
+\begin{equation}\label{eqn:AB-adjunction}\begin{tikzcd}
+	(\cdot) \dotimes{A} P : \cated{Mod}A \arrow[shift left, r] & \cated{Mod}B: \Hom_{\cated{Mod}B}(P, \cdot). \arrow[shift left, l]
+\end{tikzcd}\end{equation}
+定理 \ref{prop:Morita} 说明精确到同构, 左右两端的函子分别穷尽了 $\mathrm{Fct}^c(\cated{Mod}A, \cated{Mod}B)$ 和 $\mathrm{Fct}_c(\cated{Mod}B, \cated{Mod}A)$ 的所有对象.
+
+基于例 \ref{eg:adjunction-monad}, 伴随对 \eqref{eqn:AB-adjunction} 在 $\cated{Mod}A$ 上确定单子 $T$, 在 $\cated{Mod}B$ 上确定余单子 $L$, 其一般描述如下. 考虑右 $A$-模 $N$ 和右 $B$-模 $M$:
+\begin{equation}\label{eqn:bimod-adjunction}
+	\begin{array}{|c|c|} \hline
+		\text{单位}\; \eta_N & \text{余单位}\; \epsilon_M \\ \hline
+		N \to \Hom_{\cated{Mod}B}\left( P, N \dotimes{A} P \right) & \Hom_{\cated{Mod}B}(P, M) \dotimes{A} P \to M \\
+		x \mapsto \left[ p \mapsto x \otimes p \right] & \varphi \otimes p \mapsto \varphi(p) \\ \hline
+	\end{array}
+\end{equation}
+
+请回忆正合函子的定义 \ref{def:exact-functor}.
+
+\begin{proposition}\label{prop:Morita-descent}
+	设 $P$ 为 $(A, B)$-双模, 如果 $(\cdot) \dotimes{A} P$ (或 $\Hom_{\cated{Mod}B}(P, \cdot)$) 是忠实正合函子, 则伴随对 \eqref{eqn:AB-adjunction} 是余单子的 (或单子的); 见定义 \ref{def:monadic} 及其对偶版本.
+\end{proposition}
+\begin{proof}
+	以下给出 $(\cdot) \dotimes{A} P$ 情形的证明, 另一侧的论证完全相同.
+
+	先前已说明 $(\cdot) \dotimes{A} P$ 有右伴随. 仅须再对定理 \ref{prop:Beck} (iii) 的条件验证其对偶版本. 首先证 $(\cdot) \dotimes{A} P$ 是保守函子. 设 $f: N \to N'$ 为右 $A$-模同态, 所求性质归结为
+	\begin{multline*}
+		f \;\text{是同构} \iff 0 \to N \xrightarrow{f} N' \to 0 \;\text{正合} \\
+		\stackrel{\text{命题 \ref{prop:faithful-exact} (iii)}}{\iff} 0 \to N \dotimes{A} P \xrightarrow{\identity \otimes f} N' \dotimes{A} P \to 0 \;\text{正合} \iff \identity \otimes f \;\text{是同构}.
+	\end{multline*}
+	
+	其次, $\cated{Mod}A$ 和 $\cated{Mod}B$ 的任一对态射皆有等化子, 而忠实正合的前提确保 $(\cdot) \dotimes{A} B$ 保等化子, 故定理 \ref{prop:Beck} (iii) 的全部条件成立.
+\end{proof}
+
+这只是一则抽象结果. 为了加以应用, 有必要对某些特殊情形明确相应的单子 $T$ 和余单子 $L$. 首先考虑环的变换.
+
+\begin{example}[环的变换]\label{eg:comonad-change-ring}
+	\index[sym1]{FBA@$\mathcal{F}_{B \mid A}$}
+	选定 $\Bbbk$-代数的同态 $f: A \to B$. 在上述框架中取 $P := B$, 通过 $f$ 视为 $(A, B)$-双模. 此时 $(\cdot) \dotimes{A} B$ 的右伴随 $\Hom_{\cated{Mod}B}(B, \cdot)$ 通过 $\varphi \mapsto \varphi(1)$ 同构于忘却函子 $\mathcal{F}_{B|A}: \cated{Mod}B \to \cated{Mod}A$, 而
+	\[\begin{array}{|c|c|} \hline
+		\text{单位态射}\; \eta_N & \text{余单位态射}\; \epsilon_M \\ \hline
+		N \to \mathcal{F}_{B|A}(N \dotimes{A} B) & \mathcal{F}_{B|A}(M) \dotimes{A} B \to M \\
+		x \mapsto x \otimes 1 & y \otimes b \mapsto yb \\ \hline
+	\end{array} \quad \begin{array}{c}
+		N: \;\text{右 $A$-模,} \\
+		M: \;\text{右 $B$-模.}
+	\end{array}\]
+	
+	在讨论环的变换时, 惯常略去 $\mathcal{F}_{B|A}$ 以简化符号. 于是单子 $T$ 和余单子 $L$ 分别表作
+	\[\begin{array}{|c|c|c|} \hline
+		T & \identity \to T & T^2 \to T \\ \hline
+		N \mapsto N \dotimes{A} B & N \to N \dotimes{A} B & (N \dotimes{A} B) \dotimes{A} B \to N \dotimes{A} B \\
+		& x \mapsto x \otimes 1 & (x \otimes b) \otimes b' \mapsto x \otimes bb' \\ \hline\hline
+		L & L \to \identity & L \to L^2 \\ \hline
+		M \mapsto M \dotimes{A} B & M \dotimes{A} B \to M & M \dotimes{A} B \to (M \dotimes{A} B) \dotimes{A} B \\
+		& (y, b) \mapsto yb & y \otimes b \mapsto (y \otimes 1) \otimes b \\ \hline
+	\end{array}\]
+	所需不外是按部就班的验证.
+\end{example}
+
+其次考虑一个稍广的情形. 首先, 对任何右 $B$-模 $P$ 和 $X$, 视 $B$ 为 $(B, B)$-双模以定义左 $B$-模
+\begin{equation}\label{eqn:P-vee}
+	P^\vee := \Hom_{\cated{Mod}B}(P, B)
+\end{equation}
+以及典范的 $\Bbbk$-模同态
+\begin{equation}\label{eqn:dual-Hom-X}\begin{aligned}
+	X \dotimes{B} P^\vee & \to \Hom_{\cated{Mod}B}(P, X) \\
+	x \otimes \lambda & \mapsto x \lambda(\cdot).
+\end{aligned}\end{equation}
+\index[sym1]{Pvee@$P^\vee$}
+
+如果 $P$ 是 $(A, B)$-双模, 则 $P^\vee$ 具有 $(B, A)$-双模的结构, $\Hom_{\cated{Mod}B}(P, X)$ 具有右 $A$-模结构, 而 \eqref{eqn:dual-Hom-X} 是右 $A$-模同态.
+
+相同构造当然也有左右对调的版本, 故 $P^{\vee\vee}$ 有意义, 此外还有右 $B$-模的典范同态 $P \to P^{\vee\vee}$.
+
+\begin{lemma}\label{prop:AB-comonad-aux}
+	设 $(A, B)$-双模 $P$ 作为右 $B$-模是有限生成投射模, 则 $P^\vee$ 亦然, 此时
+	\begin{itemize}
+		\item 对所有 $X$, \eqref{eqn:dual-Hom-X} 皆给出右 $A$-模的典范同构,
+		\item $P \to P^{\vee\vee}$ 是同构.
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	将 $P$ 作为右 $B$-模表作 $B^{\oplus n}$ 的直和项, $n \in \Z_{\geq 0}$. 于是 $P^\vee$ 自然地是 $B^{\oplus n}$ 的直和项. 显见在 \eqref{eqn:dual-Hom-X} 中以 $B^{\oplus n}$ 代 $P$ 可得 $\Bbbk$-模同构, 于是在直和项 $P$ 的层次仍有 $\Bbbk$-模同构, 因而有右 $A$-模同构. 关于 $P \rightiso P^{\vee\vee}$ 同样是化到 $B^{\oplus n}$ 来论证.
+\end{proof}
+
+于是伴随对 \eqref{eqn:AB-adjunction} 在上述假设下改写为
+\begin{equation}\label{eqn:AB-adjunction-2}\begin{tikzcd}
+	(\cdot) \dotimes{A} P : \cated{Mod}A \arrow[shift left, r] & \cated{Mod}B: (\cdot) \dotimes{B} P^\vee . \arrow[shift left, l]
+\end{tikzcd}\end{equation}
+
+\begin{definition}\label{def:bimodule-ev-coev}
+	\index[sym1]{ev-coev@$\mathrm{ev}, \mathrm{coev}$}
+	设 $(A, B)$-双模 $P$ 作为右 $B$-模是有限生成投射模. 定义 $(B, B)$-双模同态
+	\[\begin{tikzcd}[row sep=tiny]
+		\mathrm{ev}: & P^\vee \dotimes{A} P \arrow[r] & B \\
+		& \lambda \otimes p \arrow[mapsto, r] & \lambda(p)
+	\end{tikzcd}\]
+	和 $(A, A)$-双模同态
+	\[\begin{tikzcd}[row sep=tiny]
+		\mathrm{coev}: & A \arrow[r] & P \dotimes{B} P^\vee \arrow[r, "{\text{引理 \ref{prop:AB-comonad-aux}}}" inner sep=0.6em, "\sim"'] & \End_{\cated{Mod}B}(P) \\
+		& a \arrow[mapsto, rr] & & {[p \mapsto ap]} .
+	\end{tikzcd}\]
+\end{definition}
+
+容易验证它们都是良定义的. 结合 \eqref{eqn:bimod-adjunction} 和引理 \ref{prop:AB-comonad-aux} 可见对于所有右 $A$-模 $N$ 和右 $B$-模 $M$, 伴随对 \eqref{eqn:AB-adjunction-2} 的单位态射 $\eta_N$ 和余单位态射 $\epsilon_M$ 满足
+\[\begin{tikzcd}[row sep=tiny]
+	N \arrow[r, "\eta_N"] & \Hom_{\cated{Mod}B}(P, N \dotimes{A} P) & N \dotimes{A} P \dotimes{B} P^\vee \arrow[l, "\sim"'] \\
+	x \arrow[mapsto, r] & {[p \mapsto x \otimes p]} & x \otimes \mathrm{coev}(1) \arrow[mapsto, l] \\
+	M \dotimes{B} P^\vee \dotimes{A} P \arrow[r, "\sim"] & \Hom_{\cated{Mod}B}(P, M) \dotimes{A} P \arrow[r, "\epsilon_M"] & M \\
+	x \otimes \lambda \otimes p \arrow[mapsto, r] & x \lambda(\cdot) \otimes p \arrow[mapsto, r] & x\lambda(p) \arrow[equal, d] \\
+	& & (\identity_M \otimes \mathrm{ev})(x \otimes \lambda \otimes p).
+\end{tikzcd}\]
+因此我们无妨作等同
+\begin{align*}
+	\eta_N = \identity_N \otimes \mathrm{coev}: \; & N \to N \dotimes{A} P \dotimes{B} P^\vee , \\
+	\epsilon_M = \identity_M \otimes \mathrm{ev}: \; & M \dotimes{B} P^\vee \dotimes{A} P \to M.
+\end{align*}
+
+上述操作发生在双模 $P$ 和 $P^\vee$ 的层次, 和 $M$, $N$ 了不相干.
+
+\begin{definition}\label{def:cogebroid}
+	\index{mo} \index{yumo}
+	对任意 $\Bbbk$-代数 $A$, 由于 $(A, A)\dcate{Mod}$ 对 $\otimes := \dotimes{A}$ 构成幺半范畴, \S\ref{sec:alg-in-monoidal-cat} 和 \S\ref{sec:bialgebra} 定义了何谓 $(A, A)\dcate{Mod}$ 中的代数 $E$ (或余代数 $C$), 以及其上的左/右模 (或左/右余模). 既然模 (或余模) 的定义只涉及单边的 $\otimes$, 此处有一则微小然而必要的推广.
+	\begin{itemize}
+		\item 左 $E$-模意谓以下资料: $M \in \Obj(A\dcate{Mod})$ 连同 $A\dcate{Mod}$ 的态射 $\mu_M: E \otimes M \to M$, 使定义 \ref{def:module-algebra} 的图表在 $A\dcate{Mod}$ 中交换.
+		
+		\item 左 $C$-余模意谓以下资料: $M \in \Obj(A\dcate{Mod})$ 连同 $A\dcate{Mod}$ 的态射 $\rho_M: M \to C \otimes M$, 使定义 \ref{def:comodule-cogebra} 的图表在 $A\dcate{Mod}$ 中交换.
+	\end{itemize}
+	类似地定义右 $E$-模和右 $C$-余模, 并以标准手法定义模或余模之间的态射. 
+\end{definition}
+
+以此前的一系列结果描述由伴随对 \eqref{eqn:AB-adjunction-2} 确定的单子和余单子, 以下成果水到渠成.
+
+\begin{proposition}\label{prop:Morita-comonad}
+	设 $(A, B)$-双模 $P$ 作为右 $B$-模是有限生成投射模, 定义 $(B, A)$-双模 $P^\vee$ 如上, 则:
+	\begin{itemize}
+		\item $P \dotimes{B} P^\vee$ 构成幺半范畴 $(A, A)\dcate{Mod}$ 中的代数, 它的乘法由
+		\[ \identity_P \otimes \mathrm{ev} \otimes \identity_{P^\vee}: P \dotimes{B} P^\vee \dotimes{A} P \dotimes{B} P^\vee \to P \dotimes{B} P^\vee \]
+		给出, 而幺元来自 $\mathrm{coev}: A \to P \dotimes{B} P^\vee$;
+		\item $P^\vee \dotimes{A} P$ 构成幺半范畴 $(B, B)\dcate{Mod}$ 中的余代数, 它的余乘法由
+		\[ \identity_{P^\vee} \otimes \mathrm{coev} \otimes \identity_P: P^\vee \dotimes{A} P \to P^\vee \dotimes{A} P \dotimes{B} P^\vee \dotimes{A} P \]
+		给出, 而余幺元来自 $\mathrm{ev}: P^\vee \dotimes{A} P \to B$.
+	\end{itemize}
+
+	接着考虑伴随对 \eqref{eqn:AB-adjunction-2} 在 $\cated{Mod}A$ 上确定的单子 $T$, 以及它在 $\cated{Mod}B$ 上确定的余单子 $L$. 采纳定义 \ref{def:cogebroid} 以探讨模和余模.
+	\begin{itemize}
+		\item 指定单子 $T$ 作用下的模相当于指定右 $A$-模 $N$ 连同满足结合律, 幺元律等标准性质的同态
+		\[ N \dotimes{A} (P \dotimes{B} P^\vee) \to N; \]
+		换言之, 相当于让 $N$ 成为 $P \dotimes{B} P^\vee$-模.
+		\item 指定余单子 $L$ 作用下的余模相当于指定右 $B$-模 $M$ 连同满足结合律, 幺元律等标准性质的同态
+		\[ M \to M \dotimes{B} (P^\vee \dotimes{A} P); \]
+		换言之, 相当于让 $N$ 成为 $P^\vee \dotimes{A} P$-余模.
+	\end{itemize}
+\end{proposition}
+\begin{proof}
+	比陈述容易.
+\end{proof}
+
+注意到 $P \dotimes{B} P^\vee$ 作为环无非是 $\End_{B\dcate{Mod}}(P)$. 相较于此, $P^\vee \dotimes{A} P$ 的余代数结构看似别扭, 在应用中却往往更为方便. 不过余模的优势亦非绝对, 比方说, 为了使余模范畴成为 Abel 范畴, 余代数必须是平坦的. 以下仅勾勒简单证明, 本章习题另有补充.
+
+\begin{proposition}\label{prop:Comod-abelian}
+	设 $C$ 是 $(B, B)\dcate{Mod}$ 中的余代数. 记右 (或左) $C$-余模范畴为 $\cated{Comod}C$ (或 $C\dcate{Comod}$), 记由之映向 $\cated{Mod}B$ (或 $B\dcate{Mod}$) 的忘却函子为 $U$. 若 $C$ 作为左 (或右) $B$-模平坦 \cite[定义 6.9.4]{Li1}, 则 $\cated{Comod}C$ (或 $C\dcate{Comod}$) 是 Abel 范畴, 而 $U$ 忠实正合.
+\end{proposition}
+\begin{proof}
+	处理 $\cated{Comod}C$ 版本即可. 考虑右 $C$-余模的同态 $f: M \to N$, 将它在 $B$-模层次的余核记为 $\Coker(Uf)$, 则在 $\cated{Mod}B$ 中有行正合交换图表
+	\[\begin{tikzcd}
+		M \arrow[r, "Uf"] \arrow[d] & N \arrow[d] \arrow[r] & \Coker(Uf) \arrow[dashed, d] \arrow[r] & 0 \\
+		M \dotimes{B} C \arrow[r, "{Uf \otimes \identity}"'] & N \dotimes{B} C \arrow[r] & \Coker(Uf) \dotimes{B} C \arrow[r] & 0,
+	\end{tikzcd}\]
+	其中的虚线箭头由余核的函子性唯一确定. 容易证明虚线箭头赋予 $\Coker(Uf)$ 余模结构, 另记为 $\Coker(f)$, 而且这使之成为 $f$ 的余核. 请读者视需要验证细节.
+	
+	我们希望用同样方式将 $\Ker(Uf)$ 提升为余模. 要点在于确保
+	\[ 0 \to \Ker(Uf) \dotimes{B} C \to M \dotimes{B} C \xrightarrow{Uf \otimes \identity} N \dotimes{B} C \]
+	在 $\cated{Mod}B$ 中正合, 此处便需要 $C$ 作为左 $B$-模平坦, 剩下的例行验证和余核情况类似.
+	
+	为了证明 $\cated{Comod}C$ 是 Abel 范畴, 尚需说明典范态射
+	\[ \Coim(f) = \Coker[\Ker(f) \hookrightarrow M] \to \Ker[N \twoheadrightarrow \Coker(f)] = \Image(f) \]
+	是同构, 然而这点立即化约到 $\cated{Mod}B$ 的层次.
+	
+	按构造, $U$ 既保核又保余核, 因此正合; 它显然也是忠实的.
+\end{proof}
+
+言归正传, 继续探讨函子 $(\cdot) \dotimes{A} P$.
+
+% Reference: Deligne, Categories tannakiennes, 4.5 Proposition.
+\begin{proposition}\label{prop:Morita-comonad-ft}
+	设 $(A, B)$-双模 $P$ 作为右 $B$-模是有限生成投射模, 而且 $(\cdot) \dotimes{A} P$ 是忠实正合函子, 则右 $A$-模 $N$ 是有限生成的当且仅当右 $B$-模 $N \dotimes{A} P$ 是有限生成的.
+\end{proposition}
+\begin{proof}
+	对于``仅当''方向, 设存在 $n \in \Z_{\geq 0}$ 和满同态 $A^{\oplus n} \twoheadrightarrow N$, 则函子作用后给出满同态 $P^{\oplus n} \twoheadrightarrow N \dotimes{A} P$, 然而 $P$ 作为右 $B$-模是有限生成的.
+	
+	对于``当''的方向, 取 $N$ 的有限生成子模 $N'$ 使得 $N' \dotimes{A} P$ 的像包含 $N \dotimes{A} P$ 在 $B$ 上的一族生成元. 既然 $(\cdot) \dotimes{A} P$ 忠实正合, 我们实则有 $N' \dotimes{A} P \rightiso N \dotimes{A} P$, 继而有 $N' = N$.
+\end{proof}
+
+事实上, 模的有限生成性质可以完全以范畴语言刻画如下.
+
+\begin{lemma}\label{prop:fg-module-cat}
+	设 $R$ 为环, $N$ 为右 $R$-模, 则 $N$ 是有限生成的当且仅当以下性质成立: 对 $N$ 的任一族子对象 $(N_i)_{i \in I}$, 若 $\sum_{i \in I} N_i = N$, 则存在有限子集 $I_0 \subset I$ 使得 $\sum_{i \in I_0} N_i = N$.
+\end{lemma}
+\begin{proof}
+	对于``仅当''方向, 设 $x_1, \ldots, x_n$ 为 $N$ 的一族生成元, 每个 $x_j$ 皆包含于某个 $\sum_{i \in I_j} N_i$, 其中 $I_j \subset I$ 有限; 取 $I_0 = \bigcup_{j=1}^n I_j$ 便是. 对于``当''的方向, 考虑 $N = \sum_{x \in N} xR$.
+\end{proof}
+
+现在回到定义--命题 \ref{def:Morita-equiv} 介绍的森田等价. 我们只论右模情形.
+
+\begin{theorem}[森田纪一]\label{prop:Morita-refined}
+	考虑 $\Bbbk$-代数 $A$ 和 $B$. 命 $\mathrm{Equiv}(\cated{Mod}A, \cated{Mod}B)$ 为以所有等价 $F: \cated{Mod}A \to \cated{Mod}B$ 为对象, 以其间的同构为态射的范畴. 另一方面, 定义范畴 $\mathcal{P}(A, B)$ 使得其对象是满足下述条件的 $(A, B)$-双模 $P$:
+	\begin{itemize}
+		\item $P$ 作为右 $B$-模是 $\cated{Mod}B$ 的有限生成投射生成元,
+		\item 左乘诱导同构 $A \rightiso \End_{\cated{Mod}B}(P)$,
+	\end{itemize}
+	其态射则定为双模的同构. 我们有以下互为拟逆的函子:
+	\[\begin{tikzcd}[row sep=tiny]
+		\mathrm{Equiv}(\cated{Mod}A, \cated{Mod}B) \arrow[shift left, r] & \mathcal{P}(A, B) \arrow[shift left, l] \\
+		F \arrow[mapsto, r] & F(A) \\
+		(\cdot) \dotimes{A} P & P \arrow[mapsto, l] .
+	\end{tikzcd}\]
+\end{theorem}
+\begin{proof}
+	首先说明 $F \mapsto F(A)$ 是良定义的. 观察到 $A$ 是 $\cated{Mod}A$ 的有限生成投射生成元, 既然投射生成元和有限生成性质皆有范畴论刻画 (引理 \ref{prop:fg-module-cat}), 故 $F(A)$ 亦然; 此外, 根据抽象的理由,
+	\[ F: \End_{\cated{Mod}A}(A) \rightiso \End_{\cated{Mod}B}(F(A)), \]
+	不难看出这正是 $A$ 对 $F(A)$ 的左乘给出的 $A \to \End_{\cated{Mod}B}(F(A))$.
+	
+	若能说明从右到左的函子也是良定义的, 则定理 \ref{prop:Morita} 便蕴涵双向的函子互为拟逆. 问题遂归结为证: 若 $P \in \Obj(\mathcal{P}(A, B))$, 则 $F := (\cdot) \dotimes{A} P$ 是范畴的等价.
+	
+	取 $P$ 如上. 在 \eqref{eqn:AB-adjunction-2} 已经说明 $(\cdot) \dotimes{A} P$ 的右伴随是 $(\cdot) \dotimes{B} P^\vee$, 其中 $P^\vee := \Hom_{\cated{Mod}B}(P, B)$. 目标是说明它们互为拟逆. 在定义--命题 \ref{def:Morita-equiv} (ii) 中取 $Q = P^\vee$, 将问题进一步化约为证明定义 \ref{def:bimodule-ev-coev} 的双模同态
+	\[ \mathrm{ev}: P^\vee \dotimes{A} P \to B, \quad \mathrm{coev}: A \to P \dotimes{B} P^\vee \simeq \End_{\cated{Mod}B}(P) \]
+	皆为同构.
+	
+	先看 $\mathrm{ev}$. 由 $P$ 是 $\cated{Mod}B$ 的生成元可知存在满同态 $P^{\oplus I} \twoheadrightarrow B$, 特别地, 存在 $q_1, \ldots, q_n \in P^\vee$ 和 $p_1, \ldots, p_n \in B$ 使得 $\sum_{i=1}^n q_i(p_i) = 1_B$, 亦即 $\mathrm{ev}(\sum_i q_i \otimes p_i) = 1_B$. 满性得证.
+	
+	接着引进写作乘法的运算 $P \times P^\vee \to A$, 它的刻画是对于所有 $p, p' \in P$ 和 $q \in P^\vee$, 在 $P$ 中有形似结合律的
+	\[ \underbracket{(pq)}_{\in A} p' = p \underbracket{(qp')}_{\in B}, \]
+	其中 $qp' := q(p')$; 诚然, 当 $p$ 和 $q$ 固定, 右式是 $\End_{\cated{Mod}B}(P)$ 的元素, 而左乘诱导 $A \rightiso \End_{\cated{Mod}B}(P)$, 由此唯一定义了 $pq \in A$. 从上式还可以推导第二种结合律, 这是 $P^\vee$ 中的等式
+	\[ \underbracket{(qp)}_{\in B} q' = q \underbracket{(pq')}_{\in A}; \]
+	说明两边对所有 $p' \in P$ 取值皆相等即可, 平凡的验证留给读者.
+
+	现在可以说明 $\mathrm{ev}$ 的单性. 选定上一步得到的 $p_i$ 和 $q_i$, 设 $\mathrm{ev}(\sum_{j=1}^m q'_j \otimes p'_j) = 0$, 则上述两种结合律蕴涵
+	\begin{multline*}
+		\sum_j q'_j \otimes p'_j = \sum_{i, j} (q_i p_i) q'_j \otimes p'_j
+		= \sum_{i, j} q_i \underbracket{(p_i q'_j)}_{\in A} \otimes p'_j \\
+		= \sum_{i, j} q_i \otimes (p_i q'_j) p'_j
+		= \sum_{i, j} q_i \otimes p_i \underbracket{(q'_j p'_j)}_{\in B}
+		= \sum_j q_i \otimes p_i \sum_j q'_j p'_j = 0.
+	\end{multline*}
+
+	最后, 关于 $\mathrm{coev}$ 为同构的断言无非是 $\mathcal{P}(A, B)$ 定义的第二部分.
+\end{proof}
+
+作为推论, $A$ 和 $B$ 森田等价的充要条件是 $\mathcal{P}(A, B)$ 非空, 而范畴 $\mathcal{P}(A, B)$ 的研究是再具体不过的模论问题. 我们还可以反过来运用森田等价将 $\mathcal{P}(A, B)$ 的定义改写成更加平衡的形式.
+
+\begin{corollary}\label{prop:Morita-refined-symm}
+	对于 $(A, B)$-双模 $P$, 它是定理 \ref{prop:Morita-refined} 中的范畴 $\mathcal{P}(A, B)$ 的对象当且仅当以下条件成立:
+	\begin{itemize}
+		\item $P$ 作为左 $A$-模是 $A\dcate{Mod}$ 的有限生成投射生成元, 作为右 $B$-模是 $\cated{Mod}B$ 的有限生成投射生成元,
+		\item 左乘诱导同构 $A \rightiso \End_{\cated{Mod}B}(P)$, 右乘诱导同构 $B^{\opp} \rightiso \End_{A\dcate{Mod}}(P)$.
+	\end{itemize}
+\end{corollary}
+\begin{proof}
+	只须说明``仅当''方向. 设 $P \in \Obj(\mathcal{P}(A, B))$, 则先前证出的双模同构
+	\[ P \dotimes{B} P^\vee \simeq A, \quad P^\vee \dotimes{A} P \simeq B \]
+	不仅说明 $(\cdot) \dotimes{A} P: \cated{Mod}A \to \cated{Mod}B$ 是等价, 也蕴涵 $P \dotimes{B} (\cdot): B\dcate{Mod} \to A\dcate{Mod}$ 是等价. 因此定理 \ref{prop:Morita-refined} 的左模版本说明 $P$ 作为左 $A$-模是有限生成投射生成元, 而右乘诱导 $B^{\opp} \rightiso \End_{A\dcate{Mod}}(P)$. 事实上, 只需要对左模重复定理 \ref{prop:Morita-refined} 证明的第一段.
+\end{proof}
+
+\section{识别模范畴}\label{sec:module-cat}
+本节依然选定交换环 $\Bbbk$. 所有 Abel 范畴和函子皆默认是 $\Bbbk$-线性的.
+
+形如 $R\dcate{Mod}$ 或 $\cated{Mod}R$ 的范畴统称为模范畴, 其中 $R$ 是 $\Bbbk$-代数. 我们在 \S\ref{sec:Morita} 对模范畴与其间的函子进行了专门的讨论. 另一方面, 当然也可以问有哪些范畴等价于模范畴, 以及等价的具体给法. 本节将顺势给出几则简短而方便的相关结果.
+
+设 $\mathcal{A}$ 为 Abel 范畴. 本节的进路是考虑形如 $\Hom_{\mathcal{A}}(s, \cdot)$ 的函子, 它自然地升级为函子 $\mathcal{A} \to \cated{Mod}R$, 其中 $R := \End_{\mathcal{A}}(s)$, 问题在于判断 $\Hom_{\mathcal{A}}(s, \cdot)$ 何时为等价.
+
+\index{jinduixiang}
+兹复述紧对象的定义 \ref{def:cpt-objects}: 设 $\mathcal{A}$ 有所有滤过小 $\varinjlim$ 而 $X \in \Obj(\mathcal{A})$, 假若对所有滤过小范畴 $I$ 和函子 $\alpha: I \to \mathcal{A}$, 以下典范态射皆为同构, 则称 $X$ 紧:
+\[ \varinjlim_i \Hom\left( X, \alpha(i) \right) \to \Hom\left( X, \varinjlim \alpha \right). \]
+
+\begin{lemma}\label{prop:proj-compact}
+	设 $X$ 是余完备 Abel 范畴 $\mathcal{A}$ 的投射对象, 则 $X$ 紧当且仅当 $\Hom_{\mathcal{A}}(X, \cdot)$ 保所有小直和, 亦即: 对任意小集 $I$ 和一族对象 $(Y_i)_{i \in I}$, 我们有 $\bigoplus_{i \in I} \Hom_{\mathcal{A}}(X, Y_i) \rightiso \Hom_{\mathcal{A}}(X, \bigoplus_{i \in I} Y_i)$. 当前述条件成立时, $\Hom_{\mathcal{A}}(X, \cdot)$ 实际上保所有小 $\varinjlim$.
+\end{lemma}
+\begin{proof}
+	设 $X$ 紧. 因为以小集 $I$ 为下标的直和是有限直和的滤过 $\varinjlim$ (取遍 $I$ 的有限子集, 以包含关系赋序), 已知 $\Hom_{\mathcal{A}}(X, \cdot)$ 保有限直和, 故它也保小直和.
+	
+	对于反方向, 投射条件相当于说 $\Hom_{\mathcal{A}}(X, \cdot)$ 保余核, 而一般的小 $\varinjlim$ 可以用小直和连同余核来构造, 故 $\Hom_{\mathcal{A}}(X, \cdot)$ 保所有小 $\varinjlim$.
+\end{proof}
+
+\begin{example}
+	设 $R$ 为 $\Bbbk$-代数, $M$ 为投射右 $R$-模, 则 $M$ 紧的充要条件是 $M$ 有限生成.
+	\begin{itemize}
+		\item 必要性: 存在小集 $I$, 同态 $i: M \to R^{\oplus I}$ 和 $p: R^{\oplus I} \to M$ 使得 $pi = \identity_M$. 紧性蕴涵 $i$ 取值在 $R^{\oplus I_0}$ 中, 其中 $I_0 \subset I$ 是有限子集; 取 $p' := p|_{R^{\oplus I_0}}$, 则仍有 $p' i = \identity_M$, 这就说明 $M$ 可以实现为有限秩自由模的直和项.
+		\item 充分性: 代入引理 \ref{prop:proj-compact} 的判准. 任意同态 $M \to \bigoplus_{i \in I} Y_i$ 都必然落在 $\bigoplus_{i \in I_0} Y_i$ 中, 其中 $I_0 \subset I$ 是有限子集 (考察生成元的像即可), 故 $M$ 紧.
+	\end{itemize}
+\end{example}
+
+\begin{proposition}\label{prop:proj-compact-gen}
+	设 $\mathcal{A}$ 是余完备 Abel 范畴, 则 $s \in \Obj(\mathcal{A})$ 是紧投射生成元的充要条件是 $\Hom_{\mathcal{A}}(s, \cdot): \mathcal{A} \to \Bbbk\dcate{Mod}$ 是保所有小 $\varinjlim$ 的忠实正合函子.
+\end{proposition}
+\begin{proof}
+	根据命题 \ref{prop:injective-cogenerator}, 投射生成元等价于 $\Hom_{\mathcal{A}}(s, \cdot)$ 忠实正合. 根据引理 \ref{prop:proj-compact}, 在投射的前提下, 紧性等价于 $\Hom_{\mathcal{A}}(s, \cdot)$ 保所有小 $\varinjlim$.
+\end{proof}
+
+\begin{theorem}[P.\ Gabriel]\label{prop:identify-ModR}
+	设 $s \in \Obj(\mathcal{A})$, 命 $R := \End_{\mathcal{A}}(s)$, 则
+	\[ \Hom_{\mathcal{A}}(s, \cdot): \mathcal{A} \to \cated{Mod}R \]
+	为等价的充要条件是 $s$ 为 $\mathcal{A}$ 的紧投射生成元.
+\end{theorem}
+\begin{proof}
+	简记 $G := \Hom_{\mathcal{A}}(s, \cdot): \mathcal{A} \to \cated{Mod}R$. 先说明条件的必要性. 由于 $G$ 是等价并且 $G(s) = R$, 问题归结为验证 $R$ 是 $\cated{Mod}R$ 的紧投射生成元, 这是简单的.
+	
+	以下处理充分性. 设 $s$ 是紧投射生成元. 命题 \ref{prop:proj-compact-gen} 蕴涵 $G$ 是保所有小 $\varinjlim$ 的忠实正合函子, 因为它与忘却 $\cated{Mod}R \to \Bbbk\dcate{Mod}$ 的合成有此性质. 既然忠实性已知, 问题归结为证:
+	\begin{compactitem}
+		\item 对所有 $X, Y \in \Obj(\mathcal{A})$, 相应的 $\Hom_{\mathcal{A}}(X, Y) \to \Hom_R(GX, GY)$ 是满射;
+		\item $G$ 是本质满的.
+	\end{compactitem}
+	
+	我们首先说明对于任何 $X \in \Obj(\mathcal{A})$, 定义态射 $\phi_X: s^{\oplus \Hom_{\mathcal{A}}(s, X)} \to X$ 使得它在 $f: s \to X$ 对应的直和项上是 $f$, 则 $\phi_X$ 是满的. 使用反证法: 若 $\Coker(\phi_X) \neq 0$, 则生成元的性质说明存在非零态射 $s \to \Coker(\phi_X)$ (命题 \ref{prop:injective-cogenerator}), 而投射对象的性质说明此态射可以分解为 $s \xrightarrow{g} X \to \Coker(\phi_X)$, 故 $s^{\oplus \Hom_{\mathcal{A}}(s, X)} \xrightarrow{\phi_X} X \to \Coker(\phi_X)$ 在 $g$ 对应的直和项上非零, 矛盾.
+	
+	对 $\Ker(\phi_X)$ 的核也可以继续如上操作, 由此得知任何 $X$ 皆可置入正合列
+	\[ s^{\oplus J} \to s^{\oplus I} \to X \to 0, \quad I = I_X, \; J = J_X: \text{小集}. \]
+	因为 $G$ 保所有小 $\varinjlim$, 这给出右 $R$-模的正合列
+	\[ R^{\oplus J} \to R^{\oplus I} \to GX \to 0, \]
+	两者的第一段态射都可以视同 $R$ 上的 $I \times J$ 矩阵, 以左乘作用; 它们实际是同一个矩阵.
+	
+	现在考虑右 $R$-模同态 $f: GX \to GY$. 对 $X$ 和 $Y$ 任取如上形式的正合列, 易见 $f$ 可提升为行正合交换图表
+	\[\begin{tikzcd}
+		R^{\oplus J_X} \arrow[r] \arrow[d] & R^{\oplus I_X} \arrow[d] \arrow[r] & GX \arrow[d, "f"] \arrow[r] & 0 \\
+		R^{\oplus J_Y} \arrow[r] & R^{\oplus I_Y} \arrow[r] & GY \arrow[r] & 0.
+	\end{tikzcd}\]
+	但左侧方块的四个箭头都可以表成 $R$ 上的矩阵, 四个矩阵遂给出行正合交换图表
+	\[\begin{tikzcd}
+		s^{\oplus J_X} \arrow[r] \arrow[d] & s^{\oplus I_X} \arrow[d] \arrow[r] & X \arrow[dashed, d] \arrow[r] & 0 \\
+		s^{\oplus J_Y} \arrow[r] & s^{\oplus I_Y} \arrow[r] & Y \arrow[r] & 0
+	\end{tikzcd}\]
+	的实线部分, 虚线部分由余核的函子性唯一确定. 由于 $G$ 正合, 必有 $G(X \dashrightarrow Y) = f$.
+	
+	类似的技巧可以说明 $G$ 本质满. 给定右 $R$-模 $M$, 存在正合列
+	\[ R^{\oplus L} \to R^{\oplus K} \to M \to 0, \]
+	其第一段映射视同 $R$ 上的 $K \times L$ 矩阵. 但同一个矩阵在 $\mathcal{A}$ 中给出余核正合列
+	\[ s^{\oplus L} \to s^{\oplus K} \to X \to 0; \]
+	既然 $G$ 保所有小 $\varinjlim$, 必有 $GX \simeq M$. 明所欲证.
+\end{proof}
+
+另一则相关问题是如何识别有限生成模范畴. 记有限生成右 $R$-模构成的范畴为 $\catesubd{Mod}{\mathrm{fg}}R$. 假如 $R$ 是右 Noether 环, 则 $\catesubd{Mod}{\mathrm{fg}}R$ 还是 Abel 范畴, 见 \cite[命题 6.10.3, 引理 6.10.4]{Li1}.
+\index[sym1]{Modfg@$\cate{Mod}_{\mathrm{fg}}$}
+
+\begin{theorem}\label{prop:identify-ModR-fg}
+	设 $\mathcal{A}$ 为 Abel 范畴, $s \in \Obj(\mathcal{A})$. 假设:
+	\begin{compactitem}
+		\item 每个 $X \in \Obj(\mathcal{A})$ 都是 Noether 对象 (定义 \ref{def:finite-length-object}),
+		\item $R := \End_{\mathcal{A}}(s)$ 是右 Noether 环,
+		\item $s$ 是 $\mathcal{A}$ 的投射生成元.
+	\end{compactitem}
+	则函子 $\Hom_{\mathcal{A}}(s, \cdot): \mathcal{A} \to \cated{Mod}R$ 分解为
+	\[ \mathcal{A} \xrightarrow{\text{等价}} \catesubd{Mod}{\mathrm{fg}}R \subset \cated{Mod}R. \]
+\end{theorem}
+\begin{proof}
+	首先说明任意 $X \in \Obj(\mathcal{A})$ 皆可置入正合列
+	\begin{equation}\label{eqn:identify-ModR-fg-aux}
+		s^{\oplus m} \to s^{\oplus n} \to X \to 0, \quad n, m \in \Z_{\geq 0}.
+	\end{equation}
+
+	为此, 注意到因为 $s$ 是生成元, 对任何非零的 $X$ 都有非零的 $\phi_1: s \to X$. 若 $\phi_1$ 非满, 则存在非零的 $s \to \Coker(\phi_1)$, 而 $s$ 的投射性质确保它分解为 $s \xrightarrow{\psi_1} X \to \Coker(\phi_1)$, 由此得到 $\phi_2 := (\phi_1, \psi_1): s^{\oplus 2} \to X$ 使得 $\Image(\phi_2) \supsetneq \Image(\phi_1)$. 若 $\phi_2$ 非满, 则同样操作继续迭代. 因为 $X$ 是 Noether 对象, 步骤必在有限步内停止, 给出满态射 $\phi_X: s^{\oplus n} \twoheadrightarrow X$. 对 $\Ker(\phi_X)$ 继续如是操作, 即可得到 \eqref{eqn:identify-ModR-fg-aux}.
+	
+	回忆到 $s$ 是投射生成元相当于说 $G := \Hom_{\mathcal{A}}(s, \cdot)$ 忠实正合. 施 $G$ 于 \eqref{eqn:identify-ModR-fg-aux} 可得 $R^{\oplus m} \to R^{\oplus n} \to GX \to 0$ 正合, 这就表明 $G$ 取值在 $\catesubd{Mod}{\mathrm{fg}}R$.
+	
+	另一方面, 由于 $R$ 是右 Noether 环, 任意 $M \in \Obj(\catesubd{Mod}{\mathrm{fg}}R)$ 亦可置入正合列
+	\[ R^{\oplus q} \to R^{\oplus p} \to M \to 0, \quad p, q \in \Z_{\geq 0}. \]
+	
+	后续思路和定理 \ref{prop:identify-ModR} 的充分性证明相平行. 在该处的论证中, $s$ 的紧性只用来处理无穷直和, 而此处则只涉及有限直和, 它们被一切加性函子保持. 其余论证完全相同, 不再赘言.
+\end{proof}
+
+\section{应用: 模的下降}\label{sec:descent-modules}
+在几何学中, 给定伴随对
+$\begin{tikzcd}
+	F: \mathcal{C} \arrow[shift left, r] & \mathcal{D}: G \arrow[shift left, l]
+\end{tikzcd}$,
+从 $\mathcal{D}$ 上相应的余单子余作用下的余模重构 $\mathcal{C}$ 上信息的过程通常称为\emph{下降}. 本节将针对模论的情形加以说明.
+\index{xiajiang@下降 (descent)}
+
+考虑交换环的同态 $K \to L$. 相应的忘却函子 $\mathcal{F}_{L|K}: L\dcate{Mod} \to K\dcate{Mod}$ 可以置入伴随对
+\[\begin{tikzcd}
+	L \dotimes{K} (\cdot): K\dcate{Mod} \arrow[shift left, r] & L\dcate{Mod} : \mathcal{F}_{L|K}, \arrow[shift left, l]
+\end{tikzcd}\]
+我们将应用 \S\ref{sec:Morita} 后半部的结果探讨 $L\dcate{Mod}$ 上对应的余单子. 更精确地说, 我们取 $\Bbbk = K$, 将此代入例 \ref{eg:comonad-change-ring} 的``环的变换''. 除却符号上的差异, 此处考虑的是左模而非右模; 因为我们仅考虑交换环, 没有实质影响.
+
+基于例 \ref{eg:comonad-change-ring} 的描述, 伴随对在 $L\dcate{Mod}$ 上确定的余单子在本节记为 $(\mathbf{L}, \delta, \epsilon)$, 其中
+\[ \mathbf{L} = L \dotimes{K} \mathcal{F}_{L|K}(\cdot), \quad \delta: \mathbf{L} \to \mathbf{L}^2, \quad \epsilon: \mathbf{L} \to \identity. \]
+今后我们按惯例将在各种公式中省略忘却函子 $\mathcal{F}_{L|K}$ 以简化符号.
+
+余单子 $\mathbf{L}$ 的余模是资料 $(M, a)$, 其中 $M$ 是 $L$-模而 $a: M \to L \dotimes{K} M$ 是 $L$-模同态, 所需条件是以下交换图表
+\[\begin{tikzcd}
+	\ell \otimes 1 \otimes m \arrow[phantom, r, "\in" description] & L \dotimes{K} L \dotimes{K} M & L \dotimes{K} M \arrow[l, "{\mathbf{L}a = \identity_L \otimes a}"' inner sep=0.6em] \\
+	\ell \otimes m \arrow[phantom, r, "\in" description] \arrow[mapsto, u] & L \dotimes{K} M \arrow[u, "\delta_M"] & M \arrow[l, "a"] \arrow[u, "a"']
+\end{tikzcd} \quad \begin{tikzcd}
+	\ell m \arrow[phantom, d, "\in" description, sloped] & \ell \otimes m \arrow[phantom, d, "\in" description, sloped] \arrow[mapsto, l] \\
+	M & L \dotimes{K} M \arrow[l, "\epsilon_M"'] \\
+	& M. \arrow[lu, "\identity_M"] \arrow[u, "a"']
+\end{tikzcd}\]
+
+余单子 $\mathbf{L}$ 作用下的全体余模 $(M, a)$ 构成范畴 $L\dcate{Mod}^{\mathbf{L}}$. 引理 \ref{prop:T-comparison} 的对偶版本给出分解
+\[ L \dotimes{K} (\cdot) = \left[ K\dcate{Mod} \xrightarrow{\mathbb{K}} L\dcate{Mod}^{\mathbf{L}} \xrightarrow{U^{\mathbf{L}}} L\dcate{Mod} \right] \; \text{之合成}. \]
+函子 $U^{\mathbf{L}}$ 是忘却 $(M, a) \mapsto M$, 函子 $\mathbb{K}$ 映对象 $N$ 为 $(L \dotimes{K} N, a)$, 其中
+\begin{equation}\label{eqn:N-comonad-action}
+	\begin{aligned}
+		a: L \dotimes{K} N & \to L \dotimes{K} (L \dotimes{K} N) \quad \text{($L$-模同态)} \\
+		\ell \otimes x & \mapsto \ell \otimes 1 \otimes x.
+	\end{aligned}
+\end{equation}
+
+核心问题是伴随对是否为余单子的, 换言之, $\mathbb{K}$ 是否为等价?
+
+\begin{definition}
+	\index{zhongshipingtan@忠实平坦 (faithfully flat)}
+	给定交换环的同态 $K \to L$, 如果 $L \dotimes{K} (\cdot): K\dcate{Mod} \to L\dcate{Mod}$ 是忠实正合函子, 则称 $L$ 作为交换 $K$-代数是\emph{忠实平坦}的.
+\end{definition}
+
+\begin{theorem}[平坦下降]\label{prop:flat-descent}
+	\index{xiajiang!平坦 (flat)}
+	设 $L$ 是忠实平坦的交换 $K$-代数, 则伴随对 $\left( L \dotimes{K} (\cdot), \mathcal{F}_{L|K}\right)$ 是余单子的, 此时 $K\dcate{Mod} \xrightarrow{\mathbb{K}} L\dcate{Mod}^{\mathbf{L}}$ 的一个拟逆 $\mathbb{L}$ 可以由 $K\dcate{Mod}$ 的等化子图表描述:
+	\[\begin{tikzcd}[row sep=tiny]
+		\mathbb{L}(M, a) \arrow[r] & M \arrow[shift left, r, "a"] \arrow[shift right, r, "{m \mapsto 1 \otimes m}"'] & L \dotimes{K} M ,
+	\end{tikzcd} \quad (M, a) \in \Obj\left(L\dcate{Mod}^{\mathbf{L}}\right). \]
+\end{theorem}
+\begin{proof}
+	命题 \ref{prop:Morita-descent} 确保余单子性, 而定理 \ref{prop:Beck} 的对偶版本已包含拟逆函子的描述.
+\end{proof}
+
+\begin{remark}
+	必须强调的是在导出范畴 $\cate{D}(K\dcate{Mod})$ 和 $\cate{D}(L\dcate{Mod})$ 的层次, 尽管所论的伴随对也有导出版本, 如例 \ref{eg:change-of-ring-adjunction} 和例 \ref{eg:change-of-rings}, 但没有相应的下降定理.
+\end{remark}
+
+平坦下降的证明出奇地简单, 但实践中必须对余单子或下降资料给出易于操作的描述; \S\ref{sec:descent-Galois} 的主题便与此相关. 在本节的剩余部分, 我们着手将 $L\dcate{Mod}^{\mathbf{L}}$ 的定义整理成另一形式, 以方便读者对照其他文献. 这在本质上是命题 \ref{prop:Morita-comonad} (取左模版本, $P = L = P^\vee$) 的具体改写, 但程序略微曲折.
+
+对 $i = 1, 2$, 记映向第 $i$ 个张量槽的同态为 $\iota_i: L \to L \dotimes{K} L$. 对于任意 $L$-模 $M$, 我们有 $L$-模的典范同构
+\begin{align*}
+	L \dotimes{K} M & \rightiso (L \dotimes{K} L) \dotimes{L, \iota_2} M \\
+	\ell \otimes m & \mapsto \ell \otimes 1 \otimes m,
+\end{align*}
+右式通过 $\iota_1$ 成为 $L$-模. 根据模论中熟知的伴随性质, 指定 $L$-模同态 $a: M \to L \dotimes{K} M$ 遂相当于指定 $L \dotimes{K} L$-模同态
+\begin{equation}\label{eqn:flat-descent-map-aux}\begin{aligned}
+		\tilde{a}: (L \dotimes{K} L) \dotimes{L, \iota_1} M & \to (L \dotimes{K} L) \dotimes{L, \iota_2} M \\
+		1 \otimes 1 \otimes m & \mapsto \sum_{i=1}^n \ell_i \otimes 1 \otimes m_i ;
+\end{aligned}\end{equation}
+此处记 $a(m) = \sum_{i=1}^n \ell_i \otimes m_i$. 因为 $\iota_1 |_K = \iota_2 |_K$, 当 $M$ 来自 $K$-模 $N$ 时, 小心翼翼地代入 \eqref{eqn:N-comonad-action}, 可见 $\tilde{a}$ 化为 $\identity: L \dotimes{K} L \dotimes{K} N \to L \dotimes{K} L \dotimes{K} N$.
+
+以后简记 $L^{\otimes n} := L \dotimes{K} \cdots \dotimes{K} L$ (共 $n$ 项). 暂且忘记 $L\dcate{Mod}^{\mathbf{L}}$, 今起考虑任意的 $\tilde{a}: L^{\otimes 2} \dotimes{L, \iota_1} M \to L^{\otimes 2} \dotimes{L, \iota_2} M$. 根据张量积的泛性质 \cite[命题 7.3.4]{Li1}, 指定一对交换 $K$-代数的同态 $f, g: L \to E$ 相当于指定同态 $f \otimes g: L \dotimes{K} L \to E$. 由此可从 $\tilde{a}$ 定义 $E$-模的同态
+\begin{equation*}
+	\tilde{a}_{gf} := E \dotimes{f \otimes g} \tilde{a}: E \dotimes{L, f} M \to E \dotimes{L, g} M.
+\end{equation*}
+
+随着 $(E, f, g)$ 变动, 我们希望分析这些同态之间的兼容性. 上式说明 $(E, f, g) := (L \dotimes{K} L, \iota_1, \iota_2)$ 对此是``泛''的, 对应到 $\tilde{a}$, 一般的 $(E, f, g)$ 则是对它取 $E \dotimes{f \otimes g} (\cdot)$ 的产物. 为了剖析``泛''的情形, 对 $1 \leq i \neq j \leq 3$ 记:
+\begin{center}\begin{tabular}{|c|c|} \hline
+		$\iota^3_{ij}: L^{\otimes 2} \to L^{\otimes 3}$ & 向第 $(i, j)$ 个张量槽的嵌入 \\
+		$\iota^3_i: L \to L^{\otimes 3}$ & 向第 $i$ 个张量槽的嵌入 \\ \hline
+\end{tabular}\end{center}
+
+从 \eqref{eqn:flat-descent-map-aux} 定义 $L^{\otimes 3}$-模的同态
+\[ \tilde{a}_{ij} := L^{\otimes 3} \dotimes{L, \iota^3_{ij}}\tilde{a} : \; L^{\otimes 3} \dotimes{L, \iota^3_i} M \to L^{\otimes 3} \dotimes{L, \iota^3_j} M; \]
+此处用到了 $\iota^3_{ij} \iota_1 = \iota^3_i$ 和 $\iota^3_{ij} \iota_2 = \iota^3_j$. 当 $M$ 来自 $K$-模时, 我们可以等同
+\[ \tilde{a} \;\text{与}\; \identity_{L^{\otimes 2} \dotimes{K} N}, \quad \tilde{a}_{ij} \;\text{与}\; \identity_{L^{\otimes 3} \dotimes{K} N}, \]
+此时显然有 $\tilde{a}_{31} = \tilde{a}_{32} \tilde{a}_{21}$. 后者就是我们所寻求的兼容性条件, 它的妙用在于
+\begin{equation}\label{eqn:cocycle-condition-descent}
+	\tilde{a}_{31} = \tilde{a}_{32} \tilde{a}_{21} \implies
+	\begin{array}{l}
+		\forall f, g, h: L \xrightarrow{K\text{-代数}} E, \\
+		\tilde{a}_{hf} = \tilde{a}_{hg} \tilde{a}_{gf};
+	\end{array}
+\end{equation}
+左式可谓是右式的``泛版本''.
+
+\begin{definition}[下降资料]
+	\index{xiajiangziliao@下降资料 (descent datum)}
+	命 $\mathrm{Desc}_{K \to L}$ 为以下范畴: 其对象为资料 $(M, \tilde{a})$, 其中 $M$ 是 $L$-模而 $\tilde{a}: L^{\otimes 2} \dotimes{L, \iota_1} M \to L^{\otimes 2} \dotimes{L, \iota_2} M$ 满足
+	\begin{description}
+		\item[同构条件] $\tilde{a}$ 是 $L^{\otimes 2}$-模的同构;
+		\item[余圈条件] $\tilde{a}_{31} = \tilde{a}_{32} \tilde{a}_{21}$.
+	\end{description}
+	
+	从 $(M, \tilde{a})$ 到 $(M', \tilde{a}')$ 的态射是满足 $(\identity^{\otimes 2} \otimes f)\tilde{a} = \tilde{a}' (\identity^{\otimes 2} \otimes f)$ 的 $L$-模同态 $f: M \to M'$. 这些资料 $(M, \tilde{a})$ 称为下降资料.
+\end{definition}
+
+在 \eqref{eqn:cocycle-condition-descent} 之前的讨论表明 $L \dotimes{K} (\cdot)$ 给出函子 $K\dcate{Mod} \to \mathrm{Desc}_{K \to L}$. 现在着手联系下降资料与 $L\dcate{Mod}^{\mathbf{L}}$.
+
+\begin{lemma}\label{prop:descent-data-vs-comodule}
+	我们有从 $L\dcate{Mod}^{\mathbf{L}}$ 到 $\mathrm{Desc}_{K \to L}$ 的范畴同构, 它在对象层次是 $(M, a) \leftrightarrow (M, \tilde{a})$, 在态射层次按标准的套路定义.
+	
+	此外, $\mathrm{Desc}_{K \to L}$ 定义中的同构条件可以代换为: 以 $m(\ell \otimes \ell') = \ell\ell'$ 定义同态 $m: L^{\otimes 2} \to L$, 则 $L \dotimes{L^{\otimes 2}, m} \tilde{a}$ 给出的自同态 $M \to M$ 是 $\identity_M$.
+\end{lemma}
+\begin{proof}
+	已知指定 $\tilde{a}$ 和指定 $a: M \to L \dotimes{K} M$ 是一回事. 问题在于会通关于下降资料 $\tilde{a}$ 和使得 $(M, a)$ 为余模的 $a$ 的条件. 这将是断言第二部分的应用.
+	
+	关于余模的条件是余结合律和余幺元律. 对于前者, 条件 $\tilde{a}_{31} = \tilde{a}_{32} \tilde{a}_{21}$ 和余结合律的等价是机械验证, 留给读者. 至于后者, 记 $\varphi$ 为 $M \xrightarrow{a} L \dotimes{K} M \xrightarrow{\epsilon_M} M$ 的合成; 余幺元律相当于说 $\varphi = \identity$. 回忆到 $\epsilon_M(\ell \otimes m) = \ell m$, 同样简单的验证表明
+	\[ \varphi = L \dotimes{L^{\otimes 2}, m} \tilde{a}. \]
+	我们接着说明在 $\tilde{a}_{31} = \tilde{a}_{32} \tilde{a}_{21}$ 成立的前提下, $\tilde{a}$ 是同构当且仅当 $\varphi = \identity_M$. 这足以完成全部证明.
+	
+	设 $\tilde{a}$ 是同构, 则 $\varphi$ 亦然. 在 \eqref{eqn:cocycle-condition-descent} 中取 $E = L$ 和 $f = g = h = \identity_L$, 则容易验证其右式化为 $\varphi = \varphi^2$, 故 $\varphi = \identity_M$.
+	
+	设 $\varphi = \identity_M$. 对任意 $K$-代数同态 $f: L \to E$, 将 $\tilde{a}$ 沿交换图表
+	\[\begin{tikzcd}
+		L^{\otimes 2} \arrow[rd, "{f \otimes f}"'] \arrow[r, "m"] & L \arrow[d, "f"] \\
+		& E
+	\end{tikzcd}\]
+	的两路作环变换, 可见 $\tilde{a}_{ff} = \identity$. 配合 \eqref{eqn:cocycle-condition-descent}, 这说明对任意 $(E, f, g)$ 皆有 $\tilde{a}_{fg}^{-1} = \tilde{a}_{gf}$. 特别地, 其``泛版本'' $\tilde{a}$ 也是同构. 明所欲证.
+\end{proof}
+
+\begin{theorem}[平坦下降的第二种形式]\label{prop:flat-descent-2}
+	设 $L$ 是忠实平坦的交换 $K$-代数, 则
+	\[ L \dotimes{K} (\cdot): K\dcate{Mod} \to \mathrm{Desc}_{K \to L} \]
+	是范畴的等价, 它的一个拟逆 $\tilde{\mathbb{L}}$ 可以取为等化子
+	\[\begin{tikzcd}
+		0 \arrow[r] & \tilde{\mathbb{L}}(M, \tilde{a}) \arrow[r] & M \arrow[shift left, r, "a"] \arrow[shift right, r, "{m \mapsto 1 \otimes m}"'] & L \dotimes{K} M,
+	\end{tikzcd}\]
+	其中 $a$ 是按 \eqref{eqn:flat-descent-map-aux} 对应到 $\tilde{a}$ 的映射.
+\end{theorem}
+\begin{proof}
+	鉴于引理 \ref{prop:descent-data-vs-comodule}, 这不过是平坦下降定理 \ref{prop:flat-descent} 的改述.
+\end{proof}
+
+定理 \ref{prop:flat-descent-2} 是平坦下降在代数几何中常见的表述. 在代数几何中, 忠实平坦同态 $K \to L$ 对应到几何对象在某种意义下的覆盖.
+
+下降资料中的 $\tilde{a}$ 或对应的 $a$ 有时也表述为左 $L \dotimes{K} L$-模, 亦即 $(L, L)$-双模的同态
+\begin{align*}
+	\overline{a}: M \dotimes{K} L & \to L \dotimes{K} M \\
+	m \otimes \ell & \mapsto \sum_{i=1}^n \ell_i \otimes \ell m_i ,
+\end{align*}
+其中仍假设 $a(m) = \sum_{i=1}^n \ell_i \otimes m_i$. 这是从 \eqref{eqn:flat-descent-map-aux} 适当地缩并张量积的产物, 它至少具有更简洁的外观. 对 $\tilde{a}_{ij}$ 有类似的缩并版本, 不在话下.
+
+\begin{remark}[代数和模的平坦下降]\label{rem:flat-descent-alg}
+	我们能进一步讨论 $L$-代数或这些代数上的模如何下降到 $K$. 具体言之, 设 $(M, a), (M', a') \in \Obj\left(L\dcate{Mod}^{\mathbf{L}}\right)$ 是 $N, N' \in \Obj\left(K\dcate{Mod}\right)$ 的像. 忆及 $L \dotimes{K} (\cdot): K\dcate{Mod} \to L\dcate{Mod}$ 是幺半函子 \cite[命题 6.6.10]{Li1}, 亦即存在诸如
+	\begin{equation}\label{eqn:change-of-ring-monoidal}\begin{aligned}
+			(L \dotimes{K} N_1) \dotimes{L} (L \dotimes{K} N_2) & \rightiso L \dotimes{K} (N_1 \dotimes{K} N_2) \\
+			(\ell_1 \otimes x) \otimes (\ell_2 \otimes y) & \mapsto \ell_1 \ell_2 \otimes (x \otimes y)
+	\end{aligned}\end{equation}
+	的典范同构. 以此赋予 $M \dotimes{L} M'$ 来自 $N \dotimes{K} N'$ 的 $\mathbf{L}$-余模结构. 现在取 $N' = N$; 赋予 $N$ 一个 $K$-代数的结构相当于指定 $M$ 的 $L$-代数结构, 使乘法 $M \dotimes{L} M \to M$ 和幺元 $L \to M$ 都是 $L\dcate{Mod}^{\mathbf{L}}$ 的态射; $K$-代数所需的结合律等性质全来自 $M$. 从 $M$-模到 $N$-模的下降也应作如是观. 对此, 采用形如 \eqref{eqn:flat-descent-map-aux} 的下降资料或许比考虑 $\mathbf{L}$ 的余模更方便, 因为它涉及的函子对 $M$ 都是幺半的; 相反地, $\mathbf{L}$ 则非幺半函子.
+\end{remark}
+
+\section{应用: Galois 下降}\label{sec:descent-Galois}
+以下探讨的 $L|K$ 取作域的 Galois 扩张, 这是 \S\ref{sec:descent-modules} 的平坦下降的一个实用特例, 称为 Galois 下降. 我们的策略是直接描述相应的余单子, 所需工具仅止于平坦下降在定理 \ref{prop:flat-descent} 中的形式, 以及其上的铺垫, 不涉及 \S\ref{sec:descent-modules} 后半部的深入讨论.
+
+今后假定 $K$ 和 $L$ 都是域, $L|K$ 是 Galois 扩张. 先前的模化为向量空间. 记
+\[ \Gamma := \Gal(L|K), \quad \text{赋予 Krull 拓扑.} \]
+关于 Krull 拓扑的背景知识见诸 \cite[\S 4.10, \S 9.2]{Li1}; 当 $L|K$ 有限时, 这不过是离散拓扑. 事实上, $\Gamma$ 是 \S\ref{sec:profinite-groups} 所介绍的 pro-有限群.
+
+我们称映射 $f: \Gamma \to X$ 是\emph{光滑}的, 如果对每个 $\sigma \in \Gamma$, 存在开子群 $\Gamma_0$ 使得 $\sigma_0 \in \Gamma_0 \implies f(\sigma \sigma_0) = f(\sigma)$. 记
+\[ \mathrm{Maps}(\Gamma, X)^\infty := \left\{ \text{光滑映射}\; f: \Gamma \to X \right\}. \]
+
+\begin{lemma}\label{prop:smooth-map-finite}
+	设 $f \in \mathrm{Maps}(\Gamma, X)^\infty$, 则存在正规开子群 $\Gamma'$ 使得 $f$ 通过 $\Gamma/\Gamma'$ 分解, $f$ 仅取有限多个值.
+\end{lemma}
+\begin{proof}
+	对每个 $\sigma \in \Gamma$, 存在依赖于 $\sigma_0$ 的开子群 $\Gamma_0$ 使得 $f$ 在 $\sigma \Gamma_0$ 上取常值. 这些 $\sigma \Gamma_0$ 构成 $\Gamma$ 的开覆盖, 既然 $\Gamma$ 紧, 存在有限子覆盖 $\sigma_1 \Gamma_{0, 1}, \ldots, \sigma_r \Gamma_{0, r}$. 现在取包含于 $\bigcap_{i=1}^r \Gamma_{0, i}$ 的正规开子群 $\Gamma'$.
+\end{proof}
+
+我们以此具体地描述 $L|K$ 在 $\cate{Vect}(L)$ 上确定的余单子 $\mathbf{L}: M \mapsto L \dotimes{K} M$.
+
+\begin{lemma}\label{prop:Galois-descent-comonad-0}
+	对于所有 $L$-向量空间 $M$, 赋予 $\mathrm{Maps}(\Gamma, M)^\infty$ 如下的 $L$-向量空间结构: 若 $\ell \in L$, 则 $(\ell f)(\sigma) = \sigma(\ell) f(\sigma)$ 对所有 $\sigma \in \Gamma$ 成立. 此时有 $L$-向量空间的同构
+	\begin{equation}\label{eqn:comonad-smMap}
+		\begin{tikzcd}[row sep=tiny]
+			\Phi(M): L \dotimes{K} M \arrow[r, "\sim"] & \mathrm{Maps}(\Gamma, M)^\infty \\
+			\ell \otimes m \arrow[mapsto, r] & {\left[ f: \sigma \mapsto \sigma(\ell)m \right]}.
+		\end{tikzcd}
+	\end{equation}
+\end{lemma}
+\begin{proof}
+	易见 $\Phi(M)$ 良定义 ($\Stab_{\Gamma}(\ell)$ 恒开, 故 $f$ 光滑), 它按定义是 $L$-线性的, 而且和任意直和交换 $\Phi(\oplus_i M_i) = \bigoplus_i \Phi(M_i)$ (每个 $f$ 取值有限, 故 $\mathrm{Maps}(\Gamma, \cdot)^\infty$ 和任意直和交换). 任取 $M$ 的基, 则验证 \eqref{eqn:comonad-smMap} 化约为验证 $M=L$ 的特例
+	\[\begin{tikzcd}[row sep=tiny]
+		\Phi(L): L \dotimes{K} L \arrow[r, "\sim"] & \mathrm{Maps}(\Gamma, L)^\infty \\
+		\ell \otimes \ell' \arrow[mapsto, r] & {[f: \sigma \mapsto \sigma(\ell)\ell' ]}.
+	\end{tikzcd}\]
+	
+	对于 $L|K$ 的任意有限 Galois 子扩张 $L'|K$, 记 $\Gamma' := \Gal(L|L')$, 我们断言和上式相同的映法给出
+	\begin{equation}\label{eqn:comonad-smMap-aux}
+		L' \dotimes{K} L' \rightiso \mathrm{Maps}(\Gamma/\Gamma', L') := \left\{\text{映射}\; f: \Gamma/\Gamma' \to L' \right\}.
+	\end{equation}
+	一旦承认这点, 则因为 $\mathrm{Maps}(\Gamma, L)^\infty = \bigcup_{L'|K} \mathrm{Maps}(\Gamma/\Gamma', L')$ (应用引理 \ref{prop:smooth-map-finite}, 扩大 $L'$ 相当于缩小 $\Gamma'$), 在 \eqref{eqn:comonad-smMap-aux} 两边对所有 $L'|K$ 取并, 即得 $\Phi(L)$ 为同构.
+	
+	取 $\alpha$ 使得 $L' = K(\alpha)$, 它的极小多项式 $p \in K[X]$ 在 $L'$ 上分裂为 $\prod_{i=1}^d (X - \alpha_i)$, 使得 $\alpha_1 = \alpha$, 无重根. 群 $\Gamma/\Gamma' = \Gal(L'|K)$ 通过 $\sigma \mapsto \sigma(\alpha)$ 和 $\alpha_1, \ldots, \alpha_d$ 一一对应. 将 $\ell \in L'$ 表为 $g(\alpha)$, 其中 $g \in K[X]$, 则有
+	\[\begin{tikzcd}[row sep=tiny, column sep=small]
+		L' \dotimes{K} L' & \dfrac{K[X]}{(p)} \dotimes{K} L' \arrow[l, "\sim"'] \arrow[r, "\sim"] & \dfrac{L'[X]}{\displaystyle\prod_{i=1}^d (X - \alpha_i)} \arrow[r, "\sim"] & \displaystyle\prod_{i=1}^d \underbracket{\dfrac{L'[X]}{(X - \alpha_i)}}_{\text{等同于}\; L'} \arrow[r, "\sim"] & (L')^{\Gamma/\Gamma'} \\
+		\ell \otimes \ell' & (g + (p)) \otimes \ell' \arrow[mapsto, l] \arrow[mapsto, r] & g\ell' + (p) \arrow[mapsto, r] & \left( g(\alpha_i) \ell' \right)_{i=1}^d 	\arrow[mapsto, r] & \left( \sigma_i(\ell) \ell' \right)_{i=1}^d
+	\end{tikzcd}\]
+	这就确立了 \eqref{eqn:comonad-smMap-aux}.
+\end{proof}
+
+\begin{lemma}\label{prop:Galois-descent-comonad-1}
+	通过引理 \ref{prop:Galois-descent-comonad-0} 的典范同构, 余单子 $(\mathbf{L}, \delta, \epsilon)$ 由以下交换图表描述, 其中 $M$ 是任意 $L$-向量空间:
+	\[\begin{tikzcd}
+		M \arrow[equal, d] & L \dotimes{K} M \arrow[r, "{\delta_M}"] \arrow[d, "\sim"', sloped] \arrow[l, "{\epsilon_M}"'] & L \dotimes{K} L \dotimes{K} M \arrow[d, "\sim", sloped] \\
+		M & \mathrm{Maps}(\Gamma, M)^\infty \arrow[r, "{\delta'_M}"] \arrow[l, "{\epsilon'_M}"'] & \mathrm{Maps}\left(\Gamma, (\mathrm{Maps}(\Gamma, M)^\infty )\right)^\infty \\
+		f(1) \arrow[phantom, u, "\in" description, sloped] & f \arrow[mapsto, r] \arrow[phantom, u, "\in" description, sloped] \arrow[mapsto, l] & {[\sigma \mapsto [\tau \mapsto f(\tau\sigma) ]]} \arrow[phantom, u, "\in" description, sloped]
+	\end{tikzcd}\]
+	此处 $1 := 1_\Gamma$.
+\end{lemma}
+\begin{proof}
+	余单位 $\epsilon_M: L \dotimes{K} M \to M$ 是 $\ell \otimes m \mapsto \ell m$, 在 \eqref{eqn:comonad-smMap} 之下显然对应 $f \mapsto f(1)$. 余乘法 $\delta_M: L \dotimes{K} M \to L \dotimes{K} L \dotimes{K} M$ 稍费周折: 若 $f \in \mathrm{Maps}(\Gamma, M)^\infty$ 对应到 $\ell \otimes m$, 则后者对 $\delta_M$ 的像 $\ell \otimes (1 \otimes m)$ 对应到映射
+	\[ \Gamma \ni \sigma \mapsto \sigma(\ell)  \cdot \underbracket{\left[ \tau \mapsto m  \right]}_{\in \mathrm{Maps}(\Gamma, M)^\infty} = \left[ \tau \mapsto \tau(\sigma(\ell))m \xlongequal{\text{\eqref{eqn:comonad-smMap}}} f(\tau\sigma) \right]. \]
+	明所欲证.
+\end{proof}
+
+\begin{definition}\label{def:semilinear-action}
+	\index{guanghuabanxianxingzuoyong@光滑半线性作用 (smooth semi-linear action)}
+	\index[sym1]{Vect-Gamma-infty@$\cate{Vect}^{\Gamma, \infty}$}
+	若群 $\Gamma = \Gal(L|K)$ 左作用于 $L$-向量空间 $M$, 使得 $\sigma(m + m') = \sigma(m) + \sigma(m')$ 和 $\sigma(tm) = \sigma(t)\sigma(m)$ 对所有 $\sigma \in \Gamma$, $t \in L$ 和 $m, m' \in M$ 皆成立, 则称此作用是\emph{半线性}的. 定义范畴 $\cate{Vect}^{\Gamma, \infty}(L)$ 如下.
+	\begin{itemize}
+		\item 对象: 带光滑半线性 $\Gamma$-作用的 $L$-向量空间 $M$. 光滑意指 $\Stab_{\Gamma}(m)$ 对所有 $m \in M$ 都是 $\Gamma$ 的开子群.
+		\item 态射: 满足 $\varphi(\sigma m) = \sigma (\varphi(m))$ 的 $L$-线性映射 $\varphi$, 或称 $\Gamma$-等变线性映射.
+	\end{itemize}
+\end{definition}
+
+回到 Galois 扩张 $L|K$ 所确定的余单子 $\mathbf{L}$. 其余模构成的范畴记为 $\cate{Vect}(L)^{\mathbf{L}}$.
+
+\begin{lemma}\label{prop:Galois-descent-aux}
+	按照上述符号, 我们有范畴的同构
+	\[ \cate{Vect}(L)^{\mathbf{L}} \simeq \cate{Vect}^{\Gamma, \infty}(L). \]
+	若 $M$ 是 $\cate{Vect}^{\Gamma, \infty}(L)$ 的对象, 则 $\cate{Vect}(L)^{\mathbf{L}}$ 中对应的对象是 $(M, a)$, 其中 $a$ 的刻画是使合成态射
+	\[ M \xrightarrow{a} L \dotimes{K} M \xrightarrow[\sim]{\Phi(M)} \mathrm{Maps}(\Gamma, M)^\infty \]
+	映 $m \in M$ 为从 $\Gamma$ 到 $M$ 的映射 $[\sigma \mapsto \sigma m]$.
+\end{lemma}
+\begin{proof}
+	首先留意到 $\mathrm{Maps}(\Gamma, \cdot)^\infty$ 是函子: 任意映射 $\varphi: M_1 \to M_2$ 诱导 $\mathrm{Maps}(\Gamma, M_1)^\infty \to \mathrm{Maps}(\Gamma, M_2)^\infty$, 映 $f$ 为 $\varphi f$.
+	
+	接着将定义余模的两个交换图表用引理 \ref{prop:Galois-descent-comonad-1} 改写并且合并为
+	\[\begin{tikzcd}
+		\mathrm{Maps}\left( \Gamma, \mathrm{Maps}(\Gamma, M)^\infty \right)^\infty & \mathrm{Maps}(\Gamma, M)^\infty \arrow[l, "{\mathrm{Maps}(\Gamma, a')^\infty }"' inner sep=0.8em] \arrow[r, "{\epsilon'_M}"] & M \\
+		\mathrm{Maps}(\Gamma, M)^\infty \arrow[u, "{\delta'_M}"] & M \arrow[l, "{a'}"] \arrow[u, "{a'}"] \arrow[equal, ru] &
+	\end{tikzcd}\]
+	其中的态射 $a'$ 对应到 $a$. 观察到指定 $L$-线性映射 $a': M \to \mathrm{Maps}(\Gamma, M)^\infty$ 等价于指定映射 $\beta: \Gamma \times M \to M$, 使得
+	\begin{itemize}
+		\item $\beta(\sigma, m + m') = \beta(\sigma, m) + \beta(\sigma, m')$ 和 $\beta(\sigma, tm) = \sigma(t) \beta(\sigma, m)$ (其中 $t \in L$);
+		\item 对每个 $m \in M$ 和 $\sigma \in \Gamma$ 都存在开子群 $\Gamma_0$ 使得 $\sigma_0 \in \Gamma_0 \implies \beta(\sigma\sigma_0, m) = m$.
+	\end{itemize}
+	具体对应方式当然是 $\beta(\sigma, m) = a'(m)(\sigma)$. 以上交换图表依此翻译为
+	\[ \beta(\tau\sigma, m) = \beta(\tau, \beta(\sigma, m)), \quad \beta(1, m) = m. \]
+	
+	在对象层次, 上述条件精准匹配 $\Gamma$ 的光滑半线性作用. 态射层次的验证也毫无困难.
+\end{proof}
+
+\begin{lemma}\label{prop:Galois-descent-action}
+	若 $(M, a) \in \Obj(\cate{Vect}(L)^{\mathbf{L}})$ 来自 $K$-向量空间 $N$, 则在 $\cate{Vect}^{\Gamma, \infty}(L)$ 中对应的对象是 $L \dotimes{K} N$ 配备以下的光滑半线性作用:
+	\[ \sigma (\ell \otimes x) = \sigma(\ell) \otimes x, \quad \ell \in L, \; x \in N, \quad \sigma \in \Gamma. \]
+\end{lemma}
+\begin{proof}
+	我们有 $M = L \dotimes{K} N$. 根据 \eqref{eqn:N-comonad-action}, 同态 $a$ 映 $\ell \otimes x$ 为 $\ell \otimes 1 \otimes x$. 于是半线性作用的刻画说明
+	\[ \sigma (\ell \otimes x) = \Phi(M)(\ell \otimes (1 \otimes x))(\sigma) = \sigma(\ell) (1 \otimes x) = \sigma(\ell) \otimes x, \]
+	其中 $\ell \in L$ 和 $x \in N$ 任取. 明所欲证.
+\end{proof}
+
+给定 $(M, a) \in \Obj(\cate{Vect}(L)^{\mathbf{L}})$. 由于 $\Phi(M)(1 \otimes m)(\sigma) = \sigma(1)m = m$, 引理 \ref{prop:Galois-descent-aux} 对 $a$ 的描述进一步扩充为 $\cate{Vect}(K)$ 的交换图表
+\[\begin{tikzcd}[row sep=large]
+	M \arrow[r, "a"] \arrow[rd, "{m \mapsto [\sigma \mapsto \sigma m]}"'] & L \dotimes{K} M \arrow[d, "\Phi(M)" description] & M. \arrow[l, "{1 \otimes m \mapsfrom m}"'] \arrow[ld, "{[m \mapsfrom \sigma] \mapsfrom m}"] \\
+	& \mathrm{Maps}(\Gamma, M)^\infty &
+\end{tikzcd}\]
+定理 \ref{prop:flat-descent} 中的等化子按此等同于取 $\Gamma$-不变量
+\[ M^\Gamma := \left\{ m \in M: \forall \sigma \in \Gamma, \; \sigma m = m \right\}. \]
+
+注意到 $M \mapsto M^\Gamma$ 给出 $K$-线性范畴之间的 $K$-线性函子
+\[ (\cdot)^{\Gamma}: \cate{Vect}^{\Gamma, \infty}(L) \to \cate{Vect}(K). \]
+
+\begin{theorem}[Galois 下降]\label{prop:Galois-descent}
+	\index{xiajiang!Galois}
+	设 $L|K$ 为域的 Galois 扩张, 记 $\Gamma = \Gal(L|K)$, 则函子
+	\[\begin{tikzcd}[row sep=tiny]
+		\cate{Vect}(K) \arrow[r] & \cate{Vect}^{\Gamma, \infty}(L) \\
+		\text{对象}\; N \arrow[mapsto, r] & L \dotimes{K} N \\
+		\text{态射}\; \varphi \arrow[mapsto, r] & \identity \otimes \varphi
+	\end{tikzcd}\]
+	是范畴等价, 其拟逆函子可以取为 $(\cdot)^{\Gamma}: \cate{Vect}^{\Gamma, \infty}(L) \to \cate{Vect}(K)$.
+\end{theorem}
+\begin{proof}
+	显然 $L$ 是忠实平坦 $K$-代数. 引理 \ref{prop:Galois-descent-aux} 和之前对等化子的描述化此为平坦下降定理 \ref{prop:flat-descent} 的特例.
+\end{proof}
+
+换个角度观照定理 \ref{prop:Galois-descent}. 对所有 $M \in \Obj(\cate{Vect}^{\Gamma, \infty}(L))$, 定义
+\begin{equation}\label{eqn:Galois-descent-iotaM}
+	\iota_M: L \dotimes{K} (M^{\Gamma}) \to M, \quad
+	\ell \otimes x \mapsto \ell x ;
+\end{equation}
+这显然是 $\Gamma$-等变线性映射. 我们有简单的伴随对
+\begin{equation}\label{eqn:Galois-descent-adjunction}
+	\begin{tikzcd}[row sep=tiny]
+		L \dotimes{K} (\cdot) : \cate{Vect}(K) \arrow[shift left, r] & \cate{Vect}^{\Gamma, \infty}(L) : (\cdot)^{\Gamma}, \arrow[shift left, l] \\
+		\Hom_{\cate{Vect}^{\Gamma, \infty}(L)} (L \dotimes{K} N, M) \arrow[r, "\sim"] & \Hom_{\cate{Vect}(K)}(N, M^{\Gamma}) \\
+		\varphi \arrow[mapsto, r] & \varphi|_{1 \otimes N} \\
+		\iota_M \circ (\identity_L \otimes \psi) & \psi. \arrow[mapsto, l]
+	\end{tikzcd}
+\end{equation}
+\begin{itemize}
+	\item 容易看出伴随对的单位 $N \to (L \dotimes{K} N)^{\Gamma}$ 映 $x$ 为 $1 \otimes x$. 这是同构: 任取 $N$ 的基 $B$, 则 $L \dotimes{K} N$ 的元素 $\sum_{b \in B} \ell_b \otimes b$ (有限和) 是 $\Gamma$-不变的当且仅当每个 $\ell_b$ 皆不变, 亦即 $\sum_b \ell_b \otimes b = 1 \otimes \sum_b \ell_b b \in N$.
+	\item 余单位态射正是先前定义的 $\iota_M$.
+	
+	若 $M = L \dotimes{K} N$, 则上一条蕴涵 $L \dotimes{K} (M^{\Gamma}) = L \dotimes{K} (1 \otimes N) \rightiso L \dotimes{K} N = M$, 由此可推知此时 $\iota_M$ 为同构. 
+\end{itemize}
+
+一旦承认定理 \ref{prop:Galois-descent}, 则所有 $M$ 都来自某个 $N$, 以上讨论遂蕴涵 $(L \dotimes{K} (\cdot), (\cdot)^{\Gamma})$ 是一对伴随等价. 反过来说, 若能说明 $\iota_M$ 对所有 $M$ 都是同构, 便能重新证明 Galois 下降定理 \ref{prop:Galois-descent}. 尽管取道平坦下降的证明具有天然的理路, 但它确实显得迂回. 习题将给出直接证明 $\iota_M$ 为同构的一种方法, 涉及的技巧也适用于其他场合.
+
+\begin{remark}[代数和模的 Galois 下降]\label{rem:Galois-descent-alg}
+	设 $N_1, N_2 \in \Obj(\cate{Vect}(K))$, 按照 \eqref{eqn:change-of-ring-monoidal} 将 $L \dotimes{K} (N_1 \dotimes{K} N_2)$ 自带的半线性 $\Gamma$-作用翻译为对 $(L \dotimes{K} N_1) \dotimes{L} (L \dotimes{K} N_2)$ 的``对角作用'', 亦即对两个张量槽同步地作用. 指定一个 $K$-代数 $N$ 相当于指定 $M := L \dotimes{K} N$ 上的 $L$-代数结构, 使得代数运算兼容半线性 $\Gamma$-作用:
+	\[ \sigma(1_M) = 1_M , \quad \sigma (xy) = \sigma(x) \sigma(y). \]
+	对于 $K$-代数上的模也应作如是观. 这和注记 \ref{rem:flat-descent-alg} 的思路是相似的.
+\end{remark}
+
+\section{Galois 下降和 \texorpdfstring{$\Hm^1$}{H1} 的关联}\label{sec:Galois-H1}
+下降法是分类各种代数或几何对象的有力工具, 其一般陈述需要代数几何的语言. 为了方便教学, 本节作两种简化的假设.
+\begin{enumerate}
+	\item 我们只用 Galois 下降 (定理 \ref{prop:Galois-descent} 以及其后讨论), 而不采取平坦下降或更广泛的技术.
+	\item 本书的原则是尽量选择代数的, 尤其是线性代数的语言来阐释例子, 因此不得不将分类问题的范围收窄. 事实上, 行将探讨的仅是有限维向量空间中的一类张量.
+\end{enumerate}
+
+这些观点自然地导向 Galois 群的非交换上同调 $\Hm^1$. 后续讨论将基于 \S\ref{sec:nonabelian-coh} 和 \S\ref{sec:descent-Galois} 的工具; 由于有必要容许无穷 Galois 扩张, 我们也继续使用 pro-有限群的语言, 详阅 \S\ref{sec:profinite-groups}. 首先引入相关符号.
+
+\begin{convention}
+	本节选定域 $K$ 并且记 $\otimes := \otimes_K$, 记有限维 $K$-向量空间 $V$ 的对偶空间为 $V^\vee$. 对于任意 $(p, q) \in \Z_{\geq 0}^2$, 引入记号
+	\[ T^{p, q} V := V^{\otimes p} \otimes (V^\vee)^{\otimes q}; \]
+	依循微分几何学的习俗, 我们称 $T^{p, q} V$ 的元素为 $V$ 上的 \emph{$(p, q)$ 型张量}.
+	\index{zhangliang@张量 (tensor)}
+\end{convention}
+
+有限维 $K$-向量空间的任何同构 $g: V \to V'$ 皆自然地诱导 $T^{p, q} V \rightiso T^{p, q} V'$; 方便起见, 诱导同构仍记为 $g$. 此外, 有限维条件蕴涵典范同构 $(V_1 \otimes V_2)^\vee \simeq V_1^\vee \otimes V_2^\vee$.
+
+在本节考虑的分类问题中, 主角是以下形式的资料, 定义在域 $K$ 上:
+\begin{equation}\label{eqn:tensor-data}
+	\mathbf{t} = (V, I, (t_i, p_i, q_i)_{i \in I}),
+\end{equation}
+其中
+\begin{itemize}
+	\item $V$: 有限维 $K$-向量空间,
+	\item $I$: 集合 (容许为空),
+	\item $(p_i, q_i)$: 一族非负整数对, 其中 $i$ 遍历 $I$,
+	\item $t_i \in T^{p_i, q_i} V$: 一族张量, 其中 $i$ 遍历 $I$.
+\end{itemize}
+
+换言之, 我们研究有限维向量空间中的一列张量, 型是给定的. 对另一组资料
+\[ \mathbf{t}' = (V', I, (t'_i, p_i, q_i)_{i \in I} ), \]
+若有 $K$-向量空间的同构 $g: V \rightiso V'$ 使得 $g t_i = t'_i$ 对所有 $i$ 成立, 则我们称 $g$ 是这些资料之间的同构, 记作
+\[ g \mathbf{t} = \mathbf{t}' \quad \text{或} \quad g: \mathbf{t} \rightiso \mathbf{t}'. \]
+
+我们希望在同构意义下分类这些资料 $\mathbf{t}$, 或者进一步分类满足额外条件的 $\mathbf{t}$, 这些条件必须是代数地表述的, 并且被同构保持. 虽然理论的框架受限于线性代数, 但它的应用范围已经足够宽广, 以下是一小部分特例.
+\begin{enumerate}
+	\item 考虑资料 $(V, b)$, 其中 $b \in (V^\vee)^{\otimes 2}$ 是 $(0, 2)$ 型张量. 分类这些资料相当于分类 $V$ 上的双线性型. 对 $b$ 还能够施加对称, 反对称, 非退化等条件, 这些条件都是``代数''的. 多重线性型也有类似的处理.
+	\item 也可以考虑 $(V, \varphi_1, \ldots, \varphi_n)$ 的分类, 其中 $\varphi_i \in V \otimes V^\vee$ 是 $(1, 1)$ 型张量. 因为 $V \otimes V^\vee \simeq \End_K(V)$, 这相当于分类 $V$ 连同一族线性自同态. 对之可以施加各种代数关系, 譬如其间的交换性等.
+	\item 接着考虑资料 $(V, \mu)$, 其中 $\mu \in V \otimes (V^{\vee})^{\otimes 2}$ 是 $(1, 2)$ 型张量, 亦视同 $\Hom_K(V \otimes V, V)$ 的元素. 这相当于分类 $V$ 连同某种双线性的``乘法''运算 $V \times V \to V$; 若我们要求运算有结合律和幺元 (后者可视同一个 $(1, 0)$ 张量), 则这相当于使 $V$ 成为 $K$-代数. 我们也可以对 $\mu$ 施加不同的限制, 以探讨诸如 Lie 代数, Jordan 代数等五光十色的结构.
+\end{enumerate}
+
+推而广之, 对 \eqref{eqn:tensor-data} 还可以适当扩展, 以探讨 $T^{p, q} V$ 中的一族向量子空间, 或者至少是直线的分类问题. 篇幅所限, 不在话下.
+
+\begin{definition}
+	给定有限维 $K$-向量空间 $V$, 记 $\GL(V)$ 为 $V$ 的线性自同构群. 对于如 \eqref{eqn:tensor-data} 的资料 $\mathbf{t}$, 定义 $\GL(V)$ 的子群
+	\[ G(\mathbf{t}) := \left\{ g \in \GL(V): g\mathbf{t} = \mathbf{t} \right\}. \]
+\end{definition}
+
+选定 $V$ 的基, 将对每个 $i \in I$ 的条件 $gt_i = t_i$ 按坐标具体写下, 则 $G(\mathbf{t})$ 在 $\GL(V)$ 中是由一族多项式方程截出的. 在上述例子中, 若取 $\mathbf{t}$ 对应于非退化对称 (或反对称) 双线性型 $b: V \times V \to K$, 相应的 $G(\mathbf{t})$ 便是正交群 $\mathrm{O}(V, b)$ (或辛群 $\mathrm{Sp}(V, b)$); 若取 $\mathbf{t}$ 为行列式给出的 $(0, \dim V)$ 型张量, 相应的 $G(\mathbf{t})$ 便是特殊线性群 $\SL(V) := \left\{ g: \det g = 1 \right\}$.
+
+\begin{definition}\label{def:tL}
+	对任意域扩张 $L|K$ 和 $K$-向量空间 $V$, 记 $V_L := L \dotimes{K} V$, 视为 $L$-向量空间. 基于典范的 $L$-向量空间同构
+	\[ (T^{p, q} V)_L \simeq T^{p, q}(V_L) , \]
+	任何相对于 $V$, 形如 \eqref{eqn:tensor-data} 的资料 $\mathbf{t}$ 都诱导出一个相对于 $V_L$ 的资料 $\mathbf{t}_L$, 定义在扩域 $L$ 上.
+\end{definition}
+
+域扩张不改变资料的数值部分 $(\dim V, I, (p_i, q_i)_i)$.
+
+回忆到当 $L|K$ 是 Galois 扩张时, $\Gal(L|K)$ 光滑而半线性地作用于 $V_L$ (引理 \ref{prop:Galois-descent-action}), 写作左乘. 事实上, 它光滑半线性地作用于每个 $T^{p, q} (V_L)$ (定义 \ref{def:semilinear-action}), 方法是在张量积上``对角''地作用, 在对偶空间 $V^\vee$ 上按 $\check{v} \mapsto \check{v} \sigma^{-1}$ 作用 (所谓``逆步''); 相对于前述同构, 其不变量子空间是
+\[ T^{p, q} (V_L)^{\Gal(L|K)} = T^{p, q} V; \]
+这无非是 Galois 下降的对象层次. 态射层次则体现为以下结果.
+
+\begin{lemma}
+	设 $V$ 和 $W$ 为有限维 $K$-向量空间. 对所有 $h \in \Hom_L(V_L, W_L)$ 和 $\sigma \in \Gal(L|K)$ 定义
+	\[ {}^\sigma h := \sigma h \sigma^{-1} : V_L \to W_L, \]
+	则它仍是 $L$-线性映射. 这使 $\Gal(L|K)$ 光滑半线性地作用于 $L$-向量空间 $\Hom_L(V_L, W_L)$. 作用兼容于线性映射的合成, 而且
+	\[ \Hom_L(V_L, W_L)^{\Gal(L|K)} = \Hom_K(V, W); \]
+	此处 $\Hom_K(V, W)$ 通过 $f \mapsto f_L := \identity_L \otimes f$ 嵌入 $\Hom_L(V_L, W_L)$.
+\end{lemma}
+\begin{proof}
+	请读者简单地验证 ${}^\sigma h$ 确实是 $L$-线性映射. 至于光滑性, 选取 $V$ 和 $W$ 的基, 将 $\Hom_L(V_L, W_L)$ 的元素等同于矩阵, 则 $\Gal(L|K)$ 按标准方式作用在每个矩阵元上. 既然 $h$ 只涉及有限多个矩阵元, 它们总包含于 $L|K$ 的某个有限子扩张 $E|K$, 故开子群 $\Gal(L|E)$ 保持 $h$ 不动. 关于作用 $(\sigma, h) \mapsto {}^\sigma h$ 的其余断言都是容易的.
+	
+	等式 $\Hom_L(V_L, W_L)^{\Gal(L|K)} = \Hom_K(V, W)$ 是 Galois 下降的直接结论, 也不难以矩阵直接看出.
+\end{proof}
+
+取特例 $V = W$ 可见群 $\Gal(L|K)$ 通过 $(\sigma, g) \mapsto {}^\sigma g$ 作用在 $\GL(V_L)$ 上, 而 $\GL(V_L)^{\Gal(L|K)} = \GL(V)$.
+
+\begin{lemma}
+	给定形如 \eqref{eqn:tensor-data} 的资料 $\mathbf{t}$, 群 $\Gal(L|K)$ 对 $\GL(V_L)$ 的光滑作用保持 $G(\mathbf{t}_L)$ 不变, 使 $G(\mathbf{t}_L)$ 成为注记 \ref{rem:pro-finite-coh-nonabelian} 所谓的光滑 $\Gal(L|K)$-群; 其不变量子群满足
+	\[ G(\mathbf{t}_L)^{\Gal(L|K)} = G(\mathbf{t}). \]
+\end{lemma}
+\begin{proof}
+	设 $g \in G(\mathbf{t}_L)$ 而 $\sigma \in \Gal(L|K)$, 则
+	\[ ({}^\sigma g) \mathbf{t}_L = ({}^\sigma g) (\sigma \mathbf{t}_L) = \sigma g \sigma^{-1} (\sigma \mathbf{t}_L) = \sigma (g \mathbf{t}_L) = \sigma(\mathbf{t}_L) = \mathbf{t}_L, \]
+	故 $\Gal(L|K)$ 作用保持 $G(\mathbf{t}_L)$. 其余断言都是平凡的.
+\end{proof}
+
+实践表明, 对资料 \eqref{eqn:tensor-data} 的分类在充分大的扩域 $L$ 上总能简化. 以非退化二次型为例, 在代数闭域上, 它们的同构类完全由维数决定, 而在一般的域, 例如 $\R$, $\Q_p$ 或 $\Q$ 上, 情况就比较复杂.
+
+先前在种种分类问题中施加的非退化性, 或者乘法结合律等条件通常能够在任意扩域上检验. 问题因而拆成两部分:
+\begin{enumerate}
+	\item 在足够大的域 $L$ 上分类形如 \eqref{eqn:tensor-data} 的资料, 使之满足所需条件; 典型手法是取 $L$ 为可分闭域.
+	\item 选取定义在 $K$ 上的资料 $\mathbf{t}_0$, 取足够大的 Galois 扩张 $L|K$ 并研究有哪些资料 $\mathbf{t}$ 满足 $\mathbf{t}_L \simeq \mathbf{t}_{0,L}$.
+\end{enumerate}
+第一部分可谓是几何的, 第二部分则可谓是算术的. 本节侧重算术部分, 它启发以下定义.
+
+\begin{definition}
+	设 $\mathbf{t}_0$ 为形如 \eqref{eqn:tensor-data} 的资料, 定义在域 $K$ 上, 而 $L|K$ 为域的 Galois 扩张. 命
+	\[ \mathcal{T}(\mathbf{t}_0) := \left\{\begin{array}{r|l}
+		\mathbf{t}: \text{形如 \eqref{eqn:tensor-data} 的资料} & \text{存在同构}\; h: \mathbf{t}_{0, L} \rightiso \mathbf{t}_L \\
+		\text{定义在域 $K$ 上} &
+	\end{array}\right\}. \]
+	另记 $\mathscr{T}(\mathbf{t}_0) := \mathcal{T}(\mathbf{t}_0)/\simeq$.
+\end{definition}
+
+定义中只要求存在同构 $h$, 但未加指定; 不同选取差一个 $G(\mathbf{t}_{0, L})$ 的右乘. 记
+\[ \Gamma := \Gal(L|K), \quad \text{赋予 Krull 拓扑.} \]
+
+若 $\sigma \in \Gamma$ 而 $h: \mathbf{t}_{0, L} \rightiso \mathbf{t}_L$ (亦即 $h(\mathbf{t}_{0, L}) = \mathbf{t}_L$), 则
+\[ {}^ \sigma h (\mathbf{t}_{0, L}) = {}^\sigma h (\sigma \mathbf{t}_{0, L}) = \sigma (h (\mathbf{t}_{0, L})) = \sigma (\mathbf{t}_L) = \mathbf{t}_L, \]
+故存在唯一的映射 $c: \Gamma \to G(\mathbf{t}_{0, L})$ 使得
+\[ {}^\sigma h = h c(\sigma), \quad \sigma \in \Gal(L|K). \]
+
+从 ${}^{\sigma\tau} h = {}^\sigma (h c(\tau)) = {}^\sigma h \cdot {}^{\sigma} c(\tau) = h \cdot c(\sigma) \cdot {}^\sigma c(\tau)$ 可得
+\[ c(\sigma\tau) = c(\sigma) \cdot {}^\sigma c(\tau), \quad \sigma, \tau \in \Gamma. \]
+
+不妨设 $\mathbf{t}_0$ 和 $\mathbf{t}$ 分别实现在空间 $V$ 和 $W$ 上, 于是 $h \in \Hom_L(V_L, W_L)$. 因为 $\Gamma$-作用光滑, 存在开子群 $\Gamma_0 \subset \Gamma$ 保持 $h$ 不动; 相应地, $c$ 通过 $\Gamma/\Gamma_0$ 分解.
+
+若改变 $h$ 的选取, 写作 $h' = h a$, 其中 $a \in G(\mathbf{t}_{0, L})$, 则对应的 $c'$ 满足
+\[ c'(\sigma) = (h')^{-1} \cdot {}^\sigma h' = a^{-1} \cdot h^{-1} \cdot {}^\sigma h \cdot {}^\sigma a = a^{-1} \cdot c(\sigma) \cdot {}^\sigma a. \]
+
+综上, 逐条对照非交换 $\Hm^1$ 的定义 \ref{def:nonabelian-H}, 配合关于 pro-有限版本的注记 \ref{rem:pro-finite-coh-nonabelian}, 可得映射
+\begin{equation}\label{eqn:Galois-H1-prep}
+	\begin{aligned}
+		\mathcal{T}(\mathbf{t}_0) & \to \Hm^1 \left(\Gamma, G(\mathbf{t}_{0, L})\right) \\
+		\mathbf{t} & \mapsto [c] := c\;\text{的等价类}.
+	\end{aligned}
+\end{equation}
+它是典范的, 不依赖任何辅助资料的选取.
+
+顺带回忆到 $\Hm^1 \left(\Gamma, G(\mathbf{t}_{0, L})\right)$ 一般非群, 但它具有由映为恒等自同构 $1$ 的常值映射 $\Gamma \to G(\mathbf{t}_{0, L})$ 代表的基点. 另一方面, $\mathcal{T}(\mathbf{t}_0)$ 也有当然的基点 $\mathbf{t}_0$, 其商集 $\mathscr{T}(\mathbf{t}_0)$ 亦然. 映射 \eqref{eqn:Galois-H1-prep} 显然保持基点, 代入 $h = \identity$ 即可知晓.
+
+\begin{theorem}\label{prop:Galois-H1}
+	给定资料 $\mathbf{t}_0$ 和 Galois 扩张 $L|K$ 如上, $\Gamma := \Gal(L|K)$. 映射 \eqref{eqn:Galois-H1-prep} 诱导保基点的双射
+	\[ \mathscr{T}(\mathbf{t}_0) \; \xrightarrow{1:1} \Hm^1 \left(\Gamma, G(\mathbf{t}_{0, L})\right). \]
+\end{theorem}
+\begin{proof}
+	首先说明 \eqref{eqn:Galois-H1-prep} 通过 $\mathscr{T}(\mathbf{t}_0)$ 分解: 设有 $f: \mathbf{t} \rightiso \mathbf{t}'$, 相应地 $f_L: \mathbf{t}_L \rightiso \mathbf{t}'_L$, 则从 $h: \mathbf{t}_{0, L} \rightiso \mathbf{t}_L$ 可得 $f_L h: \mathbf{t}_{0, L} \rightiso \mathbf{t}'_L$; 由于 ${}^\sigma f_L = f_L$, 它满足 $(f_L h)^{-1} \cdot {}^\sigma (f_L h) = h^{-1} \cdot {}^\sigma h$, 对应的 $c$ 不变.
+
+	其次说明 $\mathscr{T}(\mathbf{t}_0) \to \Hm^1 \left(\Gamma, G(\mathbf{t}_{0, L})\right)$ 单. 设有资料 $\mathbf{t}$, $\mathbf{t}'$ 和同构
+	\[ \mathbf{t}'_L \xleftarrow[\sim]{h'} \mathbf{t}_{0, L} \xrightarrow[\sim]{h} \mathbf{t}_L, \]
+	使得存在满足下式的 $a \in G(\mathbf{t}_{0, L})$:
+	\[ (h')^{-1} \cdot {}^\sigma h' = a^{-1} \cdot h^{-1} \cdot {}^\sigma h \cdot {}^\sigma a, \quad \sigma \in \Gamma. \]
+	因此
+	\[ h \cdot a \cdot (h')^{-1} = {}^\sigma h \cdot {}^\sigma a \cdot {}^\sigma (h')^{-1}, \quad \sigma \in \Gamma, \]
+	换言之, $ha(h')^{-1}: \mathbf{t}'_L \rightiso \mathbf{t}_L$ 对 $\Gamma$-作用不变, 故它下降为同构 $\mathbf{t}' \rightiso \mathbf{t}$.
+	
+	最后说明 $\mathscr{T}(\mathbf{t}_0) \to \Hm^1 \left(\Gamma, G(\mathbf{t}_{0, L})\right)$ 满. 令 $c \in Z^1(\Gamma, G(\mathbf{t}_{0, L}))$. 由于 $c(\sigma) \in \GL(V_L)$, 借此可在 $V_L$ 上定义新的 $\Gamma$-作用 $\odot$ 如下:
+	\[ \sigma \odot v := c(\sigma)(\sigma v), \quad \sigma \in \Gamma, \; v \in V_L. \]
+	
+	从 $c(\identity) = 1$ 和
+	\[ \sigma \odot (\tau \odot v) = c(\sigma) \sigma (c(\tau)(\tau v)) = c(\sigma) \left( {}^\sigma c(\tau) (\sigma\tau v)\right) = (\sigma\tau) \odot v \]
+	可知 $\odot$ 确实是 $\Gamma$-作用, 而 $c$ 的光滑性确保 $\odot$ 仍是光滑半线性作用. 定义 $K$-向量空间 $W := (V_L)^{\Gamma, \;\odot\text{-作用}}$. 根据 Galois 下降, 我们推得保持半线性 $\Gamma$-作用的 $L$-向量空间同构
+	\begin{gather*}
+		h: (V_L, \; \odot\text{-作用}) \rightiso (W_L, \; \text{自然作用}), \\
+		w \in W \implies h(w) = 1 \otimes w.
+	\end{gather*}
+	
+	另一方面, $\Gamma$ 也通过 $\odot$ 半线性地作用在每个 $T^{p, q} (V_L)$ 上 (参照定义 \ref{def:tL} 之下的讨论), 而由 $c(\sigma) \in G(\mathbf{t}_{0, L})$ 得
+	\[ \sigma \odot \mathbf{t}_{0, L} = c(\sigma) (\sigma \mathbf{t}_{0, L}) = c(\sigma) \mathbf{t}_{0, L} = \mathbf{t}_{0, L}. \]
+	故 $\mathbf{t}_{0, L}$ 对 $\odot$ 下降为 $W$ 上的资料 $\mathbf{t}$, 其刻画为 $h(\mathbf{t}_{0, L}) = \mathbf{t}_L$.
+	
+	综上可见 $\mathbf{t} \in \mathcal{T}(\mathbf{t}_0)$. 对应的同构 $h$ 满足 $\sigma(h(v)) = h (\sigma \odot v) = (h c(\sigma) \sigma)(v)$, 亦即恒等式 $\sigma h = h c(\sigma) \sigma$; 将此改写为 $h^{-1} \cdot {}^\sigma h = c(\sigma)$, 可见 $\mathbf{t}$ 在 \eqref{eqn:Galois-H1-prep} 之下被映为 $[c]$. 明所欲证.
+\end{proof}
+
+最简单也最直接的应用如下, 它归结为一则常识: 任何有限维向量空间都有基, 从而维数确定有限维向量空间的同构类.
+
+\begin{theorem}[Hilbert 第 90 定理: $\GL$ 版本]\label{prop:Hilbert-90-GL}
+	\index{Hilbert 90}
+	设 $V$ 为有限维 $K$-向量空间, $L|K$ 为域的 Galois 扩张, 依此让 $\Gamma := \Gal(L|K)$ 光滑地作用在群 $\GL(V_L)$ 上. 我们有
+	\[ \Hm^1(\Gamma, \GL(V_L)) = 1. \]
+\end{theorem}
+\begin{proof}
+	应用定理 \ref{prop:Galois-H1}, 但考虑的资料 $\mathbf{t}_0$ 满足 $I = \emptyset$; 换言之, 它仅指定一个有限维 $K$-向量空间 $V$, 无关任何张量. 此时 $\mathscr{T}(\mathbf{t}_0)$ 的元素一一对应于 $K$-向量空间 $W$ 的同构类, 条件是 $W_L \simeq V_L$, 亦即 $\dim W = \dim V$. 这种同构类当然是唯一的.
+\end{proof}
+
+类似地, 在特征 $\neq 2$ 的域上, 任意辛空间 $(V, \omega)$ 都有辛基这一常识导向下述结果.
+
+\begin{theorem}
+	设 $\mathrm{char}(K) \neq 2$ 而 $V$ 是 $K$-向量空间, $\omega: V \times V \to K$ 是非退化反对称双线性型 (又称``辛形式'', 资料 $(V, \omega)$ 称为``辛空间''). 对应的辛群定义为
+	\begin{align*}
+		\Sp(V) & = \Sp(V, \omega) \\
+		& := \left\{g \in \GL(V): \forall v_1, v_2 \in V, \; \omega(gv_1, gv_2) = \omega(v_1, v_2) \right\}.
+	\end{align*}
+
+	设 $L|K$ 为域的 Galois 扩张, 类似地定义群 $\Sp(V_L)$ 连同其上的 $\Gamma := \Gal(L|K)$-作用; 这是光滑作用. 我们有
+	\[ \Hm^1(\Gamma, \Sp(V_L)) = 1. \]
+\end{theorem}
+\begin{proof}
+	考虑的资料 $\mathbf{t}_0$ 由空间 $V$ 和 $(0, 2)$ 型张量 $\omega$ 构成. 双线性型的非退化和反对称性质可在任意扩域上验证, 因此 $\mathscr{T}(\mathbf{t}_0)$ 的元素一一对应于 $K$ 上的辛空间 $(W, \eta)$ 的同构类, 条件是 $(W_L, \eta_L) \simeq (V_L, \omega_L)$. 基于辛空间的结构定理 (即: 维数确定同构类), 这表明上述资料 $(W, \eta)$ 构成单一的同构类.
+\end{proof}
+
+\begin{example}\label{eg:multiplicative-90-finite}
+	在定理 \ref{prop:Hilbert-90-GL} 中要求 $\dim V = 1$, 则 $\GL(V_L) \simeq L^\times$, 带标准 $\Gamma$-作用, 由此便得到
+	\[ \Hm^1(\Gamma, L^\times) = 0; \]
+	因为 $L^\times$ 交换, 上式采用了加法符号. 若 $L|K$ 有限, 则上式可用定义 \ref{def:TaHm} 的 Tate 上同调改写为 $\TaHm^1(\Gamma, L^\times) = 0$.
+	
+	若进一步要求 $L|K$ 是循环扩张, 则例 \ref{eg:TaHm-periodic} 指出的周期性蕴涵
+	\[ \TaHm^{-1}(\Gamma, L^\times) \simeq \TaHm^1(\Gamma, L^\times) = 0. \]
+	这就以一种自然的方式重证了乘性版本的 Hilbert 第 90 定理, 见 \cite[定理 9.6.9]{Li1}.
+\end{example}
+
+一般来说, 直接计算 $\Hm^1$ 来分类数学对象可能比较困难, 但它的价值在于开启新的视角, 并且将长正合列 (定理 \ref{prop:nonabelian-long}) 等上同调工具引入分类问题的研究中.
+
+
+
+\begin{Exercises}
+	\item 补全定义 \ref{def:opposite-braided-algebra} 省略的论证, 并且证明对于对称幺半范畴 $\mathcal{V}$ 上的代数 $A$, 左 $A$-模和右 $A^{\opp}$-模是一回事.
+	
+	\item 设 $\mathcal{V}$ 是辫幺半范畴, $(A, \mu_A, \eta_A)$ 是其上的代数. 证明若存在 $\cate{Alg}(\mathcal{V})$ 的态射 $\mu': A \otimes A \to A$ 和 $\eta': \munit \to A$, 使得 $A$ 成为 $\cate{Alg}(\mathcal{V})$ 上的代数, 则必然有 $\eta' = \eta_A$ 和 $\mu' = \mu_A$; 特别地, 应用引理 \ref{prop:CAlg-mu} 可知 $A$ 交换. 由此建立 \eqref{eqn:AlgAlg-CAlg}.
+	
+	\begin{hint}
+		容易说明 $\eta' = \eta_A$. 至于 $\mu' = \mu_A$, 记 $A \otimes A$ 的乘法为 $\mu_{A \otimes A}$, 条件给出交换图表
+		\[\begin{tikzcd}[column sep=large]
+			(A \otimes A) \otimes (A \otimes A) \arrow[r, "{\mu' \otimes \mu'}"] \arrow[d, "{\mu_{A \otimes A}}"'] & A \otimes A \arrow[d, "{\mu_A}"] \\
+			A \otimes A \arrow[r, "{\mu'}"'] & A
+		\end{tikzcd}\]
+		若将四份 $A$ 放在 $2 \times 2$ 的表格中, 则交换图表可以形象地理解为纵横交换律
+		\begin{center}\begin{tikzpicture}[baseline=(O)]
+			\matrix (M) [matrix of nodes] {
+				$A$ & $A$ \\
+				$A$ & $A$ \\
+			};
+			\coordinate (O) at (M-1-1.south west);
+			\draw (M-1-1.north west) rectangle (M-1-2.south east);
+			\draw (M-2-1.north west) rectangle (M-2-2.south east);
+		\end{tikzpicture} = \begin{tikzpicture}[baseline=(O)]
+			\matrix (M) [matrix of nodes] {
+				$A$ & $A$ \\
+				$A$ & $A$ \\
+			};
+			\coordinate (O) at (M-1-1.south west);
+			\draw (M-1-1.north west) rectangle (M-2-1.south east);
+			\draw (M-1-2.north west) rectangle (M-2-2.south east);
+		\end{tikzpicture} \quad \begin{tabular}{rl}
+			横向: & 以 $\mu'$ 相乘 \\
+			纵向: & 以 $\mu_A$ 相乘
+		\end{tabular}\end{center}
+		现在 $\mu' = \mu_A$ 的论证可以图解作
+		\begin{center}\begin{tikzpicture}[baseline=(O)]
+			\matrix (M) [matrix of nodes] {
+				$A$ & $A$ \\
+			};
+			\coordinate (O) at (M-1-1.south west);
+			\draw (M-1-1.north west) rectangle (M-1-2.south east);
+		\end{tikzpicture}
+		$=$ \begin{tikzpicture}[baseline=(O)]
+			\matrix (M) [matrix of nodes, every node/.style={anchor=base, minimum width=1.7em, minimum height=1.7em}] {
+				$A$ & $\munit$ \\
+				$\munit$ & $A$ \\
+			};
+			\coordinate (O) at (M-1-1.south west);
+			\draw (M-1-1.north west) rectangle (M-2-1.south east);
+			\draw (M-1-2.north west) rectangle (M-2-2.south east);
+		\end{tikzpicture}
+		$=$ \begin{tikzpicture}[baseline=(O)]
+			\matrix (M) [matrix of nodes, every node/.style={anchor=base, minimum width=1.5em, minimum height=1.7em}] {
+				$A$ & $\munit$ \\
+				$\munit$ & $A$ \\
+			};
+			\coordinate (O) at (M-1-1.south west);
+			\draw (M-1-1.north west) rectangle (M-1-2.south east);
+			\draw (M-2-1.north west) rectangle (M-2-2.south east);
+		\end{tikzpicture}
+		$=$ \begin{tikzpicture}[baseline=(O)]
+			\matrix (M) [matrix of nodes] {
+				$A$ \\
+				$A$ \\
+			};
+			\coordinate (O) at (M-1-1.south west);
+			\draw (M-1-1.north west) rectangle (M-2-1.south east);
+		\end{tikzpicture}\end{center}
+		也请试着翻译为相应的交换图表或等式.
+	\end{hint}
+
+	\item 考虑 $\mathcal{A}$ 上的 dg-代数 $A$ (定义 \ref{def:dg-algebra}). 验证当 $A = \munit$ (幺元) 时, 左 $A$-模和右 $A$-模的概念都化约为 $\mathcal{A}$ 上的复形.
+
+	\item 取定交换环 $\Bbbk$. 设 $A$ 为 $\Bbbk\dcate{Mod}$ 上的 dg-代数, $M$ 为复形. 证明赋予 $M$ 左 $A$-模的结构相当于指定 dg-代数的同态 $A \to \End^\bullet(M) := \Hom^\bullet(M, M)$.
+	
+	\item 设 $\Bbbk$ 为交换环, $R$ 为 $\Bbbk\dcate{Mod}$ 上的 dg-代数. 对于右 $R$-模 $X$ 和左 $R$-模 $Y$, 我们分别将 $R$ 和 $X$, $Y$ 等同于带有直和分解
+	\[ R = \bigoplus_n R^n, \quad X = \bigoplus_n X^n, \quad Y = \bigoplus_n Y^n \]
+	连同满足 $d^2 = 0$ 的 $1$ 次自同态 $d$ 的 $\Bbbk$-代数和 $\Bbbk$-模. 因此 $X \dotimes{R} Y$ 作为 $\Bbbk$-模已有定义.
+	\begin{enumerate}[(i)]
+		\item 回忆到 $X \otimes Y = \bigoplus_n (\bigoplus_{p+q=n} X^p \otimes Y^q)$ 既是 $\Bbbk$-模又有复形结构. 对自明的 $\Bbbk$-模同态 $\pi: X \otimes Y \twoheadrightarrow X \dotimes{R} Y$, 验证 $\Ker(\pi)$ 是子复形, 从而 $X \dotimes{R} Y$ 具有典范的复形结构.
+		
+		\item 证明若 $X$ 为 $(A, R)$-双模, $Y$ 为 $(R, B)$-双模, 其中 $A$ 和 $B$ 也是 dg-代数, 则 $X \dotimes{R} Y$ 自然地成为 $(A, B)$-双模. 以此推广命题 \ref{prop:tensor-Hom-cplx} 的伴随关系至 dg-模的情形; 此处涉及的 $\Hom^\bullet(Y_B, Z_B)$ 和 $\Hom^\bullet({}_A X, {}_A Z)$ 按例 \ref{eg:dg-Hom-cplx} 的方式定义为复形, 但在赋予 $(A, R)$ 和 $(R, B)$-双模结构时须留意符号.
+	\end{enumerate}
+
+	\item 选定 $\mathcal{A}$ 上的 dg-代数 $A$. 若 $p > 0 \implies A^p = 0$, 则称 $A$ 是\emph{非正}的. 对于左 (或右) $A$-模 $M$ 和 $n \in \Z$, 以定义 \ref{def:truncation-cplx} 取 $M$ 的截断子复形 $\tau^{\leq n} M$. 证明若 $A$ 非正, 则:
+	\begin{enumerate}[(i)]
+		\item 每个 $d_M^p: M^p \to M^{p+1}$ 都是 $A^0$-线性的;
+		\item 我们有 $A$-模的短正合列 $0 \to \tau^{\leq n} M \to M \to \tilde{\tau}^{\geq n+1} M \to 0$.
+	\end{enumerate}
+	\index{dg daishu!非正 (non-positive)}
+	
+	\item 选定 $\mathcal{A}$ 上的 dg-代数 $A$. 回忆到全体左 $A$-模构成 dg-范畴 $A\dcate{dgMod}$ (例 \ref{eg:dg-Hom-cplx}); 注记 \ref{rem:dg-homotopy-cat} 相应地给出同伦范畴 $\mathrm{h}(A\dcate{dgMod})$. 若左 $A$-模 $M$ 作为复形是零调的, 则称 $M$ 零调; 若 $A$-模的态射 $f: M \to N$ 作为复形的态射是拟同构, 则称 $f$ 为拟同构.
+	\begin{enumerate}[(i)]
+		\item 设 $M$ 为左 $A$-模, 其结构由 $\mathcal{A}$ 中的一族态射 $\alpha_{A, M}^{p, q}: A^p \otimes M^q \to M^{p+q}$ 确定 ($p, q \in \Z$). 说明下式赋予复形 $M[1]$ 左 $A$-模结构:
+		\[ \alpha_{A, M[1]}^{p, q} := (-1)^p \alpha_{A, M}^{p, q+1} . \]
+		其次, 说明 $M \mapsto M[1]$ 给出从 $A\dcate{dgMod}$ 到自身的 dg-函子.
+		\item 对 $A\dcate{dgMod}$ 的任意态射 $f: M \to N$, 说明映射锥 $\Cone(f)$ 具有典范的左 $A$-模结构, 它按先前符号表作
+		\[ \alpha_{A, \Cone(f)}^{p, q} = \alpha_{A, M[1]}^{p, q} \oplus \alpha_{A, N}^{p, q}. \]
+		\item 循 \S\ref{sec:derived-cat} 的成法, 以映射锥令 $\mathrm{h}(A\dcate{dgMod})$ 成为三角范畴. 其次, 对零调 $A$-模作 Verdier 局部化, 换言之添入拟同构的逆, 以得到导出范畴 $\cate{D}(A\dcate{dgMod})$; 定义相应的 $\cate{D}^{\star}(A\dcate{dgMod})$, 其中 $\star \in \{+, -, \bdd\}$.
+		\item 在 $A$ 非正的前提下, 将命题 \ref{prop:derived-full-faithful-subcat} 推广到 $\cate{D}(A\dcate{dgMod})$ 和 $\cate{D}^{\star}(A\dcate{dgMod})$ 情形, $\star \in \{+, -, \bdd\}$.
+		\begin{hint}
+			使用截断函子.
+		\end{hint}
+		\item 参照 \S\ref{sec:K-injectives} 来定义何谓 K-内射和 K-投射 $A$-模, 以之描述 $\cate{D}(A\dcate{dgMod})$ 中的态射. 代入 \S\ref{sec:triangulated-functor-localization} 的框架来探讨它们和导出函子的联系.
+		\item 对于右 $A$-模 $M$, 说明复形 $M[1]$ 具有如下的右 $A$-模结构: $\alpha_{M[1], A}^{p, q} = \alpha_{M, A}^{p, q+1}$, 而且先前一切性质仍成立.
+	\end{enumerate}
+	
+	\item 设 $\mathcal{C}$ 是 $\Bbbk$ 上的 dg-范畴. 定义 $\mathcal{C}^{\opp}$ 使得 $\Obj\left( \mathcal{C}^{\opp} \right) = \Obj(\mathcal{C})$, 而对任意 $X, Y \in \Obj\left(\mathcal{C}^{\opp}\right)$ 定义复形 $\Hom^\bullet_{\mathcal{C}^{\opp}}(X, Y) := \Hom^\bullet_{\mathcal{C}}(Y, X)$, 其上的合成运算定为
+	\begin{align*}
+		\Hom^p_{\mathcal{C}^{\opp}}(Y, Z) \dotimes{\Bbbk} \Hom^q_{\mathcal{C}^{\opp}}(X, Y) & \to \Hom^{p+q}_{\mathcal{C}^{\opp}}(X, Z) \quad p, q \in \Z \\
+		f \otimes g & \mapsto (-1)^{pq} \underbracket{f \circ g}_{\Hom^\bullet_{\mathcal{C}}\;\text{的运算}}.
+	\end{align*}
+	验证这确实给出 dg-范畴 $\mathcal{C}^{\opp}$, 称为 $\mathcal{C}$ 的相反 dg-范畴.
+	
+	\item 选定交换环 $\Bbbk$ 和 $\Bbbk\dcate{Mod}$ 上的 dg-代数 $R$, 右 $R$-模和左 $R$-模 $Y$. 证明先前介绍的
+	\[ X \dotimes{R} (\cdot): R\dcate{dgMod} \to \cate{C}(\Bbbk), \quad (\cdot) \dotimes{R} Y: \cated{dgMod}R \to \cate{C}(\Bbbk) \]
+	自然地升级为 dg-函子. 对于 $X$ 或 $Y$ 另带双模结构的情形勾勒相应的结果.
+	
+	\begin{hint}
+		关键在于定义 $\Hom$ 复形之间的态射. 对于 $X \dotimes{R} (\cdot)$, 设 $M$ 和 $N$ 为左 $R$-模, 则 Koszul 符号律要求将 $f \in \Hom^n_R(M, N)$ 的像 $\identity_X \otimes f \in \Hom^n(X \dotimes{R} M, X \dotimes{R} N)$ 定义为
+		\[ (\identity_X \otimes f)(x \otimes m) = (-1)^{pn} x \otimes f(m), \quad x \in X^p, \; m \in M^q. \]
+		须验证 $\identity_X \otimes d_{\Hom^\bullet}(f) = d_{\Hom^\bullet}(\identity_X \otimes f)$.
+		
+		至于 $(\cdot) \dotimes{R} Y$ 的情形则比较简单, 取 $(f \otimes \identity_Y)(m \otimes y) = f(m) \otimes y$ 即可.
+	\end{hint}
+	
+	\item 设 $\mathcal{C}$ 为交换环 $\Bbbk$ 上的 dg-范畴, $M \in \Obj(\mathcal{C})$.
+	\begin{enumerate}[(i)]
+		\item 将 $\Hom^\bullet(M, \cdot): \mathcal{C} \to \cate{C}(\Bbbk)$ 升级为 dg-函子.
+		
+		\begin{hint}
+			设 $X, Y \in \Obj(\mathcal{C})$ 而 $f \in \Hom^n(X, Y)$. 命 $\mathcal{H}_X = \Hom^\bullet(M, X)$, 则 $f$ 的像应当取为
+			\[ \left[ f_*: g \xmapsto{n\;\text{次态射}} fg \right] \in \Hom^n(\mathcal{H}_X, \mathcal{H}_Y). \]
+			代入 $\Hom$ 复形的定义来验证 $(d_{\Hom^\bullet(X, Y)} f)_* = d_{\Hom^\bullet(\mathcal{H}_X, \mathcal{H}_Y)}(f_*)$.
+		\end{hint}
+		\item 将 $\Hom^\bullet(\cdot, M): \mathcal{C} \to \cate{C}(\Bbbk)^{\opp}$ 升级为 dg-函子.
+		
+		\begin{hint}
+			命 $\mathcal{K}_X = \Hom^\bullet(X, M)$, 则 Koszul 符号律要求将 $f \in \Hom^n(X, Y)$ 的像取为
+			\[ \left[\begin{array}{c}
+				f^*: g \xmapsto{n\;\text{次态射}} (-1)^{np} gf \\
+				\forall p \in \Z , \; \forall\; g \in \Hom^p(Y, M)
+			\end{array}\right] \in \Hom^n(\mathcal{K}_Y, \mathcal{K}_X). \]
+			细心地验证
+			\begin{compactitem}
+				\item $(d_{\Hom^\bullet(X, Y)} f)^* = d_{\Hom^\bullet(\mathcal{K}_Y, \mathcal{K}_X)}(f^*)$,
+				\item $(fh)^*$ 等于 $h^*$ 和 $f^*$ 在 $\Hom^\bullet_{\cate{C}(\Bbbk)}$ 中的合成.
+			\end{compactitem}
+		\end{hint}
+	\end{enumerate}
+	
+	\item 证明 \S\ref{sec:closed-monoidal} 对闭幺半范畴定义的典范态射 $[Y, Z] \otimes [X, Y] \to [X, Z]$ 和 $\munit \to [X, X]$ 满足结合律和幺元的性质, 从而使闭幺半范畴相对于内 $\Hom$ 是自充实的.
+	\begin{hint}
+		直接验证, 或者参考 \cite[Section 1.6]{Kel05}.
+	\end{hint}
+
+	\item 考虑交换环 $\Bbbk$ 上的多项式代数 $\Bbbk[t]$. 取 $\Delta, \epsilon, S$ 分别为
+	\[ \Delta(t^n) = \sum_{k=0}^n \binom{n}{k} t^k \otimes t^{n-k}, \quad \epsilon(t^n) = \begin{cases}
+		1, & n = 0 \\
+		0, & n \neq 0
+	\end{cases}, \quad
+	S(t^n) = (-1)^n t^n, \]
+	其中 $n \in \Z_{\geq 0}$. 验证这给出交换而且余交换的 Hopf $\Bbbk$-代数.
+	
+	\item 若交换环上的 Hopf 代数 $A$ 的理想 $I$ 满足 $\Delta(I) \subset I \otimes A + A \otimes I$, $\epsilon(I) = 0$ 和 $S(I) \subset I$, 则称之为 Hopf 理想. 说明对 Hopf 理想取商给出 Hopf 代数 $A/I$.
+	
+	\item 设 $\Bbbk$ 是交换环而 $V$ 是 $\Bbbk$-模. 对张量代数 $T(V)$ (见 \cite[定义 7.5.1]{Li1}) 可以定义 $\Bbbk$-代数的同态 $\Delta: T(V) \to T(V) \otimes T(V)$ 和 $\epsilon: T(V) \to \Bbbk$, 使得对所有 $v \in V$ 都有
+	\begin{gather*}
+		\Delta(v) = v \otimes 1 + 1 \otimes v, \quad \epsilon(v) = 0;
+	\end{gather*}
+	此处以平凡辫结构 $x \otimes y \mapsto y \otimes x$ 赋予 $T(V) \otimes T(V)$ 代数的结构.
+	\begin{enumerate}[(i)]
+		\item 验证 $T(V)$ 对此成为双代数.
+		\item 说明如何定义 $\Bbbk$-模自同构 $S: T(V) \to T(V)$ 使得 $S(v) = -v$, 并且使 $S$ 是双代数的反自同构 (命题 \ref{prop:Hopf-antiautomorphism}); 更具体地说,
+		\[ S(v_1 \cdots v_n) = (-1)^n v_n \cdots v_1, \quad n \in \Z_{\geq 0}, \quad v_1, \ldots, v_n \in V. \]
+		验证 $T(V)$ 依此成为 Hopf 代数.
+		\item 说明对称代数 $\Sym(V)$ 也有类似性质, 它事实上是 $T(V)$ 对一个 Hopf 理想的商.
+		\item 处理外代数 $\bigwedge(V)$ 的版本, 但 $\bigwedge(V) \otimes \bigwedge(V)$ 上的乘法结构应该用 Koszul 辫结构 \eqref{eqn:Koszul-braiding} 来定义 (在该处取 $\epsilon(a) = a \bmod\; 2$), 使得齐次元 $x, y, z, w \in \bigwedge(V)$ 满足 $(x \otimes y)(z \otimes w) = (-1)^{\deg y \deg z} xz \otimes yw$. 这可以确保 $(1 \otimes v + v \otimes 1)^2$ 对所有 $v \in V$ 都被映为 $\bigwedge(V) \otimes \bigwedge(V)$ 的零元.
+	\end{enumerate}
+	
+	\item (E.\ Taft) 设 $q$ 是域 $\Bbbk$ 的 $n$ 次单位原根, $n \geq 2$. 考虑由生成元 $g$, $x$ 和关系
+	\[ g^n = 1, \quad x^n = 0, \quad gxg^{-1} = qx \]
+	确定的 $\Bbbk$-代数 $H$. 说明可以定义 $\Delta: H \to H \dotimes{\Bbbk} H$ 和 $\epsilon: H \to \Bbbk$, 满足
+	\begin{gather*}
+		\Delta(g) = g \otimes g, \quad \Delta(x) = 1 \otimes x + x \otimes g, \\
+		\epsilon(g) = 1, \quad \epsilon(x) = 0,
+	\end{gather*}
+	而且这使 $H$ 成为 Hopf $\Bbbk$-代数, 带有对极
+	\[ S: H \to H, \quad S(g) = g^{-1}, \quad S(x) = -g^{-1}x. \]
+	
+	说明 $H$ 既非交换亦非余交换. 当 $n=2$ 时, 对应的 Hopf 代数也称为 Sweedler 的 Hopf 代数.
+
+	\item 设 $(A, \Delta, \epsilon)$ 为交换环 $\Bbbk$ 上的余代数. 若 $x \in A$ 满足 $\Delta(x) = 1 \otimes x + x \otimes 1$, 则称 $x$ 是\emph{本原}的.
+	\begin{enumerate}[(i)]
+		\item 证明对所有本原的 $x$ 皆有 $\epsilon(x) = 0$.
+		\item 设 $(A, \mu, \eta, \Delta, \epsilon)$ 为双代数, 将 $\mu$ 表作乘法 ($xy = \mu(x \otimes y)$). 证明若 $x, y \in A$ 是本原元素, 则 $xy - yx$ 亦然.
+		\item 仍然设 $A$ 为双代数, 设 $x_1, \ldots, x_n \in A$ 为本原元素, 记以 $x_1, \ldots, x_n$ 为基的自由 $\Bbbk$-模为 $V$. 由此得到 $\Bbbk$-代数同态 $\phi: T(V) \to A$. 证明 $\phi$ 也是双代数的同态.
+	\end{enumerate}
+
+	\item 设 $(A, \Delta, \epsilon)$ 是交换环 $\Bbbk$ 上的余代数, $A \neq \{0\}$, 而且它作为 $\Bbbk$-模是无挠的. 满足 $\Delta(x) = x \otimes x$ 的非零元 $x \in A$ 称为\emph{类群}的. 全体类群元素所成集合记为 $\mathcal{G}(A)$.
+	\begin{enumerate}[(i)]
+		\item 证明 $x \in \mathcal{G}(A)$ 蕴涵 $\epsilon(x) = 1$.
+		\item 证明若 $(A, \mu, \eta, \Delta, \epsilon)$ 是双代数, 则 $\mathcal{G}(A)$ 对 $A$ 的乘法 $\mu$ 成为幺半群, 以 $1_A := \eta(1)$ 为幺元.
+		\item 对于幺半群 $M$ 及对应的双代数 $\Bbbk[M]$ (例 \ref{eg:monoid-bialgebra}), 证明 $\mathcal{G}(\Bbbk[M]) = M$.
+		\item 设 $A$ 是以 $S$ 为对极的 Hopf 代数, 证明 $\mathcal{G}(A)$ 是群, $x \in \mathcal{G}(A)$ 的逆是 $S(x)$.
+	\end{enumerate}
+	
+	\item 设 $(A, \Delta, \epsilon)$ 是域 $\Bbbk$ 上的余代数, $A \neq \{0\}$. 证明 $\mathcal{G}(A)$ 是 $A$ 的线性无关子集.
+	
+	\begin{hint}
+		设若不然, 取其中最短的非平凡线性关系, 不妨写作 $x_1 = \sum_{i=2}^n a_i x_i$, 其中 $x_1, \ldots, x_n \in \mathcal{G}(A)$ 两两相异, $a_i \in \Bbbk$. 于是 $x_2, \ldots, x_n$ 线性无关, 而 $x_1 \otimes x_1 = \sum_{i=2}^n a_i x_i \otimes x_i$.
+	\end{hint}
+
+	\item 命 $\cate{TopCMon}$ 为交换拓扑幺半群范畴, $\cate{Top}_\bullet$ 为带基点拓扑空间范畴, $U: \cate{TopCMon} \to \cate{Top}_\bullet$ 为忘却函子 (基点对应幺元). 试构造 $U$ 的左伴随函子 $\Sym: \cate{Top}_\bullet \to \cate{TopCMon}$. 对应于带基点拓扑空间 $(X, x)$ 的 $\Sym(X, x)$ 又称为 $(X, x)$ 的无穷对称积, 试解释这一术语. 代数拓扑学中的 Dold--Thom 定理便是基于这一构造.
+	
+	% Reference: Deligne, Categories tannakiennes, 4.5 Proposition.
+	\item 设 $(A, B)$-双模 $P$ 作为右 $B$-模是有限生成投射模, 而且 $(\cdot) \dotimes{A} P$ 是忠实正合函子. 证明右 $A$-模 $N$ 是有限展示的 (例 \ref{eg:Mod-cpt}) 当且仅当 $N \dotimes{A} P$ 是有限展示右 $B$-模. 这是命题 \ref{prop:Morita-comonad-ft} 的补充.
+	
+	\item 考虑交换环 $\Bbbk$ 和 $\Bbbk$-代数的同态 $f: A \to B$. 我们有伴随对
+	\[\begin{tikzcd}
+		\mathcal{F}_{B|A}: \cated{Mod}B \arrow[shift left, r] & \cated{Mod}A: \Hom_A(B, \cdot), \arrow[shift left, l]
+	\end{tikzcd}\]
+	其中对所有右 $A$-模 $N$, 以 $(\phi b)(x) = \phi(bx)$ 赋予 $\Hom_A(B, N)$ 右 $B$-模结构. 详言之,
+	\begin{compactitem}
+		\item 单位态射 $M \to \Hom_A(B, M)$ 映 $m$ 为 $[b \mapsto mb]$,
+		\item 余单位态射 $\Hom_A(B, N) \to N$ 映 $\phi$ 为 $\phi(1)$;
+	\end{compactitem}
+	可见 \cite[推论 6.6.8]{Li1}. 作为例 \ref{eg:comonad-change-ring} 的补充, 请明确它所对应的单子和余单子.
+
+	\item 设 $R$ 是交换环. 记 $R\dcate{Alg}$ 为 $R$-代数所成范畴. 考虑伴随对
+	$\begin{tikzcd}
+		T(\cdot): R\dcate{Mod} \arrow[shift left, r] & R\dcate{Alg}: U \arrow[shift left, l]
+	\end{tikzcd}$,
+	其中 $T(\cdot)$ 是取张量代数, $U$ 是忘却.
+	\begin{enumerate}[(i)]
+		\item 直接证明 $R\dcate{Mod}$ 上对应的单子作用下的模是 $R$-代数, 从而说明伴随对是单子的.
+		\item 以 $\Sym(\cdot)$ 和 $\bigwedge(\cdot)$ 代替 $T(\cdot)$, 陈述并证明相应的结果; 可参考 \cite[\S 7.6]{Li1}.
+	\end{enumerate}
+
+	\item 试补全命题 \ref{prop:Comod-abelian} 的论证, 并且进一步证明以下的强化版本: 设 $C$ 是 $(B, B)\dcate{Mod}$ 中的余代数, 证明:
+	\begin{enumerate}[(i)]
+		\item 忘却函子 $U: \cated{Comod}C \to \cated{Mod}B$ 有右伴随;
+		
+		\begin{hint}
+			记 $C$ 的余乘法为 $\Delta$, 余幺元为 $\epsilon$. 对右 $B$-模 $N$, 以 $\identity_N \otimes \Delta$ 将 $N \dotimes{B} C$ 作成右 $C$-余模. 对所有右 $C$-余模 $M$, 须验证
+			\[\begin{tikzcd}[row sep=tiny]
+				\Hom_{\cated{Mod}B}(M, N) \arrow[shift left, r] & \Hom_{\cated{Comod}C}\left(M, N \dotimes{B} C\right) \arrow[shift left, l] \\
+				\varphi \arrow[mapsto, r] & (\varphi \otimes \identity_C) \rho \\
+				(\identity_N \otimes \epsilon) \psi & \psi \arrow[mapsto, l]
+			\end{tikzcd}\]
+			互为逆, 其中 $\rho: M \to M \dotimes{B} C$ 确定 $M$ 的余模结构.
+		\end{hint}
+		\item 忘却函子 $U$ 生所有小 $\varinjlim$, 因此 $\cated{Comod}C$ 余完备;
+		\item 范畴 $\cated{Comod}C$ 有余生成元 (定义 \ref{def:generators});
+		
+		\begin{hint}
+			取 Grothendieck 范畴 $\cated{Mod}B$ 的余生成元, 然后取它对
+			$U$ 的右伴随函子的像.
+		\end{hint}
+		\item 证明若 $\cated{Comod}C$ 是 Abel 范畴, 而且 $U$ 是正合函子, 则 $C$ 作为左 $B$-模是平坦的.
+		
+		\begin{hint}
+			设 $g: M \to N$ 是右 $B$-模的单同态. 由 $U$ 正合与右伴随保核这一事实来说明 $g \otimes \identity_C: M \dotimes{B} C \to N \dotimes{B} C$ 仍是单射.
+		\end{hint}
+	\end{enumerate}
+
+	\item 如上题, 继续设 $C$ 是 $(B, B)\dcate{Mod}$ 中的余代数, 而 $M$ 是右 $C$-余模. 证明 $M$ 的任意 $B$-商模 $M''$ (或 $B$-子模 $M'$) 若具有余模结构, 使得 $M \twoheadrightarrow M''$ (或 $M' \hookrightarrow M$) 是余模同态, 则这样的余模结构是唯一的, 前提是在子模情形须假设 $C$ 作为左 $B$-模平坦.
+
+	\item 依照 \S\ref{sec:descent-Galois} 末尾的解释, 按以下步骤给出 Galois 下降定理 \ref{prop:Galois-descent} 的直接证明. 沿用该处符号, 设 $M \in \Obj(\cate{Vect}^{\Gamma, \infty}(L))$, 以 \eqref{eqn:Galois-descent-iotaM} 定义典范映射 $\iota_M$.
+	\begin{enumerate}[(i)]
+		\item 设 $M'$ 是 $L \dotimes{K} (M^\Gamma)$ 的 $\Gamma$-不变子空间 (亦即 $\Gamma M' \subset M'$). 证明若 $M' \cap (1 \otimes M^\Gamma) = \{0\}$, 则 $M' = \{0\}$.
+		
+		\begin{hint}
+			选定 $M^\Gamma$ 的基 $(y_i)_{i \in I}$. 若 $M' \neq \{0\}$, 选其中最短的非零表达式 $\sum_{i \in I} \ell_i \otimes y_i$ (有限和), 适当调整后可以假设它形如
+			\[ m' = 1 \otimes y_{i_0} + \ell_1 \otimes y_{i_1} + \cdots, \quad \ell_1 \notin K. \]
+			取 $\sigma \in \Gamma$ 使得 $\sigma(\ell_1) \neq \ell_1$, 考虑 $m' - \sigma(m')$ 以得到矛盾.
+		\end{hint}
+		\item 证明 $\iota_M: L \dotimes{K} (M^\Gamma) \to M$ 是单射.
+		\begin{hint}
+			考虑 $M' := \Ker(\iota_M)$.
+		\end{hint}
+		
+		\item 证明 $\iota_M$ 是满射.
+		
+		\begin{hint}
+			考虑 $L|K$ 的有限 Galois 子扩张 $E|K$. 取 $E$ 作为 $K$-向量空间的基 $a_1, \ldots, a_n$, 枚举 $\Gal(L|E)$ 的元素 $\identity = \sigma_1, \ldots, \sigma_n$. 应用域论知识可知 $(\sigma_i(a_j))_{1 \leq i, j \leq n}$ 是 $E$ 上的可逆矩阵, 其逆记为 $(b_{ij})_{1 \leq i, j \leq n}$. 对 $m \in M^{\Gal(L|E)}$ 推导
+			\[ m = \sum_{i=1}^n b_{i1} \sum_{j=1}^n \sigma_j(a_i m) \; \in \Image(\iota_M). \] 
+		\end{hint}
+		
+		\item 以上述结果说明 \eqref{eqn:Galois-descent-adjunction} 是伴随等价, 从而给出定理 \ref{prop:Galois-descent} 的一个直接证明.
+	\end{enumerate}
+	
+	\item 设 $G$ 为群, $L|K$ 为域的 Galois 扩张. 记系数在域 $K$ (或 $L$) 上的 $G$-模范畴为 $G\dcate{Mod}$ (或 $G\dcate{Mod}_L$); 参阅定义 \ref{def:G-mod}. 运用 \S\S\ref{sec:descent-Galois}---\ref{sec:Galois-H1} 的 Galois 下降方法, 以 $G\dcate{Mod}_L$ 的对象连同合适的 $\Gal(L|K)$-作用来描述 $G\dcate{Mod}$.
+	
+	\item 沿用 \S\ref{sec:Galois-H1} 的符号. 设 $c \in Z^1(\Gamma, G(\mathbf{t}_{0, L}))$, 回忆定理 \ref{prop:Galois-H1} 的证明, 可见它通过 Galois 下降定义了 $K$-向量空间 $W$ 和其上的资料 $\mathbf{t}$, 以及 $h: \mathbf{t}_{0, L} \rightiso \mathbf{t}_L$.
+	\begin{enumerate}[(i)]
+		\item 说明 $g \mapsto h^{-1} g h$ 给出群同构 $\nu: G(\mathbf{t}_L) \rightiso G(\mathbf{t}_{0, L})$; 说明 $f \xmapsto{\sigma \in \Gamma} c(\sigma) ({}^\sigma f) c(\sigma)^{-1}$ 赋予 $G(\mathbf{t}_{0, L})$ 新的 $\Gamma$-作用, 另记此结构为 ${}^c G(\mathbf{t}_{0, L})$, 而且 $\nu: G(\mathbf{t}_L) \rightiso {}^c G(\mathbf{t}_{0, L})$ 保持 $\Gamma$-作用.
+		\item 说明下式给出良定义的映射
+		\begin{align*}
+			Z^1(\Gamma, G(\mathbf{t}_L)) & \to Z^1(\Gamma, G(\mathbf{t}_{0, L})) \\
+			\tilde{c} & \mapsto \left[\sigma \mapsto \nu(\tilde{c}(\sigma)) c(\sigma) \right],
+		\end{align*}
+		它诱导双射 $\Hm^1(\Gamma, G(\mathbf{t}_L)) \to \Hm^1(\Gamma, G(\mathbf{t}_{0, L}))$, 映基点为 $[c]$.
+		\begin{hint}
+			对照\CHref{sec:group-coh}习题中关于``扭曲''的构造.
+		\end{hint}
+		\item 说明相对于定理 \ref{prop:Galois-H1}, 此双射对应于等式 $\mathscr{T}(\mathbf{t}) = \mathscr{T}(\mathbf{t}_0)$.
+	\end{enumerate}
+	
+	\item 选定满足 $\mathrm{char}(K) \neq 2$ 的域 $K$. 有限维 $K$-向量空间 $V$ 上的非退化对称双线性型 $q: V \times V \to K$ 简称非退化二次型; 在正交群 $\mathrm{O}(q) = \mathrm{O}(V, q)$ 中, 记 $\det = 1$ 截出的子群为 $\SO(q) = \SO(V, q)$. 对任意 Galois 扩张 $L|K$, 我们有非退化二次型 $(V_L, q_L)$ 和对应的群, 其上都有 $\Gamma := \Gal(L|K)$ 的光滑作用.
+	\begin{enumerate}[(i)]
+		\item 记 $\mu_2 := \{\pm 1\} \subset K^\times$. 说明 $\mathrm{O}(q)/\SO(q) \simeq \mu_2$; 对于 $\mathrm{O}(q_L)/\SO(q_L)$ 的版本, 说明同构和 $\Gamma$-作用有何关系.
+		\item 基于 \S\ref{sec:Galois-H1} 的工具, 说明 $\Hm^1(\Gamma, \mathrm{O}(q_L))$ 的元素一一对应于 $K$ 上满足 $\dim V' = \dim V$ 的非退化二次型 $(V', q')$ 的同构类, 基点对应 $(V, q)$.
+		\item 代入定理 \ref{prop:nonabelian-long} 推导带基点集的正合列
+		\[ \mathrm{O}(q) \xrightarrow{\det} \mu_2 \to \Hm^1(\Gamma, \SO(q_L)) \xrightarrow{\varphi} \Hm^1(\Gamma, \mathrm{O}(q_L)) \xrightarrow{\psi} \Hm^1(\Gamma, \mu_2). \]
+		试说明 $\varphi$ 是单射.
+		\begin{hint}
+			由 $\det$ 满只能说明 $\varphi^{-1}(\text{基点}) = \{\text{基点}\}$; 为了说明单性, 须变化 $(V, q)$, 并应用上一道习题的扭曲技巧.
+		\end{hint}
+		\item 说明 $\Hm^1(\Gamma, \mu_2) \simeq K^\times / K^{\times, 2}$. 说明 $\psi$ 等同于映射
+		\[ \left[ (V', q'):\; \text{非退化二次型} \right] \mapsto \mathrm{disc}(q') / \mathrm{disc}(q), \]
+		其中我们任取 $V'$ 的基, 将 $q'$ 等同于一个对称矩阵, 然后定义
+		\[ \mathrm{disc}(q') := (-1)^n \det(q') \bmod K^{\times 2}, \quad \dim V = 2n \;\text{或}\; 2n+1. \]
+		\item 说明 $\Hm^1(\Gamma, \SO(q_L))$ 的元素一一对应于 $K$ 上满足 $\dim V' = \dim V$ 和 $\mathrm{disc}(q') = \mathrm{disc}(q)$ 的非退化二次型 $(V', q')$ 的同构类, 基点对应到 $(V, q)$.
+	\end{enumerate}
+\end{Exercises}

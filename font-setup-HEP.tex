@@ -1,0 +1,40 @@
+% Copyright 2022  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% 目的: 字体相关设置, 呼叫相关宏包.
+% 将由 AJbook.cls 引入
+% 必须提供 \kaishu, \songti, \heiti, \thmheiii, \fangsong 几种字型切换命令, 在文档类中使用.
+\ProvidesFile{font-setup-HEP.tex}[2022/12/19]
+
+% 设置 xeCJK 字体及中文数字
+%\setmainfont{TeX Gyre Pagella}	% 设置西文衬线字体
+\setsansfont{TeX Gyre Heros}	% 设置西文无衬线字体
+
+% 出版模式: 方正字体
+\setCJKmainfont[BoldFont=FZCuSong-B09S, ItalicFont=FZKai-Z03]{FZShuSong-Z01}
+\setCJKsansfont[BoldFont=FZDaHei-B02S]{FZHei-B01}
+\setCJKmonofont[BoldFont=FZDaHei-B02S]{FZHei-B01}
+\setCJKfamilyfont{kai}{FZKai-Z03}
+\setCJKfamilyfont{song}[BoldFont=FZCuSong-B09S, ItalicFont=FZKai-Z03]{FZShuSong-Z01}
+\setCJKfamilyfont{fangsong}[BoldFont=FZCuSong-B09S, ItalicFont=FZKai-Z03]{FZFangSong-Z02}
+\setCJKfamilyfont{hei}[BoldFont=FZDaHei-B02S]{FZHei-B01}
+\setCJKfamilyfont{hei2}[BoldFont=FZDaHei-B02S]{FZHei-B01}
+\setCJKfamilyfont{sectionfont}[BoldFont=FZDaHei-B02S]{FZHei-B01}
+\setCJKfamilyfont{pffont}[BoldFont=FZDaHei-B02S]{FZHei-B01}
+\setCJKfamilyfont{emfont}[BoldFont=FZHei-B01]{FZHei-B01}
+
+\defaultfontfeatures{Ligatures=TeX} 
+%\XeTeXlinebreaklocale "zh"
+%\XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt
+
+% 以下设置字体相关命令, 用于定理等环境中.
+\newcommand\kaishu{\CJKfamily{kai}} % 楷体
+\newcommand\songti{\CJKfamily{song}} % 宋体
+\newcommand\heiti{\CJKfamily{hei}}	% 黑体
+\newcommand\thmheiti{\CJKfamily{hei2}}	% 用于定理名称的黑体
+\newcommand\fangsong{\CJKfamily{fangsong}} % 仿宋
+\renewcommand{\thepart}{\Alph{part}} % 以大写字母表示部分
+\renewcommand{\em}{\bfseries\mathversion{bold}\CJKfamily{emfont}} % 强调

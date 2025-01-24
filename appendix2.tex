@@ -1,0 +1,770 @@
+% LaTeX source for book ``代数学方法'' in Chinese
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% To be included
+
+\chapter{简介 ind-对象和 pro-对象}\label{sec:app-Ind}
+给定范畴 $\mathcal{C}$, 何谓其上的 ind-对象? 取道米田嵌入 $\mathcal{C} \to \mathcal{C}^{\wedge}$, ind-对象可以严谨地定义为 $\mathcal{C}^\wedge$ 中形如 $X = \Yinjlim X_i$ 的对象, 下标 $i$ 遍历某个滤过小范畴 $I$, 而 $X_i \in \Obj(\mathcal{C})$; 符号 $\Yinjlim$ 是为了区别 $\mathcal{C}^{\wedge}$ 和 $\mathcal{C}$ 中的 $\varinjlim$. 可以证明
+\[ \Hom(X, Y) = \varprojlim_i \varinjlim_j \Hom_{\mathcal{C}}(X_i, Y_j), \quad X = \Yinjlim X_i, \; Y = \Yinjlim Y_j. \]
+因此一个 ind-对象 $X$ 可大致地设想为一个``滤过系'', 由 $\mathcal{C}$ 的一族对象 $X_i$ 连同相容的态射族 $X_i \to X_j$ 代表, 其中 $i \to j$ 遍历 $\Mor(I)$, 但 $(X_i)_i$ 的取法相对于 $X$ 是可变的. 这一概念也有对偶版本, 称为 $\mathcal{C}$ 上的 pro-对象. 此处的表述方式借鉴了 \cite{KS06}.
+
+为了给出实例, \S\ref{sec:profinite-groups} 从 pro-有限群入手: 它们既是一类特殊的拓扑群, 也可以等价地刻画为有限群在拓扑群范畴中的滤过 $\varprojlim$ (注记 \ref{rem:profinite-group-lim}). 在此基础上, 稍后的例 \ref{eg:profinite-group} 将说明 pro-有限群无非是有限群范畴上的 pro-对象, 因此能用代数方法处理. 这一类拓扑群在数学中特别常用, 也是本书一些章节所需的背景知识.
+
+我们在 \S\ref{sec:ind-pro} 正式写下 ind-对象和 pro-对象的定义, 态射的描述以及若干初步例子. 之后的讨论侧重 ind-对象; \S\ref{sec:Indization} 探讨 $\mathcal{C}$ 上的所有 ind-对象所成的范畴 $\IndC\mathcal{C}$, 又称 $\mathcal{C}$ 的 $\IndC$ 化, 它包含 $\mathcal{C}$ 作为全子范畴. 我们将探讨如何在 $\mathcal{C}^{\wedge}$ 中辨认 ind-对象 (命题 \ref{prop:recognize-ind}), 亦即刻画一个函子 $\mathcal{C}^{\opp} \to \cate{Set}$ 的 ind-可表性, 然后讨论 $\mathcal{C} \to \IndC\mathcal{C}$ 和极限的纠葛; 特别地, 我们将说明 $\IndC\mathcal{C}$ 具备所有滤过小 $\varinjlim$.
+
+对偶地, $\mathcal{C}$ 也有 $\ProC$ 化: 全体 pro-对象构成范畴 $\ProC\mathcal{C} = \IndC\left(\mathcal{C}^{\opp}\right)^{\opp}$.
+
+函子的 $\IndC$ 化是 \S\ref{sec:Indization-functor} 的主题. 结论包括如何将函子 $\mathcal{C} \to \mathcal{D}$ 延拓到 $\IndC\mathcal{C}$ (定义--命题 \ref{def:Ind-hat-functor}), 以及如何识别一个范畴 $\mathcal{C}$ 是否为全子范畴 $\mathcal{C}'$ 的 $\IndC$ 化 (命题 \ref{prop:Ind-hat-small}).
+
+这些结果将在 \S\ref{sec:Indization-Abel} 应用于 Abel 范畴 $\mathcal{C}$, 由之说明嵌入 $\mathcal{C} \to \IndC\mathcal{C}$ 和 $\mathcal{C} \to \ProC\mathcal{C}$ 都是 Abel 范畴之间的全忠实正合函子 (定理 \ref{prop:Ind-Abel}); 该处还对 Abel 范畴讨论函子延拓的正合性 (命题 \ref{prop:Ind-ext-exactness}). 进一步, 定理 \ref{prop:Ind-Grothendieck} 将说明 Abel 小范畴的 $\IndC$ 化是 Grothendieck 范畴.
+
+基于前述结果, 以及 Grothendieck 范畴有内射余生成元这一基本事实, \S\ref{sec:FM} 将证明 Freyd--Mitchell 嵌入定理: 任何 Abel 小范畴都能全忠实正合地嵌入 $\cated{Mod}R$, 其中 $R$ 是某个实现在小集上的环. 取道 $\IndC$ 化的进路既非最初等的, 也不是最短的, 然而与 Freyd--Mitchell 定理本身相比, $\IndC$ 化兴许是一套更有价值的技术.
+
+\section{楔子: pro-有限群}\label{sec:profinite-groups}
+本节先从拓扑视角界定 pro-有限群: 它们是一类具有特定性质的拓扑群. 在少数必须区分集合大小的场合, 我们考虑的拓扑群默认实现在小集上, 否则不多赘言.
+
+\begin{definition}\label{def:profinite-group}
+	\index{pro-youxianqun@pro-有限群 (profinite group)}
+	所谓 \emph{pro-有限群}意谓具备下述条件的拓扑群 $G$:
+	\begin{itemize}
+		\item $G$ 是 Hausdorff 紧群,
+		\item $G$ 在幺元 $1_G$ 处有一组由正规子群构成的邻域基.
+	\end{itemize}
+	
+	将全体拓扑群构成的范畴记为 $\cate{TopGrp}$, 其中的态射取为连续同态, 则全体 pro-有限群构成 $\cate{TopGrp}$ 的全子范畴. 
+\end{definition}
+
+若 $G$ 是 pro-有限群, 则 $1_G$ 处的邻域基可以取为所有正规开子群 $K \lhd G$. 详细讨论可见 \cite[\S 1.9]{FL14} 或 \cite[\S 4.10]{Li1}.
+
+\begin{remark}
+	另一种刻画是: 一个拓扑群 $G$ 是 pro-有限群当且仅当它是完全不连通的紧群; 见 \cite[\S 1.7 和命题 1.9.3]{FL14}. 此外, 以下相关事实也是有益的: 一个 Hausdorff 拓扑空间 $E$ 是局部紧而且完全不连通的, 当且仅当每个 $e \in E$ 都有一组由紧开子集构成的邻域基.
+\end{remark}
+
+若 $H$ 是 $G$ 的开子群, 对所有陪集 $\bar{g} \in G/H$ 任取代表元 $g$, 则 $G = \bigsqcup_{\bar{g} \in G/H} gH$ 连同紧性蕴涵 $(G:H)$ 有限. 此外, $H = G \smallsetminus \bigcup_{\bar{g} \neq H} gH$ 还蕴涵 $H$ 闭.
+
+我们进一步记录若干基本性质.
+
+\begin{lemma}
+	设 $G$ 为拓扑群, $H$ 为其子群, 则:
+	\begin{enumerate}[(i)]
+		\item 商映射 $\pi: G \to G/H$ 相对于 $G/H$ 的商拓扑是开映射;
+		\item $G/H$ 对商拓扑是 Hausdorff 空间当且仅当 $H$ 闭;
+		\item $G/H$ 的商拓扑是离散的当且仅当 $H$ 开.
+	\end{enumerate}
+	以上断言对 $H \backslash G$ 当然也是成立的.
+\end{lemma}
+\begin{proof}
+	对于断言 (i), 若 $U$ 是 $G/H$ 的开子集, 则 $\pi^{-1}(\pi(U)) = \bigcup_{h \in H} Uh$ 亦开, 故 $\pi(U)$ 按商拓扑定义是开的.
+	
+	断言 (ii) 的``仅当''方向来自 $H = \pi^{-1}(1_G \cdot H)$. 至于``当''的方向, 给定相异陪集 $xH \neq yH$, 取 $G$ 的开子集 $V \ni 1_G$ 使得 $Vx \cap yH = \emptyset$, 再取开子集 $U \ni 1_G$ 使得 $U^{-1} U \subset V$. 这确保 $UxH \cap UyH = \emptyset$. 然而 (i) 说明 $\pi(Ux)$ 和 $\pi(Uy)$ 皆开.
+	
+	断言 (iii) 的``仅当''方向仍来自 $H = \pi^{-1}(1_G \cdot H)$. 现在设 $H$ 开, 则 (i) 蕴涵 $\{1_G \cdot H \} = \pi(H)$ 开, 平移可见 $G/H$ 的所有独点集皆开, 故``当''方向得证.
+\end{proof}
+
+\begin{proposition}
+	设 $G$ 为 pro-有限群.
+	\begin{enumerate}[(i)]
+		\item 若 $H$ 是 $G$ 的闭子群, 则 $H$ 是 pro-有限群.
+		\item 若 $H$ 是 $G$ 的正规闭子群, 则 $G/H$ 对商拓扑成为 pro-有限群.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	对于 (i), 闭子群 $H$ 当然是紧 Hausdorff 的, 它在 $1_G$ 处的一组邻域基由所有 $K \cap H$ 构成, $K$ 遍历 $G$ 的正规开子群.
+	
+	至于 (ii), 已知 $H$ 闭蕴涵 $G/H$ 是 Hausdorff 的, $G$ 紧蕴涵 $G/H$ 紧, 而 $G/H$ 在 $1_G \cdot H$ 处的邻域基由所有 $KH/H$ 构成, $K$ 遍历 $G$ 的正规开子群; 然而我们同样已知 $KH/H$ 是 $G/H$ 的正规开子群.
+\end{proof}
+
+容易证明一族 pro-有限群 $(G_i)_i$ 的乘积仍然 pro-有限, 下标 $i$ 遍历某个小集. 对于任意小范畴 $I$ 和函子 $\beta: I^{\opp} \to \cate{TopGrp}$, 简写为 $(G_i)_{i \in \Obj(I)}$ 的形式 ($G_i := \beta(i)$), 我们赋予
+\[ \left( \varprojlim_i G_i := \varprojlim \beta \right) \hookrightarrow \prod_i G_i \]
+的左式来自乘积空间的拓扑, 使其成为闭子群. 这给出 $\cate{TopGrp}$ 中的 $\varprojlim$. 综上可知若每个 $G_i$ 都是 pro-有限的, 则 $\varprojlim_i G_i$ 亦然. 作为推论, 我们得知所有 pro-有限群构成一个完备范畴.
+
+\begin{example}
+	平凡的例子是 $G$ 为有限群的情形, 此时它的 Hausdorff 拓扑只有一种选择 --- 离散拓扑. 下述例子也是常见的.
+	\begin{itemize}
+		\item 取 Galois 扩张 $E|F$ 的 Galois 群 $G := \Gal(E|F)$, 带 Krull 拓扑 \cite[\S 9.2]{Li1}, 对应的邻域基是 $\Gal(E|L)$, 其中 $L|F$ 遍历 $E|F$ 的有限 Galois 子扩张.
+		
+		\item 对素数 $p$, 记 $\Z_p$ 为 $p$-进整数环, 记 $\SL(n, \Z_p)$ 为其上行列式 $=1$ 的 $n \times n$ 矩阵群, 赋予来自 $n \times n$ 矩阵空间 $\mathrm{M}_n(\Z_p)$ 的拓扑, 这也是 pro-有限群.
+		
+		\item 对于任意群 $G$, 它的 pro-有限完备化定义为
+		\[ \hat{G} := \varprojlim_{\substack{N \lhd G \\ (G:N) < \infty}} G/N, \]
+		对其中每个 $G/N$ 赋离散拓扑. 顾名思义, 它是 pro-有限群.
+	\end{itemize}
+\end{example}
+
+\begin{remark}\label{rem:profinite-group-lim}
+	早先的讨论表明若赋有限群离散拓扑, 则它们的小 $\varprojlim$ 是 pro-有限群. 反之, 任何 pro-有限群 $G$ 都可以表作 $\varprojlim_i G_i$ 的形式, 其中 $(I, \leq)$ 是滤过偏序小集, 而每个 $G_i$ 都是有限群; 见 \cite[定理 4.10.6]{Li1}. 这里可以具体取正规开子群在 $1_G$ 处构成的一组邻域基 $(K_i)_{i \in I}$, 下标集按包含关系反向赋序, 而 $G_i := G/K_i$.
+	
+	以 Galois 群为例, $\Gal(E|F) = \varprojlim_{L|F} \Gal(L|F)$, 其中 $L|F$ 遍历 $E|F$ 的有限 Galois 子扩张.
+	
+	考虑带有如上表达式的 pro-有限群 $G = \varprojlim_i G_i$ 和 $H = \varprojlim_j H_j$; 由于全体 $\Ker[G \to G_i]$ 构成 $G$ 在 $1_G$ 处的一族邻域基, 我们得到典范同构
+	\begin{align*}
+		\Hom_{\cate{TopGrp}}(G, H) & = \Hom_{\cate{TopGrp}}\left(\varprojlim_i G_i, \varprojlim_j H_j \right) \\
+		& \simeq \varprojlim_j \Hom_{\cate{TopGrp}}\left( \varprojlim_i G_i, H_j \right) \quad \text{($\because\; \varprojlim$ 的泛性质)} \\
+		& \simeq \varprojlim_j \varinjlim_i \Hom_{\cate{Grp}}(G_i, H_j) \quad \text{($\because$\; 连续同态必通过某个 $G_i$ 分解)};
+	\end{align*}
+	基于此, pro-有限群也可用代数的方式来处理; 详见稍后的例 \ref{eg:profinite-group}.
+\end{remark}
+
+\begin{definition}
+	\index{pro-p-qun@pro-$p$-群}
+	设 $p$ 为素数. 若一个 pro-有限群 $G$ 具备以下性质, 则称之为 \emph{pro-$p$-群}: 对于任意小的正规开子群 $K \lhd G$, 商群 $G/K$ 皆是 $p$-群. 等价地说: $G$ 可以表成 $\varprojlim_i G_i$, 其中 $(I, \leq)$ 是滤过偏序集而所有 $G_i$ 皆是 $p$-群.
+\end{definition}
+
+这一类群在数论中常见. 习题将有更多关于 pro-$p$-群的讨论.
+
+以下结果表明 pro-有限群对闭子群的商映射具有简单的拓扑性状, 与常见的 Lie 群场景迥异.
+
+\begin{lemma}\label{prop:profinite-section}
+	设 $H$ 和 $H'$ 为 pro-有限群 $G$ 的闭子群, $H' \subset H$, 则商映射 $\pi: G/H' \twoheadrightarrow G/H$ 有连续截面 $s: G/H \to G/H'$; 换言之, $s$ 是满足 $\pi s = \identity_{G/H_2}$ 的连续映射.
+	
+	对于商映射 $H' \backslash G \twoheadrightarrow H \backslash G$ 也有相似的结论.
+\end{lemma}
+\begin{proof}
+	首先处理 $(H:H')$ 有限的情形. 此时 $H$ 是 $H'$ 和有限多个左平移的无交并, 故 $H'$ 在 $H$ 中是开的. 存在正规开子群 $U \lhd G$ 使得 $U \cap H \subset H'$; 于是 $\pi$ 限制为双射 $UH'/H' \to UH/H$, 基于紧性可见这是同胚, 其逆给出定义在 $G/H$ 的开子集 $UH/H$ 上的连续截面. 最后, 以平移将截面延拓到整个 $G/H$ 上.
+	
+	对于一般情形, 请读者将问题化约到 $H' = \{1_G\}$ 情形. 在此情况下, 我们考虑所有资料 $(T, t)$, 其中 $T \subset H$ 是闭子群而 $t$ 是 $G/T \twoheadrightarrow G/H$ 的连续截面, 赋偏序: $(T_1, t_1) \preceq (T_2, t_2)$ 意谓 $T_2 \subset T_1$ 而 $t_1$ 分解为 $G/H \xrightarrow{t_2} G/T_2 \twoheadrightarrow G/T_1$.  Zorn 引理确保极大元存在: 关键在于若 $((S_i, s_i))_i$ 对 $\preceq$ 成链, 命 $S' := \bigcap_i S_i$, 则典范映射 $G/S' \to \varprojlim_i G/S_i$ 连续单, 像稠密, 故紧性蕴涵同胚. 由此遂可定义 $s' := \varprojlim_i s_i: G/H \to G/S'$ 以得到链的上界 $(S', s')$.
+	
+	考虑上述偏序集的极大元 $(S, s)$. 若 $S = \{1\}$ 则完事. 假若 $S \neq \{1\}$, 取 $G$ 的正规开子群 $U$ 使 $S \cap U \neq S$. 由于 $(S : S \cap U)$ 有限, 证明第一步给出 $G/(S \cap U) \to G/S$ 的连续截面, 再合成 $s$ 可得 $G/(S \cap U) \to G/H$ 的连续截面, 这与 $(S, s)$ 的极大性质矛盾.
+	
+	最后, $H' \backslash G \twoheadrightarrow H \backslash G$ 的版本毫无差别.
+\end{proof}
+
+最重要的是 $H' = \{1_G\}$ 的特例, 此时连续截面 $s$ 诱导拓扑空间的同胚 $(G/H) \times H \rightiso G$, 映 $(x, h)$ 为 $s(x)h$. 对于 $G \twoheadrightarrow H \backslash G$, 结论当然是相似的.
+
+\section{关于 ind-对象与 pro-对象}\label{sec:ind-pro}
+自本节起, 我们选定 Grothendieck 宇宙 $\mathcal{U}$, 依此来谈论何谓小范畴和小集; 除非另外说明, 不带定语的范畴默认为 $\mathcal{U}$-范畴 (否则称为``大范畴''). 回忆到 $\cate{Set}$ 代表小集范畴.
+
+设 $\mathcal{C}$ 为范畴. 我们在 \S\ref{sec:Yoneda} 回顾了两种米田嵌入
+\[ h_{\mathcal{C}}: \mathcal{C}\to \mathcal{C}^\wedge, \quad k_{\mathcal{C}}: \mathcal{C} \to \mathcal{C}^\vee. \]
+两者当然互为对偶. 注意到除非 $\mathcal{C}$ 小, 否则 $\mathcal{C}^\wedge$ 和 $\mathcal{C}^\vee$ 一般是大范畴. 在不致混淆的前提下, 今后经常省略函子 $h_{\mathcal{C}}$ 或 $k_{\mathcal{C}}$.
+
+回忆 \cite[命题 2.7.8, 2.7.9]{Li1} 的教诲:
+\begin{itemize}
+	\item $\mathcal{C}^\wedge$ 具备所有小 $\varinjlim$ 和小 $\varprojlim$, 构造方式是在 $\cate{Set}$ 中逐点地取;
+	\item 一般而言, 米田嵌入 $\mathcal{C}\to \mathcal{C}^\wedge$ 保 $\varprojlim$ 不保 $\varinjlim$.
+\end{itemize}
+遵循该处的成例\footnote{这种符号由 P.\ Deligne 首创.}, 本节将 $\alpha: I \to \mathcal{C}^\wedge$ 的 $\varinjlim$ 另外记为
+\[ \Yinjlim \alpha \;\text{或}\; \Yinjlim \alpha(i) \]
+的形式, 下标 $i$ 遍历 $\Obj(I)$. 这是为了和 $\mathcal{C}$ 中的 $\varinjlim$ 相区别.
+\index[sym1]{lim-quot@$\Yinjlim$, $\Yprojlim$}
+
+对偶地, 我们将 $\mathcal{C}^\vee$ 中逐点构造给出的 $\varprojlim$ 记为 $\Yprojlim$ 以资区别, 因为一般而言 $\mathcal{C} \to \mathcal{C}^\vee$ 保 $\varinjlim$ 不保 $\varprojlim$.
+
+稠密性定理 \ref{prop:Yoneda-density} 说明 $\mathcal{C}^\wedge$ 的所有对象都能表成 $\mathcal{C}$ 中对象的 $\Yinjlim$. 所谓 ind-对象, 相当于其中能以滤过 $\Yinjlim$ 表出的对象, 在 $\mathcal{C}^\vee$ 中的对偶版本则称为 pro-对象.
+
+\begin{definition}
+	\index{ind-duixiang@ind-对象 (ind-object)}
+	\index{pro-duixiang@pro-对象 (pro-object)}
+	\index[sym1]{IndC@$\IndC\mathcal{C}$}
+	\index[sym1]{ProC@$\ProC\mathcal{C}$}
+	设 $\mathcal{C}$ 为范畴.
+	\begin{itemize}
+		\item 若 $X \in \Obj(\mathcal{C}^\wedge)$ 能表成 $\Yinjlim X_i$, 下标遍历一个滤过小范畴 $I$, 而 $X_i \in \Obj(\mathcal{C})$ (资料相当于函子 $I \to \mathcal{C}$), 则称 $X$ 是 $\mathcal{C}$ 上的 \emph{ind-对象}.
+		
+		\item 若 $X \in \Obj(\mathcal{C}^\vee)$ 能表成 $\Yprojlim X_i$, 下标遍历一个滤过小范畴 $I$, 而 $X_i \in \Obj(\mathcal{C})$ (资料相当于函子 $I^{\opp} \to \mathcal{C}$), 则称 $X$ 是 $\mathcal{C}$ 上的 \emph{pro-对象}.
+	\end{itemize}
+	
+	全体 ind-对象构成范畴 $\IndC\mathcal{C}$, 全体 pro-对象构成范畴 $\ProC\mathcal{C}$, 它们分别是 $\mathcal{C}^\wedge$ 和 $\mathcal{C}^\vee$ 的全子范畴.
+\end{definition}
+
+于是我们有全忠实函子 $\mathcal{C} \to \IndC\mathcal{C}$ 和 $\mathcal{C} \to \ProC\mathcal{C}$. 推论 \ref{prop:Ind-Pro-size} 将控制 $\IndC\mathcal{C}$ 和 $\ProC\mathcal{C}$ 的大小, 说明它们并非大范畴.
+
+按定义显见 $(\IndC\mathcal{C})^{\opp} \simeq \ProC(\mathcal{C}^{\opp})$. 今后将 ind-对象 (或 pro-对象) 不加说明地表成 $\Yinjlim X_i$ (或 $\Yprojlim Y_i$) 的形式; 留意到表法并不唯一.
+
+\begin{proposition}\label{prop:Ind-Hom}
+	设 $X = \Yinjlim X_i$ 和 $Y = \Yinjlim Y_j$ 为 $\mathcal{C}$ 上的 ind-对象, 则有典范双射
+	\[ \Hom_{\IndC \mathcal{C}}(X, Y) \simeq \varprojlim_i \varinjlim_j \Hom_{\mathcal{C}}(X_i, Y_j); \]
+	类似地, 对 pro-对象 $X = \Yprojlim X_i$ 和 $Y = \Yprojlim Y_j$, 我们有
+	\[ \Hom_{\ProC \mathcal{C}}(X, Y) \simeq \varprojlim_j \varinjlim_i \Hom_{\mathcal{C}}(X_i, Y_j). \]
+	右式的极限都在 $\cate{Set}$ 中理解.
+\end{proposition}
+\begin{proof}
+	对于 ind-对象, 我们有
+	\begin{align*}
+		\Hom_{\mathcal{C}^\wedge}\left(\Yinjlim X_i, \Yinjlim Y_j \right) & = \varprojlim_i \Hom_{\mathcal{C}^\wedge}\left( X_i, \Yinjlim Y_j \right) & (\because\; \mathcal{C}^{\wedge} \; \text{中的 $\varinjlim$}) \\
+		& = \varprojlim_i \left[ \left( \Yinjlim Y_j \right)(X_i) \right] & (\because\; \text{定理 \ref{prop:Yoneda}}) \\
+		& = \varprojlim_i \varinjlim_j \Hom_{\mathcal{C}}(X_i, Y_j) & (\because\; \Yinjlim \;\text{的构造}).
+	\end{align*}
+	后两个等号也可以理解为 $X_i$ 在 $\mathcal{C}^\wedge$ 中的紧性的体现 (命题 \ref{prop:Ind-cpt}). 至于 pro-对象情形则是对偶的.
+\end{proof}
+
+\begin{corollary}\label{prop:Ind-Pro-size}
+	以上构造的 $\IndC \mathcal{C}$ 和 $\ProC \mathcal{C}$ 同 $\mathcal{C}$ 一样都是 $\mathcal{U}$-范畴.
+\end{corollary}
+\begin{proof}
+	命题 \ref{prop:Ind-Hom} 中的每个 $\Hom_{\mathcal{C}}(X_i, Y_j)$ 都是 $\mathcal{U}$-小集, 而 $\varprojlim$ 和 $\varinjlim$ 也在小范畴上取.
+\end{proof}
+
+留意到 $\IndC\mathcal{C}$ 和 $\ProC\mathcal{C}$ 的定义涉及宇宙 $\mathcal{U}$ 的选取. 关于它们和 $\mathcal{U}$ 的精确关系, 请参阅 \cite[Proposition 6.1.21]{KS06}, 此处不深究.
+
+以下例子中的代数结构都默认实现在小集上.
+
+\begin{example}\label{eg:Ind-Vect}
+	设 $\Bbbk$ 为域, 记有限维 $\Bbbk$-向量空间范畴为 $\cate{Vect}_{\mathrm{f}}(\Bbbk)$, 记 $\Bbbk$-向量空间范畴为 $\cate{Vect}(\Bbbk)$. 以下来说明
+	\[ \IndC \cate{Vect}_{\mathrm{f}}(\Bbbk) \;\text{等价于}\; \cate{Vect}(\Bbbk). \]
+	
+	定义函子 $\IndC \cate{Vect}_{\mathrm{f}}(\Bbbk) \to \cate{Vect}(\Bbbk)$ 如下: 它映 $\Yinjlim V_i$ 为 $\cate{Vect}(\Bbbk)$ 中的 $V := \varinjlim_i V_i$. 为了说明它给出全忠实函子, 关键在于
+	\[ \Hom_{\Bbbk}(V, W) \simeq \varprojlim_i \varinjlim_j \Hom_{\Bbbk}(V_i, W_j). \]
+	这不外是因指定线性映射 $f: V \to W$ 相当于指定一族相容的线性映射 $f_i: V_i \to W$, 而滤过 $\varinjlim$ 在 $\cate{Vect}(\Bbbk)$ 中的具体描述说明每个 $f_i$ 都通过某个 $W_j$ 分解.
+	
+	函子 $\IndC \cate{Vect}_{\mathrm{f}}(\Bbbk) \to \cate{Vect}(\Bbbk)$ 还是本质满的, 这是因为对于任意 $\Bbbk$-向量空间 $V$, 其所有有限维子空间 $V^\flat$ 对包含关系成为滤过偏序集, 而我们有 $\cate{Vect}(\Bbbk)$ 中的典范同构 $\varinjlim V^\flat \rightiso V$.
+\end{example}
+
+类似而且更加简单的方法足以说明 $\cate{Set}$ 等价于 $\IndC\cate{FinSet}$, 此处 $\cate{FinSet}$ 代表有限小集范畴. 观察到 $\cate{FinSet}$ 和 $\cate{Vect}_{\mathrm{f}}(\Bbbk)$ 都是``本质小''的: 其对象的同构类构成一个小集. 由此可见 ind-对象是一种``小中见大''的构造.
+
+这种例子举之不尽, 命题 \ref{prop:recognition-Ind} 将给出一种统一的判准来识别范畴的 $\IndC$ 化.
+
+\begin{example}\label{eg:profinite-group}
+	记有限群范畴为 $\cate{FinGrp}$, 记定义 \ref{def:profinite-group} 的 pro-有限群构成的范畴为 $\cate{proFinGrp}$. 以下来说明 $\cate{proFinGrp}$ 等价于 $\ProC\cate{FinGrp}$.
+	
+	定义函子 $\ProC\cate{FinGrp} \to \cate{proFinGrp}$, 映 $\Yprojlim G_i$ 为拓扑群范畴 $\cate{TopGrp}$ 中的 $G := \varprojlim_i G_i$, 其中赋予每个 $G_i$ 离散拓扑; 按定义, 资料 $(G_i)_i$ 来自函子 $I^{\opp} \to \cate{TopGrp}$, 其中 $I$ 是滤过小范畴, 但注记 \ref{rem:filtered-poset} 表明取 $I$ 为滤过偏序集亦可. 一如例 \ref{eg:Ind-Vect}, 等价性归结为证
+	\begin{compactitem}
+		\item 以上的 $G$ 是 pro-有限群,
+		\item $\Hom_{\cate{TopGrp}}(G, H) \simeq \varprojlim_j \varinjlim_i \Hom_{\cate{FinGrp}}(G_i, H_j)$,
+		\item pro-有限群总能表为有限群的滤过小 $\varprojlim$.
+	\end{compactitem}
+	然而这些正是注记 \ref{rem:profinite-group-lim} 的内容.
+\end{example}
+
+在范畴 $\mathcal{C}$ 本身已有滤过小 $\varinjlim$ 的情形, $\IndC\mathcal{C}$ 和 $\mathcal{C}$ 之间还有反向联系. 我们一并对 pro-对象给出对偶的陈述.
+
+\begin{proposition}\label{prop:Ind-adjunction}
+	假设对于所有滤过小范畴 $I$ 和函子 $\alpha: I \to \mathcal{C}$ (或 $\beta: I^{\opp} \to \mathcal{C}$), 总是存在 $\varinjlim \alpha$ (或 $\varprojlim \beta$), 则嵌入函子 $\iota: \mathcal{C} \to \IndC\mathcal{C}$ (或 $\mathcal{C} \to \ProC\mathcal{C}$) 有左伴随 $\sigma: \IndC\mathcal{C} \to \mathcal{C}$ (或右伴随 $\tau: \ProC\mathcal{C} \to \mathcal{C}$), 满足 $\sigma\iota \simeq \identity_{\mathcal{C}}$ (或 $\tau\iota \simeq \identity_{\mathcal{C}}$).
+	
+	具体地说, 若 $X = \Yinjlim X_i$ (或 $X = \Yprojlim X_i$), 则有典范同构 $\sigma(X) \simeq \varinjlim_i X_i$ (或 $\tau(X) \simeq \varprojlim_i X_i$). 
+\end{proposition}
+\begin{proof}
+	处理 ind-版本即可. 鉴于 \cite[命题 2.6.9]{Li1}, 证明左伴随 $\sigma$ 存在相当于对所有 ind-对象 $X$ 证明
+	\[ \Hom_{\mathcal{C}^\wedge}(X, \cdot): \mathcal{C} \to \cate{Set} \]
+	是可表函子. 为此, 设 $X = \Yinjlim X_i$, 则上式同构于
+	\[ \varprojlim_i \Hom_{\mathcal{C}}(X_i, \cdot) \simeq \Hom_{\mathcal{C}}\left( \varinjlim_i X_i, \cdot\right). \]
+	这非但证明左伴随 $\sigma$ 存在, 也一并给出所需的描述.
+\end{proof}
+
+出于理论的需要, 我们经常希望将 $\IndC\mathcal{C}$ 或 $\ProC\mathcal{C}$ 中的态射``对齐'', 这点由以下结果料理.
+
+\begin{lemma}\label{prop:ind-object-morphism}
+	设 $X$ 和 $Y$ 为 $\mathcal{C}$ 上的 ind-对象 (或 pro-对象).
+	\begin{enumerate}[(i)]
+		\item 存在滤过小范畴 $K$ 和函子 $\gamma, \delta: K \to \mathcal{C}$ (或 $K^{\opp} \to \mathcal{C}$), 使得 $X = \Yinjlim \gamma$ 而 $Y = \Yinjlim \delta$ (或 $X = \Yprojlim \gamma$ 而 $Y = \Yprojlim \delta$).
+		\item 设 $f: X \to Y$ 为态射, 则在 (i) 的资料中还可以取到函子之间的态射 $\varphi: \gamma \to \delta$, 使得 $f$ 等于 $\Yinjlim \varphi$ (或 $\Yprojlim \varphi$).
+		
+		\item 推而广之, 给定一对态射 $f, g: X \rightrightarrows Y$, 也同样能适当地选取资料, 将它们用一对态射 $\varphi, \psi: \gamma \to \delta$ 的 $\Yinjlim$ (或 $\Yprojlim$) 来代表.
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	处理 ind-版本即可. 对于 (i), 首先设 $X$ 和 $Y$ 分别来自函子 $\alpha: I \to \mathcal{C}$ 和 $\beta: J \to \mathcal{C}$. 定义 $K$ 为积范畴 $I \times J$; 回忆其对象是二元组 $(i, j) \in \Obj(I) \times \Obj(J)$, 而 $\Hom_K((i,j), (i', j')) := \Hom_I(i, i') \times \Hom_J(j, j')$. 容易看出 $K$ 是滤过小范畴, 而两个投影函子
+	\[ I \leftarrow K \rightarrow J, \quad i \mapsfrom (i, j) \mapsto j \]
+	都是共尾函子 (定义 \ref{def:cofinal}); 展开原定义检验便是. 以这两个函子和 $\alpha$ 与 $\beta$ 的合成分别定义 $\gamma$ 与 $\delta$, 于是命题 \ref{prop:cofinal-lim} 蕴涵 $\Yinjlim \alpha = \Yinjlim \gamma$ 而 $\Yinjlim \beta = \Yinjlim \delta$.
+	
+	对于 (ii), 我们按以下方式调整构造. 这次定义 $K$ 为以下范畴: 其对象是构成交换图表的三元组 $(i, j, t)$:
+	\[\begin{tikzcd}
+		\alpha(i) \arrow[d, "\text{典范}"'] \arrow[r, "t"] & \beta(j) \arrow[d, "\text{典范}"] \\
+		X \arrow[r, "f"'] & Y
+	\end{tikzcd}\]
+	其态射则以自明的楔形交换图表定义. 我们有函子 $I \leftarrow K \rightarrow J$, 它在对象层面是 $i \mapsfrom (i, j, t) \mapsto j$. 仍以它们和 $\alpha$ 与 $\beta$ 的合成分别定义 $\gamma$ 与 $\delta$. 有劳读者验证:
+	\begin{compactitem}
+		\item $K$ 是滤过小范畴,
+		\item 函子 $I \leftarrow K \rightarrow J$ 皆共尾,
+		\item 资料中的 $t$ 给出态射 $\varphi: \gamma \to \delta$.
+	\end{compactitem}
+	
+	这些事实足以说明存在所求的交换图表
+	\[\begin{tikzcd}[column sep=large]
+		\Yinjlim \gamma \arrow[r, "{\Yinjlim \varphi}"] \arrow[d, "\sim"' sloped] & \Yinjlim \delta \arrow[d, "\sim" sloped] \\
+		X \arrow[r, "f"'] & Y.
+	\end{tikzcd}\]
+	
+	对于 (iii) 的态射对 $f, g: X \rightrightarrows Y$, 论证是类似的, 须定义 $K$ 的元素为四元组 $(i, j, s, t)$, 其中 $s, t: \alpha(i) \rightrightarrows \alpha(j)$, 细节留给读者.
+\end{proof}
+
+上述结果自然地推广到任意有限个态射 $f, g, \ldots \in \Hom_{\IndC\mathcal{C}}(X, Y)$ 的情形.
+
+\section{范畴的 \texorpdfstring{$\IndC$}{Ind} 化}\label{sec:Indization}
+延续 \S\ref{sec:ind-pro} 的讨论, 今起聚焦于 ind-对象. 从 $\mathcal{C}$ 向 $\IndC\mathcal{C}$ 的过渡是一个重要技巧, 常被称为 $\IndC$ 化.
+
+\begin{definition}
+	\index{fanchou!共尾小 (cofinally small)}
+	设 $I$ 为范畴. 若存在小范畴 $J$ 连同共尾函子 $J \to I$ (定义 \ref{def:cofinal}), 则称 $I$ 是\emph{共尾小}的.
+\end{definition}
+
+\begin{lemma}\label{prop:cofinally-small-sub}
+	范畴 $I$ 是共尾小的当且仅当存在全子范畴 $I'$ 使得包含函子 $I' \to I$ 是共尾函子, 而 $I'$ 是小范畴. 若 $I$ 滤过, 则 $I'$ 也滤过.
+\end{lemma}
+\begin{proof}
+	说明``仅当''方向和后半部即可. 取定义中的共尾函子 $H: J \to I$. 命 $I'$ 为所有对象 $H(j)$ 组成的全子范畴 ($j \in \Obj(J)$); 它当然是小的. 将 $H$ 分解为
+	\[ J \xrightarrow{H'} I' \xrightarrow{G: \text{包含函子}} I. \]
+	证明 $G: I' \to I$ 共尾相当于证明逗号范畴 $(i/G)$ 对所有 $i \in \Obj(I)$ 皆连通, 见定义 \ref{def:cofinal}. 这点容易从 $(i/H)$ 的连通性推得, 留给读者验证.
+	
+	至于共尾全子范畴 $I'$ 的滤过性质, 请见命题 \ref{prop:cofinal-filtered}.
+\end{proof}
+
+\begin{proposition}[辨认 ind-对象]\label{prop:recognize-ind}
+	设 $X \in \Obj(\mathcal{C}^\wedge)$, 则以下陈述等价:
+	\begin{enumerate}[(i)]
+		\item $X$ 是 $\mathcal{C}$ 上的 ind-对象;
+		\item 定理 \ref{prop:Yoneda-density} 中出现的 $(h_{\mathcal{C}}/X)$ 是共尾小滤过范畴.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	先说明 (i) $\implies$ (ii). 关于滤过性质, 设 $X = \Yinjlim X_i$, 下标 $i$ 遍历滤过小范畴 $I$ 的对象, $X_i \in \Obj(\mathcal{C})$. 设 $\phi: S \to X$ 和 $\phi': S' \to X$ 为 $(h_{\mathcal{C}}/X)$ 的任两个对象. 命题 \ref{prop:Ind-cpt} 说明存在 $i$ (或 $i'$) 使得 $\phi$ (或 $\phi'$) 通过 $X_i$ (或 $X_{i'}$) 分解; 因为 $I$ 滤过, 不失一般性可设 $i = i'$, 于是 $\phi$ 和 $\phi'$ 都通过 $(h_{\mathcal{C}}/X)$ 的对象 $X_i \to X$ 分解. 这是滤过范畴的第一要件.
+	
+	以上论证顺带指出: 全体典范态射 $(X_i \to X)_i$ 给出共尾函子 $I \to (h_{\mathcal{C}}/X)$. 故 $(h_{\mathcal{C}}/X)$ 共尾小.
+	
+	其次, 设有 $(h_{\mathcal{C}}/X)$ 中的两个态射, 形如
+	\[\begin{tikzcd}[row sep=small]
+		S \arrow[rr, shift left, "f"] \arrow[rr, shift right, "g"'] \arrow[rd, "\phi"'] & & S' . \arrow[ld, "{\phi'}"] \\
+		& X &
+	\end{tikzcd}\]
+	我们知道 $\phi'$ 通过某个 $\phi'_i: S' \to X_i$ 分解, $\phi' f = \phi' g$ 蕴涵有 $I$ 的态射 $\alpha: i \to j$ 使得 $X(\alpha) \phi'_i f = X(\alpha) \phi'_i g$, 其中 $X(\alpha): X_i \to X_j$. 这也相当于说 $f$ 和 $g$ 被下图等化
+	\[\begin{tikzcd}
+		S \arrow[r, shift left, "f"] \arrow[r, shift right, "g"'] \arrow[rd, "\phi"'] & S' \arrow[d, "{\phi'}"] \arrow[r, "{X(\alpha) \phi'_i}"] & X_j . \arrow[ld] \\
+		& X &
+	\end{tikzcd}\]
+	至此证出 $(h_{\mathcal{C}}/X)$ 滤过.
+	
+	以下说明 (ii) $\implies$ (i). 定理 \ref{prop:Yoneda-density} 说明 $X$ 是函子 $(h_{\mathcal{C}}/X) \to \mathcal{C}^\wedge$ 的 $\Yinjlim$ (映 $\phi: S \to X$ 为 $S$). 以引理 \ref{prop:cofinally-small-sub} 取 $(h_{\mathcal{C}}/X)$ 的共尾全子范畴 $I$, 使得 $I$ 是滤过小范畴, 由此可将 $X$ 写成 ind-对象 $\Yinjlim X_i$.
+\end{proof}
+
+落在 $\IndC\mathcal{C}$ 的函子 $X: \mathcal{C}^{\opp} \to \cate{Set}$ 也称为 \emph{ind-可表}的. 命题 \ref{prop:recognize-ind} 相当于给出 ind-可表性的一个判准. 以对偶方式可谈论 \textbf{pro-可表}函子并给出判准.
+
+今后的结果涉及定义 \ref{def:create-limit} 的术语.
+
+\begin{proposition}\label{prop:Ind-filtered-colim}
+	全忠实函子 $\IndC\mathcal{C} \to \mathcal{C}^\wedge$ 生滤过小 $\varinjlim$. 特别地, $\IndC\mathcal{C}$ 具备所有滤过小 $\varinjlim$.
+\end{proposition}
+\begin{proof}
+	取滤过小范畴 $I$ 和函子 $\alpha: I \to \IndC\mathcal{C}$, 记 $X := \Yinjlim \alpha \in \Obj(\mathcal{C}^\wedge)$. 我们的目标是证明 $X$ 落在 $\IndC\mathcal{C}$. 基于命题 \ref{prop:recognize-ind}, 证明 $(h_{\mathcal{C}}/X)$ 是共尾小滤过范畴即可.
+	
+	关于滤过范畴的第一则条件, 给定 $\phi: S \to X$ 和 $\phi': S' \to X$, 命题 \ref{prop:Ind-cpt} 蕴涵存在 $i, i' \in \Obj(I)$ 使得它们分别通过 $\phi_i: S \to X_i$ 和 $\phi'_{i'}: S \to X_{i'}$ 分解, 不失一般性可设 $i = i'$. 既然 $X_i$ 是 ind-对象, 写作 $\Yinjlim X_{ij}$ 之形, 再次应用命题 \ref{prop:Ind-cpt} 可设 $\phi_i$ 和 $\phi'_i$ 都通过某个 $X_{ij} \in \Obj(\mathcal{C})$ 分解; 典范态射 $X_{ij} \to X$ 使它成为 $(h_{\mathcal{C}}/X)$ 的对象.
+	
+	关于态射等化的第二则条件按照相同方式处理.
+	
+	现在验证 $(h_{\mathcal{C}}/X)$ 共尾小. 基于引理 \ref{prop:cofinally-small-sub}, 对所有 $i$ 皆存在 $\Obj((h_{\mathcal{C}}/ X_i))$ 的小子集 $S_i$, 使得 $(h_{\mathcal{C}}/ X_i)$ 的任何对象皆有映向 $S_i$ 的态射. 记 $F_i: (h_{\mathcal{C}}/ X_i) \to (h_{\mathcal{C}}/ X)$ 为自明的函子, 命
+	\[ S := \bigcup_i F_i(S_i) \;\subset \Obj((h_{\mathcal{C}}/ X)). \]
+	于是 $S$ 是小集, 而且早先的论证其实说明 $(h_{\mathcal{C}}/ X)$ 的任何对象都有映向 $S$ 的态射. 综上可见 $S$ 给出 $(h_{\mathcal{C}}/ X)$ 的共尾全子范畴 (应用命题 \ref{prop:cofinal-filtered}), 故 $(h_{\mathcal{C}}/ X)$ 共尾小.
+\end{proof}
+
+\begin{lemma}\label{prop:Ind-lim}
+	设 $\mathcal{C}$ 具备有限 $\varprojlim$, 则函子 $\IndC\mathcal{C} \to \mathcal{C}^\wedge$ 生有限 $\varprojlim$, 而 $\mathcal{C} \to \IndC\mathcal{C}$ 保有限 $\varprojlim$, 特别地, $\IndC\mathcal{C}$ 具备有限 $\varprojlim$.
+	
+	此时 $\IndC\mathcal{C}$ 中的有限 $\varprojlim$ 可和滤过小 $\varinjlim$ 交换.
+\end{lemma}
+\begin{proof}
+	已知嵌入 $\mathcal{C} \to \mathcal{C}^\wedge$ 保小 $\varprojlim$. 第一段的断言归结为证明 $\IndC\mathcal{C}$ 对 $\mathcal{C}^\wedge$ 中的有限 $\varprojlim$ 保持封闭.
+	
+	既然 $\mathcal{C} \to \mathcal{C}^\wedge$ 保小 $\varprojlim$, 它映终对象为终对象, 于是问题进一步简化为证明 $\IndC\mathcal{C}$ 对 $\mathcal{C}^\wedge$ 中的有限积和等化子保持封闭. 对于两个 ind-对象 $X$ 和 $Y$ 的积, 以引理 \ref{prop:ind-object-morphism} (i) 取滤过范畴 $K$ 将它们表为 $X = \Yinjlim X_k$ 和 $Y = \Yinjlim Y_k$, 兹断言 $\Yinjlim (X_k \times Y_k)$ 在 $\mathcal{C}^\wedge$ 中给出 $X \times Y$. 诚然, 对任意 $S \in \Obj(\mathcal{C})$ 皆有
+	\begin{multline*}
+		\left(\Yinjlim (X_k \times Y_k)\right)(S) = \varinjlim_k \left((X_k \times Y_k)(S)\right) = \varinjlim_k (X_k(S) \times Y_k(S)) \\
+		\simeq \varinjlim_k X_k(S) \times \varinjlim_k Y_k(S) = X(S) \times Y(S);
+	\end{multline*}
+	第二行的典范同构用到一则事实: $\cate{Set}$ 中的滤过小 $\varinjlim$ 和有限 $\varprojlim$ 相交换 (命题 \ref{prop:filtered-finite-exchange}).
+	
+	接着处理等化子. 考虑 ind-对象之间的态射 $f, g: X \rightrightarrows Y$. 根据引理 \ref{prop:ind-object-morphism} (iii), 不妨假设 $X = \Yinjlim X_i$, $Y = \Yinjlim Y_i$ 而 $f, g$ 分别来自两族态射 $f_i, g_i: X_i \rightrightarrows Y_i$. 取 $\mathcal{C}$ 中的 $\Ker(f_i, g_i)$. 对所有 $S \in \Obj(\mathcal{C})$ 和 $i$, 我们得到 $\cate{Set}$ 中的等化子图表
+	\[\begin{tikzcd}
+		\Hom_{\mathcal{C}}(S, \Ker(f_i, g_i)) \arrow[r] & \Hom_{\mathcal{C}}(S, X_i) \arrow[r, shift left, "{f_{i, *}}"] \arrow[r, shift right, "{g_{i, *}}"'] & \Hom_{\mathcal{C}}(S, Y_i).
+	\end{tikzcd}\]
+	对 $i$ 取 $\varinjlim$, 并且再次应用 $\cate{Set}$ 中的滤过小 $\varinjlim$ 和有限 $\varprojlim$ 相交换这一事实, 便有等化子图表
+	\[\begin{tikzcd}
+		\left(\Yinjlim \Ker(f_i, g_i)\right)(S) \arrow[r] & X(S) \arrow[r, shift left, "f"] \arrow[r, shift right, "g"'] & Y(S).
+	\end{tikzcd}\]
+	当 $S$ 变动, 它表明 ind-对象 $\Yinjlim \Ker(f_i, g_i)$ 给出 $\mathcal{C}^\wedge$ 中的 $\Ker(f, g)$.
+	
+	事实上, 论证中说明了 $\mathcal{C}^\wedge$ 中的滤过小 $\varinjlim$ 和有限 $\varprojlim$ 相交换; 这点是化约到 $\cate{Set}$ 上验证的. 既然 $\IndC\mathcal{C} \to \mathcal{C}^\wedge$ 生滤过小 $\varinjlim$ (命题 \ref{prop:Ind-filtered-colim}) 和有限 $\varprojlim$, 交换性质在 $\IndC\mathcal{C}$ 中仍成立.
+\end{proof}
+
+\begin{lemma}\label{prop:Ind-colim}
+	设 $\mathcal{C}$ 具备有限 $\varinjlim$, 则 $\IndC\mathcal{C}$ 亦然, 而且 $\mathcal{C} \to \IndC\mathcal{C}$ 保有限 $\varinjlim$.
+	
+	此时 $\IndC\mathcal{C}$ 是余完备的.
+\end{lemma}
+\begin{proof}
+	将有限 $\varinjlim$ 拆解为三种情形: 始对象, 两个对象的余积, 余等化子.
+	
+	设 $X$ 是 $\mathcal{C}$ 的始对象, 则对于任意 ind-对象 $Y = \Yinjlim Y_j$ 皆有 $\Hom_{\mathcal{C}^\wedge}(X, Y) \simeq \varinjlim_j \Hom_{\mathcal{C}}(X, Y_j)$, 这显然是独点集. 故 $X$ 是 $\IndC\mathcal{C}$ 的始对象.
+	
+	接着考虑 ind-对象 $X$ 和 $Y$ 的余积. 以引理 \ref{prop:ind-object-morphism} (i) 取滤过范畴 $K$ 将它们表为 $X = \Yinjlim X_k$ 和 $Y = \Yinjlim Y_k$. 兹断言余积由 ind-对象 $\Yinjlim (X_k \sqcup Y_k)$ 给出. 对任意 ind-对象 $S = \Yinjlim S_h$,
+	\begin{multline*}
+		\Hom_{\mathcal{C}^\wedge}(\Yinjlim (X_k \sqcup Y_k), S) \simeq \varprojlim_k \varinjlim_h \Hom_{\mathcal{C}}(X_k \sqcup Y_k, S_h) \\
+		\simeq \varprojlim_k \varinjlim_h \left( \Hom_{\mathcal{C}}(X_k, S_h) \times \Hom_{\mathcal{C}}(Y_k, S_h) \right) \\
+		\simeq \varprojlim_k \varinjlim_h \Hom_{\mathcal{C}}(X_k, S_h) \times \varprojlim_k \varinjlim_h \Hom_{\mathcal{C}}(Y_k, S_h),
+	\end{multline*}
+	最后一步用到 $\varprojlim$ 和 $\varprojlim$ 交换, 以及  $\cate{Set}$ 中的滤过小 $\varinjlim$ 和有限 $\varprojlim$ 交换. 最终产物是 $\Hom_{\mathcal{C}^\wedge}(X, S) \times \Hom_{\mathcal{C}^\wedge}(Y, S)$, 同构都是典范的.
+	
+	考虑余等化子情形. 设 $f, g: X \rightrightarrows Y$ 为 ind-对象之间的态射. 根据引理 \ref{prop:ind-object-morphism} (iii), 可假设 $X = \Yinjlim X_i$, $Y = \Yinjlim Y_i$ 而 $f, g$ 来自两族态射 $f_i, g_i: X_i \rightrightarrows Y_i$. 对所有 $S \in \Obj(\mathcal{C})$ 和 $i$, 我们有 $\cate{Set}$ 中的等化子图表
+	\[\begin{tikzcd}
+		\Hom_{\mathcal{C}}(\Coker(f_i, g_i), S) \arrow[r] &
+		\Hom_{\mathcal{C}}(Y_i, S) \arrow[r, shift left, "{f_i^*}"] \arrow[r, shift right, "{g_i^*}"'] & \Hom_{\mathcal{C}}(X_i, S).
+	\end{tikzcd}\]
+	
+	若以米田嵌入将 $\Hom_{\mathcal{C}}$ 改写成 $\Hom_{\mathcal{C}^\wedge}$, 并将上式的 $S \in \Obj(\mathcal{C})$ 放宽为 ind-对象 $S = \Yinjlim S_j$, 则仍然有等化子图表, 缘由是根据命题 \ref{prop:Ind-Hom}, 这不外是在上式中以 $S_j$ 代 $S$, 再套一层 $\varinjlim_j$ 的结果; 但等化子是一种有限 $\varprojlim$, 故被 $\varinjlim_j$ 保持.
+	
+	对以上得到的等化子图表取 $\varprojlim_i$, 然后将 $\varprojlim_i$ 搬进 $\Hom$ 的第一个变元, 变为 $\Yinjlim$, 其产物是 $\cate{Set}$ 中的等化子图表
+	\[\begin{tikzcd}
+		\Hom_{\mathcal{C}^\wedge}(\Yinjlim \Coker(f_i, g_i), S) \arrow[r] &
+		\Hom_{\mathcal{C}^\wedge}(Y, S) \arrow[r, shift left, "{f^*}"] \arrow[r, shift right, "{g^*}"'] & \Hom_{\mathcal{C}^\wedge}(X, S).
+	\end{tikzcd}\]
+	综上, 我们为 $\Yinjlim \Coker(f_i, g_i)$ 验证了 $\IndC\mathcal{C}$ 中的 $\Coker(f, g)$ 所需之泛性质.
+	
+	最后, 为了证明 $\IndC\mathcal{C}$ 余完备, 说明它具备小余积即可. 但一般的小余积表作有限余积的滤过 $\varinjlim$. 应用命题 \ref{prop:Ind-filtered-colim}. 明所欲证.
+\end{proof}
+
+\section{函子的 \texorpdfstring{$\IndC$}{Ind} 化与延拓}\label{sec:Indization-functor}
+继续前一节的讨论, 但将焦点转向函子.
+
+\begin{definition-proposition}[函子的 $\IndC$ 化]\label{def:Ind-functor}
+	设 $F: \mathcal{C} \to \mathcal{D}$ 为函子, 则有典范地定义的函子 $\IndC F: \IndC\mathcal{C} \to \IndC\mathcal{D}$, 使得下图精确到典范同构是交换的:
+	\[\begin{tikzcd}
+		\IndC\mathcal{C} \arrow[r, "{\IndC F}"] & \IndC \mathcal{D} \\
+		\mathcal{C} \arrow[u] \arrow[r, "F"'] & \mathcal{D}. \arrow[u]
+	\end{tikzcd}\]
+	对 $\mathcal{C}$ 上的任何 ind-对象 $X = \Yinjlim X_i$, 存在典范同构 $(\IndC F)(X) \simeq \Yinjlim F(X_i)$.
+\end{definition-proposition}
+\begin{proof}
+	米田嵌入的稠密性定理 \ref{prop:Yoneda-density} 将所有 $X \in \Obj(\mathcal{C}^\wedge)$ 典范地表作
+	\[ X \simeq \Yinjlim_{\phi: S \to X} S, \]
+	右式的资料遍历范畴 $(h_{\mathcal{C}}/X)$. 我们希望对 ind-对象 $X$ 定义
+	\[ (\IndC F)(X) := \Yinjlim_{\phi: S \to X} F(S), \]
+	这当然是典范的, 问题在于说明右式是 $\mathcal{D}$ 上的 ind-对象. 由命题 \ref{prop:recognize-ind} 可知 $(h_{\mathcal{C}}/X)$ 是共尾小滤过范畴; 以引理 \ref{prop:cofinally-small-sub} 取其共尾全子范畴 $I$, 使得 $I$ 是滤过小范畴, 则 $(\IndC F)(X)$ 表为 $I$ 上的滤过小 $\varinjlim$, 从而说明 $(\IndC F)(X)$ 是 ind-对象.
+	
+	给定 ind-对象 $X = \Yinjlim X_i$, 命题 \ref{prop:recognize-ind} 的证明已说明典范态射族 $(X_i \to X)_i$ 给出共尾函子 $I \to (h_{\mathcal{C}}/X)$, 由此易得 $(\IndC F)(X) \simeq \Yinjlim F(X_i)$. 取 $X \in \Obj(\mathcal{C})$ 而 $I$ 是仅有单个对象的滤过偏序集, 便给出所求的交换图表, 精确到典范同构.
+\end{proof}
+
+\begin{lemma}\label{prop:Ind-hat-functor-prep}
+	设 $F: \mathcal{C} \to \mathcal{D}$ 为函子. 若 $\mathcal{C}$ 和 $\mathcal{D}$ 具备有限 $\varinjlim$ (或有限 $\varprojlim$), 而且 $F$ 保持这些 $\varinjlim$ (或 $\varprojlim$), 则定义--命题 \ref{def:Ind-functor} 构造的函子 $\IndC F: \IndC\mathcal{C} \to \IndC\mathcal{D}$ 亦然.
+\end{lemma}
+\begin{proof}
+	有限 $\varinjlim$ (或 $\varprojlim$) 在 $\IndC\mathcal{C}$ 和 $\IndC\mathcal{D}$ 中的存在性已由引理 \ref{prop:Ind-colim} (或引理 \ref{prop:Ind-lim}) 确保. 回顾证明可见其中考量的 $\varinjlim$ (或 $\varprojlim$) 都是``逐下标''地描述的, 前提是将所论的 ind-对象及态射适当地对齐; 然而 $\IndC F$ 也有相应的描述. 这就将问题化约到 $F: \mathcal{C} \to \mathcal{D}$ 保持有限 $\varinjlim$ (或 $\varprojlim$) 这一前提.
+\end{proof}
+
+\begin{lemma}\label{prop:IndF-vs-Yoneda}
+	设 $F: \mathcal{C} \to \mathcal{D}$ 为函子, $\mathcal{C}$ 为小范畴. 记 $F^\wedge: \mathcal{C}^\wedge \to \mathcal{D}^\wedge$ 为将 \eqref{eqn:Yoneda-F-tilde} 施于 $\mathcal{C} \xrightarrow{F} \mathcal{D} \xrightarrow{h_{\mathcal{D}}} \mathcal{D}^\wedge$ 的合成所给出的函子. 精确到同构, 下图交换:
+	\[\begin{tikzcd}
+		\IndC\mathcal{C} \arrow[r, "{\IndC F}"] \arrow[d] & \IndC\mathcal{D} \arrow[d] \\
+		\mathcal{C}^\wedge \arrow[r, "{F^\wedge}"'] & \mathcal{D}^\wedge ,
+	\end{tikzcd}\]
+	其中的纵向函子都是自明嵌入.
+	
+	作为推论, $\IndC F$ 保滤过小 $\varinjlim$.
+\end{lemma}
+\begin{proof}
+	回忆到 $\mathcal{D}^\wedge$ 余完备, 故 $F^\wedge$ 确实可定义. 对于第一部分, 给定 $\mathcal{C}$ 上的 ind-对象 $X = \Yinjlim X_i$, 此处 $i$ 遍历滤过小范畴 $I$, 或者更广的滤过共尾小范畴, 后者可典范地取为 $(h_{\mathcal{C}}/X)$. 根据 \eqref{eqn:Yoneda-F-tilde} 的构造, 它在 $F^\wedge$ 之下的像是 $\mathcal{D}^\wedge$ 中的 $\Yinjlim F(X_i)$. 根据定义--命题 \ref{def:Ind-functor} 的证明, 这也正是 $(\IndC F)(X)$ 在 $\mathcal{D}^\wedge$ 中的像.
+	
+	至于第二部分, 命题 \ref{prop:Yoneda-F-tilde} 已指出 $F^\wedge$ 保小 $\varinjlim$. 既然图表中的纵向函子生滤过小 $\varinjlim$ (命题 \ref{prop:Ind-filtered-colim}), 由此易证 $\IndC F$ 保滤过小 $\varinjlim$.
+\end{proof}
+
+\begin{definition-proposition}\label{def:Ind-hat-functor}
+	设 $F: \mathcal{C} \to \mathcal{D}$ 为函子, 范畴 $\mathcal{D}$ 具备滤过小 $\varinjlim$. 定义 $\hat{F}: \IndC\mathcal{C} \to \mathcal{D}$ 为合成函子
+	\[ \IndC\mathcal{C} \xrightarrow{\IndC F} \IndC\mathcal{D} \xrightarrow[\text{命题 \ref{prop:Ind-adjunction}}]{\sigma} \mathcal{D}; \]
+	若 $X = \Yinjlim X_i$ 是 $\mathcal{C}$ 上的 ind-对象, 则有典范同构 $\hat{F}(X) \simeq \varinjlim_i F(X_i)$; 特别地, $\hat{F}$ 和嵌入 $\mathcal{C} \to \IndC\mathcal{C}$ 的合成同构于 $F$.
+	
+	若进一步设 $\mathcal{C}$ 和 $\mathcal{D}$ 具备有限 $\varinjlim$, 而 $F$ 保这些 $\varinjlim$, 则 $\hat{F}$ 亦然.
+\end{definition-proposition}
+\begin{proof}
+	第一部分不外是结合命题 \ref{prop:Ind-adjunction} 和定义--命题 \ref{def:Ind-functor} 中的相关陈述.
+	
+	对于第二部分, 引理 \ref{prop:Ind-hat-functor-prep} 说明 $\IndC F$ 保有限 $\varinjlim$. 另一方面, $\sigma$ 既然有右伴随函子, 它也保 $\varinjlim$.
+\end{proof}
+
+当 $\mathcal{C}$ 是小范畴时, 定义--命题 \ref{def:Ind-hat-functor} 能进一步强化.
+
+\begin{proposition}\label{prop:Ind-hat-small}
+	设 $F: \mathcal{C} \to \mathcal{D}$ 为函子, $\mathcal{C}$ 为小范畴而 $\mathcal{D}$ 具有滤过小 $\varinjlim$, 则 $\hat{F}: \IndC\mathcal{C} \to \mathcal{D}$ 保所有滤过小 $\varinjlim$.
+\end{proposition}
+\begin{proof}
+	引理 \ref{prop:IndF-vs-Yoneda} 已说明 $\IndC F$ 保滤过小 $\varinjlim$, 而 $\sigma$ 有右伴随.
+\end{proof}
+
+\begin{proposition}[识别 $\IndC$ 化]\label{prop:recognition-Ind}
+	设 $\mathcal{C}$ 具有滤过小 $\varinjlim$, 而 $\mathcal{C}'$ 是 $\mathcal{C}$ 的全子范畴. 嵌入函子 $\iota: \mathcal{C}' \to \mathcal{C}$ 按照定义--命题 \ref{def:Ind-hat-functor} 的方式诱导函子 $\hat{\iota}: \IndC(\mathcal{C}') \to \mathcal{C}$. 设 $\mathcal{C}'$ 满足以下条件
+	\begin{itemize}
+		\item $\mathcal{C}'$ 的对象皆是 $\mathcal{C}$ 中的紧对象 (定义 \ref{def:cpt-objects}),
+		\item $\mathcal{C}$ 的所有对象都能表成 $\mathcal{C}'$ 中对象的滤过小 $\varinjlim$.
+	\end{itemize}
+	此时 $\hat{\iota}$ 是等价.
+\end{proposition}
+\begin{proof}
+	依构造, $\hat{\iota}$ 映 $\mathcal{C}'$ 上的 ind-对象 $\Yinjlim X_i$ 为 $\mathcal{C}$ 中的 $\varinjlim X_i$; 此处 $I \to \mathcal{C}'$ 是给定的函子, $I$ 是滤过小范畴. 依假设, $\mathcal{C}$ 的所有对象都能表为此形式, 故 $\hat{\iota}$ 本质满.
+	
+	其次说明 $\hat{\iota}$ 全忠实. 考虑 $\mathcal{C}'$ 上的 ind-对象 $\Yinjlim X_i$ 和 $\Yinjlim Y_j$. 基于 $\mathcal{C}'$ 在 $\mathcal{C}$ 中的紧性, 类似于命题 \ref{prop:Ind-Hom} 的论证蕴涵
+	\begin{gather*}
+		\Hom_{\mathcal{C}}\left( \varinjlim_i X_i, \; \varinjlim_j Y_j\right) \simeq \varprojlim_i \varinjlim_j \Hom_{\mathcal{C}'}(X_i, Y_j).
+	\end{gather*}
+	这是典范双射. 明所欲证.
+\end{proof}
+
+反过来说, 若 $\mathcal{C} = \IndC(\mathcal{C}')$, 则 $\mathcal{C}'$ 嵌入为 $\mathcal{C}$ 的全子范畴, 满足上述全部条件.
+
+\section{Abel 范畴的 \texorpdfstring{$\IndC$}{Ind} 化}\label{sec:Indization-Abel}
+本节沿续 \S\S\ref{sec:ind-pro}---\ref{sec:Indization-functor} 的讨论和相关假设.
+
+\begin{theorem}\label{prop:Ind-Abel}
+	设 $\mathcal{C}$ 是 Abel 范畴, 则 $\Ind\mathcal{C}$ 亦然, 而 $\mathcal{C} \to \IndC\mathcal{C}$ 是全忠实正合函子.
+	
+	对偶地, 当 $\mathcal{C}$ 是 Abel 范畴时, $\mathcal{C} \to \ProC\mathcal{C}$ 也是 Abel 范畴之间的全忠实正合函子.
+\end{theorem}
+\begin{proof}
+	先处理 $\IndC\mathcal{C}$ 版本. 以下记 $\Hom := \Hom_{\IndC\mathcal{C}}$. 既然 $\mathcal{C} \to \IndC\mathcal{C}$ 保有限 $\varinjlim$ (引理 \ref{prop:Ind-colim}) 和 $\varprojlim$ (引理 \ref{prop:Ind-lim}), 它映零对象为零对象. 此外这也说明 $\IndC\mathcal{C}$ 具备有限 $\varinjlim$ 和 $\varprojlim$.
+	
+	其次, \eqref{eqn:coprod-prod-delta} 的典范态射
+	\[ \delta: Y \sqcup Y \to Y \times Y, \quad Y \in \Obj(\IndC\mathcal{C}) \]
+	总是同构: 基于 ind-对象的积或余积的``逐下标''构造, 这点立即化约到 $X, Y \in \Obj(\mathcal{C})$ 的情形来验证. 基于此, 遂可按照命题 \ref{prop:additive-cat-addition} 的方法在 $\Hom(X, Y)$ 上定义加法为
+	\[ f+g := \left[ X \to X \times X \xrightarrow{f \times g} Y \times Y \xrightarrow{\delta^{-1}} Y \sqcup Y \to Y \right]\;\text{的合成}. \]
+	读者可以验证这些操作在 $\Hom(X, Y) \simeq \varprojlim_i \varinjlim_j \Hom_{\mathcal{C}}(X_i, Y_j)$ 之下化为 $\Hom_{\mathcal{C}}$ 中按照同样方式刻画的加法 (忆及 $\varinjlim_j$ 是滤过的), 因此这确实使 $\IndC\mathcal{C}$ 成为 $\cate{Ab}$-范畴, 继而成为加性范畴, 而 $\mathcal{C} \to \IndC\mathcal{C}$ 成为加性函子.
+	
+	考虑 $\IndC\mathcal{C}$ 的任意态射 $f: X \to Y$. 兹断言典范态射 $\Coim(f) \to \Image(f)$ 总是同构. 鉴于引理 \ref{prop:ind-object-morphism} (ii), 不妨设 $f$ 由 $\mathcal{C}$ 中的一族态射 $f_i: X_i \to Y_i$ 诱导. 在加性范畴中以核及余核描述像及余像 (命题 \ref{prop:Im-Coim-additive}), 并且回忆到先前证明中得到的 $\Ker(f) = \Yinjlim \Ker(f_i)$ 等性质, 容易将这点化约到 $\Coim(f_i) \rightiso \Image(f_i)$. 至此证出 $\IndC\mathcal{C}$ 是 Abel 范畴.
+	
+	最后, $\mathcal{C} \to \IndC\mathcal{C}$ 的正合性源于它保有限 $\varinjlim$ 和有限 $\varprojlim$.
+	
+	由于 Abel 范畴的概念自对偶 (命题 \ref{prop:abelian-cat-duality}), 而 $\ProC\mathcal{C} \simeq \IndC(\mathcal{C}^{\opp})^{\opp}$, 由此立得关于 $\ProC\mathcal{C}$ 的对偶表述.
+\end{proof}
+
+留意到 Abel 范畴是一类特殊的加性范畴, 而加性是范畴的一种性质, 并非额外结构; 参看推论 \ref{prop:automatic-additivity} 之后的讨论.
+
+\begin{remark}\label{rem:Ind-k-linear}
+	若进一步假定 $\mathcal{C}$ 是 $\Bbbk$-线性 Abel 范畴, $\Bbbk$ 是交换环, 则 $\IndC\mathcal{C}$ 亦然, 而且 $\mathcal{C} \to \IndC\mathcal{C}$ 是 $\Bbbk$-线性函子. 为了说明这点, 关键是在每个 $\Hom(X, Y)$ 上典范地定义 $\Bbbk$-模结构, 使之在双射
+	\[ \Hom(X, Y) \simeq \varprojlim_i \varinjlim_j \Hom_{\mathcal{C}}(X_i, Y_j) \]
+	的右侧反映为每个 $\Hom_{\mathcal{C}}(X_i, Y_j)$ 的 $\Bbbk$-模结构. 我们可以将此条件取作定义, 但问题在于说明它只依赖 $X$ 和 $Y$, 无关 $(X_i)_i$ 和 $(Y_j)_j$ 的选取. 相关验证没有本质上的困难, 细节留作习题.
+\end{remark}
+
+\begin{lemma}
+	考虑 Abel 范畴之间的函子 $F: \mathcal{C} \to \mathcal{D}$. 定义--命题 \ref{def:Ind-functor} 的函子 $\IndC F: \IndC\mathcal{C} \to \IndC\mathcal{D}$ 依然是加性函子.
+\end{lemma}
+\begin{proof}
+	考虑 $\mathcal{C}$ 上的 ind-对象 $X = \Yinjlim X_i$ 和 $Y = \Yinjlim Y_j$. 回顾构造可知 $\IndC F$ 在态射层面诱导的映射等同于
+	\[ \varprojlim_i \varinjlim_j \Hom_{\mathcal{C}}(X_i, Y_j) \xrightarrow{\text{由 $F$ 诱导}} \varprojlim_i \varinjlim_j \Hom_{\mathcal{C}}(FX_i, FY_j). \]
+	回忆 $\IndC\mathcal{C}$ 和 $\IndC\mathcal{D}$ 的 $\Hom$ 集上的加法结构 (见定理 \ref{prop:Ind-Abel} 证明), 可见上述映射是加法群同态.
+\end{proof}
+
+\begin{lemma}
+	设 Abel 范畴 $\mathcal{C}$ 具备滤过小 $\varinjlim$, 则命题 \ref{prop:Ind-adjunction} 的 $\sigma: \IndC\mathcal{C} \to \mathcal{C}$ 是加性函子.
+\end{lemma}
+\begin{proof}
+	仿照先前方式直接验证, 或者运用以下事实: 它是 $\IndC\mathcal{C} \to \mathcal{C}$ 的左伴随, 故推论 \ref{prop:automatic-additivity} (v) 蕴涵加性.
+\end{proof}
+
+当 $\mathcal{C}$ 和 $\mathcal{D}$ 是 $\Bbbk$-线性的, $\Bbbk$ 是交换环, 而 $F$ 也是 $\Bbbk$-线性函子时, 以上结论也有显然的推广.
+
+以下结果是 \S\ref{sec:Tannaka-coend} 所用到的.
+
+\begin{proposition}\label{prop:Ind-ext-exactness}
+	考虑 Abel 范畴之间的右正合函子 $F: \mathcal{C} \to \mathcal{D}$. 设 $\mathcal{D}$ 具有滤过小 $\varinjlim$.
+	\begin{enumerate}[(i)]
+		\item 定义--命题 \ref{def:Ind-hat-functor} 给出的延拓 $\hat{F}: \IndC\mathcal{C} \to \mathcal{D}$ 是右正合函子.
+		\item 若进一步要求 $F$ 是正合函子, 而且滤过小 $\varinjlim$ 在 $\mathcal{D}$ 中是正合的, 则 $\hat{F}$ 是正合函子.
+		\item 在 (i) 的场景中, 若要求 $\mathcal{C}$ 是小范畴, 则 $\hat{F}$ 保所有小 $\varinjlim$.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	此前两则引理说明 $\hat{F}$ 是加性函子, 而定义--命题 \ref{def:Ind-hat-functor} 说明 $\hat{F}$ 保有限 $\varinjlim$, 断言 (i) 得证.
+	
+	现在设 (ii) 的前提成立, 我们的目标归结为证 $\hat{F}$ 保 $\Ker$. 设 $f: X \to Y$ 为 $\IndC\mathcal{C}$ 的态射. 基于引理 \ref{prop:ind-object-morphism} (ii), 不妨设 $X = \Yinjlim X_i$, $Y = \Yinjlim Y_i$ 而 $f = \Yinjlim f_i$, 其中 $f_i: X_i \to Y_i$ 满足相容性条件. 对正合列
+	\[ 0 \to \Ker(f_i) \to X_i \xrightarrow{f_i} Y_i \]
+	先取 $F$ 再取 $\varinjlim_i$, 产物是正合列
+	\[ 0 \to \varinjlim_i F\Ker(f_i) \to \varinjlim_i FX_i \to \varinjlim_i FY_i. \]
+	
+	根据引理 \ref{prop:Ind-lim} 的证明, $\Yinjlim \Ker(f_i) = \Yinjlim \Ker(f_i, 0)$ 给出 $\Ker(f) = \Ker(f, 0)$, 从而正合列的第一项等同于 $\hat{F}(\Ker(f))$. 另一方面, 第二段态射等同于 $\hat{F}f: \hat{F}X \to \hat{F}Y$. 断言 (ii) 得证.
+	
+	现在考虑断言 (iii). 命题 \ref{prop:Ind-hat-small} (ii) 说明 $\hat{F}$ 保所有滤过小 $\varinjlim$. 搭配右正合性, 我们遂得到 $\hat{F}$ 保所有小 $\varinjlim$.
+\end{proof}
+
+继续将重心转向小范畴的 $\IndC$ 化. 我们需要 \S\ref{sec:Grothendieck-cat} 关于 Grothendieck 范畴的理论.
+
+\begin{lemma}\label{prop:Ind-generator}
+	若 $\mathcal{C}$ 是具备有限 $\varinjlim$ 的小范畴, 则 $\IndC\mathcal{C}$ 有生成元.
+\end{lemma}
+\begin{proof}
+	已知 $\IndC\mathcal{C}$ 余完备 (引理 \ref{prop:Ind-colim}), 而 $\mathcal{C}$ 小, 故可在 $\IndC\mathcal{C}$ 中取
+	\[ s := \coprod_{X \in \Obj(\mathcal{C})} X. \]
+	
+	以下说明 $s$ 是生成元. 给定 $\IndC\mathcal{C}$ 的任一对态射 $f, g: X \rightrightarrows Y$, 可设 $X = \Yinjlim X_i$. 根据 $s$ 的构造, 可对每个 $i$ 取 $\epsilon_i$ 使得
+	\[ \left[X_i \xrightarrow{\text{余积的典范态射}} s \xrightarrow{\epsilon_i} X\right] \;\text{的合成} = \left[ X_i \xrightarrow{\text{典范}} X\right]. \]
+	若对所有态射 $\epsilon: s \to X$ 都有 $f\epsilon = g\epsilon$, 则代入 $\epsilon = \epsilon_i$ 可见 $f$ 和 $g$ 拉回到每个 $X_i$ 上皆相等, 从而 $f=g$.
+\end{proof}
+
+\begin{theorem}\label{prop:Ind-Grothendieck}
+	设 $\mathcal{C}$ 是 Abel 小范畴, 则 $\IndC\mathcal{C}$ 是 Grothendieck 范畴.
+\end{theorem}
+\begin{proof}
+	定理 \ref{prop:Ind-Abel} 说明 $\IndC\mathcal{C}$ 是 Abel 范畴. 以下逐一验证 Grothendieck 范畴的条件.
+	\begin{description}
+		\item[余完备性] 包含于引理 \ref{prop:Ind-colim}.
+		\item[生成元] 引理 \ref{prop:Ind-generator} 确保其存在.
+		\item[滤过小 $\varinjlim$ 正合] 给定滤过小范畴 $I$ 和函子 $\alpha, \beta, \gamma: I \to \IndC\mathcal{C}$, 连同态射 $\alpha \to \beta \to \gamma$, 使得
+		\[ 0 \to \alpha(i) \to \beta(i) \to \gamma(i) \to 0 \]
+		对每个 $i \in \Obj(I)$ 都是短正合列, 我们希望证明
+		\[ 0 \to \varinjlim \alpha \to \varinjlim \beta \to \varinjlim \gamma \to 0 \]
+		也正合. 如例 \ref{eg:limit-exactness} 所述, $\varinjlim$ 总是保 $\Coker$, 关键是证其保 $\Ker$. 然而 $\Ker$ 是一种有限 $\varprojlim$, 所以问题由引理 \ref{prop:Ind-lim} 的第二部分解决.
+	\end{description}
+	明所欲证.
+\end{proof}
+
+\section{Freyd--Mitchell 嵌入定理}\label{sec:FM}
+继续选定 Grothendieck 宇宙 $\mathcal{U}$ 以区分范畴 (默认为 $\mathcal{U}$-范畴) 和小范畴. 按照惯例, 以下提到的群, 环和模皆默认实现在小集 (即 $\mathcal{U}$-小集) 上.
+
+\begin{lemma}\label{prop:FM-prep-1}
+	设 $\mathcal{C}$ 是具有投射生成元的余完备 Abel 范畴, 而 $O$ 是 $\Obj(\mathcal{C})$ 的小子集, 则存在 $\mathcal{C}$ 的投射生成元 $S$, 使得每个 $X \in O$ 都能表作 $S$ 的商对象.
+\end{lemma}
+\begin{proof}
+	任取 $\mathcal{C}$ 的投射生成元 $s$. 以余完备的条件取直和
+	\[ S := \bigoplus_{X \in O} s^{\oplus \Hom(s, X)}. \]
+	它依然是投射对象. 对任意 $X \in O$, 定义典范态射 $S \twoheadrightarrow X$ 使得它拉回 $f \in \Hom(s, X)$ 对应的直和项 $s$ 上等于 $f$, 其余直和项上为 $0$. 从生成元的性质易见这是满态射, 详阅定理 \ref{prop:identify-ModR} 证明.
+\end{proof}
+
+以下结果是定理 \ref{prop:identify-ModR} 的一则简单变奏.
+
+\begin{lemma}\label{prop:FM-prep-2}
+	设 $S$ 是 Abel 范畴 $\mathcal{C}$ 的投射生成元. 命 $R := \End_{\mathcal{C}}(S)$, 由此得到忠实正合函子 (命题 \ref{prop:injective-cogenerator})
+	\[ G := \Hom_{\mathcal{C}}(S, \cdot): \mathcal{C} \to \cated{Mod}R. \]
+	若 $X \in \Obj(\mathcal{C})$ 能表成有限多份 $S$ 的直和的商, 则 $G$ 诱导之
+	\[ \Hom_{\mathcal{C}}(X, Y) \to \Hom_{\cated{Mod}R}(GX, GY) \]
+	对所有 $Y \in \Obj(\mathcal{C})$ 都是双射.
+\end{lemma}
+\begin{proof}
+	取 $m \in \Z_{\geq 0}$ 和 $\mathcal{C}$ 中的短正合列
+	\[ 0 \to X' \to S^{\oplus m} \to X \to 0. \]
+	对之取 $G$ 给出 $\cated{Mod}R$ 中的短正合列. 考虑 $\cate{Ab}$ 中的行正合交换图表
+	\begin{equation}\label{eqn:FM-prep-2}\begin{tikzcd}
+			0 \arrow[r] & \Hom_{\mathcal{C}}(X, Y) \arrow[r] \arrow[hookrightarrow, d] & \Hom_{\mathcal{C}}(S^{\oplus m}, Y) \arrow[r] \arrow[hookrightarrow, d] & \Hom_{\mathcal{C}}(X', Y) \arrow[hookrightarrow, d] \\
+			0 \arrow[r] & \Hom_R(GX, GY) \arrow[r] & \Hom_R(G(S^{\oplus m}), GY) \arrow[r] & \Hom_R(GX', GY),
+	\end{tikzcd}\end{equation}
+	纵向箭头都来自忠实函子 $G$, 故为单射. 观察到
+	\[ \Hom_{\mathcal{C}}(S, Y) \xrightarrow{\identity} GY \xleftarrow[\psi(1_R) \mapsfrom \psi]{\sim} \Hom_R(R, GY) = \Hom_R(GS, GY) \]
+	的合成等同于函子 $G$ 在 $\Hom$ 上诱导的同态; 这当然近乎同义反复, 引理 \ref{prop:GP-prep} 的证明中业已验证. 既然 $G$ 是加性函子, 这蕴涵 \eqref{eqn:FM-prep-2} 的中段纵向箭头是同构. 在 $\cate{Ab}$ 中按图索骥, 易见左侧纵向箭头也是同构.
+\end{proof}
+
+\begin{theorem}[P.\ Freyd, B.\ Mitchell {\cite[Chapter 4]{Fr03}}]\label{prop:FM}
+	\index{Freyd-Mitchell@Freyd--Mitchell 嵌入定理 (Freyd--Mitchell Embedding Theorem)}
+	设 $\mathcal{A}$ 为 Abel 小范畴, 则存在环 $R$ 和全忠实正合函子 $F: \mathcal{A} \to \cated{Mod}R$.
+\end{theorem}
+\begin{proof}
+	以下论证取自 \cite[Theorem 9.6.10]{KS06}. 因为 $\mathcal{A}^{\opp}$ 仍是 Abel 小范畴, 定理 \ref{prop:Ind-Grothendieck} 说明 $\IndC(\mathcal{A}^{\opp})$ 是 Grothendieck 范畴, 从而推论 \ref{prop:Grothendieck-cat-cogenerator} 确保它有内射余生成元. 鉴于
+	\[ \ProC(\mathcal{A}) \simeq \IndC(\mathcal{A}^{\opp})^{\opp}, \]
+	我们推知 $\ProC(\mathcal{A})$ 有投射生成元. 此外 $\mathcal{A} \to \ProC(\mathcal{A})$ 是 Abel 范畴之间的全忠实正合函子 (定理 \ref{prop:Ind-Abel}).
+	
+	视 $\mathcal{A}$ 为 $\ProC(\mathcal{A})$ 的全子范畴. 应用引理 \ref{prop:FM-prep-1} (取 $O = \Obj(\mathcal{A})$) 可得 $\ProC(\mathcal{A})$ 的投射生成元 $S$, 使得 $\mathcal{A}$ 的每个对象都能表为 $S$ 的商. 现在考虑函子
+	\[ \mathcal{A} \to \ProC(\mathcal{A}) \xrightarrow{G} \cated{Mod}R , \quad G := \Hom_{\ProC(\mathcal{A})}(S, \cdot), \; R := \End_{\ProC\mathcal{C}}(S). \]
+	记其合成为 $F$. 因为每段皆正合, $F$ 是正合函子. 应用引理 \ref{prop:FM-prep-2} 可知 $G$ 全忠实, 故 $F$ 全忠实. 明所欲证.
+\end{proof}
+
+\begin{corollary}
+	设 $\mathcal{A}$ 为 Abel 小范畴, 则存在忠实正合函子 $E: \mathcal{A} \to \cate{Ab}$.
+\end{corollary}
+
+Freyd--Mitchell 定理可将许多关于一般 Abel 范畴的交换图表化约到 $\cated{Mod}R$, 或甚至是 $\cate{Ab}$ 的情形来验证; 由于后两种范畴是具体的, 其对象有元素可言, 图追踪的技术 \cite[\S 6.8]{Li1} 将许多问题大大地简化. 在适当的集合论假设下, 关于小范畴的前提可以通过扩大 Grothendieck 宇宙来确保.
+\index{daxiaowenti}
+
+\begin{Exercises}
+	\item 设 $E$ 是 Hausdorff 拓扑群, $M$ 是 $E$ 的有限正规子群, 而 $E/M$ 对商拓扑成为 pro-有限群. 证明 $E$ 也是 pro-有限群.
+	
+	\item 定义 $\hat{\mathbb{N}}$ 为所有映射 $n: \{\text{素数}\} \to \Z_{\geq 0} \sqcup \{+\infty\}$ 所成集合, 其元素可以形式地表作乘积 $\prod_{p: \text{素数}} p^{n_p}$. 通过素因子分解, $\Z_{\geq 1}$ 嵌入为 $\hat{\mathbb{N}}$ 的子集. 这些表达式之间的乘法, 最大公因数, 最小公倍数和互素的概念按自明方式定义. 设 $H$ 为 pro-有限群 $G$ 的闭子群, 定义
+	\[ (G:H) := \text{所有}\; (G/K : H/(H \cap K)) \;\text{在 $\hat{\mathbb{N}}$ 中的最小公倍数}, \]
+	此处 $K$ 遍历 $G$ 的正规开子群.
+	\begin{enumerate}[(i)]
+		\item 证明 $(G:H)$ 也是所有 $(G:L)$ 的最小公倍数, $L$ 遍历包含 $H$ 的开子群.
+		\begin{hint}
+			这样的 $L$ 必然包含形如 $HK$ 的开子群, $K$ 如上.
+		\end{hint}
+		\item 证明若 $H_2 \subset H_1 \subset G$, 则 $(G:H_2) = (G:H_1) (H_1: H_2)$.
+		
+		\begin{hint}
+			命 $G_K = G/K$, $H_{i, K} = H_i/H_i \cap K$. 已知 $(G_K: H_{2, K}) = (G_K: H_{1, K}) (H_{1, K} : H_{2, K})$; 在等式两边同取最小公倍数.
+		\end{hint}
+		\item 设 $H_1 \supset H_2 \supset \cdots$ 为一列递降闭子群, $H := \bigcap_i H_i$. 证明 $(G:H)$ 是诸 $(G:H_i)$ 的最小公倍数.
+		% 提示: 对每个选定的 K 作考虑
+		\item 证明 $H$ 开的充要条件是 $(G:H) \in \Z_{\geq 1}$.
+	\end{enumerate}
+
+	\item 设 $p$ 为素数, $G$ 为 pro-有限群. 若闭子群 $P$ 满足
+	\begin{inparaenum}
+		\item $P$ 是 pro-$p$ 群,
+		\item $(G:P) \in \hat{\mathbb{N}}$ 与 $p$ 互素,
+	\end{inparaenum}
+	则称 $P$ 为 $G$ 的一个 \emph{Sylow pro-$p$-子群}.
+	\begin{enumerate}[(i)]
+		\item 证明 $G$ 总有 Sylow pro-$p$-子群.
+		\begin{hint}
+			每个 $G/K$ 都有某个 Sylow $p$-子群 $P_K$. 应用非空有限集的滤过 $\varprojlim$ 非空这一事实 (下一道习题), 对每个 $G/K$ 相容地取 $P_K$, 然后考虑 $\varprojlim_K P_K \hookrightarrow G$.
+		\end{hint}
+		\item 对于 $\Z$ 的 pro-有限完备化 $\hat{\Z} := \varprojlim_{n \geq 1} \Z/n\Z$, 验证 $p$-进整数环 $\Z_p$ 的加法群是 $\hat{\Z}$ 的 Sylow pro-$p$-子群.
+		\item 证明 Sylow pro-$p$-子群两两共轭.
+		\begin{hint}
+			和 (i) 的论证类似, 化约到有限群情形.
+		\end{hint}
+		\item 证明 $G$ 的所有 pro-$p$-子群都包含于某个 Sylow $p$-子群.
+	\end{enumerate}
+	
+	\item (N.\ Bourbaki \cite[III.58 Théorème 1]{BouE}) 设 $(I, \leq)$ 是非空滤过偏序集, 给定函子 $X: I^{\opp} \to \cate{Set}$, 表作 $(X_i)_{i \in \Obj(I)}$ 之形, $i \leq j$ 对应的映射记为 $f_{ij}: X_j \to X_i$. 按照以下方法证明若每个 $X_i$ 皆是非空有限集, 则 $\varprojlim_i X_i \neq \emptyset$.
+	\begin{enumerate}[(i)]
+		\item 考虑满足以下条件的集合族 $(A_i)_{i \in \Obj(I)}$:
+		\[ \emptyset \neq A_i \subset X_i, \quad i \leq j \implies f_{ij}(A_j) \subset A_i . \]
+		这些集合族构成一个集合 $\Sigma$, 赋予偏序 $\preceq$ 如下: $(A_i)_i \preceq (A'_i)_i$ 意谓 $A'_i \subset A_i$ 对所有 $i$ 成立. 以 Zorn 引理说明 $(\Sigma, \preceq)$ 有极大元.
+		
+		\begin{hint}
+			易见 $\Sigma$ 非空. 对于 $(\Sigma, \preceq)$ 中的链, 须验证对每个下标 $i$ 取交仍给出 $\Sigma$ 的元素, 从而给出链的上界. 关于非空的性质需要有限集条件.
+		\end{hint}
+		
+		\item 证明若 $(A_i)_i$ 是 $(\Sigma, \preceq)$ 的极大元, 则 $f_{ij}(A_j) = A_i$ 对所有 $i \leq j$ 成立.
+		
+		\begin{hint}
+			命 $A'_i := \bigcap_{i \leq j} f_{ij}(A_j) \subset A_i$, 问题归结为证 $(A'_i)_i \in \Sigma$. 非空性质来自有限集条件; 此外唯一待说明的是 $f_{ij}(A'_j) \subset A'_i$. 首先观察到 $f_{ij}(A'_j) \subset \bigcap_{j \leq k} f_{ik}(A_k)$, 其次以滤过条件说明 $\bigcap_{j \leq k} f_{ik}(A_k) = \bigcap_{i \leq h} f_{ih}(A_h) = A'_i$.
+		\end{hint}
+		
+		\item 承上, 证明极大元 $(A_i)_i$ 中的每个 $A_i$ 都是独点集, 从而证明 $\varprojlim_i X_i \neq \emptyset$.
+		
+		\begin{hint}
+			选定 $i \in \Obj(I)$ 和 $x_i \in A_i$, 对所有 $j$ 定义
+			\[ B_j := \begin{cases}
+				A_j \cap f_{ij}^{-1}(x_i), & i \leq j \\
+				A_j, & \text{其他情形}.
+			\end{cases} \]
+			证明 $(B_j)_j \in \Sigma$, 从而 $A_j = B_j$ 恒成立, 包括 $i=j$ 情形.
+		\end{hint}
+	\end{enumerate}
+	留意到 $(I, \leq) = (\Z_{\geq 0}, \leq)$ 的情形可由引理 \ref{prop:ML-nonempty} 处理.
+	
+	\item 将域 $F$ 的所有代数扩张 (或有限扩张) 作成范畴 $\cate{ext}_{\mathrm{alg}}(F)$ (或 $\cate{ext}_{\mathrm{f}}(F)$). 说明 $\cate{ext}_{\mathrm{alg}}(F)$ 等价于 $\IndC\left(\cate{ext}_{\mathrm{f}}(F)\right)$.
+	
+	\item 设 $A$ 为域 $\Bbbk$ 上的余代数, 亦即幺半范畴 $\left( \cate{Vect}(\Bbbk), \otimes_{\Bbbk}\right)$ 上的余代数 (定义 \ref{def:cogebra-monoidal}). 记 $\cated{Comod}A$ 为右 $A$-余模范畴 (定义 \ref{def:comodule-cogebra}), 记 $\catesubd{Comod}{\mathrm{f}}A$ 为有限维右 $A$-余模构成的全子范畴. 证明 $\cated{Comod}A$ 等价于 $\IndC \left(\catesubd{Comod}{\mathrm{f}}A\right)$.
+	
+	\begin{hint}
+		和例 \ref{eg:Ind-Vect} 的向量空间情形类似, 应用引理 \ref{prop:comodule-fd-union}.
+	\end{hint}
+	
+		\item 考虑全子范畴 $\mathcal{C}' \subset \mathcal{C}$ 和函子 $F': \mathcal{C}' \to \mathcal{D}$. 假定
+	\begin{compactitem}
+		\item $\mathcal{C}'$ 小, 其对象皆在 $\mathcal{C}$ 中紧;
+		\item $\mathcal{C}$ 的对象皆能写成 $\mathcal{C}'$ 的对象的滤过小 $\varinjlim$;
+		\item $\mathcal{D}$ 具有滤过小 $\varinjlim$.
+	\end{compactitem}
+	证明此时 $F'$ 能延拓为 $F: \mathcal{C} \to \mathcal{D}$, 使得 $F$ 保滤过小 $\varinjlim$; 精确到同构, $F$ 唯一.
+	% \cite[Tag 0FWY]{stacks}
+	
+	\begin{hint}
+		先将 $F'$ 延拓为 $\widehat{F'}: \IndC(\mathcal{C}') \to \mathcal{D}$ (定义--命题 \ref{def:Ind-hat-functor}), 再以命题 \ref{prop:recognition-Ind} 的等价得到 $F: \mathcal{C} \to \mathcal{D}$. 我们也需要命题 \ref{prop:Ind-hat-small}.
+		
+		关于唯一性, 留意到若 $\mathcal{C}$ 的对象 $X$ 表作 $\varinjlim_i X_i$, 其中 $I \to \mathcal{C}'$ 是函子, $I$ 是滤过小范畴, 则必有 $F(X) \simeq \varinjlim_i F'(X_i)$.
+	\end{hint}
+	
+	\item 设范畴 $\mathcal{C}$ 具备有限 $\varinjlim$. 证明 $\IndC\mathcal{C}$ 是定义 \ref{def:presentable-cat} 所谓的 $\aleph_0$-可展示范畴.
+	
+	\index{Stone kongjian@Stone 空间 (Stone space)}
+	\index{pro-youxianji@pro-有限集 (profinite set)}
+	\item 紧 Hausdorff 完全不连通拓扑空间被称为 \emph{Stone 空间}; 按惯例, 拓扑空间默认实现在小集上. 记全体 Stone 空间构成的范畴为 $\cate{Stone}$, 记全体有限小集构成的范畴为 $\cate{FinSet}$.
+	\begin{enumerate}[(i)]
+		\item 证明 Cantor 集和 $\Z_p$ 都是 Stone 空间 ($p$ 为任意素数).
+		\item 证明 $\cate{Stone}$ 等价于 $\ProC(\cate{FinSet})$, 因此 Stone 空间可视同 pro-有限集.
+		\item 证明 pro-有限群无非是 $\cate{Stone}$ 中的群对象.
+		\item 证明局部紧 Hausdorff 完全不连通拓扑空间范畴等价于 $\IndC\ProC(\cate{FinSet})$; 证明 $\Q_p$ 是这种空间.
+	\end{enumerate}
+	
+	\item 验证注记 \ref{rem:Ind-k-linear} 的细节.
+	
+	\item 说明 $\IndC\mathcal{C}$ 可由以下性质刻画: 对任何具备滤过小 $\varinjlim$ 的范畴 $\mathcal{D}$, 由 $\mathcal{C} \to \IndC\mathcal{C}$ 诱导的函子
+	\[ \mathrm{Fct}^0(\IndC\mathcal{C}, \mathcal{D}) \to \mathrm{Fct}(\mathcal{C}, \mathcal{D}) \]
+	是等价; 此处 $\mathrm{Fct}(\cdots)$ 表函子范畴, 而上标 $0$ 代表由保滤过小 $\varinjlim$ 的函子构成的全子范畴.
+\end{Exercises}

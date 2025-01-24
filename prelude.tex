@@ -1,0 +1,495 @@
+% LaTeX source for book ``代数学方法'' in Chinese
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% To be included
+\chapter*{导言}	% 文档类会自动将之加入目录并设置天眉
+
+呈献给读者的这部作品是 \cite{Li1} (简称卷一) 的续作, 目的是在读者了解代数学中的基本结构的前提下, 介绍可以合理地泛称为线性代数的一系列方法, 思想和技巧. 这些方法的应用贯穿当代数学的方方面面, 而为了尽可能全面地回应实际需求, 便有必要将相关技术锻造为更纯粹也更精练的形式. 范畴与函子对此是不可或缺的语言.
+
+本书分为内篇, 外篇和附录三大部分, 主要面向从事相关研究或抱有兴趣的高年级本科生, 研究生, 教研人员和自学者. 预设的背景知识包括对群, 环, 模, 域等代数结构与范畴论的了解; 卷一足以涵盖这些基础, 但除去些许符号差异, 其他优秀教材也同样胜任. 撰书的动机已在卷一导言说明, 初心无改, 不必复述.
+
+\section*{何谓线性代数}
+\index{xianxingdaishu@线性代数 (linear algebra)}
+按照代数学界的理解, ``线性''泛指与具有加法及其逆运算, 亦即减法的种种结构相关连的性质. 加减法进一步给出取整数倍的运算, 而一个立即的推广是考虑来自某个环 $R$ 的纯量乘法. 典型例子莫过于左 $R$-模和右 $R$-模, 而 $\Z$-模即交换群. 对于给定的 $R$-模 (以下默认为左模) 可以探讨其子模和商模, 以及考虑模同态 $f$ 的核 $\Ker(f)$, 余核 $\Coker(f)$ 及像 $\Image(f)$, 它们全是来自基础代数学的老友; 至少, $R$ 为域亦即向量空间的情形是广为人知的.
+
+自 20 世纪以降, 人们逐渐在实践中意识到: 将 $R$-模及同态的研究扩及 $R$-模构成的复形, 亦即一列满足 $d^{n+1} d^n = 0$ 的模同态
+\[ \cdots \to X^{n-1} \xrightarrow{d^{n-1}} X^n \xrightarrow{d^n} X^{n+1} \xrightarrow{d^{n+1}} \cdots \]
+非但有益, 方便, 而且往往是必要的. 关于同态的条件有时表作 $d^2 = 0$, 复形的全套资料则常简写为 $(X^n, d^n)_n$, $(X, d)$ 或 $X$. 由于采取上标递增的记法, 复形又称上链复形; 若改用下标递降的记法 $\cdots \to X_n \xrightarrow{d_n} X_{n-1} \to \cdots$, 所得的数学对象称为链复形, 它和复形的差别仅是形式上的.
+
+单个 $R$-模 $M$ 可以看作复形的特例, 相当于取 $X^0 = M$ 而其他项全部取零. 对于给定的复形 $X$, 由于 $d^n d^{n-1} = 0$, 可以定义其第 $n$ 个上同调为商模
+\[ \Hm^n(X) := \Ker\left(d^n \right) \big/ \Image\left(d^{n-1} \right). \]
+
+满足 $\forall n \; \Hm^n(X) = 0$ 的复形称为正合列或零调复形. 对于链复形, 我们相应地有同调 $\Hm_n(X) := \Ker(d_n) / \Image(d_{n+1})$. 复形 (或链复形) 的上同调 (或同调) 经常蕴藏数学对象的重要信息.
+
+对于模或者其他具备某种线性操作的数学结构, 例如稍后要介绍的 Abel 范畴中的对象, 复形及其上同调的研究是通称为同调代数的学科的经典内容; 这是本真意义的``线性代数''的一个真子集, 也是本书核心, 其来由不妨略述一二.
+
+\section*{同调简史}
+数学不必基于史学, 然而鉴往知来, 有益无害. 我们且将同调理论的发展人为地划分为几个阶段.
+
+\subsection*{草创时期}
+同调代数发展的第一推手是拓扑. B.\ Riemann 和 E.\ Betti 在 19 世纪后期研究了曲面的亏格, 以及称为 Betti 数的高维推广. 在世纪之交, 这套思路在 H.\ Poincaré 手里发展为更加严谨的体系. 粗略地说, Poincaré 的原始思路是将空间剖分为多边形, 多面体或者其高维版本的黏合, 从记录黏合方式的矩阵来计算 Betti 数或它们的挠版本, 并说明它们都是拓扑不变量.
+
+在 1925 年的一篇短文中, E.\ Noether 阐明如何将同调定义为一个交换群, 而 Betti 数及其挠版本不过是派生的数值. 这已经接近了代数拓扑学中的现代定义: 对带有剖分的空间 $E$ 和交换群 $A$ 定义相应的链复形 $C(E, A)$, 它记录剖分的黏合方式, 则 $E$ 的 $A$-系数同调群定义为 $\Hm_n(E; A) := \Hm_n(C(E, A))$, 而另有对偶的方式来定义上同调群 $\Hm^n(E; A)$.
+
+自此直到 1950 年左右, 代数拓扑学进入了一个百花齐放的时期. 从代数的立场看, 值得称道的发展包括:
+\begin{itemize}
+	\item 同调 (或上同调) 的泛系数定理, 这说明整系数情形足以确定系数在一般交换群 $A$ 的同调 (或上同调), 具体描述涉及以后将深入讨论的 $\Tor$ (或 $\Ext$) 函子.
+	\item 上同调的杯积, 这是上同调群所具有的一种乘法结构.
+	\item 所谓非球面空间, 意指满足 $n > 1 \implies \pi_n(E) = 0$ 的连通空间 $E$, 其中 $\pi_n(E)$ 代表相对于选定基点的 $n$ 次同伦群. W.\ Hurewicz 证明了非球面空间的同调和上同调群完全由 $\pi_1(E)$ 确定, 而且能按代数方式给出. 这是群上同调理论的滥觞.
+\end{itemize}
+
+同调代数的另一推手来自代数学内部. 经典例子当属不变量理论中的 Hilbert 合冲定理 (1890 年): 以现代语言来说, 合冲定理断言多项式环 $\Bbbk[X_1, \ldots, X_n]$ 上的模总有长度 $\leq n$ 的自由解消.
+
+同样关乎代数问题的还有 $\Ext$ 函子: 对于交换群 $A$ 和 $B$, 交换群的短正合列 $0 \to A \to E \to B \to 0$ 又称群扩张; 精确到同构, 它们和群 $\Ext^1(B, A)$ 的元素一一对应. 此外, 若将 $B$ 换作一般的群 $G$, 则群扩张的分类自然地引出群上同调 $\Hm^2(G, A)$ 的代数定义.
+
+环上的求导运算是很早就得到代数学家关注的问题. G.\ Hochschild 在 1942 年对环 $R$ 定义了现今称为 Hochschild 同调与上同调的不变量, 其 $n=1$ 次项分类所有求导运算. 这些构造能扩及更一般的 $(R, R)$-双模 $M$, 它们在现代数学前沿中继续扮演要角.
+
+值得一提的还有 J.\ Leray 在二战期间关于层和谱序列的工作, 他的动机始于和偏微分方程相关的不动点问题. 层是几何学中承载局部--整体信息的结构, 谱序列则提供计算层上同调的强大工具. 受 Leray 理论以及冈洁在多复变领域的工作所影响, H.\ Cartan 等人在战后着手重写代数拓扑学的基础, 同调代数也随之改头换面.
+
+\subsection*{Cartan--Eilenberg 革命}
+H.\ Cartan 和 S.\ Eilenberg 的著作 \cite{CE56} 汪洋闳肆, 在很长一段时期内被视为正典. 该书标志了同调代数发展的新时期, 主要贡献包括:
+\begin{itemize}
+	\item 定义了内射模和投射模, 以及模的内射解消和投射解消;
+	\item 在模论框架下定义了右导出函子和左导出函子, 由此给出 $\Ext$ 和 $\Tor$ 函子的一般定义, 引入了模的内射维数和投射维数, 这些工具不久便在交换环论中大展身手;
+	\item 借此解释了先前的种种构造, 例如群的上同调, 以及 Hochschild 同调与上同调;
+	\item 系统地建立了谱序列及其乘法结构的一般理论.
+\end{itemize}
+
+``同调代数''一词也渊源于 \cite{CE56}. 随着宏大理论的出现, 同调代数步入了它的青春时期.
+
+\subsection*{Abel 范畴}
+以几何的, 或精确地说是层论的立场来衡量, 模论框架下的同调代数理论并不足够. 我们希望容许比环 $R$ 上的左模范畴 $R\dcate{Mod}$ 更一般的范畴 $\mathcal{A}$, 它也应当具有某种``线性''的意味. 这方面的初次尝试来自 1955 年 D.\ Buchsbaum 的博士论文, 同时也是 \cite{CE56} 的附录; 他对模论中的正合列的概念予以抽象. 
+
+如今通行的方案则来自 A.\ Grothendieck 的论文 \cite{Gr57}, 对应的范畴称为 Abel 范畴. 这是具有核及余核的加性范畴, 并且要求其中的所有态射 $f: M \to N$ 皆严格; 所谓严格性, 大致对应到模论中熟知的同构定理 $M/\Ker(f) \rightiso \Image(f)$. 在该篇著作中, Grothendieck 还进一步
+\begin{itemize}
+	\item 依靠长正合列的概念定义了 $\delta$-函子, 泛 $\delta$-函子并给出后者的刻画, 说明导出函子是泛 $\delta$-函子的特例;
+	\item 给出关于合成函子求导的 Grothendieck 谱序列;
+	\item 定义了一类特殊的 Abel 范畴, 现称为 Grothendieck 范畴, 对之确立了内射解消的存在性.
+\end{itemize}
+
+这些理论使层上同调的研究得以在更一般的空间上开展, 对几何学的发展是极其关键的.
+
+\subsection*{导出范畴}
+J.-L.\ Verdier 在 1963 年的博士论文中定义了 Abel 范畴 $\mathcal{A}$ 的导出范畴 $\cate{D}(\mathcal{A})$, 动机来自 Grothendieck 在研究代数几何中的对偶性时面临的困难, 这些障碍促使人们寻求一种新的框架, 其中操作的不再只是上同调, 而是复形本身, 但必须形式地向复形范畴 $\cate{C}(\mathcal{A})$ 添入拟同构之逆. 所谓拟同构, 是指在上同调层次诱导同构 $\Hm^n(f): \Hm^n(X) \rightiso \Hm^n(Y)$ 的复形态射 $f: X \to Y$, 而添逆的构造则称为 Gabriel--Zisman 局部化, 它是环的局部化在范畴层次的推广.
+
+导出范畴 $\cate{D}(\mathcal{A})$ 携带的信息多于上同调, 它的操作方式也有所不同: 我们必须以 $\cate{D}(\mathcal{A})$ 中称为好三角的一族态射列
+\[ X \xrightarrow{f} Y \xrightarrow{g} Z \xrightarrow{h} X[1] \]
+来替代 $\mathcal{A}$ 或复形范畴 $\cate{C}(\mathcal{A})$ 中的短正合列, 其中 $X[1]$ 意谓复形 $X$ 的平移:
+\[ X[1]^n = X^{n+1}, \quad d_{X[1]}^n = -d_X^n. \]
+这些构造被 Verdier 进一步抽象为称作三角范畴的一类结构. 从拓扑来观照, 导出范畴的三角结构同样自然: 好三角可以类比于同伦论中的上纤维列. 这关系到我们稍后要讨论的同伦代数. 也正是出于同伦论的考量, D.\ Puppe 在 1962 年独立地发现了类似的结构, 但他写下的条件不含 Verdier 的八面体公理.
+
+尽管导出范畴在应用上并非完美, 这套语言直到 21 世纪初依然是几何学家与代数学家的首选. 举例明之, 一则突出应用是主要由柏原正树和 Z.\ Mebkhout 等人发扬光大的 $\mathscr{D}$-模理论, 其中的一些基本操作只在导出范畴层次方有合理定义.
+
+另外, 环 $R$ 的导出范畴 $\cate{D}(R) := \cate{D}(R\dcate{Mod})$ 也可以视作 $R$ 的一种不变量. 若两个环的导出范畴作为三角范畴相等价, 则称它们是导出等价的环. 围绕导出等价的一系列问题和方法是代数表示论中的一支主流, 这方面的先驱有 D.\ Happel 和 J.\ Rickard 等人.
+
+\subsection*{同伦代数}
+读者想必记得, 同调代数的拓扑源头是对空间作剖分, 由之定义合适的链复形或复形来萃取拓扑不变量. 第一步所涉及的剖分有种种变体, Eilenberg 和 Zilber 在 1950 年定义的单纯形集便是其中一员, 而单纯形集能进一步推广为给定范畴中的单纯形对象. 这套语言的诠释力特别广泛, 比如拓扑空间的同伦论能在单纯形集的框架下开展, 而称为``脉''的构造又将范畴解释为一类特殊的单纯形集.
+
+如果我们向这幅图像加入一点``线性'', 产物何如? Dold--Kan 对应 (1958 年) 给出 Abel 范畴中的单纯形对象和复形理论的直接联系. 取交换群范畴 $\cate{Ab}$ 为例, Dold--Kan 对应是一对显式给出的伴随等价
+\[\begin{tikzcd}
+	\mathrm{N}: \cate{sAb} \arrow[shift left, r] & \cate{Ch}_{\geq 0}(\cate{Ab}): \Gamma \arrow[shift left, l]
+\end{tikzcd}\]
+其中 $\cate{sAb}$ 是 $\cate{Ab}$ 上的单纯形对象范畴, $\cate{Ch}_{\geq 0}(\cate{Ab})$ 是 $\cate{Ab}$ 上的非负次链复形范畴. 对于复形范畴, 我们可以翻转标号或过渡到相反范畴来处理.
+
+Dold--Kan 对应能够从拓扑层次诠释关于链复形的许多定义和构造. 借由单纯形方法, 同调代数中统称``杠构造''的一类解消也能得到统一的解释.
+
+同伦是单纯形理论的核心观念. 涉及单纯形的代数学方法有时也被称为同伦代数, 其威力在 D.\ Quillen 发展的高阶 K-理论中有突出表现, 且不限于此.
+
+综之, 线性代数学中的单纯形方法可谓是拓扑学, 特别是同伦论与同调代数在一个更高层次上的合流, 后继的无穷范畴理论则是它在 21 世纪初鼓舞的另一波浪潮.
+
+\section*{本书旨趣}
+\subsection*{编排目标}
+之前的介绍表明所谓的线性代数粗分为两支主干, 一是 Abel 范畴理论, 二是搭建在 Abel 范畴上的复形理论. 本书围绕这两个方面, 力求为读者提供理解当代数学所需的观念与技术. 内容既包括应用中涉及的代数方法, 也包括它们所要求的理论基础. 由于这些方法主要服务于基础数学研究, 所服务的范围又务求其广, 是故本书的另一则定性是``纯粹应用数学''.
+
+本书还力求兼顾教材与参考书的双重属性, 为此必然要顾及细节和体系建构. 不同目标之间互存张力, 而且必须在有限的篇幅内完成命意, 铺排和点题, 这就为全书的编排带来巨大挑战, 却是一个必须接下的挑战.
+
+落实到内容方面, 导出范畴, 导出函子和谱序列是当代数学工作者的必备常识, 然而对初学者不无难度, 障碍主要在观念和定义. 本书内篇便以此为目标进行铺排, 并为外篇的讨论奠定基础. 为了论述通畅, 也为了适当节约篇幅, 我们不会亦步亦趋地重走历史, 而更多的是依循后见之明的逻辑顺序.
+
+受上述种种目标约束, 文艺批评家所称的``灵氛''便不免在文字中隐没, 代之的是体系和严格论证所不时带来的滞重感. 与滞重相对的这种灵氛是数学之于人心最初的, 兴许也是最终的叩鸣, 然而依笔者之见, 轻盈灵动, 单刀直入的写法或见诸理论初创时期, 或者是依托完备的参考书籍为后援, 而这些依托须嵌入原生的语言文化, 为一切读者共享. 笔者选择负重, 但盼望随着本书的面世, 未来的作者们能享有轻装上阵的自由.
+
+本书编撰过程中广泛参考了相关著作, 包括但不限于 \cite{Wei94, ML98, KS06, Rie16, Yek20} 等, 此外 \cite{stacks} 和 \href{https://ncatlab.org}{nLab} 网站也起了很大帮助.
+
+\subsection*{路径与取舍}
+本书既要兼顾各种领域, 各种风格, 另一方面也要在古典与现代之间寻求平衡点, 以使这些内容对初学者也具有一定的可读性. 为此, 折衷是笔者的写作总方针, 但怀着折衷心理翻开一本书的读者却罕有; 折衷带来迂回, 所以本书的理路无论对哪位观者都不走测地线, 这是无可奈何的.
+
+基于相同理由, 本书对内容的取舍也难让人人满意. 譬如几何取向的读者看不到层和 t-结构, 而代数表示论取向的读者也无法找到倾斜理论; 之所以不提, 是因为在未深入接触这些学科的前提下, 不可能对相关理论有足够的动机.
+
+范畴爱好者可能认为本书的进路至多是半经典的. 话虽如此, 读者也可能会察觉正文和习题为某些进阶视角预留了接口, 比如 dg-范畴, 单子论和单纯形对象等题材, 尽管其处理方式全是蜻蜓点水. 这些内容可以视为针对无穷范畴理论的热身, 由此便指向了较线性代数更为深刻的崭新世界, 称为高等或高阶代数, 这已经超出本书的探讨范围了.
+
+关于取舍, 还有必要说明本书处理一般的 Abel 范畴, 直接从公理出发来建立基本性质, 这点和一些只考虑模的同调代数教材有所不同. 容许一般 Abel 范畴不但符合理论的彻底性与实践的必要性, 即使我们将出发点自限于模, 这点对于函子范畴和 Serre 商之类的构造也是必需的. 由于模论中的图追踪无法直接扩及一般场景, 关于 Abel 范畴的一些基础结果需要十分迂回的证明. 为了帮助理解这些细节, 本书期望读者对于模的复形及其上同调有最初步的经验, 比如 \cite[第六章]{Li1} 的内容, 但这不是逻辑上的必需.
+
+著名的 Freyd--Mitchell 嵌入定理断言每个 Abel 小范畴都能正合而且全忠实地嵌入 $\cated{Mod}R$, 其中 $R$ 是某个环. 一旦承认这点, Abel 范畴的许多基本事实便能够化到具体的模范畴 $\cated{Mod}R$ 来检验. 我们将在附录 \S\ref{sec:FM} 给出嵌入定理的证明. 由于证明本身不算容易, 而且依赖关于 Abel 范畴的一些基本性质, 定理并未在本质上简化 Abel 范畴理论, 它起到的更多是启发作用.
+
+\section*{使用指南}
+\subsection*{功能说明}
+为了兼顾作为参考书的功能, 适度的体系感是必要的, 因此各章节主要按照逻辑顺序安排, 前后依存关系在内篇尤其突出, 少部分必要但偏离主干, 或较具技术性的题材则划入附录.
+
+对于自学的读者, 具体阅读哪些内容需视自身兴趣和需求而定. 内容的抉择主要在于外篇, 内篇则是共通的基础框架, 尽管细化到节的尺度, 内篇仍有部分内容属于选读. 部分较为抽象或技术性的细节可以在初学时酌情省略, 而涉及附录的部分则建议先跳过, 或仅作快速浏览. 关于这些取舍的详细建议, 请见各章和各附录开头的说明, 尤其是阅读提示部分.
+
+如之前谈及旨趣时所述, 我们不得不将数学思想包裹在层层的文字障里. 自学者必须痛下功夫, 像在翻腾的浓云里捕捉闪电一般, 从中识别真正的数学.
+
+对于将本书作为参考用途的读者, 笔者在撰写时已经尽量采取模块化的写作, 方便分段阅读; 这不单体现于章节的剪裁, 也体现于以下两点.
+\begin{itemize}
+	\item 本书尽量采用当代文献中标准的符号, 辅以回顾和说明, 而导言结尾的凡例部分和书末索引则是理解符号的另一利器.
+	\item 各种陈述或证明中总会不厌其烦地插入各种交叉参照, 方便对内容已有一定知识的读者快速理解, 高效建图.
+\end{itemize}
+特别地, 笔者希望本书能帮助备课或参与讨论班的读者迅速组装所需的知识点, 然后熔铸为自己的语言.
+
+至于教学用途, 必须坦然承认: 由于排课结果不以个人意志为转移, 笔者在写作期间几乎没有在课堂上锻炼这些材料的机会, 效果如何不得而知. 以过去经验衡量, 即使课堂上省略细节, 全书也明显超过一学年的容量, 而内篇在简约模式下或能压缩入一个学期. 如果作为主教材来使用, 教师必须先将本书内容分割; 笔者希望先前提到的模块化设计能降低此工作的难度.
+
+缺少课堂锻炼还带来另外两个后果. 一是本书难免还有许多未发现的错误, 二是缺乏经典教材的圆润感. 这里既有现实条件的因素, 也是笔者水平所限, 只能请读者海涵了.
+
+\subsection*{关于习题}
+各章和附录的末尾均配有习题, 按照对应内容在正文中的顺序来排列, 有时带提示. 其目的多半是补充性质, 提供实例, 以及扩展眼界. 部分习题旨在帮助读者熟悉技巧, 涉及的技术性一般不强. 少部分习题则要求补全正文省略的细节, 这些细节或者是琐碎的, 或者是简单的, 更常是兼而有之. 总之, 笔者期望初学的读者能尽量尝试做题, 但不必有自我强迫的心态, 不必非全做不可.
+
+\subsection*{范畴及其大小}
+本书多数内容以范畴语言表述, 这是因为实践为证, 范畴论确实是理解和处理代数问题的高效手段. 然而线性代数或所谓同调代数并非范畴论的分支, 正如概率论并非测度论的分支一般.
+
+和一些教材不同, 本书和卷一都要求范畴的全体对象和态射构成集合, 不许对象仅成``类''. 作为在定义中排除真类的代价, 严格来说须引入 Grothendieck 宇宙的概念来衡量集合大小, 并且假设所有集合都属于某个宇宙 $\mathcal{U}$, 详见 \cite[假设 1.5.2, 注记 1.5.6]{Li1}. 倘若具体问题具体分析, 则关于存在足够多宇宙 (等价地说, 足够的强不可达基数) 的这一公理往往可以弱化. 由于非关本书核心, 我们不再深究.
+
+\section*{结构总览}
+建议读者从导言结尾的凡例部分起步, 其目的是确认全书的符号和惯例. 除此之外, 不鼓励初学者严格地循序阅读, 除非对抽象方法已经有充分高的接受度. 各章开头将提供详细的摘要和阅读须知.
+
+首先是筑基的内篇.
+
+\begin{description}
+	\item[第一章: 范畴论拾遗] 回顾并补全必需的范畴论知识, 重点包括严格态射, 加性范畴中的核及余核, Kan 延拓, Gabriel--Zisman 局部化等主题.
+	\item[第二章: Abel 范畴] 建立 Abel 范畴的基础理论, 辅以 Grothendieck 范畴等内容.
+	\item[第三章: 复形] 讨论加性范畴上的复形, 双复形, 同伦和映射锥等基本概念, 并在 Abel 范畴的情形讨论上同调. 后半部从经典视角讨论导出函子及 $\Ext$, $\Tor$, $\lim^1$ 等特例. 为了处理无界复形, 末尾还探讨了 K-内射和 K-投射解消.
+	\item[第四章: 三角范畴与导出范畴] 引入三角范畴和三角函子的一般概念, 然后着重讨论 Abel 范畴的导出范畴, 以及导出范畴之间的导出函子. 经典视角下的 $\Ext$ 和 $\Tor$ 等将相应地升级为 $\RHom$ 和 $\otimesL$.
+	\item[第五章: 谱序列] 从谱序列的一般定义和正合偶出发, 逐步细化到滤过复形和双复形的谱序列, 以及它们在代数场景下的应用. 正合偶对于滤过复形的谱序列并非绝对必要的.
+\end{description}
+
+其次是涉及应用或谓拓展内容的外篇.
+\begin{description}
+	\item[第六章: 群的同调与上同调] 探讨群的同调, 上同调和种种相关计算或实例. 该章还讨论 Tate 上同调, pro-有限群的上同调, 以及非交换上同调, 它们在应用中各自占据要地.
+	\item[第七章: 单子论] 从幺半范畴上关于``代数''的一般概念出发, 先讨论和复形相关的微分分次结构. 其次在论述包括余代数, 双代数和 Hopf 代数等实例后转向 Beck 单子性定理. 该章的后半部考虑模论, 介绍森田理论, 然后以单子性定理处理模的平坦下降和 Galois 下降.
+	\item[第八章: 单纯形方法] 包括单纯形对象和单纯形集的一般理论, Dold--Kan 对应, 以及基于单子语言的杠构造. 最后几节涉及广义 Eilenberg--Zilber 定理, 以及映射锥的拓扑诠释.
+	\item[第九章: 对偶性] 从幺半范畴中的对偶性出发, 在给出基本例子后探讨重构定理与淡中范畴. 本章内容和复形没有直接关系.
+\end{description}
+
+根据原计划, 外篇本应包括表示理论的基本知识, 预想它在体系中能扮演一个自然的角色. 后期考虑到篇幅已经过长, 而且现有多部成熟教材, 遂打消设想.
+
+附录部分条列如次.
+\begin{description}
+	\item[附录 A: 关于 Abel 范畴的延伸内容] 和 Abel 范畴直接或间接相关的素材, 或者是正文所引, 或者属支线内容.
+	\item[附录 B: 简介 ind-对象和 pro-对象] 从 pro-有限群的理论入手, 顺势引入 ind-对象和 pro-对象的概念, 探讨范畴与函子的 Ind 化, 然后在 Abel 范畴的特例证明 Freyd--Mitchell 嵌入定理, 作为一则应用示范.
+\end{description}
+
+最后, 笔者的个人主页提供包括勘误表在内的最新补充信息, 不限于本书, 欢迎读者关注. 如发现书中错误, 敬请来信指正.
+
+\section*{鸣谢}
+本书编写过程中承蒙各方师友的指正与建议. 历时既久, 记忆难免错谬, 谨附不完整名单如下: 郇真, 黄晨欣, 黎景辉, 雷嘉乐, 李长远, 孙毓泽, 汤一鸣, 薛寒玉, 阳恩林, 张好风, 赵泽龙 (按汉语拼音排序).
+
+书中有少部分内容曾在中国科学院大学与华中科技大学的课程中使用, 在此也向全体参与者表示感激.
+
+一如笔者迄今的所有著作, 本书是全程在开源软件环境下撰写的, 包括操作系统和付印前的字体. 谨向众多无私的开发者们致意, 他和她们践行了共享与利他的普世价值.
+
+撰书期间, 笔者的科研工作受国家自然科学基金委员会优秀青年科学基金 11922101 项目资助, 依托单位为北京大学, 在此并致谢忱.
+
+笔者还要感谢高等教育出版社赵天夫编辑的耐心与专业. 本书的编写理应与卷一无缝衔接, 却因为种种牵绊, 直到 2022 年底方告完成.
+
+尽管进度拖延, 全书编撰工作耗费笔者精神之巨, 较卷一却有过之而无不及, 尤其是后期的反复检查和修改, 如在无尽黑暗的甬道中穿行. 这些后期工作有一大部分是在北京地铁车厢里完成的. 车上工作难言舒适, 需要字面意义的争分夺秒. 但在这日复一日巨大的无名的洪流中, 笔者仿佛感到职场所罕有的, 某种默然的相互理解, 并在微茫中获得慰藉. 是邪, 非邪? 解释或属妄诞, 感受毕竟真实. 序曲将终, 敬无穷的远方, 与无尽的人们.
+
+\vspace{1em}
+\begin{flushright}\begin{minipage}{0.3 \textwidth}
+	\begin{tabular}{c}
+		{\fangsong 李文威} \\
+		2022 年 12 月 \\
+		于石景山
+	\end{tabular}
+\end{minipage}\end{flushright}
+
+\section*{凡例}
+本书的符号惯例和卷一相同. 在此不避繁琐地予以摘述.
+
+\subsection*{基本规范}
+本书使用标准的逻辑符号 $\forall$, $\exists$, $\implies$ 等等. 符号 $\exists !$ 代表``存在唯一的...'', 符号 $\iff$ 代表``当且仅当''. 证明的结尾标注 $\Box$. 符号 $A := B$ 意谓 ``$A$ 被定义为 $B$''. 如果一个数学对象的定义不依赖于种种辅助资料的选取, 则称之为良定义的. \index{liangdingyi@良定义 (well-defined)}
+
+箭头 $\rightiso$ 代表对象之间的同构, 有时也不加方向地记为 $\simeq$. 符号 $\xrightarrow{1:1}$ 或 $\stackrel{1:1}{\longleftrightarrow}$ 代表集合之间的双射, 亦即一一对应. 形如 $F(\cdot)$ 的符号意在凸显映射或函子 $F$ 带有的变量.
+
+符号 $n \gg m$ 代表 $n$ 充分大于 $m$. 例如 $n \gg 0$ 代表 $n$ 充分大, 而 $n \ll 0$ 代表 $-n$ 充分大.
+
+本书将大量使用交换图表的语言. 最简单的情形是
+\[\begin{tikzcd}
+	A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[ld, "g"] \\
+	C &
+\end{tikzcd} \; \text{交换} \stackrel{\text{定义}}{\iff} g \circ f = h, \]
+这里的 $f$, $g$, $h$ 可以是映射, 同态, 或者一般范畴中的态射. 依此类推以理解更复杂的交换图表.
+
+\subsection*{集合与序结构}
+本书采用 Zermelo--Fraenkel 公理集合论, 并且承认选择公理.
+
+空集记为 $\emptyset$. 符号 $A \subset B$ 意谓 $A$ 是 $B$ 的子集, 容许相等, 真包含则记为 $A \subsetneq B$; 差集记为 $A \smallsetminus B := \left\{a \in A: a \notin B \right\}$, 无交并记为 $A \sqcup B$. 给定映射 $f: A \to B$, 符号 $a \mapsto b$ 意谓 $a \in A$ 被 $f$ 映为 $b \in B$, 而 $f|_{A'}$ 意谓 $f$ 在子集 $A' \subset A$ 上的限制. 集合 $A$ 到自身的恒等映射记为 $\identity = \identity_A$. 集合 $A$ 的元素个数, 势或曰基数在本书被记为 $|A|$.
+
+基于 \cite[定义 1.2.1]{Li1}, 所谓\emph{偏序集}\index{pianxuji@偏序集 (partially ordered set)}是一个集合 $P$ 配上一个服从于反身性, 传递性和反称性的二元关系 $\leq$; 如果不要求反称性, 则得到\emph{预序集}. 符号 $x < y$ 意谓 $x \lneq y$. 偏序集 $(P, \leq)$ 常简记为 $P$.
+
+\begin{itemize}
+	\item 若 $m \in P$ 满足 $\forall x \in P, \; x \geq m \iff x = m$, 则称 $m$ 为 $P$ 中的极大元; 以 $\leq$ 代 $\geq$ 可定义极小元的概念. 它们一般而言并不唯一.
+	\item 设 $S$ 是 $P$ 的子集. 若 $b \in P$ 满足 $\forall x \in S, \; x \leq b$, 则称 $b$ 是 $S$ 在 $P$ 中的上界. 同理可以定义 $S$ 的下界.
+	\item 若 $b \in P$ 是 $S$ 的上界, 而且任何其他上界 $b'$ 皆满足 $b' \geq b$, 则称之为 $S$ 的上确界, 记为 $\sup S$. 上确界若存在则唯一. 同理可定义 $S$ 的下确界 $\inf S$.
+\end{itemize}
+
+偏序集之间的映射 $f: P \to Q$ 若满足 $a \leq b \implies f(a) \leq f(b)$ 则称为保序的; 若 $f: P \to Q$ 为双射, $f$ 和 $f^{-1}$ 皆保序, 则称 $f$ 为偏序集之间的同构, 或称保序双射.
+
+若偏序集 $P$ 的任两个元素皆可比大小, 则称为全序集. 若非空全序集 $P$ 的所有非空子集皆有极小元, 则称 $P$ 为\emph{良序集}\index{liangxuji@良序集 (well-ordered set)}. 有一类特殊的良序集称为\emph{序数}\index{xushu@序数 (ordinal)}, 而序数之间可比大小. 简略勾勒如下.
+\begin{itemize}
+	\item 对于任意序数 $\alpha$, 我们有 $\alpha = \left\{ \beta: \text{序数}, \; \beta < \alpha \right\}$;
+	\item 若序数 $\kappa$ 作为集合不与任何 $< \kappa$ 的序数等势, 则称之为\emph{基数}; \index{jishu@基数 (cardinal)}
+	\item 任意集合 $S$ 的基数 $|S|$ 定义为其等势类中的最小序数, 这里用到一件事实: 任意集合皆可赋予良序 (需要选择公理), 而良序集同构于唯一的序数;
+	\item 特别地, 对任意序数 $\alpha$ 皆有 $|\alpha| \leq \alpha$.
+\end{itemize}
+这是 von Neumann 的观点, 可参阅 \cite[\S 1.2]{Li1} 或 \cite{Je03}. 这比基数作为等势类的寻常定义稍加曲折, 但也有其便利.
+
+有限序数可以视同非负整数: 任何 $n \in \Z_{\geq 0}$ 都有对应的全序集 $\mathbf{n}$, 作为集合按 $\mathbf{0} := \emptyset$ 和 $\mathbf{n+1} := \{\mathbf{0}, \ldots, \mathbf{n}\}$ 递归地定义, 序结构的定义是自明的. 最小的无穷序数 $\omega$ 即良序集 $\mathbf{0} \leq \mathbf{1} \leq \cdots$, 它也是可数基数 $\aleph_0$.\index[sym1]{012@$\mathbf{0}, \mathbf{1}, \mathbf{2}, \ldots$}
+
+我们选定一个 \emph{Grothendieck 宇宙}\index{Grothendieck 宇宙 (Grothendieck universe)}\index[sym1]{U@$\mathcal{U}$} $\mathcal{U}$ 来区分集合的大小: $\mathcal{U}$ 的元素称为 $\mathcal{U}$-集, 与 $\mathcal{U}$-集等势者称为 $\mathcal{U}$-小集, 或简称\emph{小集}\index{xiaoji@小集 (small set)}. 若基数 $\mu$ 作为集合是 $\mathcal{U}$-小集, 则称为\emph{小基数}\index{jishu!小 (small)}. 我们假定所有集合 $X$ 都属于某个 $\mathcal{U}$; 详见 \cite[假设 1.5.2]{Li1} 和相关讨论.
+
+\subsection*{范畴}
+关于范畴的约定和 \cite[\S 1.5, 定义 2.1.3]{Li1} 相同: 一个范畴 $\mathcal{C}$ 的所有对象和所有态射都构成集合, 分别记为 $\Obj(\mathcal{C})$ 和 $\Mor(\mathcal{C})$. 任两个对象之间的态射集记为 $\Hom_{\mathcal{C}}(\cdot, \cdot)$, 或简记为 $\Hom(\cdot, \cdot)$. 对象 $X$ 的恒等态射记为 $\identity_X$. 单态射以箭头 $\hookrightarrow$ 标识, 满态射则以箭头 $\twoheadrightarrow$ 标识; 单态射又称嵌入.
+\index{fanchou@范畴 (category)}
+\index{duixiang@对象 (object)}
+
+\begin{itemize}
+	\item 对于任意范畴中的态射 $f: X \to Y$ 和任意对象 $T$, 由 $f$ 诱导态射的拉回 $f^*$ 与推出 $f_*$ 运算, 它们定义在 $\Hom$ 集上:
+	\begin{align*}
+		f^*: \Hom(Y, T) & \to \Hom(X, T), & f_*: \Hom(T, X) & \to \Hom(T, Y) \\
+		\beta & \mapsto \beta f & \alpha & \mapsto f\alpha .
+	\end{align*}
+	\item 子范畴按子集的符号记为 $\mathcal{C}' \subset \mathcal{C}$; 若 $\Hom_{\mathcal{C}'}(X, Y) = \Hom_{\mathcal{C}}(X, Y)$, 则称 $\mathcal{C}'$ 为全子范畴.
+
+	\item 两个范畴 $\mathcal{C}_1$ 和 $\mathcal{C}_2$ 的积 $\mathcal{C}_1 \times \mathcal{C}_2$ 以 $\Obj(\mathcal{C}_1) \times \Obj(\mathcal{C}_2)$ 为对象集, 从对象 $(X_1, X_2)$ 到 $(Y_1, Y_2)$ 的态射定义为 $\Hom_{\mathcal{C}_1}(X_1, Y_1) \times \Hom_{\mathcal{C}_2}(X_2, Y_2)$ 的元素, 而态射合成是分量各自合成给出的. 由此可见任意一族范畴的积 $\prod_i \mathcal{C}_i$ 如何定义. 按此亦可定义 $\mathcal{C}^n := \mathcal{C} \times \cdots \times \mathcal{C}$ (共 $n$ 项), 或更一般的 $\mathcal{C}^I$, 其中 $I$ 是集合. 见 \cite[定义 2.3.1]{Li1}.\index{jifanchou@积范畴 (product category)}
+\end{itemize}
+
+举例明之, 任何预序集 $(P, \leq)$ 都给出相应的范畴 $\mathcal{P}$, 其对象集为 $P$ 而
+\[ \forall a,b \in P, \quad \Hom_{\mathcal{P}}(a, b) = \begin{cases}
+	\text{独点集} \; \{ \star \}, & a \leq b \\
+	\emptyset, & \text{其他情形.}
+\end{cases}\]
+作为特例, $\mathbf{0}$ 可视同空范畴, 无对象, 无态射; 而 $\mathbf{1}$ 视同恰有一个对象 $\mathbf{0}$ 和一个态射 $\identity_{\mathbf{0}}$ 的范畴.
+
+满足 $\Mor(\mathcal{C}) = \left\{ \identity_X : X \in \Obj(\mathcal{C}) \right\}$ 的范畴称为\emph{离散范畴}, 它们通过 $\mathcal{C} \mapsto \Obj(\mathcal{C})$ 和集合一一对应.\index{fanchou!离散 (discrete)}
+
+\subsection*{术语: 小范畴与大范畴}
+本书选定 Grothendieck 宇宙 $\mathcal{U}$. 设 $\mathcal{C}$ 为范畴. 若 $\mathrm{Mor}(\mathcal{C})$ 是 $\mathcal{U}$-小集, 则称 $\mathcal{C}$ 是 $\mathcal{U}$-小范畴; 若仅要求 $\Hom_{\mathcal{C}}(X, Y)$ 对所有 $X, Y \in \Obj(\mathcal{C})$ 都是 $\mathcal{U}$-小集, 则称之为 $\mathcal{U}$-范畴.
+\footnote{在许多文献中, 范畴的对象集理解为类, 任两个对象之间的 $\Hom$ 集则是集合. 因此他或她们的``类''相当于本书的集合, ``集合''相当于本书的 $\mathcal{U}$-集, 而她或他们的``范畴''基本相当于本书的 $\mathcal{U}$-范畴.}
+
+例如所有 $\mathcal{U}$-集连同其间的映射构成 $\mathcal{U}$-范畴 $\cate{Set}$, 它并非 $\mathcal{U}$-小范畴. 另一方面, 如果不选定 $\mathcal{U}$, 则所有集合构成一个真类, 并非本书意义下的范畴. 类似地, 本书以 $\cate{Grp}$ (或 $\cate{Ab}$) 标记所有建立在 $\mathcal{U}$-集上的群 (或交换群) 所成的范畴, 它们是 $\mathcal{U}$-范畴.
+\index[sym1]{Set@$\cate{Set}$}
+
+为了理解大小确实成问题, 读者不妨留意到 $\Hom$ 函子 $\Hom_{\mathcal{C}}: \mathcal{C}^{\opp} \times \mathcal{C} \to \cate{Set}$ 仅对 $\mathcal{U}$-范畴 $\mathcal{C}$ 方能定义.
+
+若无另外说明, 本书论及的范畴默认为 $\mathcal{U}$-范畴, 并且将 $\mathcal{U}$-小范畴简称为\emph{小范畴}; 未必是 $\mathcal{U}$-范畴的范畴则另称为\emph{大范畴}.
+\index{fanchou!小, 大 (small, big)}
+\index{daxiaowenti@大小问题 (size issues)}
+
+大范畴在许多构造中难以避免, 特别是和函子范畴或局部化相关的理论. 凡是大范畴可能出现, 而且确实有实质影响之处, 我们将明确标出.
+
+\subsection*{函子和函子范畴}
+范畴 $\mathcal{C}$ 到其自身的恒等函子记为 $\identity_{\mathcal{C}}$. 函子 $F: \mathcal{C} \to \mathcal{D}$ 映 $\mathcal{C}$ 的态射 $f: X \to Y$ 为 $\mathcal{D}$ 的态射 $Ff: FX \to FY$. 若 $\Hom_{\mathcal{C}}(X, Y) \to \Hom_{\mathcal{D}}(FX, FY)$ 对所有 $X$ 和 $Y$ 都是单射 (或双射), 则称 $F$ 忠实 (或全忠实); 若 $\mathcal{D}$ 的所有对象都同构于某个 $FX$, 则称 $F$ 本质满.
+\index{hanzi@函子 (functor)}
+
+以偏序集所对应的范畴为例, 保序映射 $P \to Q$ 无非是函子 $\mathcal{P} \to \mathcal{Q}$.
+
+\index{ziranbianhuan@自然变换 (natural transformation)}
+\index{2-baoqiang@2-胞腔 (2-cell)}
+两个函子间的态射 $\varphi: F \to G$ 在一些文献中又称自然变换, 有时也以双箭头 $\varphi: F \Rightarrow G$ 标注; 态射 $\varphi$ 由一族相容的态射 $(\varphi_X: FX \to GX)_{X \in \Obj(\mathcal{C})}$ 构成, 也可以用 \cite[\S 2.2]{Li1} 介绍的 \emph{$2$-胞腔}图表记为
+\[\begin{tikzcd}
+	\mathcal{C} \arrow[rr, bend left=45, "F", ""'{name=F}] \arrow[rr, bend right=45, "G"', ""{name=G}] & & \mathcal{D} \arrow[Rightarrow, from=F, to=G, "\varphi"].
+\end{tikzcd}\]
+往后论及 $\cate{Ab}$-范畴 (见 \S\ref{sec:Ker-Coker}) 或 $\Bbbk$-线性范畴时 (见 \S\ref{sec:linear-cat}), 对函子还会加上相应的条件. 
+
+给定函子
+$\begin{tikzcd}
+	\mathcal{B} \arrow[r, "R"] & \mathcal{C} \arrow[shift left, r, "F"] \arrow[shift right, r, "G"'] & \mathcal{D} \arrow[r, "L"] & \mathcal{E}
+\end{tikzcd}$
+和态射 $\varphi: F \to G$, 我们自然地得到态射 $L\varphi: LF \to LG$ 和 $\varphi R: FR \to GR$. 另一方面, 态射 $\varphi: F \to G$ 和 $\psi: G \to H$ 可以作合成 $\psi\varphi: F \to H$. 这些合成运算可以用 $2$-胞腔的合成, 亦即图表的拼贴来表述; 行将回顾的三角等式是一个基本例子.
+
+\index{hanzifanchou@函子范畴 (functor category)}
+\index[sym1]{DC@$\mathcal{D}^{\mathcal{C}}$}
+\index[sym1]{Fct@$\mathrm{Fct}$}
+
+从范畴 $\mathcal{C}$ 到范畴 $\mathcal{D}$ 的所有函子构成函子范畴 $\mathcal{D}^{\mathcal{C}}$, 也记为 $\mathrm{Fct}(\mathcal{C}, \mathcal{D})$; 注意到除非 $\mathcal{C}$ 小, $\mathcal{D}^{\mathcal{C}}$ 往往是``大范畴''. 作为函子范畴的特例, 对于 $n \in \Z_{\geq 0}$ 和对应的全序集 $\mathbf{n}$, 可以定义 $\mathcal{C}^{\mathbf{n}}$, 细说如下.
+\begin{compactitem}
+	\item 按定义, $\mathcal{C}^{\mathbf{0}} := \mathbf{1}$;
+	\item 存在唯一的函子 $\mathcal{C} \to \mathbf{1}$, 故 $\mathbf{1}^{\mathcal{C}} = \mathbf{1}$;
+	\item 指定函子 $\mathbf{1} \to \mathcal{C}$ 相当于指定 $\mathcal{C}$ 的对象, 故 $\mathcal{C}^{\mathbf{1}} \simeq \mathcal{C}$;
+	\item $\mathcal{C}^{\mathbf{2}}$ 以 $\mathcal{C}$ 中的态射为对象, 以态射之间的交换方块为态射.
+\end{compactitem}
+综上, $\mathbf{0}$ 可谓始范畴, $\mathbf{1} = [\bullet]$ 可谓终范畴, 而 $\mathbf{2} = [\bullet \to \bullet]$ 可以设想为游走的箭头.
+
+\index{fanchou!相反 (opposite)}
+\index[sym1]{Cop@$\mathcal{C}^{\opp}$}
+范畴 $\mathcal{C}$ 的相反范畴 $\mathcal{C}^{\opp}$ 和 $\mathcal{C}$ 有相同的对象集; 任何态射 $f: X \to Y$ 都可以视同 $\mathcal{C}^{\opp}$ 中的态射 $Y \to X$, 记为 $f^{\opp}$ 以资区别\index[sym1]{fop@$f^{\opp}$}; 另一方面, $\mathrm{Fct}(\mathcal{C}, \mathcal{D})^{\opp}$ 则自然地等同于 $\mathrm{Fct}(\mathcal{C}^{\opp}, \mathcal{D}^{\opp})$. 从 $\mathcal{C}$ 过渡到 $\mathcal{C}^{\opp}$ 相当于倒转箭头, 这一机制在范畴论中称为对偶性.
+
+若一对函子 $F: \mathcal{C} \leftrightarrows \mathcal{D}: G$ 满足 $GF \simeq \identity_{\mathcal{C}}$ 和 $FG \simeq \identity_{\mathcal{D}}$, 则称它们互为拟逆; 有拟逆的函子称为范畴之间的等价, 这是范畴论中的基本概念. 若严格的等式 $GF = \identity_{\mathcal{C}}$ 和 $FG = \identity_{\mathcal{D}}$ 成立, 则称它们为范畴之间互逆的同构.
+
+\subsection*{代数结构}
+群的幺元 (即单位元) 在乘法符号下记作 $1$, 交换群的幺元在加法符号下记作 $0$. 群 $G$ 的相反群 (倒转乘法顺序) 记为 $G^{\opp}$. 设 $H$ 是 $G$ 的子群, 则 $H$ 在 $G$ 中的指数记为 $(G:H)$, 它也等于陪集的个数 $|G/H|$ 或 $|H \backslash G|$. \index[sym1]{GH@$(G:H)$}
+
+除非另外说明, 环都是含幺元的结合环, 交换环上的代数亦同; 环 $R$ 的乘法幺元记为 $1$ 或 $1_R$, 所有可逆元对乘法构成群 $R^\times$. 域或整环 $R$ 的特征记为 $\mathrm{char}(R)$. 环 $R$ 的相反环记为 $R^{\opp}$, 其乘法顺序和 $R$ 相反.
+\index[sym1]{Aop@$A^{\opp}$}
+
+设 $r$ 为交换环 $R$ 的非零元. 如果加法群同态 $R \xrightarrow{\text{乘以}\; r} R$ 有非零的核, 则称 $r$ 为零因子. 交换环中由元素 $x, y, \ldots$ 生成的理想记为 $(x, y, \ldots)$.
+
+交换环 $R$ 上以 $X_1, X_2, \ldots$ 为变元的多项式代数写作 $R[X_1, X_2, \ldots]$ 的形式, 形式幂级数环记为 $R\llbracket X_1, X_2, \ldots \rrbracket$. 若 $M$ 是幺半群, 相应的幺半群 $R$-代数记为 $R[M]$.
+
+按惯例, $\Z \subset \Q \subset \R \subset \CC$ 依序代表整数环, 有理数域, 实数域和复数域. 若 $q$ 是素数的幂, 则 $\F_q$ 代表有 $q$ 个元素的有限域. 设 $F \hookrightarrow E$ 是域的嵌入, 则相应的域扩张或曰扩域记为 $E|F$, 其次数记为 $[E:F]$; 若 $E|F$ 是 Galois 扩张, 记其 Galois 群为 $\Gal(E|F)$.\index[sym1]{Gal}
+
+%本书取横行竖列的记法, 将 $n \times m$ 矩阵写作
+%\[ A = (a_{ij})_{\substack{1 \leq i \leq n \\ 1 \leq j \leq m}} = \begin{tikzpicture}[baseline]
+%	\matrix (M) [matrix of math nodes, left delimiter=(, right delimiter=)] {
+%		& \vdots & \\
+%		\cdots & a_{ij} & \cdots \\
+%		& \vdots & \\
+%	};
+%	\node[right=2.5em] at (M-2-3) {\scriptsize 第 $i$ 行};
+%	\node[below=1em] at (M-3-2) {\scriptsize 第 $j$ 列};
+%\end{tikzpicture}\]
+%的形式, 其转置记为 ${}^t A$; 单位 $n \times n$ 矩阵记为 $1_{n \times n}$ 或 $1$. 对于交换环上的 $n \times n$ 矩阵 $A$, 其行列式记为 $\det A$.
+
+几种基本代数结构给出的常用范畴标注如下.
+\begin{center}\small \begin{tabular}{|c|c|}\hline
+	幺半群 & $\cate{Mon}$ \\
+	群 &  $\cate{Grp}$ \\
+	交换群 & $\cate{Ab} = \Z\dcate{Mod}$ \\
+	左或右 $R$-模 & $R\dcate{Mod}$ 或 $\cated{Mod}R$ \\
+	$\Bbbk$-向量空间 & $\cate{Vect}(\Bbbk)$ \\
+	$(R,S)$-双模 & $(R,S)\dcate{Mod}$ \\
+	$\Bbbk$-代数 & $\Bbbk\dcate{Alg}$ \\
+	交换 $\Bbbk$-代数 & $\Bbbk\dcate{CAlg}$
+	\\ \hline
+\end{tabular} \quad \begin{tabular}{l}
+	$R$, $S$: 任意环, \\
+	$\Bbbk$: 域 (向量空间情形) \\
+	$\Bbbk$: 交换环 (代数情形) \\
+	模范畴 $\Bbbk\dcate{Mod}$ 不分左右.
+\end{tabular}\end{center}
+\index[sym1]{Mod@$\cate{Mod}$}
+\index[sym1]{Ab@$\cate{Ab}$}
+\index[sym1]{Grp@$\cate{Grp}$}
+\index[sym1]{Vect@$\cate{Vect}$}
+
+若 $\Bbbk$ 选定, 而 $R$ 和 $S$ 都是 $\Bbbk$-代数, 则探讨 $(R, S)$-双模时默认双模结构来自于左 $R \dotimes{\Bbbk} S^{\opp}$-模结构; 换言之, 我们要求 $\Bbbk$ 的左乘和右乘等效.
+
+左或右 $R$-模之间的同态群记如 $\Hom_R(X, Y)$ 之形. 对于 $(R,S)$-双模, 采取类似的记法 $\Hom_{(R, S)}(X, Y)$.
+
+对于交换环 $R$ 及其乘性子集 $U$, 相应的局部化记为 $R[U^{-1}]$.
+
+一如集合范畴 $\cate{Set}$ 的情形, 此处的群, 环, 模等等都默认实现在 $\mathcal{U}$-集上, 其中 $\mathcal{U}$ 是选定的 Grothendieck 宇宙. 因此表列的所有范畴都带有指向 $\cate{Set}$ 的忘却函子. 本书谈及的拓扑空间范畴 $\cate{Top}$, 紧 Hausdorff 空间范畴 $\cate{CHaus}$ 等实例也带如是假设: 所论的空间都是实现在 $\mathcal{U}$-集上的.
+
+\subsection*{伴随性}
+伴随对 $(F, G, \varphi)$ 指的是一对函子
+$\begin{tikzcd}
+	\mathcal{C} \arrow[shift left, r, "F"] & \mathcal{C}' \arrow[shift left, l, "G"]
+\end{tikzcd}$
+连同一族典范双射 $\varphi_{X, Y}: \Hom_{\mathcal{C}'}\left(FX, Y \right) \rightiso \Hom_{\mathcal{C}}\left(X, GY \right)$, 亦即函子之间的态射
+\[ \varphi: \Hom_{\mathcal{C}'}\left(F(\cdot), \cdot \right) \rightiso \Hom_{\mathcal{C}}\left(\cdot, G(\cdot) \right): \; \mathcal{C}^{\opp} \times \mathcal{C}' \to \cate{Set}. \]
+
+伴随对也经常表作
+$\begin{tikzcd}
+	F: \mathcal{C} \arrow[shift left, r] & \mathcal{C}' \arrow[l, shift left] : G
+\end{tikzcd}$
+的形式, 代表 $F$ 是 $G$ 的左伴随, 或者说 $G$ 是 $F$ 的右伴随. 资料 $\varphi$ 经常省略, 而伴随对相应地记作 $(F, G)$.
+
+伴随对中的 $\varphi$ 可以等价地以\emph{单位}态射 $\eta: \identity_{\mathcal{C}} \to GF$ 和\emph{余单位}态射 $\varepsilon: FG \to \identity_{\mathcal{C}'}$ 来刻画. 为了使 $(F, G, \eta, \varepsilon)$ 给出伴随对, 充要条件是它们满足所谓的\emph{三角等式}\index{danwei@单位 (unit)}\index{yudanwei@余单位 (counit)}\index{sanjiaodengshi@三角等式 (triangle identities)}
+\[ G\varepsilon \circ \eta G = \identity_G, \quad \varepsilon F \circ F\eta = \identity_F, \]
+见 \cite[(2.6) + 命题 2.6.5]{Li1}; 等价的写法是 $2$-胞腔合成的等式
+\begin{equation*}\begin{gathered}
+	\begin{tikzcd}
+		\mathcal{C}' \arrow[r, "G"] \arrow[rr, bend right=60, "\identity_{\mathcal{C}'}"', "" {name=B}] & \mathcal{C} \arrow[r, "F"] \arrow[Rightarrow, to=B, "\varepsilon"] \arrow[rr, bend left=60, "\identity_{\mathcal{C}}", ""' {name=T}] & \mathcal{C}' \arrow[r, "G"] \arrow[Rightarrow, from=T, "\eta"] & \mathcal{C}
+	\end{tikzcd} \quad = \quad \begin{tikzcd}[column sep=large]
+		\mathcal{C}' \arrow[r, bend left=60, "G", ""' {name=T}] \arrow[r, bend right=60, "G"', "" {name=B}] & \mathcal{C} \arrow[Rightarrow, from=T, to=B, "{\identity_G}" description]
+	\end{tikzcd} , \\
+	\begin{tikzcd}
+		\mathcal{C} \arrow[r, "F"] \arrow[rr, bend left=60, "\identity_{\mathcal{C}}", ""' {name=T}] & \mathcal{C}' \arrow[r, "G"] \arrow[Rightarrow, from=T, "\eta"] \arrow[rr, bend right=60, "\identity_{\mathcal{C}'}"', ""' {name=B}] & \mathcal{C} \arrow[r, "F"] \arrow[Rightarrow, to=B, "\varepsilon"] & \mathcal{C}'
+	\end{tikzcd} \quad = \quad \begin{tikzcd}[column sep=large]
+		\mathcal{C} \arrow[r, bend left=60, "F", ""' {name=T}] \arrow[r, bend right=60, "F"', "" {name=B}] & \mathcal{C}' \arrow[Rightarrow, from=T, to=B, "{\identity_F}" description]
+	\end{tikzcd}.
+\end{gathered}\end{equation*}
+详见 \cite[注记 2.6.6]{Li1}.
+
+\subsection*{极限}
+考虑函子 $\alpha: I \to \mathcal{C}$.
+\begin{itemize}
+	\item 函子 $\alpha$ 的归纳极限若存在则记为 $\varinjlim \alpha$, 或者 $\varinjlim_{i \in \Obj(I)} \alpha(i)$: 它是 $\mathcal{C}$ 的对象, 带有一族态射 $\alpha(i) \to \varinjlim \alpha$, 由泛性质确定.\index{jixian@极限 (limit)}
+	\item 类似地, $\alpha$ 的投射极限若存在则记为 $\varprojlim \alpha$, 或者 $\varprojlim_{i \in \Obj(I)} \alpha(i)$: 它带有一族态射 $\varprojlim \alpha \to \alpha(i)$, 由泛性质确定.
+\end{itemize}
+两种极限是对偶的, $\alpha: I \to \mathcal{C}$ 的 $\varinjlim$ 和 $\alpha^{\opp}: I^{\opp} \to \mathcal{C}^{\opp}$ 的 $\varprojlim$ 是一回事. 有鉴于此, 本书也经常将 $\varprojlim$ 涉及的函子写作 $I^{\opp} \to \mathcal{C}$ 的形式.
+
+在许多文献中, $\varinjlim$ 也称为余极限, 记为 $\mathrm{colim}$, 而 $\varprojlim$ 则称为极限, 记为 $\lim$. 若无其他说明, 本书的``极限''泛指 $\varinjlim$ 和 $\varprojlim$.\index[sym1]{lim@$\varinjlim$, $\varprojlim$, $\lim$, $\mathrm{colim}$}
+
+若 $I$ 是小范畴, 则相应的 $\varinjlim$ 或 $\varprojlim$ 称为\emph{小极限}\index{jixian!小 (small)}. 按照 \cite[\S 2.8]{Li1} 的标准术语, 如果范畴 $\mathcal{C}$ 具备所有的小 $\varprojlim$ (或小 $\varinjlim$), 则称 $\mathcal{C}$ \emph{完备} (或\emph{余完备}). 此概念依赖 $\mathcal{U}$ 的选取.\index{fanchou!完备, 余完备 (complete, cocomplete)}
+
+为了确定符号, 以下选定范畴 $\mathcal{C}$ 来回顾极限的几种常用特例. 详细定义见诸 \cite[\S 2.7]{Li1} 或其他教材. 以下泛性质中出现的 $T$ 指代 $\mathcal{C}$ 中的任意对象, 而 $I$ 是任意集合.
+
+\begin{center}\small\begin{tabular}{|c|c|c|c|c|} \hline
+	极限名 & 输入 & 对象 & 典范态射 & 泛性质 \\ \hline
+	等化子 &  $\begin{tikzcd}[column sep=small] X \arrow[shift left, r, "f"] \arrow[shift right, r, "g"'] & Y\end{tikzcd}$ & $\Ker(f,g)$ & $\Ker(f,g) \xrightarrow{\iota} X$ & $\begin{tikzcd}[row sep=small, column sep=tiny, every cell/.append style={font = \footnotesize}]
+		\Hom(T, \Ker(f,g)) \arrow[d, "1:1"'] & \psi \arrow[mapsto, d] \\
+		\left\{\begin{array}{l} \phi \in \Hom(T, X): \\ f\phi = g\phi \end{array}\right\} & \iota\psi
+	\end{tikzcd}$ \\
+	余等化子 & (同上) & $\Coker(f,g)$ & $Y \xrightarrow{p} \Coker(f,g)$ & $\begin{tikzcd}[row sep=small, column sep=tiny, every cell/.append style={font = \footnotesize}]
+		\Hom(\Coker(f,g), T) \arrow[d, "1:1"'] & \psi \arrow[mapsto, d] \\
+		\left\{\begin{array}{l} \phi \in \Hom(Y, T): \\ \phi f = \phi g \end{array}\right\} & \psi p
+	\end{tikzcd}$ \\
+	积 & $(X_i)_{i \in I}$ & $\displaystyle\prod_{i \in I} X_i$ & $\displaystyle\prod_{j \in I} X_j \xrightarrow{p_i} X_i$ & $\begin{tikzcd}[row sep=small, column sep=tiny, every cell/.append style={font = \footnotesize}]
+		\Hom\left(T, \displaystyle\prod_{i \in I} X_i \right) \arrow[d, "1:1"'] & \psi \arrow[mapsto, d] \\
+		\displaystyle\prod_{i \in I} \Hom(T, X_i) & \left( p_i \psi \right)_{i \in I}
+	\end{tikzcd}$ \\
+	余积 & (同上) & $\displaystyle\coprod_{i \in I} X_i$ & $X_i \xrightarrow{\iota_i} \displaystyle\prod_{j \in I} X_j$ & $\begin{tikzcd}[row sep=small, column sep=tiny, every cell/.append style={font = \footnotesize}]
+		\Hom\left(\displaystyle\coprod_{i \in I} X_i, T \right) \arrow[d, "1:1"'] & \psi \arrow[mapsto, d] \\
+		\displaystyle\prod_{i \in I} \Hom(X_i, T) & \left( \psi \iota_i \right)_{i \in I}
+	\end{tikzcd}$ \\ \hline
+\end{tabular}\end{center}
+
+有限积 (或余积) 也写作 $X_1 \times X_2 \times \cdots$ (或 $X_1 \sqcup X_2 \sqcup \cdots$) 之形. 在 $\mathcal{C}$ 为加性范畴的情形, 我们经常将余积 $\coprod_i$ 用模论的直和符号写作 $\bigoplus_i$.\index[sym1]{oplus@$\oplus$}
+
+等化子/余等化子和积/余积各自都是对偶的. 这些基于泛性质的刻画也可以如 \cite[\S 2.7]{Li1} 写成交换图表, 或以 \S\ref{sec:Yoneda} 将回顾的米田嵌入来诠释. 设 $\coprod_{i \in I} X_i$ 和 $\prod_{j \in J} Y_j$ 存在, 则泛性质给出双射
+\[ \Hom\left( \coprod_{i \in I} X_i, \prod_{j \in J} Y_j \right) \xrightarrow{1:1} \prod_{\substack{i \in I \\ j \in J}} \Hom(X_i, Y_j), \quad \psi \mapsto (p_j \psi \iota_i)_{i,j} . \]
+
+\begin{description}
+	\item[终对象] 对应于 $I = \emptyset$ 的积若存在, 则称为 $\mathcal{C}$ 中的终对象, 暂记为 $Z$. 按惯例 $\prod_{i \in \emptyset} := \{\emptyset\}$, 所以 $Z$ 的泛性质是: $\Hom(T, Z)$ 对所有 $T \in \Obj(\mathcal{C})$ 皆是独点集.
+	\item[始对象] 对应于 $I = \emptyset$ 的余积若存在, 则称为 $\mathcal{C}$ 中的始对象, 暂记为 $S$, 其泛性质是: $\Hom(S, T)$ 对所有 $T \in \Obj(\mathcal{C})$ 皆是独点集.
+	\item[零对象和零态射] 若 $\mathcal{C}$ 的对象 $0$ 兼为始对象和终对象, 则称之为零对象; 出入零对象的态射存在且唯一. 对任何 $X, Y \in \Obj(\mathcal{C})$, 合成态射 $X \to 0 \to Y$ 给出 $\Hom(X, Y)$ 中的典范元素, 称为零态射.
+	\index{duixiang!零 (zero)}
+\end{description}
+
+由于从任何对象 $X$ 到零对象的同构若存在则唯一, 习惯称 $X$ 是零对象或写作 $X = 0$, 而不说 $X$ 同构于零对象.
+
+继续回顾两类重要的极限, 它们相互对偶.
+\begin{center}\small\begin{tabular}{|c|c|c|c|c|} \hline
+	名称 & 输入 & 对象 & 典范态射 & 泛性质 \\ \hline
+	纤维积 & $\left( X_i \xrightarrow{f_i} Z \right)_{i \in I}$ & $\displaystyle\prod_{i \in I} (X_i \to Z)$ & $\begin{tikzcd}[every cell/.append style={font = \footnotesize}] \displaystyle\prod_{j \in I} (X_j \to Z) \arrow[d, "p_i"] \\ X_i \end{tikzcd}$ & $\begin{tikzcd}[every cell/.append style={font = \footnotesize}]
+		\Hom\left(T, \displaystyle\prod_{i \in I} (X_i \to Z) \right) \arrow[d, "1:1"', "{\psi \mapsto (p_i \psi)_i}"] \\
+		\left\{\begin{array}{l} (\xi_i: T \to X_i)_{i \in I}: \\ \forall i,j \in I, \\ f_i \xi_i = f_j \xi_j \end{array}\right\}
+	\end{tikzcd}$ \\
+	纤维余积 & $\left( Z \xrightarrow{g_i} X_i \right)_{i \in I}$ & $\displaystyle\coprod_{i \in I} (Z \to X_i)$ & $\begin{tikzcd}[every cell/.append style={font = \footnotesize}] X_i \arrow[d, "\iota_i"] \\ \displaystyle\coprod_{j \in I} (Z \to X_j) \end{tikzcd}$ & $\begin{tikzcd}[every cell/.append style={font = \footnotesize}]
+		\Hom\left(\displaystyle\coprod_{i \in I} (Z \to X_i), T \right) \arrow[d, "1:1"', "{\psi \mapsto (\psi \iota_i)_i}"] \\
+		\left\{\begin{array}{l} (\xi_i: X_i \to T)_{i \in I}: \\ \forall i,j \in I, \\ \xi_i g_i = \xi_j g_j \end{array}\right\}
+	\end{tikzcd}$ \\ \hline
+\end{tabular}\end{center}
+
+在纤维积的泛性质中取 $\psi = \identity$ 可见 $f_i p_i = f_j p_j$ 对所有 $i,j$ 皆成立, 由此得典范态射 $\prod_{i \in I} (X_i \to Z) \to Z$. 同理, 对纤维余积取 $\psi = \identity$ 可见 $\iota_i g_i = \iota_j g_j$ 对所有 $i,j$ 皆成立, 由此得典范态射 $Z \to \coprod_{i \in I} (Z \to X_i)$.
+
+有限多个对象的纤维积 $X_1 \dtimes{Z} X_2 \dtimes{Z} \cdots$ 或纤维余积 $X_1 \dsqcup{Z} X_2 \dsqcup{Z} \cdots$ 可以化约到两个对象的情形. 我们将形如
+\[\begin{tikzcd}
+	X \dtimes{Z} Y \arrow[r, "p_1"] \arrow[d, "p_2"'] & X \arrow[d] \\
+	Y \arrow[r] & Z
+\end{tikzcd} \quad \text{和} \quad \begin{tikzcd}\
+	Z \arrow[r] \arrow[d] & X \arrow[d, "\iota_1"] \\
+	Y \arrow[r, "\iota_2"'] & X \dsqcup{Z} Y 
+\end{tikzcd}\]
+的交换图表分别称为\emph{拉回}或\emph{推出}图表, 并且称 $X \dtimes{Z} Y \to Y$ 为 $X \to Z$ 的拉回, 称 $Y \to X \dsqcup{Z} Y$ 为 $Z \to X$ 的推出; 注意到 $X, Y$ 的角色是对称的. 推而广之, 与上图同构的交换图表也分别称为拉回和推出, 详见 \cite[定义 2.8.5]{Li1}.\index{lahuitubiao@拉回图表 (pullback diagram)} \index{tuichutubiao@推出图表 (pushout diagram)}
+
+本书的记号是在拉回 (或推出) 图表的方块的中心标记 $\Box$ (或 $\boxplus$).
+\index[sym1]{Box@$\Box$, $\boxplus$}
+
+\subsection*{翻译}
+本书关于翻译的惯例和 \cite{Li1} 一致; 所用译名仍力求和 \cite{ZG} 兼容, 除非该书的翻译有明显的不妥或错误.
+
+索引列出的术语附英译. 一来是帮助有阅读或撰写英文文章需求的读者, 二来是供母语非中文的读者作参考; 最后, 由于历史的原因, 了解外文对于理解许多数学符号的意涵仍是必要的.

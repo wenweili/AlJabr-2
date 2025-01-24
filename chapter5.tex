@@ -1,0 +1,1148 @@
+% LaTeX source for book ``代数学方法'' in Chinese
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% To be included
+\chapter{谱序列}\label{sec:ss}
+谱序列是经典而常用常新的代数工具, 和拓扑学的渊源尤深. 在某些教材或讲义中, 它甚至被当作同调代数的基本工具, 用以建立\CHref{sec:Abel-cat}和\CHref{sec:cplx}中的一些基础性质.
+
+谱序列由 J.\ Leray 在 1940 年代首创, 随后经过 J.-L.\ Koszul 和 H.\ Cartan 等人的发展而逐渐定型; 他们的主要动机是研究纤维丛的同调群. 以代数形式表述, 原问题相当于要了解一个链复形 (或复形) $X$ 的同调 (或上同调); 兹以复形情形为例, $X$ 本身难以捉摸, 却能够通过合适的滤过 $\cdots \supset \mathrm{F}^p X \supset \mathrm{F}^{p+1} X \supset \cdots$ 来了解它. 滤过 $\mathrm{F}^\bullet X$ 在每个 $\Hm^n(X)$ 上诱导相应的滤过, 而从滤过 $\mathrm{F}^\bullet X$ 及其子商的信息有可能逐步逼近 $\Hm^n(X)$ 对其滤过的每个子商 $\gr^p \Hm^n(X)$. 谱序列可谓是关于这种逼近的技艺.
+
+我们也可以将复形推广为 Abel 范畴上的微分对象 $(X, d)$ (定义 \ref{def:differential-object}), 以给出谱序列的抽象定义 \ref{def:SS-abstract}: 这是一列微分对象 $\mathscr{E} = (E_r, d_r)_r$, 使得每一``页''的上同调 $\Hm(E_r, d_r)$ 都等同于下一页 $E_{r+1}$. 若在定义中加入分次结构并容许微分 $d$ 带次数, 即有分次谱序列 $E_r^p$ 和双分次谱序列 $E_r^{p, q}$ 的概念 (定义 \ref{def:graded-spectral-sequence}); 具体地说, 双分次谱序列的微分走向是
+\begin{gather*}
+	d_r^{p, q}: E_r^{p, q} \to E_r^{p+r, q-r+1}, \\
+	E_r = (E_r^{p, q})_{(p, q) \in \Z^2}, \quad d_r = (d_r^{p, q})_{(p, q) \in \Z^2}.
+\end{gather*}
+滤过复形给出滤过微分对象, 从而自然地导向双分次谱序列, 这也是谱序列在应用中最常见的形式. 一切概念对于链复形及其同调都有相应版本.
+
+本章的策略是从 W.\ Massey 的正合偶理论切入. 正合偶是制造谱序列的另一套工具, 范围比滤过微分对象更广. 承接 \S\ref{sec:grading-filtration} 关于滤过和分次结构的简介, 我们将在 \S\ref{sec:spectral-sequence} 表述谱序列的一般定义, 其分次与双分次版本, 以及退化, 有界和极限页等各种基本术语; 该节末尾的注记 \ref{rem:edge-computing} 将解释如何在谱序列的边缘读出正合列, 这是重要技巧.
+
+我们将在 \S\ref{sec:exact-couples} 定义正合偶, 在 \S\ref{sec:filtered-diff-ss} 借此说明滤过微分对象如何产生分次谱序列, 然后在 \S\ref{sec:filtered-cplx-ss} 进一步说明滤过复形如何产生双分次谱序列; 该处也涉及称为收敛性的核心概念, 以及经典收敛定理 \ref{prop:classical-convergence}. 这部分的一些验证略为琐碎, 但不存在本质的困难, 读者也可以先考虑具体的 Abel 范畴如 $\cate{Ab}$ 等, 以简化论证.
+
+双复形按两种方式给出滤过复形, 对应于按横坐标或纵坐标来滤过全复形, 相应的谱序列分别记为 $\mathscr{E}_{\mathrm{I}}$ 和 $\mathscr{E}_{\mathrm{II}}$, 其细节是 \S\ref{sec:double-cplx-ss} 的主题. 我们将给出这些谱序列的标准应用, 包括平衡双函子的求导 (例 \ref{eg:bifunctor-ss}), 超导出函子的谱序列 (例 \ref{eg:hyperderived-ss}) 以及 Grothendieck 谱序列 (定理 \ref{prop:Grothendieck-ss}). 之前介绍的 Cartan--Eilenberg 解消 (定理 \ref{prop:CE-resolution}) 在此发挥作用.
+
+Grothendieck 谱序列关乎合成函子的求导, 在几何中特别常见. 以右导出函子为例, 考虑 Abel 范畴之间的左正合加性函子 $\mathcal{A} \xrightarrow{F} \mathcal{A}' \xrightarrow{F'} \mathcal{A}''$, 并且设 $\mathcal{A}$ 和 $\mathcal{A}'$ 皆有足够的内射对象. 若 $F$ 映内射对象为 $F'$-零调对象 (约定 \ref{con:F-acyclic}), 则有典范的强收敛双分次谱序列
+\[ E_2^{p, q} = (\mathrm{R}^p F') (\mathrm{R}^q F)(X) \Rightarrow \mathrm{R}^{p+q}(F' F)(X), \quad X \in \Obj(\mathcal{A}). \]
+合成函子的求导也能在导出范畴的层次处理, 见定理 \ref{prop:localization-triangulated-composite}; 谱序列的版本除了形式初等, 易于计算, 在一些具体场合还能提供更多的信息, 譬如低次项的正合列.
+
+本章最后的 \S\ref{sec:multiplicative-SS} 将简述谱序列的乘法结构. 这是自谱序列初创便受到重视的面向. 命题 \ref{prop:dga-mult-ss} 将说明滤过微分分次代数给出具有典范乘法结构的谱序列, 更深入的讨论则留给相关专著.
+
+作为实战练习, 群上同调理论中至关重要的 Lyndon--Hochschild--Serre 谱序列既是 Grothendieck 谱序列的一则应用, 又能由滤过复形具体给出, 而后一进路还赋予它典范的乘法结构. 这些将是未来 \S\ref{sec:LHS-SS} 将涉及的主题.
+
+\begin{wenxintishi}
+	本章只需要关于 Abel 范畴和复形的知识. 除了少部分简单定义, 本章不依赖\CHref{sec:triangulated-derived-cat}的内容, 两章可以独立地阅读. 由于滤过微分对象的谱序列可以直接写下, 正合偶理论对之不是必需的 (详见命题 \ref{prop:filtered-diff-E} 及其后讨论), 因此读者也可以考虑暂时跳过 \S\ref{sec:exact-couples}. 此外, 本书后续内容仅有 \S\ref{sec:LHS-SS} 需要谱序列的知识.
+\end{wenxintishi}
+
+\section{滤过与分次结构}\label{sec:grading-filtration}
+我们在定义 \ref{def:graded-obj} 已经和分次对象打过照面: 任意范畴 $\mathcal{A}$ 上的 $\Z$-分次对象简称\emph{分次对象}, 它们按定义即 $\mathcal{A}^{\Z}$ 的对象 $(X^p)_{p \in \Z}$; 其上的 $\Z^2$-分次对象简称\emph{双分次对象}, 按定义即 $\mathcal{A}^{\Z \times \Z}$ 的对象 $(X^{p,q})_{(p,q) \in \Z^2}$. 分次 (或双分次) 对象之间的态射照例写作 $(f^p)_p$ (或 $(f^{p,q})_{p,q}$) 的形式, 态射逐项或曰逐次地作合成. \index{fenciduixiang}
+
+若 $\mathcal{A}$ 是 Abel 范畴, 则 $\mathcal{A}^{\Z}$ 和 $\mathcal{A}^{\Z \times \Z}$ 等亦复如是; 取核, 取余核等种种操作都是逐次的.
+
+范畴 $\mathcal{A}^{\Z}$ 带有平移自同构 $T$, 由 $(TX)^p = X^{p+1}$ 和 $(Tf)^p = f^{p+1}$ 确定. 推而广之, 范畴 $\mathcal{A}^{\Z^n}$ 有一族平移自同构 $T_1, \ldots, T_n$, 对应到沿 $n$ 个坐标的平移; 它们满足严格交换律 $T_i T_j = T_j T_i$.
+
+在本章的框架下, 分次结构主要源自滤过.
+
+\begin{definition}\label{def:filtration}
+	\index{lvguo@滤过 (filtration)}
+	\index{lvguo!有限 (finite)}
+	\index[sym1]{FilpX@$\mathrm{F}^p X$, $\mathrm{F}_p X$}
+	考虑加性范畴 $\mathcal{A}$ 的对象 $X$.
+	\begin{itemize}
+		\item 其\emph{降滤过} $\mathrm{F}^\bullet X$ 意谓一列子对象
+		\[ \cdots \supset \mathrm{F}^p X \supset \mathrm{F}^{p+1} X \supset \cdots \quad (p \in \Z). \]
+		\item 若存在 $a \leq b$ 使得 $\mathrm{F}^a X = X$ 而 $\mathrm{F}^b X = 0$, 则称此滤过\emph{有限}.
+		\item 类似地定义\emph{升滤过} $\mathrm{F}_\bullet X$ 及其有限性.
+	\end{itemize}
+\end{definition}
+
+降滤过和升滤过可以按次数 $p$ 标记的位置来区分, 不致混淆时, 统称为滤过. 在复形及其上同调的研究中习惯使用降滤过, 对于链复形及其同调则习惯用升滤过. 本章考虑降滤过为主.
+
+全体滤过对象 $(X, \mathrm{F}^\bullet X)$ 构成范畴 $\mathrm{Fil}^\bullet(\mathcal{A})$, 其间的态射 $f: (X, \mathrm{F}^\bullet X) \to (Y, \mathrm{F}^\bullet Y)$ 定为保持滤过的态射 $f: X \to Y$, 亦即要求 $f$ 对每个 $p$ 都限制为 $\mathrm{F}^p X \to \mathrm{F}^p Y$. 以类似方法定义范畴 $\mathrm{Fil}_\bullet (\mathcal{A})$. \index[sym1]{FilA@$\mathrm{Fil}^\bullet(\mathcal{A})$, $\mathrm{Fil}_\bullet(\mathcal{A})$}
+
+对任意 $X$, 降滤过 $\mathrm{F}^\bullet X$ (或升滤过 $\mathrm{F}_\bullet X$) 给出分次对象 $\left( \mathrm{F}^p X \right)_{p \in \Z}$ (或 $\left( \mathrm{F}_p X \right)_{p \in \Z}$); 这给出函子 $\mathrm{Fil}^\bullet(\mathcal{A}) \to \mathcal{A}^{\Z}$ (或 $\mathrm{Fil}_\bullet(\mathcal{A}) \to \mathcal{A}^{\Z}$), 称为 Rees 构造.
+
+当 $\mathcal{A}$ 是 Abel 范畴时, 我们还有另一种从滤过构造分次对象的手法.
+
+\begin{definition}
+	\index[sym1]{grX@$\gr^p X$, $\gr_p X$}
+	设 $\mathcal{A}$ 为 Abel 范畴, 考虑对象 $X$ 的滤过 $\mathrm{F}^\bullet X$ (或 $\mathrm{F}_\bullet X$). 按下述方式定义分次对象 $\gr X$:
+	\[ \gr^p X := \mathrm{F}^p X / \mathrm{F}^{p+1} X \quad (\text{或} \quad \gr_p X := \mathrm{F}_p X / \mathrm{F}_{p-1} X). \]
+	这给出函子 $\gr: \mathrm{Fil}^\bullet(\mathcal{A}) \to \mathcal{A}^{\Z}$ (或 $\gr: \mathrm{Fil}_\bullet(\mathcal{A}) \to \mathcal{A}^{\Z}$).
+\end{definition}
+
+为了从 $(\gr^p X)_p$ 萃取 $X$ 的信息, 起码的要求是 $\bigcup_p \mathrm{F}^p X = X$ 而 $\bigcap_p \mathrm{F}^p X = 0$, 此处采用约定 \ref{con:increasing-union} 的符号; 而为了使前一个陈述合理且有用, 我们还希望 $\varinjlim_{p \to -\infty}$ 在 $\mathcal{A}$ 中正合, 或者索性要求存在 $M$ 使得 $\mathrm{Fil}^M X = X$. 且先引入几个相关概念.
+
+\begin{definition}\label{def:filtration-properties}
+	\index{lvguo!完备 (complete)}
+	\index{lvguo!分离 (separated)}
+	\index{lvguo!穷竭 (exhaustive)}
+	设 $\mathcal{A}$ 是 Abel 范畴, 对象 $X$ 带滤过 $\mathrm{F}^\bullet X$.
+	\begin{itemize}
+		\item 若 $\bigcap_p \mathrm{F}^p X = 0$, 则称 $\mathrm{F}^\bullet X$ 是\emph{分离}的.
+		\item 若 $\bigcup_p \mathrm{F}^p X = X$, 而且以下任一条件成立时, 称 $\mathrm{F}^\bullet X$ 是\emph{穷竭}的:
+		\begin{compactenum}[(a)]
+			\item $\mathcal{A}$ 有正合的滤过可数 $\varinjlim$, 更确切地说, $\varinjlim: \mathcal{A}^{(\Z_{\geq 0}, \leq)} \to \mathcal{A}$ 存在而且正合\footnote{若 $\mathcal{A}$ 是 Grothendieck 范畴, 则 (a) 自动成立.};
+			\item 存在 $M \in \Z$ 使得 $\mathrm{F}^M X = X$.
+		\end{compactenum}
+		\item 若典范态射族 $X \twoheadrightarrow X/\mathrm{F}^p X$ 诱导同构 $X \rightiso \varprojlim_p X/\mathrm{F}^p X$, 则称滤过 $\mathrm{F}^\bullet X$ 是\emph{完备}的.
+	\end{itemize}
+	升滤过 $\mathrm{F}_\bullet X$ 的情形类此.
+\end{definition}
+
+完备性的概念受拓扑群的情形启发, 见 \cite[\S 4.10]{Li1}.
+
+有限滤过自动是分离, 穷竭而完备的, 这也是本章需要的主要情形. 注意到若存在 $N$ 使得 $\mathrm{F}^N X = 0$, 则 $\mathrm{F}^\bullet X$ 分离而完备; 又因为 $X \to \varprojlim_p X/\mathrm{F}^p X$ 以 $\bigcap_p \mathrm{F}^p X$ 为核, 故完备蕴涵分离.
+
+穷竭滤过的像仍是穷竭滤过: 将 $\bigcup_p$ 解释为 $\sum_p$ 再用引理 \ref{prop:image-sum-preimage-intersection} (ii) 即可. 此外, 穷竭滤过还满足
+\begin{equation}\label{eqn:exhaustion-intersection}\begin{gathered}
+	\varinjlim_{p \to -\infty} \mathrm{F}^p X \rightiso \bigcup_p \mathrm{F}^p X = X, \\
+	K = K \cap \left( \bigcup_p \mathrm{F}^p X \right) = \bigcup_p \left( K \cap \mathrm{F}^p X \right),
+\end{gathered}\end{equation}
+其中 $K$ 是 $X$ 的任意子对象: 在穷竭滤过的条件 (a) 之下, 这些是命题 \ref{prop:Grothendieck-cat-intersection} 的简单内容, 而在条件 (b) 之下则是平凡的.
+
+\begin{proposition}\label{prop:gr-isom}
+	设 $\mathcal{A}$ 是 Abel 范畴, $f: (X, \mathrm{F}^\bullet X) \to (Y, \mathrm{F}^\bullet Y)$ 是 $\mathrm{Fil}^\bullet(\mathcal{A})$ 的态射.
+	\begin{enumerate}[(i)]
+		\item 设 $\mathrm{F}^\bullet X$ 分离而穷竭. 若 $\gr(f)$ 单, 则 $f$ 单.
+		\item 设 $\mathrm{F}^\bullet X$ 完备而穷竭, $\mathrm{F}^\bullet Y$ 分离而穷竭. 若 $\gr(f)$ 是同构, 则 $f$ 亦然, 而此时 $\mathrm{F}^\bullet Y$ 也完备.
+	\end{enumerate}
+	对于升滤过同样有相应的陈述.
+\end{proposition}
+\begin{proof}
+	对每个 $p \in \Z$, 写下行正合交换图表
+	\[\begin{tikzcd}
+		0 \arrow[r] & \mathrm{F}^{p+1} X \arrow[d, "f"'] \arrow[r] & \mathrm{F}^p X \arrow[r] \arrow[d, "f"] & \gr^p X \arrow[r] \arrow[d, "{\gr^p(f)}"] & 0 \\
+		0 \arrow[r] & \mathrm{F}^{p+1} Y \arrow[r] & \mathrm{F}^p Y \arrow[r] & \gr^p Y \arrow[r] & 0
+	\end{tikzcd}\]
+	记 $\mathrm{F}^p X \xrightarrow{f} \mathrm{F}^p Y$ 的核为 $K^p$, 余核为 $C^p$.
+	
+	考虑 (i). 对上图应用定理 \ref{prop:snake-lemma}, 可见 $K^{p+1} = K^p$. 特别地, $K^p \subset \bigcap_{\ell \geq p} \mathrm{F}^\ell X = 0$, 这说明 $f$ 限制在每个 $\mathrm{F}^p X$ 上皆单. 为了说明 $f$ 单, 需要的只是
+	\[ \Ker(f) \xlongequal{\because\; \text{\eqref{eqn:exhaustion-intersection}}} \bigcup_p \left( \Ker(f) \cap \mathrm{F}^p X \right) = 0. \]
+	
+	考虑 (ii), 此时图表说明除了 $K^{p+1} = K^p$ 还有 $C^{p+1} \rightiso C^p$. 对所有 $\ell > p$, 端详行正合交换图表
+	\[\begin{tikzcd}
+		0 \arrow[r] & \mathrm{F}^{\ell} X \arrow[r] \arrow[d, "f"] & \mathrm{F}^p X \arrow[r] \arrow[d, "f"] & \mathrm{F}^p X / \mathrm{F}^{\ell} X \arrow[r] \arrow[d] & 0 \\
+		0 \arrow[r] & \mathrm{F}^{\ell} Y \arrow[r] & \mathrm{F}^p Y \arrow[r] & \mathrm{F}^p Y / \mathrm{F}^{\ell} Y \arrow[r] & 0
+	\end{tikzcd}\]
+	再次应用定理 \ref{prop:snake-lemma} 遂知 $f$ 诱导同构
+	\[ \mathrm{F}^p X / \mathrm{F}^\ell X \rightiso \mathrm{F}^p Y / \mathrm{F}^\ell Y. \]
+	
+	对上式两边以 \eqref{eqn:exhaustion-intersection} 同取 $\varinjlim_{p: p < \ell}$, 得 $X/\mathrm{F}^\ell X \rightiso Y/\mathrm{F}^\ell Y$. 再同取 $\varprojlim_\ell$, 得交换图表
+	\[\begin{tikzcd}
+		X \arrow[r, "\sim"] \arrow[d, "f"'] & \varprojlim_\ell X/\mathrm{F}^\ell X \arrow[d, "\sim" sloped] \\
+		Y \arrow[hookrightarrow, r] & \varprojlim_\ell Y/\mathrm{F}^\ell Y
+	\end{tikzcd}\]
+	由此见得 $f$ 和 $Y \to \varprojlim_\ell Y/\mathrm{F}^\ell Y$ 都是同构.
+\end{proof}
+
+\section{谱序列的一般定义}\label{sec:spectral-sequence}
+我们从微分对象的一般定义入手. 这涉及定义 \ref{def:category-with-translation} 所述的带平移的加性范畴 $(\mathcal{A}, T)$, 以及定义 \ref{def:morphism-with-degree} 所述的带次数的态射.
+
+\begin{definition}\label{def:differential-object}
+	\index{weifenduixiang@微分对象 (differential object)}
+	\index[sym1]{ATd@$\mathcal{A}_d$, $(\mathcal{A}, T)_d$}
+	带平移的加性范畴 $(\mathcal{A}, T)$ 上的\emph{微分对象}意谓资料 $(X,d)$, 其中 $X \in \Obj(\mathcal{A})$ 而 $d: X \xrightarrow{+1} X$ 满足 $d^2 = 0$.
+	\begin{itemize}
+		\item 从 $(X, d)$ 到 $(X', d')$ 的态射是满足 $d' \alpha = \alpha d$ 的态射 $\alpha: X \to X'$.
+		\item 全体微分对象构成范畴 $(\mathcal{A}, T)_d$; 另记 $\mathcal{A}_d := (\mathcal{A}, \identity_{\mathcal{A}})_d$.
+	\end{itemize}
+\end{definition}
+
+若 $\mathcal{A}$ 是 $\cate{Ab}$-范畴 (或 $\Bbbk\dcate{Mod}$-范畴, $\Bbbk$ 是交换环), 则 $(\mathcal{A}, T)_d$ 亦然. 忘却函子 $(\mathcal{A}, T)_d \to \mathcal{A}$ 映 $(X,d)$ 为 $X$.
+
+\begin{proposition}
+	\index[sym1]{HXd@$\Hm(X,d)$}
+	忘却函子 $(\mathcal{A}, T)_d \to \mathcal{A}$ 生所有 $\varinjlim$ 和 $\varprojlim$ (定义 \ref{def:create-limit}).
+\end{proposition}
+\begin{proof}
+	请回放引理 \ref{prop:limits-cplx} 的证明.
+\end{proof}
+
+由此推知若 $\mathcal{A}$ 是 Abel 范畴, 则 $(\mathcal{A}, T)_d$ 亦然, 而 $(\mathcal{A}, T)_d \to \mathcal{A}$ 正合.
+
+对于 Abel 范畴的情形, 微分对象的特色之一是它具有同调或上同调.
+
+\begin{definition}
+	设 $\mathcal{A}$ 是 Abel 范畴, 则可定义加性函子
+	\[ \Hm: (\mathcal{A}, T)_d \to \mathcal{A}, \quad \Hm(X,d) := \Ker(d)/\Image(T^{-1} d) .\]
+\end{definition}
+
+我们称 Abel 范畴 $\mathcal{A}$ 中的三角图表
+$\begin{tikzcd}[column sep=small, row sep=small]
+	A \arrow[rr] & & B \arrow[ld] \\
+	& C \arrow[lu, "+m"] &
+\end{tikzcd}$
+正合, 如果
+\[ \cdots T^{k-m} C \to T^k A \to T^k B \to T^k C \to T^{k+m} A \cdots \]
+是正合列, 两边无穷延伸. 更一般的带次数的三角图表依此类推.
+\index{zhenghelie}
+
+\begin{lemma}\label{prop:diff-obj-triangle}
+	选定带平移的 Abel 范畴 $(\mathcal{A}, T)$. 若 $0 \to (X', d') \to (X, d) \to (X'', d'') \to 0$ 是 $(\mathcal{A}, T)_d$ 的短正合列, 则下图在每个顶点皆正合:
+	\[\begin{tikzcd}[column sep=tiny]
+		\Hm(X', d') \arrow[rr] & & \Hm(X, d) \arrow[ld] . \\
+		& \Hm(X'', d'') \arrow[lu, "{+1}"] &
+	\end{tikzcd}\]
+\end{lemma}
+\begin{proof}
+	在 $\mathcal{A}$ 上考量复形的列
+	\[ 0 \to (T^n X', T^n d')_n \to (T^n X, T^n d)_n \to (T^n X'', T^n d'')_n \to 0. \]
+	它逐次正合, 故为短正合列. 对之应用命题 \ref{prop:long-exact-sequence-ses}.
+\end{proof}
+
+\begin{example}[复形作为微分对象]\label{eg:cplx-as-diff}
+	\index{weifenfenciduixiang}
+	对加性范畴 $\mathcal{A}$ 考虑 $\mathcal{A}^{\Z}$ 连同平移函子 $T: (X^n)_n \mapsto (X^{n+1})_n$. 根据 \S\ref{sec:additive-cplx} 的阐述, $(\mathcal{A}^{\Z}, T)_d$ 的对象又称微分分次对象, 而且有范畴的同构 $\cate{C}(\mathcal{A}) \simeq (\mathcal{A}^{\Z}, T)_d$. 当 $\mathcal{A}$ 是 Abel 范畴时, 显见
+	\[ \Hm(X, d) = \left( \Hm^p(X) \right)_{p \in \Z}. \]
+\end{example}
+
+现在可以给出谱序列的定义. 为了简化论述, 以下先探讨不带平移或者说是态射不带次数的情形; 换言之, 取 $T = \identity$.
+
+\begin{definition}[J.\ Leray, J.-L.\ Koszul]\label{def:SS-abstract}
+	\index{puxulie@谱序列 (spectral sequence)}
+	选定 Abel 范畴 $\mathcal{A}$ 和 $a \in \Z$. 从 $a$ 起步的\emph{谱序列}意谓资料 $\mathscr{E} = (E_r, d_r)_{r \in \Z_{\geq a}}$ 连同 $(t_r)_{r \geq a+1}$, 其中
+	\begin{compactitem}
+		\item $(E_r, d_r) \in \Obj(\mathcal{A}_d)$;
+		\item $t_r: \Hm(E_{r-1}, d_{r-1}) \rightiso E_r$, 其中 $r \geq a+1$;
+	\end{compactitem}
+	符号中常省略资料 $a$ 和 $(t_r)_r$.
+
+	谱序列之间的态射 $\mathscr{E} \to \mathscr{E}'$ 意谓 $\mathcal{A}_d$ 的态射族 $\varphi_r: (E_r, d_r) \to (E'_r, d'_r)$, 使得 $t_r \Hm(\varphi_{r-1}) = \varphi_r t_r$, 其中 $r \geq a+1$.
+\end{definition}
+
+习惯称 $(E_r, d_r)$ 为谱序列 $\mathscr{E}$ 的第 $r$ 页; 自 $E_r$ 计算 $E_{r+1}$ 便是翻页. 谱序列具体从哪一页开始, 抽象观之无关宏旨, 实用中则要视具体情境而定.
+
+如将谱序列的 $d_r$ 视同态射 $\Hm(E_{r-1}, d_{r-1}) \to \Hm(E_{r-1}, d_{r-1})$, 则 $\Ker(d_r) \supset \Image(d_r)$ 俱对应 $\Ker\left(d_{r-1} \right)$ 的子对象, 俱包含 $\Image\left( d_{r-1} \right)$. 简单起见, 假定谱序列从 $a=0$ 起步. 命 $Z_1$ (或 $B_1$) 为 $\Ker(d_0)$ (或 $\Image(d_0)$), 再命 $Z_2$ (或 $B_2$) 为 $\Ker(d_1)$ (或 $\Image(d_1)$) 相对于 $E_0 \supset Z_1 \twoheadrightarrow E_1$ 的逆像, 依此类推. 迭代给出
+\begin{equation}\label{eqn:spectral-sequence-Z-B}\begin{gathered}
+	0 =: B_0 \subset B_1 \subset B_2 \subset \cdots \subset Z_2 \subset Z_1 \subset Z_0 =: E_0, \\
+	Z_r \leftrightarrow \Ker\left( d_{r-1} \right), \quad B_r \leftrightarrow \Image\left( d_{r-1} \right), \quad Z_r/B_r \simeq E_r.
+\end{gathered}\end{equation}
+\index[sym1]{ZBE@$Z_r$, $B_r$, $E_r$}
+
+\begin{itemize}
+	\item 若存在 $Z_\infty := \bigcap_r Z_r$ 和 $B_\infty := \bigcup_r B_r$, 则定义谱序列 $\mathscr{E}$ 的\emph{极限}为 $E_\infty := Z_\infty / B_\infty$.
+	\item 若存在 $r$ 使得 $r' \geq r \implies d_{r'} = 0$, 则称 $\mathscr{E}$ 在 $E_r$ 页\emph{退化}; 此时易见 $Z_r = Z_{r+1} = \cdots$ 和 $B_r = B_{r+1} = \cdots$, 故 $Z_r = Z_\infty$, $B_r = B_\infty$; 作为推论, $E_r = E_\infty$. \index{puxulie!退化 (degenerate)}
+\end{itemize}
+
+以后探讨同调分次谱序列时, 将会改用 $(E^r, d^r)_r$ 和 $B^r$, $Z^r$ 的记法.
+
+\begin{proposition}\label{prop:ss-isom-infty}
+	设 $\varphi_r: \mathscr{E} \to \mathscr{E}'$ 是谱序列的态射. 若 $\varphi_r$ 是同构, 则当 $s \geq r$ 时 $\varphi_s$ 也是同构, 而在极限存在的前提下 $\varphi_\infty: E_\infty \to E'_\infty$ 也是同构.
+\end{proposition}
+\begin{proof}
+	同构 $\varphi_r$ 诱导同构 $\Hm(E_r, d_r) \to \Hm(E'_r, d'_r)$, 后者即 $\varphi_{r+1}$. 不妨设谱序列从 $r$ 起步, 如此则 $(\varphi_s)_{s \geq r}$ 是谱序列的同构, 于是关于 $\varphi_\infty$ 的断言平凡地成立.
+\end{proof}
+
+推而广之, 对于带平移的 Abel 范畴 $(\mathcal{A}, T)$, 谱序列的定义可以扩及 $(E_r, d_r) \in \Obj\left((\mathcal{A}, T^{a_r})_d\right)$ 的情形, 其中 $a_1, a_2, \ldots$ 是一列整数. 上述的 $\Hm(E_r, d_r)$ 和 $B_r$, $Z_r$ 定义不变.
+
+在往后需要的推广中, 还可以更进一步让 $\mathcal{A}$ 带一族相交换的自同构 $T_1, \ldots, T_n$, 而
+\[ d_r: E_r \xrightarrow{+ \vec{a}_r} E_r, \quad \vec{a}_r = (a_{r,1}, \ldots, a_{r,n}) \in \Z^n. \]
+且循此一思路, 介绍最常用的两种版本, 它们都涉及分次结构.
+
+\begin{definition}[谱序列: 分次和双分次版本]\label{def:graded-spectral-sequence}
+	\index{puxulie!分次, 双分次 (graded, bigraded)}
+	\index[sym1]{drpq@$d_r^{p,q}$, $d^r_{p,q}$}
+	选定 Abel 范畴 $\mathcal{A}$. 按下述方式定义上同调分次谱序列和上同调双分次谱序列, 它们都写作 $\mathscr{E} = (E_r, d_r)_r$ 之形.
+	\[\begin{array}{|c|c|c|c|} \hline
+		\text{版本} & E_r & d_r & \text{态射次数} \\ \hline
+		\text{分次} & (E_r^p)_{p \in \Z} \in \Obj(\mathcal{A}^{\Z}) & (d_r^p)_p & d_r^p: E_r^p \xrightarrow{+r} E_r^{p+r} \\
+		\text{双分次} & (E_r^{p,q})_{(p,q) \in \Z^2} \in \Obj(\mathcal{A}^{\Z \times \Z}) & (d_r^{p,q})_{(p,q)} & d_r^{p,q}: E_r^{p,q} \xrightarrow{+(r, -r+1)} E_r^{p+r, q-r+1} \\ \hline
+	\end{array}\]
+	两种情况下都要求 $(d_r)^2 = 0$, 理解为带次数的态射作合成, 并且资料中都带有指定的同构 $\Hm(E_{r-1}, d_{r-1}) \rightiso E_r$.
+	
+	对偶地, 同调分次 (或双分次) 谱序列为定义为如下资料 $(E^r, d^r)_{r \geq 1}$, 依然要求 $(d^r)^2 = 0$ 并指定同构 $\Hm(E^r, d^r) \simeq E^{r+1}$:
+	\[\begin{array}{|c|c|c|c|} \hline
+		\text{版本} & E^r & d^r & \text{态射次数} \\ \hline
+		\text{分次} & (E^r_p)_{p \in \Z} \in \Obj(\mathcal{A}^{\Z}) & (d^r_p)_p & d^r_p: E^r_p \xrightarrow{-r} E^r_{p-r} \\
+		\text{双分次} & (E^r_{p,q})_{(p,q) \in \Z^2} \in \Obj(\mathcal{A}^{\Z \times \Z}) & (d^r_{p,q})_{(p,q)} & d^r_{p,q}: E^r_{p,q} \xrightarrow{+(-r, r-1)} E^r_{p-r, q+r-1} \\ \hline
+	\end{array}\]
+	这些谱序列之间的态射按寻常方式定义, 须和指定的同构相容.
+\end{definition}
+
+以 $(p,q)$ 坐标绘图, 双分次谱序列中的 $d_r$ 和 $d^r$ 走向如下.
+\begin{center}\begin{tikzpicture}[>=Latex, scale=0.7, baseline=(O)]
+	\draw[very thin, gray!50]  (-1, 1) grid (4, -2);
+	\draw[thick, ->] (0, 0) -- (0, 1) node[left] {$d_0$};
+	\draw[thick, ->] (0, 0) -- (1, 0) node[right] {$d_1$};
+	\draw[thick, ->] (0, 0) -- (2, -1) node[right] {$d_2$};
+	\draw[thick, ->] (0, 0) -- (3, -2) node[right] {$d_3$};
+	\node at (1.5, -2.5) {$E_r^{p,q}$};
+	\coordinate (O) at (1.5, -0.5);
+\end{tikzpicture} \qquad \begin{tikzpicture}[>=Latex, scale=0.7, baseline=(O)]
+	\draw[very thin, gray!50]  (1, -1) grid (-4, 2);
+	\draw[thick, ->] (0, 0) -- (0, -1) node[right] {$d^0$};
+	\draw[thick, ->] (0, 0) -- (-1, 0) node[left] {$d^1$};
+	\draw[thick, ->] (0, 0) -- (-2, 1) node[left] {$d^2$};
+	\draw[thick, ->] (0, 0) -- (-3, 2) node[left] {$d^3$};
+	\node at (-1.5, -1.5) {$E^r_{p,q}$};
+	\coordinate (O) at (-1.5, 0.5);
+\end{tikzpicture}\end{center}
+
+无论哪种版本, 都可以按照先前的模式来定义 $B_r^p \subset Z_r^p$, $B_r^{p,q} \subset Z_r^{p,q}$, $E_\infty^p$, $E_\infty^{p,q}$ 和 $B^r_p \subset Z^r_p$, $B^r_{p,q} \subset Z^r_{p,q}$, $E^\infty_p$, $E^\infty_{p,q}$ 等对象.
+
+\begin{example}[有限宽的情形]\label{eg:SS-finite-width}
+	许多常见场景中, 双分次谱序列的非零项集中在宽度为 $s$ 的水平 (或竖直) 带状区域上, 其中 $s \in \Z_{\geq 0}$, 如下图:
+	\[\begin{tikzpicture}[baseline]
+		\matrix (M) [matrix of math nodes, right delimiter=\}] {
+			\cdots & \bullet & \bullet & \bullet & \cdots \\
+			\vdots & \vdots & \vdots & \vdots & \vdots \\
+			\cdots & \bullet & \bullet & \bullet & \cdots \\
+		};
+		\node[right=2em] at (M-2-5) {\scriptsize \text{$s$ 行}};
+	\end{tikzpicture} \quad \text{或} \quad \begin{tikzpicture}[baseline]
+	\matrix (M) [matrix of math nodes, below delimiter=\}] {
+			\vdots & \vdots & \vdots \\
+			\bullet & \cdots & \bullet \\
+			\bullet & \cdots & \bullet \\
+			\vdots & \vdots & \vdots \\
+		};
+		\node[below=2em] at (M-4-2) {\scriptsize \text{$s$ 列}};
+	\end{tikzpicture}\]
+	观察箭头走向可见 $r > s$ (或 $r \geq s$) 蕴涵 $d_r^{p,q} = 0$ 对所有 $p, q$ 成立, 此时谱序列在 $E_r$ 页退化. 同调情形类此.
+\end{example}
+
+\begin{definition}\label{def:bdd-ss}
+	\index{puxulie!有界 (bounded)}
+	设 $\mathscr{E}$ 是上同调 (或同调) 双分次谱序列, $r \in \Z$. 若对于每个 $n \in \Z$, 至多仅有有限个 $(p,q) \in \Z^2$ 满足 $p+q=n$ 和 $E_r^{p,q} \neq 0$ (或 $E^r_{p,q} \neq 0$), 则称 $E_r$ (或 $E^r$) \emph{有界}.
+\end{definition}
+
+从 $E_{r+1} \simeq \Hm(E_r, d_r)$ 可见 $E_r^{p,q}=0 \implies E_{r+1}^{p,q} = 0$. 特别地, $E_r$ 有界导致 $E_{r+1}$ 有界. 同调情形类此.
+
+\begin{proposition}
+	设上同调 (或同调) 双分次谱序列 $\mathscr{E}$ 满足 $E_r$ (或 $E^r$) 有界, 则对于所有 $(p,q) \in \Z^2$, 存在 $r(p,q)$ 使得当 $r \geq r(p,q) \implies E_r^{p,q} = E_{r+1}^{p,q}$ (或 $E^r_{p,q} = E^{r+1}_{p,q}$); 作为推论, $\mathscr{E}$ 的极限存在且满足 $E_r^{p,q} = E_\infty^{p,q}$ (或 $E^r_{p,q} = E^\infty_{p,q}$).
+\end{proposition}
+\begin{proof}
+	讨论 $E_r$ 情形即可. 给定 $n$. 基于有界性质, 当 $r$ 充分大时, 对所有满足 $p+q=n$ 的 $(p,q)$ 都有 $E_r^{p-r, q+r-1} = 0$, 因此 $B_r^{p,q} = 0$. 同理, $r$ 充分大时 $E_r^{p+r, q-r+1} = 0$, 因此 $Z_r^{p,q} = E_r^{p,q}$. 明所欲证.
+\end{proof}
+
+\begin{definition}\label{def:quadrant-ss}
+	设 $\mathscr{E}$ 是上同调 (或同调) 双分次谱序列, $r \in \Z$. 若 $E_r^{p,q} \neq 0$ (或 $E^r_{p,q} \neq 0$) 蕴涵 $p, q \geq 0$, 则称 $E_r$ (或 $E^r$) 落在第一象限, 类似方法可以定义其他象限的情形.
+\end{definition}
+
+落在第一象限或第三象限的 $E_r$ 显然有界. 从 $E_{r+1} \simeq \Hm(E_r, d_r)$ 可见若 $E_r$ 落在第一象限等等, 则 $E_{r+1}$ 亦然. 同调情形类此.
+
+\begin{remark}[边缘计算]\label{rem:edge-computing}
+	落在第一象限的谱序列特别常见. 以上同调版本为例, 其边缘项 $E_r^{\bullet ,0}$ 和 $E_r^{0, \bullet}$ 有特殊的性质. 选定 $p, q \geq 1$. 细心探究 $d_r$ 走向, 并且回忆到 $E_{r+1} \simeq \Hm(E_r, d_r)$, 可以验证
+	\begin{equation}\label{eqn:edge-ss-coh}\begin{array}{cc}
+		E_2^{p,0} \twoheadrightarrow E_3^{p,0} \twoheadrightarrow \cdots \twoheadrightarrow E_{p+1}^{p,0} = E_\infty^{p,0} & \text{($\because$\; 映出的 $d$ 全为 $0$)}, \\
+		E_\infty^{0,q} = E_{q+2}^{0,q} \hookrightarrow E_{q+1}^{0,q} \hookrightarrow \cdots \hookrightarrow E_2^{0,q} \hookrightarrow E_1^{0,q} & \text{($\because$\; 映入的 $d$ 全为 $0$)}.
+	\end{array}\end{equation}
+	落在第一象限的同调双分次谱序列也有对应的性质: 我们有
+	\begin{equation}\label{eqn:edge-ss-ho}\begin{array}{cc}
+		E^\infty_{p,0} = E^{p+1}_{p,0} \hookrightarrow E^p_{p,0} \hookrightarrow \cdots \hookrightarrow E^3_{p,0} \hookrightarrow E^2_{p,0} & \text{($\because$\; 映入的 $d$ 全为 $0$)}, \\
+		E^1_{0,q} \twoheadrightarrow E^2_{0,q} \twoheadrightarrow \cdots \twoheadrightarrow E^{q+2}_{0,q} = E^\infty_{0,q} & \text{($\because$\; 映出的 $d$ 全为 $0$)}.
+	\end{array}\end{equation}\index{bianyuantaishe@边缘态射 (edge morphism)}
+
+	来自 \eqref{eqn:edge-ss-coh} 或 \eqref{eqn:edge-ss-ho} 的态射统称为\emph{边缘态射}. 综上可得正合列 ($p \geq 2$)
+	\begin{equation}\label{eqn:low-exact-coh}
+		0 \to E^{0, p-1}_\infty \to E^{0, p-1}_p \xrightarrow{d} E^{p, 0}_p \to E^{p, 0}_\infty \to 0,
+	\end{equation}
+	其中除 $d$ 以外的态射都是边缘态射. 正合列也有同调版本 ($p \geq 2$)
+	\begin{equation}\label{eqn:low-exact-ho}
+		0 \to E^\infty_{p,0} \to E^p_{p,0} \xrightarrow{d} E^p_{0, p-1} \to E^\infty_{0, p-1} \to 0,
+	\end{equation}
+	初学者请务必动笔写下这些项所涉及的态射 $d$ 的走势, 了解它们何时为 $0$, 从而验证上述所有断言.
+\end{remark}
+
+\section{正合偶}\label{sec:exact-couples}
+常用的几种谱序列都来自正合偶, 这是 W.\ Massey 的发现. 为了把握问题的实质, 我们先退回不带次数的情形.
+
+\begin{definition}[正合偶]\label{def:exact-couple}
+	\index{zhengheou@正合偶 (exact couple)}
+	Abel 范畴 $\mathcal{A}$ 上的正合偶意谓 $\mathcal{A}$ 中的正合图表
+	\[\begin{tikzcd}[column sep=small]
+		D \arrow[rr, "i"] & & D \arrow[ld, "j"] \\
+		& E \arrow[lu, "k"] &
+	\end{tikzcd}\]
+	资料 $\mathscr{C} := (D, E, i, j, k)$ 之间的态射按自明的方式定义.
+\end{definition}
+
+给定正合偶 $\mathscr{C} = (D, E, i, j, k)$, 命 $d := jk: E \to E$, 则 $dj = jkj = 0$ 而 $kd = kjk = 0$, 由此可知 $d^2 = 0$. 根据正合条件易得如下分解:
+\begin{equation}\label{eqn:exact-couple-aux}
+	\begin{tikzcd}
+		D \arrow[r, "j"] \arrow[twoheadrightarrow, d, "i"'] & \Ker(d) \arrow[twoheadrightarrow, d] \\
+		i(D) \arrow[r, "{\exists! \; j'}"'] & \Hm(E, d)
+	\end{tikzcd} \quad \begin{tikzcd}
+		\Ker(d) \arrow[r, "k"] \arrow[twoheadrightarrow, d] & i(D) \\
+		\Hm(E, d) \arrow[ru, "{\exists! \; k'}"'] &
+	\end{tikzcd}
+\end{equation}
+另外定义 $E' := \Hm(E, d)$, $D' := i(D)$ 和 $i' := i|_{i(D)}: D' \to D'$.
+
+\begin{lemma}
+	给定正合偶 $\mathscr{C} = (D, E, i, j, k)$, 按以上方式构造的资料
+	\[ \mathscr{C}' = (D', E', i', j', k') : \quad \begin{tikzcd}[column sep=small]
+		D' \arrow[rr, "{i'}"] & & D' \arrow[ld, "{j'}"] \\
+		& E' \arrow[lu, "{k'}"] &
+	\end{tikzcd}\]
+	仍是正合偶.
+\end{lemma}
+\begin{proof}
+	细观 \eqref{eqn:exact-couple-aux} 并运用正合条件, 不难验证
+	\begin{align*}
+		\Ker(i') & = i(D) \cap \Ker(i) = \Ker(j) \cap k(E) \\
+		& = \Image\left[ \Ker(d) \xrightarrow{k} i(D) \right] = \Image(k'), \\
+		\Ker(j') & = i\left( j^{-1} (jk(E)) \right) \\
+		& = i\left( k(E) + \Ker(j) \right) = i\left(i(D)\right) = \Image(i'), \\
+		\Ker(k') & = (\Ker(k) \cap \Ker(d))/\Image(d) = (j(D) \cap \Ker(jk)) / \Image(d) \\
+		& = j(D) / \Image(d) = \Image(j'). 
+	\end{align*}
+	所以新的三角图表仍然正合.
+\end{proof}
+
+此法迭代, 给出一列正合偶 $(\mathscr{C}_{(r)})_{r \geq 1}$, 使得 $\mathscr{C}_{(1)} = \mathscr{C}$ 而 $r \geq 1$ 时 $\mathscr{C}_{(r+1)} = \mathscr{C}_{(r)}'$. 记 $\mathscr{C}_{(r)} = (D_r, E_r, i_r, j_r, k_r)$, 则 $(E_r, d_r := j_r k_r)_{r \geq 1}$ 给出谱序列.
+
+\begin{lemma}\label{prop:exact-couple-Z-B}
+	对于正合偶 $\mathscr{C} = (D, E, i, j, k)$ 得出的谱序列 $(E_r, d_r)_{r \geq 1}$, 按 \eqref{eqn:spectral-sequence-Z-B} 定义 $E = E_1$ 的一族子对象 $\overline{B}_r \subset \overline{Z}_r$; 此处用上划线是因为它们从 $r=1$ 起步, 详见稍后的命题 \ref{prop:differential-exact-couple}. 当 $r \geq 0$ 时
+	\begin{gather*}
+		\overline{B}_{r+1} = j\left(\Ker(i^r)\right) \subset k^{-1}\left( \Image(i^r) \right) = \overline{Z}_{r+1}; \\
+		\overline{B}_\infty = j\left( \bigcup_{r \geq 2} \Ker(i^r) \right) \subset k^{-1}\left( \bigcap_{r \geq 2} \Image(i^r) \right) = \overline{Z}_\infty ,
+	\end{gather*}
+	前提是所论的 $\bigcup_r$ 和 $\bigcap_r$ 存在. 确切地说, 正合偶 $\mathscr{C}_{(r+1)}$ 典范地同构于
+	\[\begin{tikzcd}[column sep=tiny]
+		i^r D \arrow[rr, "i"] & & i^r D \arrow[ld, "{\overline{j}_{r+1}}"] \\
+		& \dfrac{k^{-1}(i^r D)}{j(\Ker(i^r))} \arrow[lu, "{\overline{k}_{r+1}}"] &
+	\end{tikzcd}\]
+	其中 $\overline{k}_{r+1}$ 由 $k: E \to D$ 诱导, $\overline{j}_{r+1}$ 则由以下交换图表刻画:
+	\[\begin{tikzcd}
+		D \arrow[r, "{i^r}"] \arrow[d, "j"'] & i^r D \arrow[d, "{\overline{j}_{r+1}}"] \\
+		k^{-1}(i^r D) \arrow[twoheadrightarrow, r] & \dfrac{k^{-1}(i^r D)}{j(\Ker(i^r))}.
+	\end{tikzcd}\]
+\end{lemma}
+\begin{proof}
+	关于正合偶 $\mathscr{C}_{(r+1)}$ 的描述可以递归地论证, 其 $r=0$ 情形是平凡的 ($i^0 = \identity$), 而 $\overline{B}_{r+1}$ 和 $\overline{Z}_{r+1}$ 的描述则是其简单推论. 由于细节稍显琐碎, 此处略去. 关于 $\overline{B}_\infty \subset \overline{Z}_\infty$ 的断言由引理 \ref{prop:image-sum-preimage-intersection} (ii) 料理.
+\end{proof}
+
+接着说明如何从微分对象构造正合偶.
+
+\begin{proposition}\label{prop:differential-exact-couple}
+	设 $\alpha: (D, d) \to (D, d)$ 是 $\mathcal{A}_d$ 的单态射, 记 $d$ 在 $\Coker(\alpha)$ 上诱导的态射为 $d_\alpha$, 则有正合偶:
+	\[\begin{tikzcd}[column sep=tiny]
+		\Hm(D, d) \arrow[rr, "{i = \Hm(\alpha)}"] & & \Hm(D, d) \arrow[ld, "j"] \\
+		& \Hm(\Coker(\alpha), d_\alpha) \arrow[lu, "k"] &
+	\end{tikzcd}\]
+	取 $\overline{B}_{r+1} \subset \overline{Z}_{r+1}$ 在 $E_0 := \Coker(\alpha)$ 中的逆像, 记为
+	\[ 0 =: B_0 \subset B_1 \subset B_2 \subset \cdots \subset Z_2\subset Z_1 \subset Z_0 := \Coker(\alpha). \]
+	对于所有 $r \geq 0$, 我们有:
+	\begin{itemize}
+		\item $B_{r+1}$ 是 $\left(\alpha^r\right)^{-1} (dD) \subset D$ 在 $\Coker(\alpha)$ 中的像;
+		\item $Z_{r+1}$ 是 $d^{-1}\left( \alpha^{r+1} D \right) \subset D$ 在 $\Coker(\alpha)$ 中的像;
+		\item $d_{r+1} \in \End(Z_{r+1}/B_{r+1})$ 由 $d^{-1} (\alpha^{r+1} D) \xrightarrow{d} \alpha^{r+1} D \xleftarrow[\sim]{\alpha^{r+1}} D$ 诱导.
+	\end{itemize}
+	特别地, 我们有典范同构
+	\[ E_{r+1} \simeq \dfrac{Z_{r+1}}{B_{r+1}} \simeq \dfrac{d^{-1}(\alpha^{r+1} D) + \alpha D}{(\alpha^r)^{-1}(dD) + \alpha D}, \quad r \in \Z_{\geq 1}. \]
+\end{proposition}
+\begin{proof}
+	正合偶是对 $\mathcal{A}_d$ 的短正合列
+	\[ 0 \to (D, d) \xrightarrow{\alpha} (D, d) \to (\Coker(\alpha), d_\alpha) \to 0 \]
+	施行引理 \ref{prop:diff-obj-triangle} (在其中取 $T = \identity_{\mathcal{A}}$) 的产物; 特别地, 态射 $j$ 由 $D \twoheadrightarrow \Coker(\alpha)$ 诱导, 而 $k$ 的本质是长正合列中的连接态射. 关于 $B_{r+1}$ 的描述无非是引理 \ref{prop:exact-couple-Z-B} 提升到 $E_0$ 的版本. 至于 $Z_{r+1}$, 除了上述引理, 关键还在于描述连接态射 $k: \Hm(\Coker(\alpha), d_\alpha) \to \Hm(D, d)$: 仔细回顾 \eqref{eqn:snake-conn} 和 \eqref{eqn:long-exact-sequence-ses-aux} 的构造, 可知它是由行正合交换图表
+	\[\begin{tikzcd}
+		& \Coker(d) \arrow[r] \arrow[d, "\overline{d}"'] & \Coker(d) \arrow[r] \arrow[d, "\overline{d}"'] & \Coker(d_\alpha) \arrow[d, "\overline{d_\alpha}"] \arrow[r] & 0 \\
+		0 \arrow[r] & \Ker(d) \arrow[r, "\alpha"'] & \Ker(d) \arrow[r] & \Ker(d_\alpha) &
+	\end{tikzcd}\]
+	的中路 $\overline{d}$ 诱导的, 而 $\overline{d}$ 又来自 $d: D \to D$. 其余验证繁而不难, 读者不妨先从 $\mathcal{A}$ 为模范畴的情形入手.
+\end{proof}
+
+微分对象给出的谱序列因此可由 $0$ 起步, 方式是令 $E_0 := \Coker(\alpha)$, $d_0 := d_\alpha$.
+
+对于带平移的 Abel 范畴 $(\mathcal{A}, T)$, 由于带次数的态射依然能作合成, 也同样具备正合性等概念, 正合偶理论容易扩及态射 $i$, $j$, $k$ 带有次数的情形. 以 \S\ref{sec:filtered-diff-ss} 即将探讨的场景为例, 可以考虑正合偶
+\[\begin{tikzcd}[column sep=tiny]
+	D \arrow[rr, "{-1}"] & & D \arrow[ld, "{+1}"] \\
+	& E \arrow[lu] &
+\end{tikzcd} \xlongequal{\text{展卷}} \left[
+	\begin{tikzcd}[column sep=0ex, every cell/.append style = {font = \small}]
+		\cdots & T D \arrow[rr] \arrow[ld] & & D \arrow[rr] \arrow[ld] & & T^{-1} D \arrow[rr] \arrow[ld] & & T^{-2} D \arrow[ld] & \cdots \\
+		\cdots & & TE \arrow[lu] & & E \arrow[lu] & & T^{-1} E \arrow[lu] & & \cdots \arrow[lu]
+	\end{tikzcd}
+\right]. \]
+记此正合偶为 $\mathscr{C}$. 引理 \ref{prop:exact-couple-Z-B} 在带次数情形的自然推广表明 $\mathscr{C}_{(r)}$ 形如
+$\begin{tikzcd}[column sep=tiny, row sep=small]
+	\bullet \arrow[rr, "{-1}"] & & \bullet \arrow[ld, "{+r}"] \\
+	& \bullet \arrow[lu] &
+\end{tikzcd}$.
+所以 $d_r = j_r k_r$ 是 $r$ 次态射. 由此得到的谱序列将是分次的.
+
+\section{滤过微分对象的谱序列}\label{sec:filtered-diff-ss}
+本节伊始, 考虑带平移的 Abel 范畴 $(\mathcal{A}, T)$.
+
+\begin{definition}\label{def:filtered-diffop}
+	\index{weifenduixiang!滤过 (filtered)}
+	配备滤过 $\left(\mathrm{F}^\bullet X, d_{\mathrm{F}^\bullet X}\right)$ 的 $(X, d) \in \Obj((\mathcal{A}, T)_d)$ 称为 $(\mathcal{A}, T)$ 上的\emph{滤过微分对象}. 此时 $\gr^p X$ 也带有自然的 $\gr^p d: \gr^p X \to T \gr^p X$, 使得 $(\gr^p X, \gr^p d) \in \Obj((\mathcal{A}, T)_d)$.
+\end{definition}
+
+由于子对象 $\mathrm{F}^p X$ 上的 $d_{\mathrm{F}^p X}$ 宜理解为 $d: X \to T X$ 的限制, 今后仍记之为 $d$. 类似定义可施于升滤过的情形, 表述完全是对偶的.
+
+回到谱序列的研究. 上节介绍了如何从微分对象构造正合偶. 现在考虑 $\mathcal{A}$ 上的滤过微分对象 $(X, d, \mathrm{F}^\bullet X)$. 记 $\mathcal{A}^{\Z}$ 的标准平移函子为 $S: (Y^p)_p \mapsto (Y^{p+1})_p$; 注意到它和对每个 $Y^p$ 作用的 $T$ 当然地交换. 以下探讨的态射因而带两种次数: 一是对应于 $S$  的``滤过次数'', 二是对应于 $T$ 的``内次数'', 暂且聚焦于前者.
+
+滤过既然递降, 遂有单态射
+\[ \alpha: \left( \mathrm{F}^{p+1} X, d \right)_{p \in \Z} \hookrightarrow S^{-1} \left( \mathrm{F}^{p+1} X, d \right)_{p \in \Z} = \left( \mathrm{F}^p X, d \right)_{p \in \Z} . \]
+ 于是 $E_0 := \Coker(\alpha) = \left( \gr^p X, \gr^p d \right)_{p \in \Z}$, 而 $E_1^p = \Hm\left(\gr^p X, \gr^p d\right)$.
+
+将 $\alpha$ 视作 $\mathcal{A}^{\Z}$ 的 $-1$ 次态射 (相对于 $S$), 代入命题 \ref{prop:differential-exact-couple} 得 $\mathcal{A}^{\Z}$ 上带次数的正合偶:
+\[\mathscr{C} = \left[ \begin{tikzcd}[column sep=tiny]
+	\Hm\left( \mathrm{F}^{p+1} X, d \right)_p \arrow[rr, "-1"', "{\Hm(\alpha)}"] & & \Hm\left( \mathrm{F}^{p+1} X, d \right)_p \arrow[ld, "{+1}"] \\
+	& \Hm\left( \gr^p X , \gr^p d \right)_p \arrow[lu] &
+\end{tikzcd}\right], \]
+此处 $\nwarrow$ 来自短正合列 $0 \to (\mathrm{F}^{p+1} X, d) \to (\mathrm{F}^p X, d) \to (\gr^p X, \gr^p d) \to 0$ 诱导的连接态射.
+
+由此得出的 $\mathscr{E} = (E_r^p, d_r^p)_{\substack{r \geq 0 \\ p \in \Z}}$ 称为 $\mathrm{F}^\bullet X$ 在 $\mathcal{A}^{\Z}$ 中确定的谱序列. 在 \S\ref{sec:exact-couples} 结尾已说明 $d_r$ 相对于 $S$ 是 $r$ 次态射, 表作
+\[ d_r = \left( d_r^p : E_r^p \to (S^r E_r)^p = E_r^{p+r} \right)_{p \in \Z}; \]
+当然, $d_r$ 的次数也能够从命题 \ref{prop:differential-exact-couple} 的公式读出.
+
+换言之, 滤过微分对象 $(X, d, \mathrm{F}^\bullet X)$ 给出定义 \ref{def:graded-spectral-sequence} 的上同调分次谱序列. 留意到此处的 $d_r^p$ 也可能带内次数 (除非取 $T = \identity_{\mathcal{A}}$), 只是略去不表, 细节待 \S\ref{sec:filtered-cplx-ss} 梳理.
+
+按 \eqref{eqn:spectral-sequence-Z-B} 的方式定义 $Z_0 = (\gr^p X, \gr^p d)_p$ 的子对象
+\[ B_r = (B_r^p)_p \subset (Z_r^p)_p = Z_r. \]
+
+为了简化符号, 以下陈述中省略 $d$ 带有的内次数, 这相当于考虑 $T = \identity_{\mathcal{A}}$ 的特例; 推至一般情形是例行公事, 仅须在涉及 $d^{-1}(\cdots)$ 或 $d(\cdots)$ 处适当地插入平移函子, 以使表达式有严格意义.
+
+\begin{proposition}\label{prop:filtered-diff-E}
+	给定滤过微分对象 $(X, d, \mathrm{F}^\bullet X)$, 相应的谱序列满足
+	\begin{align*}
+		Z_r^p & = \dfrac{\left(\mathrm{F}^p X \cap d^{-1} \mathrm{F}^{p+r} X \right) + \mathrm{F}^{p+1} X }{\mathrm{F}^{p+1} X}, \\
+		B_r^p & = \dfrac{\left(\mathrm{F}^p X \cap d \mathrm{F}^{p-r+1} X \right) + \mathrm{F}^{p+1} X }{\mathrm{F}^{p+1} X},
+	\end{align*}
+	而 $d_r^p: E_r^p \to E_r^{p+r}$ 由态射 $d^{-1} \mathrm{F}^{p+r} X \xrightarrow{d} \mathrm{F}^{p+r} X \cap \Ker(d)$ 诱导.
+\end{proposition}
+\begin{proof}
+	留意到 $\alpha^r$ 的 $p$ 次部分可视同嵌入 $\mathrm{F}^p X \hookrightarrow \mathrm{F}^{p-r} X$ 或 $\mathrm{F}^{p+r} X \hookrightarrow \mathrm{F}^p X$. 断言归结为命题 \ref{prop:differential-exact-couple} 的分次版本.
+\end{proof}
+
+既然 $\mathcal{A}^{\Z}$ 中的 $\varinjlim$ 和 $\varprojlim$ 是逐次取的, $E_\infty = (E_\infty^p)_{p \in \Z}$ 可以表作
+\begin{equation}\label{eqn:filtered-diff-infty}
+	E_\infty^p = \dfrac{Z_\infty^p}{B_\infty^p} = \dfrac{\bigcap_r \left( (\mathrm{F}^p X \cap d^{-1} \mathrm{F}^{p+r} X) + \mathrm{F}^{p+1} X \right) }{\bigcup_r \left((\mathrm{F}^p X \cap d \mathrm{F}^{p-r+1} X ) + \mathrm{F}^{p+1} X\right)} ,
+\end{equation}
+前提是所示之 $\bigcap$ 和 $\bigcup$ 对每个 $p$ 皆存在.
+
+\begin{remark}
+	命题 \ref{prop:filtered-diff-E} 对滤过微分对象给出的谱序列是本章后续讨论的基石. 它是正合偶的应用, 但我们也完全可以将命题 \ref{prop:filtered-diff-E} 的公式视为直接定义, 对之验证谱序列所需的一切性质.
+\end{remark}
+
+基于以上描述, 可以想见 $(X, d, \mathrm{F}^\bullet X)$ 的谱序列 $E_r^p$ 形似一种逐步逼近 $\Hm(X, d)$ 的过程. 为了明确何谓逼近, 我们需要以下概念.
+
+\begin{definition}[诱导滤过]\label{def:induced-filtration-H}
+	\index{lvguo!诱导 (induced)}
+	给定 $(\mathcal{A}, T)$ 上的滤过微分对象 $(X, d, \mathrm{F}^\bullet X)$, 则 $\Hm(X,d)$ 带有诱导滤过如下
+	\[ \mathrm{F}^p \Hm(X,d) := \Image\left[ \mathrm{F}^p X \cap \Ker(d) \to \Hm(X, d) \right], \quad p \in \Z. \]
+\end{definition}
+
+\begin{lemma}\label{prop:induced-filtration-H}
+	如果存在 $N$ 使得 $\mathrm{F}^N X = 0$, 则 $\mathrm{F}^N \Hm(X, d) = 0$. 如果 $\mathrm{F}^\bullet X$ 是定义 \ref{def:filtration-properties} 所谓的穷竭滤过, 则 $\mathrm{F}^\bullet \Hm(X, d)$ 亦然.
+\end{lemma}
+\begin{proof}
+	第一部分是平凡的, 以下处理第二部分. 根据引理 \ref{prop:image-sum-preimage-intersection} (ii), $\bigcup_p \mathrm{F}^p \Hm(X,d)$ 是 $\bigcup_p \left( \mathrm{F}^p X \cap \Ker(d) \right)$ 的像, 而由 \eqref{eqn:exhaustion-intersection} 可知
+	\[ \bigcup_p \left( \mathrm{F}^p X \cap \Ker(d) \right) = \left(\bigcup_p \mathrm{F}^p X\right) \cap \Ker(d) = \Ker(d). \]
+	此外, 若存在 $M$ 使得 $\mathrm{F}^M X = X$, 自然也有 $\mathrm{F}^M \Hm(X, d) = \Hm(X, d)$.
+\end{proof}
+
+我们将在 \S\ref{sec:filtered-cplx-ss} 应用这些观察的分次版本.
+
+\begin{lemma}\label{prop:induced-filtration-gr}
+	给定滤过微分对象 $(X, d, \mathrm{F}^\bullet X)$, 对每个 $p \in \Z$ 皆有典范同构
+	\[ \gr^p \Hm(X, d) \simeq \dfrac{\mathrm{F}^p X \cap \Ker(d)}{ (\mathrm{F}^{p+1} X \cap \Ker(d)) + (\mathrm{F}^p X \cap \Image(T^{-1} d)) }. \]
+\end{lemma}
+\begin{proof}
+	展开 $\mathrm{F}^p \Hm(X,d) / \mathrm{F}^{p+1} \Hm(X,d)$ 的定义, 并且运用 Abel 范畴中标准的同构定理 \ref{prop:Abel-cat-isom-thm} 来推导
+	\begin{align*}
+		\gr^p \Hm(X, d) & = \dfrac{(\mathrm{F}^p X \cap \Ker(d)) + \Image(T^{-1}d)}{(\mathrm{F}^{p+1} X \cap \Ker(d)) + \Image(T^{-1}d)} \\
+		& = \dfrac{(\mathrm{F}^p X \cap \Ker(d)) + (\mathrm{F}^{p+1} X \cap \Ker(d)) + \Image(T^{-1}d)}{(\mathrm{F}^{p+1} X \cap \Ker(d)) + \Image(T^{-1}d)} \\
+		& \simeq \dfrac{\mathrm{F}^p X \cap \Ker(d)}{ ((\mathrm{F}^{p+1} X \cap \Ker(d)) + \Image(T^{-1}d)) \cap (\mathrm{F}^p X \cap \Ker(d)) } \\
+		& = \dfrac{\mathrm{F}^p X \cap \Ker(d)}{ (\mathrm{F}^{p+1} X \cap \Ker(d)) + (\mathrm{F}^p X \cap \Image(T^{-1} d)) };
+	\end{align*}
+	最后一步用到 $\mathrm{Sub}_X$ 是模格\footnote{也就是说对于所有满足 $A^\flat \subset A$ 的子对象 $A, A^\flat, B \subset X$ 皆有 $A^\flat + (A \cap B) = (A^\flat + B) \cap A$.} (定理 \ref{prop:subobject-modularity}), $\mathrm{F}^{p+1} X \cap \Ker(d) \subset \mathrm{F}^p X \cap \Ker(d)$ 和 $\Image(T^{-1}d) \subset \Ker(d)$, 其余都是标准的.
+\end{proof}
+
+\begin{definition-proposition}\label{def:diff-obj-convergence}
+	\index{puxulie!弱收敛, 强收敛 (weakly convergent, strongly convergent)}
+	给定滤过微分对象 $(X, d, \mathrm{F}^\bullet X)$, 构造相应的上同调分次谱序列 $(E_r, d_r)_r$, 则在 \eqref{eqn:filtered-diff-infty} 中的 $\bigcap_r$ 和 $\bigcup_r$ 存在的前提下, 极限 $E_\infty$ 存在, 而诱导滤过确定的 $\gr \Hm(X,d)$ 可以典范地实现为 $E_\infty$ 的子商.
+	\begin{itemize}
+		\item 若 $\gr \Hm(X,d) = E_\infty$, 则称谱序列 $(E_r, d_r)_r$ \emph{弱收敛}.
+		\item 若谱序列 $(E_r, d_r)_r$ 弱收敛, $\mathrm{F}^\bullet \Hm(X,d)$ 穷竭而完备, 则称谱序列 $(E_r, d_r)_r$ \emph{强收敛}.
+	\end{itemize}
+\end{definition-proposition}
+\begin{proof}
+	固定 $p \in \Z$. 端详 $E_\infty^p$ 的表达式 \eqref{eqn:filtered-diff-infty}, 其分子含 $(\mathrm{F}^p X \cap \Ker(d)) + \mathrm{F}^{p+1} X$, 分母则包含于 $(\mathrm{F}^p X \cap \Image(T^{-1} d)) + \mathrm{F}^{p+1} X$ (回忆到 $d$ 是态射 $X \to TX$). 这就给出 $E_\infty^p$ 的子商
+	\begin{multline*}
+		\dfrac{(\mathrm{F}^p X \cap \Ker(d)) + \mathrm{F}^{p+1} X}{(\mathrm{F}^p X \cap \Image(T^{-1} d)) + \mathrm{F}^{p+1} X} \\
+		\simeq \dfrac{\mathrm{F}^p X \cap \Ker(d)}{ \left( (\mathrm{F}^p X \cap \Image(T^{-1} d)) + \mathrm{F}^{p+1} X \right) \cap \left( \mathrm{F}^p X \cap \Ker(d) \right) } \\
+		= \dfrac{\mathrm{F}^p X \cap \Ker(d)}{ (\mathrm{F}^p X \cap \Image(T^{-1} d)) + (\mathrm{F}^{p+1} X \cap \Ker(d)) };
+	\end{multline*}
+	第一个同构是标准的, 其后的等号用到 $\mathrm{Sub}_X$ 是模格, $\mathrm{F}^p X \cap \Image(T^{-1} d) \subset \mathrm{F}^p X \cap \Ker(d)$ 和 $\mathrm{F}^{p+1} X \subset \mathrm{F}^p X$. 将此代入引理 \ref{prop:induced-filtration-gr}.
+\end{proof}
+
+不同文献对收敛的定义略有出入. 一切陈述对于带有升滤过 $(X, d, \mathrm{F}_\bullet X)$ 的微分对象和对应的同调分次谱序列都有对应版本.
+
+\section{滤过复形的谱序列}\label{sec:filtered-cplx-ss}
+\index{fuxing!滤过 (filtered)}
+\index{puxulie!滤过复形的}
+
+延续 \S\ref{sec:filtered-diff-ss} 的思路, 仍选定 Abel 范畴 $\mathcal{A}$. 命题 \ref{prop:filtered-diff-E} 关于滤过微分对象的结论可以进一步推广, 容许态射 $d$ 带有次数. 特别地, 这套理论可以用于滤过复形.
+
+具体言之, 以 $\mathcal{A}^{\Z}$ 代替原先的 $\mathcal{A}$, 其上的平移函子记为 $T$. 根据例 \ref{eg:cplx-as-diff}, $\left(\mathcal{A}^{\Z}, T \right)_d$ 的对象 $(X, d)$ 可以视同复形 $X \in \Obj(\cate{C}(\mathcal{A}))$; 进一步考虑降滤过 $(X, d, \mathrm{F}^\bullet X)$, 则
+\begin{align*}
+	\Hm(X, d) & = \left( \Hm^n(X) \right)_{n \in \Z}, \\
+	\Hm\left( \mathrm{F}^p X, d \right) & = \left( \Hm^n\left(\mathrm{F}^p X\right)\right)_{n \in \Z}, \\
+	\mathrm{F}^p \Hm^n(X) &:= \Image\left[ \mathrm{F}^p X^n \cap \Ker\left(d_X^n\right) \to \Hm^n(X) \right] \quad \text{(定义 \ref{def:induced-filtration-H}).}
+\end{align*}
+
+综之, 先前构造的谱序列 $\mathscr{E}$ 中的 $E_r$ 实则取值在 $\mathcal{A}^{\Z \times \Z}$, 它是双分次对象: 除了滤过次数 $p$, 另有关乎复形结构的``内次数'' $n$, 两者对应的平移函子 $S$ 和 $T$ 严格交换. 已知 $d_r$ 对 $S$ 的次数为 $r$, 以下来探讨它对 $T$ 的次数.
+
+\begin{itemize}
+	\item 在用来构造 $\mathscr{E}$ 的正合偶 $\mathscr{C}_{(1)}$ 中, 态射 $\nwarrow$ 相对于 $T$ 是 $1$ 次的, 其余皆零次: 诚然, $\nwarrow$ 来自上同调的连接态射, 故对 $T$ 是 $1$ 次态射, 而其余箭头易见为零次.
+	\item 运用引理 \ref{prop:exact-couple-Z-B} 的描述, 可递归地推得以上陈述也适用于一般的 $\mathscr{C}_{(r)}$.
+	\item 作为推论, $d_r$ 和 $(X, d)$ 中的 $d$ 对 $T$ 同样是 $1$ 次态射. 这点也可以直接从命题 \ref{prop:differential-exact-couple} 的描述一眼看穿.
+\end{itemize}
+
+基于应用考量, 惯例是改用 $p$ 和 $q := n-p$ 来标号, 于是
+\begin{gather*}
+	E_r = (E_r^{p,q})_{(p,q) \in \Z^2} = \left( Z_r^{p,q} / B_r^{p,q} \right)_{(p,q) \in \Z^2}, \\
+	E_0^{p,q} = \left( \gr^p X \right)^{p+q}, \\
+	E_1^{p,q} = \Hm^{p+q}\left( \gr^p X, \gr^p d \right), \\
+	d_r = \left( d_r^{p,q}: E_r^{p,q} \to E_r^{p+r, q-r+1} \right)_{(p,q) \in \Z^2}: E_r \xrightarrow{(r, -r+1)} E_r.
+\end{gather*}
+换言之, 滤过复形给出定义 \ref{def:graded-spectral-sequence} 的上同调双分次谱序列. 对偶地, 带有升滤过的链复形给出同调双分次谱序列.
+
+\begin{example}\label{eg:canonically-bdd-ss}
+	考虑滤过复形 $(X, d, \mathrm{F}^\bullet X)$. 若对所有 $n \in \Z$ 都有 $\mathrm{F}^0 X^n = X^n$ 和 $\mathrm{F}^{n+1} X^n = 0$, 则 $E_0$ 落在第一象限 (定义 \ref{def:quadrant-ss}): 这是 $E_0^{p,q} = \left(\gr^p X \right)^{p+q}$ 的直接结论.
+\end{example}
+
+\begin{proposition}\label{prop:filtered-cplx-ss}
+	给定带有降滤过 $\mathrm{F}^\bullet X$ 的复形 $X \in \Obj(\cate{C}(\mathcal{A}))$, 相应的谱序列满足
+	\begin{align*}
+		Z_r^{p,q} & = \dfrac{\left(\mathrm{F}^p X^{p+q} \cap d^{-1} \mathrm{F}^{p+r} X^{p+q+1} \right) + \mathrm{F}^{p+1} X^{p+q} }{\mathrm{F}^{p+1} X^{p+q}}, \\
+		B_r^{p,q} & = \dfrac{\left(\mathrm{F}^p X^{p+q} \cap d \mathrm{F}^{p-r+1} X^{p+q-1} \right) + \mathrm{F}^{p+1} X^{p+q} }{\mathrm{F}^{p+1} X^{p+q}},
+	\end{align*}
+	而 $d_r^{p,q}: E_r^{p,q} \to E_r^{p+r, q-r+1}$ 由 $d^{-1} \mathrm{F}^{p+r} X^{p+q+1} \xrightarrow{d} \mathrm{F}^{p+r} X^{p+q+1} \cap \Ker(d)$ 诱导.
+\end{proposition}
+\begin{proof}
+	在命题 \ref{prop:filtered-diff-E} 中计入复形的次数 $n = p+q$, 并留意 $d$ 对复形的平移函子 $T$ 是 $1$ 次态射.
+\end{proof}
+
+同理, \eqref{eqn:filtered-diff-infty} 有双分次版本
+\begin{equation}\label{eqn:filtered-cplx-infty}
+	E_\infty^{p,q} = \dfrac{Z_\infty^{p,q}}{B_\infty^{p,q}} = \dfrac{\bigcap_r \left( (\mathrm{F}^p X^{p+q} \cap d^{-1} \mathrm{F}^{p+r} X^{p+q+1}) + \mathrm{F}^{p+1} X^{p+q} \right) }{\bigcup_r \left((\mathrm{F}^p X^{p+q} \cap d \mathrm{F}^{p-r+1} X^{p+q-1} ) + \mathrm{F}^{p+1} X^{p,q} \right)} ,
+\end{equation}
+前提是所示的 $\bigcup$ 和 $\bigcap$ 存在; 此时 $E_\infty = (E_\infty^{p,q})_{(p,q) \in \Z^2}$.
+
+定义--命题 \ref{def:diff-obj-convergence} 在此化为双分次版本: $\gr^p \Hm^{p+q}(X)$ 对所有 $p, q$ 皆典范地实现为 $E_\infty^{p,q}$ 的子商. 谱序列的收敛性质也相应地细化.
+
+\begin{definition}\label{def:filtered-cplx-convergence}
+	\index{puxulie!弱收敛, 强收敛 (weakly convergent, strongly convergent)}
+	对 $\mathcal{A}$ 上的滤过复形 $(X, d, \mathrm{F}^\bullet X)$ 构造相应的上同调分次谱序列 $(E_r, d_r)_r$, 则在 \eqref{eqn:filtered-cplx-infty} 中的 $\bigcap_r$ 和 $\bigcup_r$ 存在的前提下, $\gr^p \Hm^{p+q}(X)$ 可以典范地实现为 $E_\infty^{p,q}$ 的子商.
+	\begin{itemize}
+		\item 若对所有 $(p,q) \in \Z^2$ 皆有 $\gr^p \Hm^{p+q}(X) = E_\infty^{p,q}$, 则称谱序列 $(E_r, d_r)_r$ \emph{弱收敛}.
+		\item 在弱收敛的前提下, 若对所有 $n \in \Z$, 滤过 $\mathrm{F}^\bullet \Hm^n(X)$ 穷竭而完备, 则称谱序列 $(E_r, d_r)_r$ \emph{强收敛}.
+	\end{itemize}
+\end{definition}
+
+\begin{convention}\label{con:ss-conv}
+	\index[sym1]{Erpq abuts to H@$E_r^{p,q} \Rightarrow \Hm^{p+q} (X)$}
+	谱序列的强收敛也记为 $E_r^{p,q} \Rightarrow \Hm^{p+q} (X)$; 此处的下标 $r$ 常具体写作 $1$, $2$ 等, 取决于我们着重描述谱序列的哪一页.
+	
+	推而广之, 若有上同调双分次谱序列 $\mathscr{E}$, 滤过分次对象 $(H, \mathrm{F}^\bullet H)$ 连同同构 $E_\infty^{p,q} \simeq \gr^p H^{p+q}$, 而且 $\mathrm{F}^\bullet H$ 穷竭而完备, 则我们也将此情境标记为 $E_r^{p, q} \Rightarrow H^{p+q}$. 同调双分次谱序列的情形依此类推, 特别地, $E^r_{p, q} \Rightarrow H_{p+q}$ 蕴涵 $E^\infty_{p,q} \simeq \gr_p H_{p+q}$.
+\end{convention}
+
+以下的经典收敛定理对于初步应用已经足够. 更广的收敛条件可参见 \cite{Boa99}.
+
+\begin{theorem}[经典收敛定理]\label{prop:classical-convergence}
+	考虑滤过复形 $(X, d, \mathrm{F}^\bullet X)$. 假定对于每个 $n \in \Z$,
+	\begin{compactitem}
+		\item 滤过 $\mathrm{F}^\bullet X^n$ 是穷竭的 (定义 \ref{def:filtration-properties}),
+		\item 存在 $N = N(n)$ 使得 $\mathrm{F}^N X^n = 0$,
+	\end{compactitem}
+	则相应的谱序列强收敛 (定义--命题 \ref{def:diff-obj-convergence}).
+	
+	如果将条件强化为每个 $X^n$ 的滤过皆有限 (定义 \ref{def:filtration}), 则 $\Hm^n(X)$ 上的诱导滤过也有限. 此时相应的谱序列有界 (定义 \ref{def:bdd-ss}).
+\end{theorem}
+\begin{proof}
+	基于引理 \ref{prop:induced-filtration-H}, 确切地说是其分次版本, 诱导滤过 $\mathrm{F}^\bullet \Hm^n(X)$ 穷竭而完备. 问题归结为证弱收敛.
+	
+	有必要回顾定义--命题 \ref{def:diff-obj-convergence} 的证明, 它说明如何对每个 $(p,q) \in \Z^2$ 将 $\gr^p \Hm^{p+q}(X)$ 实现为 $E_\infty^{p,q}$ 的子商: 关键是
+	\begin{equation*}\begin{split}
+		\bigcap_r & \left( \left( \mathrm{F}^p X^{p+q} \cap d^{-1} \mathrm{F}^{p+r} X^{p+q+1} \right) + \mathrm{F}^{p+1} X^{p+q} \right) \\
+		& \supset \left( \mathrm{F}^p X^{p+q} \cap \Ker(d) \right) + \mathrm{F}^{p+1} X^{p+q}, \\
+		\bigcup_r & \left( \left( \mathrm{F}^p X^{p+q} \cap d\mathrm{F}^{p-r+1} X^{p+q-1} \right) + \mathrm{F}^{p+1} X^{p+q} \right) \\
+		& \subset \left( \mathrm{F}^p X^{p+q} \cap \Image(d) \right) + \mathrm{F}^{p+1} X^{p+q}.
+	\end{split}\end{equation*}
+	证明谱序列弱收敛相当于将这些包含关系改进为等号. 然而, 当 $r \gg 0$ (相对于 $p, q$) 时, 第一式的 $\bigcap_r$ 内部无非是 $\left( \mathrm{F}^p X^{p+q} \cap \Ker(d) \right) + \mathrm{F}^{p+1} X^{p+q}$, 故等号成立.
+
+	对于第二式, 可以先将 $+ \mathrm{F}^{p+1} X^{p+q}$ 移出 $\bigcup_r$. 回忆到 $d(\mathrm{F}^\bullet X^n)$ 必为 $d(X^n)$ 的穷竭滤过, 故
+	\begin{multline*}
+		\bigcup_r \left( \mathrm{F}^p X^{p+q} \cap d\mathrm{F}^{p-r+1} X^{p+q-1} \right) \\
+		\xlongequal{\because\; \text{\eqref{eqn:exhaustion-intersection}}} \mathrm{F}^p X^{p+q} \cap \bigcup_r d\mathrm{F}^{p-r+1} X^{p+q-1} \\
+		= \mathrm{F}^p X^{p+q} \cap d \bigcup_r \mathrm{F}^{p-r+1} X^{p+q-1}
+		= \mathrm{F}^p X^{p+q} \cap \Image(d).
+	\end{multline*}
+
+	最后假定每个 $X^n$ 的滤过皆有限, 这时 $\mathrm{F}^\bullet \Hm^n(X)$ 自然有界. 以下说明谱序列有界. 选定 $r$ 和 $n$, 设 $p+q=n$. 根据命题 \ref{prop:filtered-cplx-ss} 的描述, $p \gg 0$ 时 $Z_r^{p,q}$ 的分子为 $0$, 而 $p \ll 0$ 时分母为 $X^n$. 由此可见至多仅有有限个 $(p,q)$ 使得 $E_{r+1}^{p,q} \neq 0$.
+\end{proof}
+
+对偶版本不言自明, 此处不再重复.
+
+\begin{corollary}[低次项的正合列]\label{prop:low-degree-ss}
+	设滤过复形 $(X, d, \mathrm{F}^\bullet X)$ 满足
+	\[ \mathrm{F}^0 X^n = X^n, \quad \mathrm{F}^{n+1} X^n = 0, \quad n \in \Z, \]
+	如例 \ref{eg:canonically-bdd-ss}. 对应的谱序列给出典范正合列
+	\[ 0 \to E_2^{1,0} \to \Hm^1(X) \to E_2^{0,1} \xrightarrow{d} E_2^{2, 0} \to \Hm^2(X). \]
+	对于带升滤过的链复形 $X$, 若 $\mathrm{F}_{-1} X = 0$ 而 $\mathrm{F}^n X = X$, 则对偶地有典范正合列
+	\[ \Hm_2(X) \to E^2_{2,0} \xrightarrow{d} E^2_{0,1} \to \Hm_1(X) \to E^2_{1,0} \to 0. \]
+\end{corollary}
+\begin{proof}
+	在 \eqref{eqn:low-exact-coh} 代入 $p=2$, 得到正合列
+	\[ 0 \to E_\infty^{0,1} \to E_2^{0,1} \xrightarrow{d} E_2^{2, 0} \to E_\infty^{2,0} \to 0. \]
+	基于经典收敛定理 \ref{prop:classical-convergence}, 我们有 $E_\infty^{0,1} \simeq \gr^0 \Hm^1(X)$, $E_\infty^{1, 0} \simeq \gr^1 \Hm^1(X)$ 和 $E_\infty^{2, 0} \simeq \gr^2 \Hm^2(X)$. 根据条件,
+	\begin{gather*}
+		\gr^2 \Hm^2(X) = \mathrm{F}^2 \Hm^2(X), \quad \gr^1 \Hm^1(X) = \mathrm{F}^1 \Hm^1(X), \\
+		\gr^0 \Hm^1(X) = \Hm^1(X) / \mathrm{F}^1 \Hm^1(X) = \Hm^1(X) / E_\infty^{1,0}.
+	\end{gather*}
+	此外, 对 \eqref{eqn:edge-ss-coh} 代入 $p=1$ 给出 $E_2^{1,0} = E_\infty^{1,0}$. 这些等式拼接为所求的正合列. 同调版本不赘.
+\end{proof}
+
+在 $E_r^{p,q}$ 强收敛的前提下, 一旦掌握足够多个 $(E_r, d_r)$, 原则上便能从 $E_\infty$ 读出 $\left( \gr^p \Hm^{p+q}(X) \right)_{p,q \in \Z}$. 然而从 $(\gr^p \Hm^n(X))_p$ 过渡到 $\Hm^n(X)$ 相当于在 $\mathcal{A}$ 中确定一系列扩张; 除非 $\Hm^n(X)$ 分裂, 一般不易处理. 如果我们仅考量较粗糙的性质, 则谱序列有时能提供简洁的答案. 以下阐释的例子本质上是 Euler--Poincaré 原理的应用.
+
+\begin{lemma}\label{prop:finite-degeneration}
+	设 $\mathscr{E} = (E_r, d_r)_{r \geq 1}$ 是上同调双分次谱序列, 而且存在 $r$ 使得
+	\[ \left\{ (p,q) \in \Z^2 : E_r^{p,q} \neq 0 \right\} \quad \text{是有限集}, \]
+	则当 $r \gg 0$ 时 $\mathscr{E}$ 在 $E_r$ 页退化.
+\end{lemma}
+\begin{proof}
+	由条件知 $r$ 足够大时 $E_r$ 的非零项集中在一个长宽皆有限的区域. 代入例 \ref{eg:SS-finite-width}.
+\end{proof}
+
+\begin{proposition}\label{prop:EP-ss}
+	设上同调双分次谱序列 $(E_r, d_r)_r$ 满足以下条件:
+	\begin{compactitem}
+		\item 存在 $r$ 使得 $\left\{ (p,q) \in \Z^2 : E_r^{p,q} \neq 0 \right\}$ 是有限集,
+		\item 强收敛性 $E_r^{p, q} \Rightarrow H^{p+q}$, 含义如约定 \ref{con:ss-conv},
+	\end{compactitem}
+	则在定义 \ref{def:K0} 的群 $\mathrm{K}_0(\mathcal{A})$ 中, 当 $r \gg 0$ 时等式
+	\[ \sum_{n \in \Z} (-1)^n \left[ H^n \right] = \sum_{p, q \in \Z} (-1)^{p+q} \left[ E_r^{p,q} \right] \]
+	成立, 两边都是有限和.
+\end{proposition}
+\begin{proof}
+	当 $r \gg 0$ 时, 右式的和仅有有限项非零. 此外,
+	\[ E_{r+1}^{p,q} \simeq \Hm\left[ E_r^{p-r, q+r-1} \xrightarrow{d} E_r^{p,q} \xrightarrow{d} E_r^{p+r, q-r+1} \right] \]
+	按 $n := p+q$ 来统计次数, 则 $d$ 是次数为 $1$ 的态射. 在 $\mathrm{K}_0(\mathcal{A})$ 当中对 $n$ 取交错和, 然后应用定理 \ref{prop:EP} 得到
+	\[ \sum_{p, q \in \Z} (-1)^{p+q} \left[ E_r^{p,q} \right] = \sum_{p, q \in \Z} (-1)^{p+q} \left[ E_{r+1}^{p,q} \right]. \]
+	
+	引理 \ref{prop:finite-degeneration} 说明谱序列终归退化, 因此当 $r \gg 0$ 时 $E_r^{p,q} = E_\infty^{p,q}$ 对所有 $(p, q)$ 成立. 于是 $r \gg 0$ 时
+	\[ \sum_{p,q} (-1)^{p+q} \left[ E_r^{p,q} \right] = \sum_{p,q} (-1)^{p+q} \left[ \gr^p \Hm^{p+q}(X) \right] = \sum_n (-1)^n \sum_p \left[ \gr^p H^n \right], \]
+	条件确保求和皆有限. 而按引理 \ref{prop:K0-prep} (v) 和 $\mathrm{F}^\bullet H$ 的条件, 我们又有 $\sum_p \left[ \gr^p H^n(X) \right] = \left[ \Hm^n(X) \right]$.
+\end{proof}
+
+若 $(E_r, d_r)_r$ 来自滤过复形 $(X, d, \mathrm{F}^\bullet)$, 而且每个 $X^n$ 的滤过 $\mathrm{F}^\bullet X^n$ 皆有限, 则定理 \ref{prop:classical-convergence} 确保命题 \ref{prop:EP-ss} 的强收敛条件 $E_r^{p,q} \Rightarrow \Hm^{p+q}(X)$ 自动成立, 但关于 $\{ (p,q) : E^{p, q}_r \neq 0\}$ 的条件则并非自动的.
+
+滤过复形已经足以产出一些简单而有用的谱序列, 见本章习题. 本书的主题是代数学, 其中最广为人知的几种谱序列都来自双复形, 是以我们先转向双复形的情形.
+
+\section{双复形的谱序列及其应用}\label{sec:double-cplx-ss}
+\index{puxulie!双复形的}
+以下总默认 Abel 范畴 $\mathcal{A}$ 具备所论的可数直和或可数积. 设 $X$ 是 $\mathcal{A}$ 上的双复形, 写作 $X \in \Obj(\cate{C}^2(\mathcal{A}))$. 全复形 $\tot_{\oplus} X$ 具有两种降滤过
+\begin{align*}
+	\mathrm{F}^p_{\mathrm{I}} (\tot_{\oplus} X)^n & = \bigoplus_{\substack{i+j=n \\ i \geq p}} X^{i, j}, \\
+	\mathrm{F}^q_{\mathrm{II}} (\tot_{\oplus} X)^n & = \bigoplus_{\substack{i+j=n \\ j \geq q}} X^{i, j} .
+\end{align*}
+对每个 $(i, j)$ 分量个别地考察, 可见
+\[ \bigcap_p \mathrm{F}^p_{\mathrm{I}} = 0 = \bigcap_q \mathrm{F}^q_{\mathrm{II}}, \quad \bigcup_p \mathrm{F}^p_{\mathrm{I}} = \tot_{\oplus} X = \bigcup_q \mathrm{F}^q_{\mathrm{II}}. \]
+
+由此得到滤过复形, 对应的谱序列分别记为 $\mathscr{E}_{\mathrm{I}} = \mathscr{E}_{\mathrm{I}}(X)$ 和 $\mathscr{E}_{\mathrm{II}} = \mathscr{E}_{\mathrm{II}}(X)$, 或更具体地记为 $E_{\mathrm{I}, r}^{p,q}$ 和 $E_{\mathrm{II}, r}^{p,q}$, 其中 $r \in \Z_{\geq 0}$. 假如 $X^{p,q} \neq 0 \implies p,q \geq 0$, 这时我们称 $X$ 落在第一象限, 则对于 $\star \in \{ \mathrm{I}, \mathrm{II} \}$, 我们有
+\[ \mathrm{F}_\star^0 \left(\tot_{\oplus} X \right)^n = \left(\tot_{\oplus} X\right)^n, \quad \mathrm{F}_\star^{n+1} \left(\tot_{\oplus} X \right)^n = 0 , \]
+相应的谱序列因而也落在第一象限.
+
+对于链双复形 $X$, 同样可定义两种升滤过
+\begin{align*}
+	\mathrm{F}_{\mathrm{I}, p} \left( \tot_{\oplus} X \right)_n & = \bigoplus_{\substack{i+j=n \\ i \leq p}} X_{i, j}, \\
+	\mathrm{F}_{\mathrm{II}, q} \left( \tot_{\oplus} X \right)_n & = \bigoplus_{\substack{i+j=n \\ j \leq q}} X_{i, j},
+\end{align*}
+以及对应的同调双分次谱序列.
+
+\begin{proposition}\label{prop:double-cplx-ss}
+	对于 $X \in \Obj(\cate{C}^2(\mathcal{A}))$, 其谱序列的前几页和相应的态射 $d$ 有如下描述
+	\[\begin{array}{|c|c|c|c|c|c|} \hline
+		& E_0^{p,q} & d_0^{p,q} & E_1^{p,q} & d_1^{p,q} & E_2^{p,q} \\ \hline
+		\mathscr{E}_{\mathrm{I}} & X^{p,q} & (-1)^p \dvert^{p,q} & \Hm^q(X^{p, \bullet}, \dvert) & \Hm^q(\dhori^{p, \bullet}) & \Hm_{\mathrm{I}}\Hm_{\mathrm{II}}(X)^{p,q} \\
+		\mathscr{E}_{\mathrm{II}} & X^{q,p} & \dhori^{q,p} & \Hm^q(X^{\bullet, p}, \dhori) & (-1)^q \Hm^q(\dvert^{\bullet, p}) & \Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(X)^{q,p} \\ \hline
+	\end{array}\]
+	函子 $\Hm_{\mathrm{I}}, \Hm_{\mathrm{II}}: \cate{C}^2(\mathcal{A}) \to \cate{C}^2(\mathcal{A})$ 的定义见诸 \S\ref{sec:double-cplx-coh}, 特别是 \eqref{eqn:HIHII}.
+	
+	对于链复形及其同调, 类似方法可得下表.
+	\[\begin{array}{|c|c|c|c|c|c|} \hline
+		& E^0_{p,q} & d^0_{p,q} & E^1_{p,q} & d^1_{p,q} & E^2_{p,q} \\ \hline
+		\mathscr{E}_{\mathrm{I}} & X_{p,q} & (-1)^p \dvert_{p,q} & \Hm_q(X_{p, \bullet}, \dvert) & \Hm_q(\dhori_{p, \bullet}) & \Hm_{\mathrm{I}}\Hm_{\mathrm{II}}(X)_{p,q} \\
+		\mathscr{E}_{\mathrm{II}} & X_{q,p} & \dhori_{q,p} & \Hm_q(X_{\bullet, p}, \dhori) & (-1)^q \Hm_q(\dvert_{\bullet, p}) & \Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(X)_{q,p} \\ \hline
+	\end{array}\]
+\end{proposition}
+\begin{proof}
+	这是按命题 \ref{prop:filtered-cplx-ss} 的描述循规蹈矩地验证的结果, $\dvert$ 所带正负号来自全复形的定义. 细节不赘.
+\end{proof}
+
+这些定义和结果对 $\tot_{\Pi} X$ 也可以如法炮制, 性质完全类似.
+
+对于 $X \in \Obj(\cate{C}^2_f(\mathcal{A}))$ (定义 \ref{def:Cf-Supp}), 其全复形仅涉及有限直和, 不必区分 $\oplus$ 和 $\Pi$ 两种版本, 统一记为 $\tot X$.
+
+\begin{theorem}\label{prop:tot-ss}
+	设 $X \in \Obj(\cate{C}^2_f(\mathcal{A}))$, 则相应的两个谱序列 $\mathscr{E}_{\mathrm{I}}$ 和 $\mathscr{E}_{\mathrm{II}}$ 皆有界, 强收敛, 而 $\Hm^n(\tot X)$ 上对应的两个诱导滤过对每个 $n \in \Z$ 皆有限.
+\end{theorem}
+\begin{proof}
+	从 $\cate{C}^2_f(\mathcal{A})$ 的定义可见 $\mathrm{F}_{\mathrm{I}}^\bullet \left( \tot X \right)^n$ 和 $\mathrm{F}_{\mathrm{II}}^\bullet \left( \tot X \right)^n$ 对每个 $n$ 都是有限滤过. 代入定理 \ref{prop:classical-convergence}.
+\end{proof}
+
+以下介绍具有代表性的几个应用. 由于涉及的滤过和谱序列总是有限, 这些结果适用于一切 Abel 范畴\footnote{稍加精确地说, 极限项 $Z_\infty^{p,q}$, $B_\infty^{p,q}$, $E_\infty^{p,q}$ 的存在性和定义 \ref{def:filtration-properties} 关于穷竭滤过的条件都不成问题.}.
+
+\begin{example}\label{eg:double-cplx-tot-ss}
+	今以谱序列重证定理 \ref{prop:double-cplx-tot}: 若 $\cate{C}^2_f(\mathcal{A})$ 的态射 $f: X \to Y$ 诱导 $\Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(X) \rightiso \Hm_{\mathrm{II}}\Hm_{\mathrm{I}}(Y)$ (或 $\Hm_{\mathrm{I}} \Hm_{\mathrm{II}}(X) \rightiso \Hm_{\mathrm{I}}\Hm_{\mathrm{II}}(Y)$), 则 $\tot(f): \tot(X) \to \tot(Y)$ 是拟同构.
+	
+	首先设 $\Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(X) \rightiso \Hm_{\mathrm{II}}\Hm_{\mathrm{I}}(Y)$; 由 $f$ 诱导谱序列的态射 $\mathscr{E}_{\mathrm{II}}(X) \to \mathscr{E}_{\mathrm{II}}(Y)$. 它在 $E_2$ 页已经是同构, 于是在极限页 $E_\infty$ 也给出同构 (命题 \ref{prop:ss-isom-infty}).
+
+	基于定理 \ref{prop:tot-ss} 确保的收敛性, $\tot(f)$ 给出的 $\gr^p \left( \Hm^n \tot(X) \right) \to \gr^p\left( \Hm^n \tot(Y) \right)$ 对所有 $p, n \in \Z$ 都是同构. 已知 $\Hm^n$ 上的诱导滤过有限, 故 $\Hm^n \tot(f): \Hm^n \tot(X) \to \Hm^n \tot(Y)$ 也是同构 (命题 \ref{prop:gr-isom}).
+	
+	若考虑谱序列 $\mathscr{E}_{\mathrm{I}}$, 则可相应地从 $\Hm_{\mathrm{I}} \Hm_{\mathrm{II}}(X) \rightiso \Hm_{\mathrm{I}}\Hm_{\mathrm{II}}(Y)$ 推导 $\tot(f)$ 是拟同构.
+\end{example}
+
+\begin{example}[双函子求导]\label{eg:bifunctor-ss}
+	设 Abel 范畴 $\mathcal{A}_1$ 和 $\mathcal{A}_2$ 有足够的内射对象 (或投射对象), 而双函子 $F: \mathcal{A}_1 \times \mathcal{A}_2 \to \mathcal{B}$ 对每个变元都左正合 (或右正合). 以下举左正合情形为例. 设 $X_i \in \Obj(\mathcal{A}_i)$ 并选定内射解消 $0 \to X_i \to I_i^0 \to \cdots$; 当 $n < 0$ 时命 $I_i^n := 0$ (其中 $i = 1, 2$). 以此构造落在第一象限的双复形
+	\[ Y^{p, q} := F\left( I_1^p, I_2^q \right). \]
+	对应的第一象限谱序列 $\mathscr{E}_{\mathrm{I}}$ 因而满足
+	\[ E_1^{p,q} = \Hm^q\left( F(I_1^p, I_2^\bullet) \right) \Rightarrow \Hm^{p+q}(\tot(Y)), \quad p,q \in \Z. \]
+	右式的 $\Hm^{p+q}(\tot Y)$ 是右导出双函子的取值 $\mathrm{R}^{p+q} F(X_1, X_2)$, 请见定义 \ref{def:derived-bifunctor}.
+	
+	现在进一步要求 $F$ 是平衡的 (定义 \ref{def:balanced-functor}); 因此 $F(I_1^p, \cdot)$ 是正合函子. 这说明 $q \neq 0 \implies E_1^{p,q} = 0$ 而 $E_1^{p,0} = F(I_1^p, X_2)$. 由此可见 $q \neq 0 \implies E_2^{p,q} = 0$, 而
+	\begin{align*}
+		E_2^{p,0} & = \Hm^p\left[ \cdots \to F(I_1^p, X_2) \to F(I_1^{p+1}, X_2) \to \cdots \right] \\
+		& = (\mathrm{R}_{\mathrm{I}}^p F)(X_1, X_2), \quad \text{符号如定理 \ref{prop:balanced-primer}}.
+	\end{align*}
+	特别地, 谱序列在 $E_2$ 页退化, 导致
+	\begin{align*}
+		E_2^{p,q} & = E_\infty^{p,q}, \\ 
+		E_\infty^{p,q} & = \gr^p \Hm^{p+q}\left(\tot(Y)\right) = 0, \quad \text{如果}\; q \neq 0, \\
+		E_\infty^{p,0} & = \Hm^p\left(\tot(Y)\right) = \mathrm{R}^p F(X_1, X_2) .
+	\end{align*}
+	这就给出了 $\mathrm{R}^n F(X_1, X_2) \simeq (\mathrm{R}_{\mathrm{I}}^n F)(X_1, X_2)$. 若改用 $\mathscr{E}_{\mathrm{II}}$, 同理可得 $\mathrm{R}^n F(X_1, X_2) \simeq (\mathrm{R}_{\mathrm{II}}^n F)(X_1, X_2)$. 于是 $\mathrm{R}_{\mathrm{I}} F \simeq \mathrm{R}_{\mathrm{II}} F$; 这正是定理 \ref{prop:balanced-primer} 的陈述.
+\end{example}
+
+\begin{example}[超导出函子的谱序列]\label{eg:hyperderived-ss}
+	\index{chaodaochuhanzi}
+	\index{puxulie!超导出函子的}
+	设 $\mathcal{A}$ 和 $\mathcal{B}$ 是 Abel 范畴, $\mathcal{A}$ 有足够的内射对象 (或投射对象), 而 $F: \mathcal{A} \to \mathcal{B}$ 是左正合 (或右正合) 加性函子. 我们在 \S\ref{sec:derived-primer} 的前半部对复形 $X \in \Obj(\cate{C}^+(\mathcal{A}))$ (或 $X \in \Obj(\cate{C}^-(\mathcal{A}))$) 定义了右导出函子 $\mathrm{R}^n F(X)$ (或左导出函子 $\mathrm{L}_n F(X)$), 其中 $n \in \Z$. 当 $X \in \Obj(\mathcal{A})$ 时, 它们是经典意义下的导出函子; 与此相对, 一般复形的情形则习惯称为超导出函子. 两者可由谱序列相联系. 以下阐述右导出函子的情形, 上下标对调便是左导出函子的版本.
+
+	设 $X \in \Obj(\cate{C}^+(\mathcal{A}))$. 将 $X$ 视同集中在第 $0$ 行的双复形, 再取定理 \ref{prop:CE-resolution} 提供的 Cartan--Eilenberg 解消 $\epsilon: X \to I$; 这是 $\cate{C}^2_f(\mathcal{A})$ 的态射. 根据注记 \ref{rem:double-cplx-resolution} 或者例 \ref{eg:double-cplx-tot-ss} 的结果, $\tot(\epsilon): X = \tot(X) \to \tot(I)$ 是 $\cate{C}^+(\mathcal{A})$ 中的拟同构, 因而是 $X$ 的内射解消.
+	
+	从双复形 $(\cate{C}^2 F)(I) \in \Obj\left(\cate{C}^2_f(\mathcal{B})\right)$ 构造收敛谱序列 $\mathscr{E}_{\mathrm{I}}$ 和 $\mathscr{E}_{\mathrm{II}}$, 它们收敛到相同目标 $\Hm^{p+q} \tot\left((\cate{C}^2 F)I \right) = \Hm^{p+q} \cate{C}F(\tot I)$, 亦即超导出函子的取值 $\mathrm{R}^{p+q} F(X)$.
+	
+	先看 $\mathscr{E}_{\mathrm{I}}$. 因为 $I^{p, \bullet}$ 是 $X^p$ 的内射解消, 故 $E_{\mathrm{I}, 1}^{p,q} =  \Hm^q\left( FI^{p, \bullet} \right) \simeq \mathrm{R}^q F (X^p)$, 右式是经典导出函子 $\mathrm{R}^p F$ 在 $X^p$ 的取值. 类似道理,
+	\[ E_{\mathrm{I}, 2}^{p,q} = \Hm^p\left[ \cdots \to \mathrm{R}^q F(X^p) \to \mathrm{R}^q F(X^{p+1}) \to \cdots \right]. \]
+
+	更有趣的兴许是 $\mathscr{E}_{\mathrm{II}}$ 的 $E_2$ 页. 基于 Cartan--Eilenberg 解消的性质, 取横向上同调的产物 $\Hm_{\mathrm{I}}(I)^{q, \bullet}$ 给出 $\Hm^q(X)$ 的内射解消, 而注记 \ref{rem:CE-split} 说明 $F$ 保持横向上同调: $\Hm_{\mathrm{I}}(\cate{C}^2 F(I))^{q, \bullet} \simeq \cate{C}F\left( \Hm_{\mathrm{I}}(I)^{q, \bullet} \right)$. 于是
+	\begin{align*}
+		E_{\mathrm{II},2}^{p, q} & =
+		\begin{tikzpicture}[scale=0.7, baseline=(O)]
+			\draw[-Latex] (0, -1) -- (0, 1) node[right] {$p$} node[left=0.5em] {\scriptsize\text{后取 $\Hm$}};
+			\draw[-Latex] (-1, 0) -- (1, 0) node[below] {$q$} node[right=0.5em] {\scriptsize\text{先取 $\Hm$}};
+			\coordinate (O) at (0, -0.3);
+			\draw (current bounding box.north west) rectangle ([yshift=-1ex] current bounding box.south east);
+		\end{tikzpicture}
+		= (\mathrm{R}^p F)\left( \Hm^q(X)\right) \\
+		& \Rightarrow \mathrm{R}^{p+q}F(X) , \quad p, q \in \Z.
+	\end{align*}
+\end{example}
+
+以下介绍的 Grothendieck 谱序列涉及合成函子的求导, 它足以涵摄几何与代数学中的一大类谱序列, 其论证和例 \ref{eg:hyperderived-ss} 同样基于 Cartan--Eilenberg 解消.
+
+\begin{theorem}[Grothendieck 谱序列]\label{prop:Grothendieck-ss}
+	\index{puxulie!Grothendieck}
+	考虑 Abel 范畴之间的加性函子
+	\[ \mathcal{A} \xrightarrow{F} \mathcal{A}' \xrightarrow{F'} \mathcal{A}''. \]
+	设它们都是左正合 (或右正合) 函子, $\mathcal{A}$ 和 $\mathcal{A}'$ 有足够的内射对象 (或投射对象), 而且 $F$ 映内射 (或投射) 对象为约定 \ref{con:F-acyclic} 所谓的 $F'$-零调对象, 则对所有 $X \in \Obj(\mathcal{A})$ 皆存在第一象限上同调 (或同调) 双分次谱序列
+	\begin{align*}
+		E_2^{p,q} = (\mathrm{R}^p F') (\mathrm{R}^q F)(X) & \Rightarrow \mathrm{R}^{p+q} (F'F)(X), \\
+		\text{或} \quad E^2_{p,q} = (\mathrm{L}_p F') (\mathrm{L}_q F)(X) & \Rightarrow \mathrm{L}_{p+q}(F'F)(X).
+	\end{align*}
+	其收敛性质如定理 \ref{prop:tot-ss} 所述. 对应的低次项正合列 (推论 \ref{prop:low-degree-ss}) 可以分别表为
+	\begin{equation*}\begin{split}
+		0 \to (\mathrm{R}^1 F')(FX) & \to \mathrm{R}^1(F'F)(X) \\
+		& \to F'\left( (\mathrm{R}^1 F)X \right) \to (\mathrm{R}^2 F')(FX) \to \mathrm{R}^2(F'F)(X),
+	\end{split}\end{equation*}
+	或
+	\begin{equation*}\begin{split}
+		\mathrm{L}_2(F'F)(X) \to (\mathrm{L}_2 F')(FX) & \to F'\left( (\mathrm{L}_1 F)X \right) \\
+		& \to \mathrm{L}_1(F'F)(X) \to (\mathrm{L}_1 F')(FX) \to 0.
+	\end{split}\end{equation*}
+\end{theorem}
+\begin{proof}
+	基于对偶性, 我们只论上同调情形. 取 $X$ 的内射解消 $0 \to X \to I^0 \to I^1 \to \cdots$; 当 $n < 0$ 时命 $I^n := 0$. 在 $\mathcal{A}'$ 中对 $\cate{C}F(I) := (FI^p)_p$ 取 Cartan--Eilenberg 解消 $\cate{C}F(I) \to J$ (定理 \ref{prop:CE-resolution}), 然后考虑第一象限双复形 $\cate{C}^2 F'(J) = (F'(J^{p, q}))_{p, q}$ 和相应的收敛谱序列 $\mathscr{E}_{\mathrm{I}}$, $\mathscr{E}_{\mathrm{II}}$. 首先,
+	\begin{align*}
+		E_{\mathrm{I},2}^{p, q} & =
+		\begin{tikzpicture}[scale=0.7, baseline=(O)]
+			\draw[-Latex] (0, -1) -- (0, 1) node[right] {$q$} node[left=0.5em] {\scriptsize\text{先取 $\Hm$}};
+			\draw[-Latex] (-1, 0) -- (1, 0) node[below] {$p$} node[right=0.5em] {\scriptsize\text{后取 $\Hm$}};
+			\coordinate (O) at (0, -0.3);
+			\draw (current bounding box.north west) rectangle ([yshift=-1ex] current bounding box.south east);
+		\end{tikzpicture} \\
+		& = \Hm^p\left[ \cdots \to (\mathrm{R}^q F')(FI^p) \to (\mathrm{R}^q F')(FI^{p+1}) \to \cdots \right] \\
+		& \Rightarrow \Hm^{p+q}\tot\left(\cate{C}^2 F'(J)\right).
+	\end{align*}
+
+	既然 $F(I^p)$ 按条件是 $F'$-零调的, 当 $q \neq 0$ 时 $E_{\mathrm{I}, 2}^{p,q} = 0$. 于是和例 \ref{eg:bifunctor-ss} 全同的论证表明 $\mathscr{E}_{\mathrm{I}}$ 在 $E_2$ 页退化, 而
+	\[ E_{\mathrm{I}, \infty}^{p,q} = E_{\mathrm{I}, 2}^{p,q} = \begin{cases}
+		\Hm^p\left( F'F(I^\bullet) \right) = \mathrm{R}^p (F' F)(X), & q = 0, \\
+		0, & q \neq 0,
+	\end{cases}\]
+	而且 $\Hm^p \tot\left(\cate{C}^2 F'(J)\right) = E_{\mathrm{I}, \infty}^{p,0} =  \mathrm{R}^p (F' F)(X)$.
+	
+	转向 $\mathscr{E}_{\mathrm{II}}$. 技巧和例 \ref{eg:hyperderived-ss} 类似, 横向上同调的第 $q$ 列 $\Hm_{\mathrm{I}}(J)^{q, \bullet}$ 给出 $\Hm^q(\cate{C}F(I)) = (\mathrm{R}^q F)(X)$ 的内射解消, 再回忆到 $F'$ 保持横向上同调, 由此推导出
+	\begin{align*}
+		E_{\mathrm{II},2}^{p, q} & =
+		\begin{tikzpicture}[scale=0.7, baseline=(O)]
+			\draw[-Latex] (0, -1) -- (0, 1) node[right] {$p$} node[left=0.5em] {\scriptsize\text{后取 $\Hm$}};
+			\draw[-Latex] (-1, 0) -- (1, 0) node[below] {$q$} node[right=0.5em] {\scriptsize\text{先取 $\Hm$}};
+			\coordinate (O) at (0, -0.3);
+			\draw (current bounding box.north west) rectangle ([yshift=-1ex] current bounding box.south east);
+		\end{tikzpicture}
+		= (\mathrm{R}^p F')(\mathrm{R}^q F)\left( X \right) \\
+		& \Rightarrow \Hm^{p+q}\tot\left(\cate{C}^2 F'(J)\right) = \mathrm{R}^{p+q}(F'F)(X).
+	\end{align*}
+	
+	于是 $\mathscr{E}_{\mathrm{II}}$ 是第一部分所需的谱序列. 将 $E_{\mathrm{II}, 2}^{p,q}$ 的描述代入 $\mathscr{E}_{\mathrm{II}}$ 的低次项正合列 (推论 \ref{prop:low-degree-ss}), 立得后半部分的断言.
+\end{proof}
+
+Grothendieck 谱序列可视为定理 \ref{prop:derived-composite} 的一种具体版本, 但它蕴藏的信息比导出范畴中的同构更加具体, 我们将在 \S\ref{sec:LHS-SS} 给出应用的例子.
+
+\begin{example}[环变换]\label{eg:change-of-rings-SS}
+	\index{huanbianhuan}
+	\index{puxulie!环变换}
+	设 $R \to S$ 为环同态. 取 $X$ 为右 $S$-模, $Y$ 为左 $R$-模. 以 $S_R$ (或 $X_R$) 代表将 $S$ (或 $X$) 视作右 $R$-模. 兹断言存在第一象限同调双分次谱序列
+	\begin{gather*}
+		E^2_{p,q} = \Tor^S_p\left( X, \Tor^R_q(S_R, Y) \right) \Rightarrow \Tor^R_{p+q}(X_R, Y);
+	\end{gather*}
+	此处赋予 $\Tor^R_q(S_R, Y)$ 左 $S$-模结构, 如注记 \ref{rem:ExtTor-bimodule}. 这是定理 \ref{prop:Grothendieck-ss} 的直接应用, 源于函子的同构
+	\[ X \dotimes{S} \left( S \dotimes{R} (\cdot) \right) \simeq X \dotimes{R} (\cdot) : R\dcate{Mod} \to \cate{Ab}, \]
+	其内层 $S \dotimes{R} (\cdot): R\dcate{Mod} \to S\dcate{Mod}$ 以 $\Tor^R_\bullet(S_R, \cdot)$ 为左导出函子, 取值在 $S\dcate{Mod}$; 基于上述同构, 内层映平坦模为平坦模, 因此 Grothendieck 谱序列的同调版本确实适用.
+
+	采用完全类似的符号和技巧, 对右 $R$-模 $X$ 和左 $S$-模 $Y$ 也有
+	\[ E^2_{p,q} = \Tor^S_p\left( \Tor^R_q(X, {}_R S), Y \right) \Rightarrow \Tor^R_{p+q}(X, {}_R Y). \]
+	
+	接着考虑 $\Ext$ 函子. 取 $X$ 为左 $S$-模, $Y$ 为左 $R$-模, 以 ${}_R X$ 代表将 $X$ 视作左 $R$-模, 按注记 \ref{rem:ExtTor-bimodule} 赋予 $\Ext^q_R({}_R S, Y)$ 左 $S$-模结构, 则有第一象限上同调双分次谱序列
+	\begin{align*}
+		E_2^{p,q} = \Ext_S^p\left( X, \Ext_R^q({}_R S, Y) \right) & \Rightarrow \Ext_R^{p+q}({}_R X, Y), \\
+		E_2^{p,q} = \Ext_S^p\left( \Tor^R_q(S_R, Y), X \right) & \Rightarrow \Ext_R^{p+q}(Y, {}_R X).
+	\end{align*}
+	它们分别对应到函子合成的同构
+	\begin{gather*}
+		\Hom_S\left( X, \Hom_R({}_R S, \cdot) \right) \simeq \Hom_R({}_R X, \cdot), \\
+		\Hom_S\left( S \dotimes{R} (\cdot), X \right) \simeq \Hom_R(\cdot, {}_R X),
+	\end{gather*}
+	此即 \cite[推论 6.6.8]{Li1} 介绍的伴随关系. 右导出函子 $\Ext_S^p$ 和左导出函子 $\Tor^R_q$ 在第二式中的混搭不成问题, 因为 $\Hom_S$ 的第一个变元取在相反范畴 $S\dcate{Mod}^{\opp}$.
+\end{example}
+
+上述谱序列宜和 \S\ref{sec:otimesL} 的导出范畴版本对照.
+
+\begin{example}\label{eg:change-of-rings-SS-bis}\index{fanxishudingli}
+	对于例 \ref{eg:change-of-rings-SS} 的谱序列 $E_2^{p,q} = \Ext_S^p\left( \Tor^R_q(S_R, Y), X \right) \Rightarrow \Ext_R^{p+q}(Y, {}_R X)$, 谨记录一个有用的特例兼练习. 假定 $S\dcate{Mod}$ 的整体维数 $\leq 1$ (定义--命题 \ref{def:global-dim}). 这导致 $E_2^{p, q}$ 的非零项集中在 $p=0,1$ 区域. 于是当 $n \geq 0$ 时, $\Ext_R^n(Y, {}_R X)$ 带有的降滤过 $\mathrm{F}^\bullet$ 必然形如
+	\[ \Ext_R^n(Y, {}_R X) = \mathrm{F}^0 \underbracket{\supset}_{E_\infty^{0, n}} \mathrm{F}^1 \underbracket{\supset}_{E_\infty^{1, n-1}} \mathrm{F}^2 = \{0\}. \]
+	
+	此外, 例 \ref{eg:SS-finite-width} 表明谱序列在 $E_2$ 页退化, 故 $E_2^{p, q} \simeq E_\infty^{p, q}$. 综上可得短正合列
+	\[ 0 \to \Ext_S^1\left( \Tor^R_{n-1}(S_R, Y), X \right) \to \Ext_R^n(Y, {}_R X) \to \Hom_S\left( \Tor^R_n(S_R, Y), X \right) \to 0; \]
+	按惯例规定 $\Tor^R_{-1} = 0$. 不妨视上式为泛系数定理的一种变体.
+	
+	同理, 在右 $S$-模 $X$ 的 $\Tor$ 维数 $\leq 1$ 的前提下 (例 \ref{eg:Tor-dimension}), 谱序列 $E^2_{p, q} = \Tor^S_p(X, \Tor^R_q(S_R, Y)) \Rightarrow \Tor^R_{p+q}(X_R, Y)$ 在 $E^2$ 页退化; 观察 $\Tor^R_n(X_R, Y)$ 上对应的升滤过, 即得短正合列
+	\[ 0 \to X \dotimes{S} \Tor^R_n(S_R, Y) \to \Tor^R_n(X_R, Y) \to \Tor^S_1(X, \Tor^R_{n-1}(S_R, Y)) \to 0. \]
+	
+	当 $S$ 是主理想整环时, 关于整体维数和 $\Tor$ 维数的前提都自动成立.
+\end{example}
+
+\section{谈谈乘法结构}\label{sec:multiplicative-SS}
+为了简单和具体起见, 本节取交换环 $\Bbbk$ 和 $\mathcal{A} = \Bbbk\dcate{Mod}$, 这对于经典应用已经足够. 我们将 $\Bbbk$-模简称为模, $\Bbbk$-代数简称为代数, 并且记 $\otimes := \otimes_{\Bbbk}$.
+
+选定交换幺半群 $I$, 二元运算记为加法. 简述 \cite[\S 7.4]{Li1} 的定义如下:
+\begin{itemize}
+	\item $I$-分次模是带有直和分解的模 $M = \bigoplus_{i \in I} M^i$, 属于 $M^i$ 的元素称作次数 $i$ 的齐次元;
+	\item $I$-分次代数是带有同态 $\mu: A \otimes A \to A$ 的分次模, 也写作乘法 $xy := \mu(x \otimes y)$, 使 $A$ 成环, 而且
+	\[ 1_A \in A^0, \quad A^i \cdot A^j \subset A^{i+j}, \quad i, j \in I, \]
+	因此乘法 $\mu$ 完全由资料 $\mu^{i,j}: A^i \otimes A^j \to A^{i+j}$ 确定;
+	\item $I$-分次模或分次代数之间的同态和同构按寻常方式定义, 同样地可以定义 $I$-分次版本的子代数和理想. 
+\end{itemize}
+
+对于 $k \in I$, 另外定义 $I$-分次模之间的 $k$ 次同态如下: 这是对所有 $i$ 都满足 $\varphi(M^i) \subset M^{i+k}$ 的模同态 $\varphi: M \to N$, 由资料 $\left(\varphi^i: M^i \to M^{i+k}\right)_{i \in I}$ 确定. 取 $k=0$ 回到寻常意义的同态. 同态合成后的次数相加.
+
+\begin{definition}\label{def:dg-algebra-preview}
+	\index{weifenfencidaishu@微分分次代数 (differential graded algebra)}
+	选定交换幺半群 $I$ 连同同态 $\epsilon: I \to \Z/2\Z$. 所谓微分次数为 $k$ 的\emph{微分 $I$-分次代数}, 意指一个 $I$-分次代数 $A = \bigoplus_{p \in I} A^p$, 连同次数 $k \in I$ 的自同态 $d = (d^p)_p: A \to A$, 满足 $d^2 = 0$ 和 Leibniz 律:
+	\[ d(xy) = (dx) \cdot y + (-1)^{\epsilon(p)} x \cdot dy, \quad x \in A^p, \; y \in A^{p'}, \quad p, p' \in I. \]
+\end{definition}
+
+简单地观察到 $d(1_A) = d(1_A \cdot 1_A)  = d(1_A) + d(1_A)$, 故 $d(1_A) = 0$. 易见 $\Ker(d)$ 是 $A$ 的 $I$-分次子代数, 而 $\Image(d)$ 是 $\Ker(d)$ 的 $I$-分次双边理想. 由此可见
+\[ \Hm(A, d) := \Ker(d)/\Image(d) \]
+仍然是 $I$-分次代数.
+
+\begin{example}
+	取 $I = \Z$ 和 $\epsilon(p) = p \;\bmod 2$. 对于任意 $\Bbbk$-线性范畴 $\mathcal{B}$ 上的复形 $X$, 定义 \ref{def:Hom-cplx} 的 $\Hom$ 复形 $\Hom^\bullet(X, X)$ 对 $d = d_{\Hom^\bullet(X, X)}$ 成为微分 $\Z$-分次代数, 微分的次数为 $1$. 这些断言基本是引理 \ref{prop:Hom-cplx-Leibniz} 的内容. 我们有 $\Hm(\Hom^\bullet(X, X), d) = \bigoplus_{n \in \Z} \Hom_{\cate{K}(\mathcal{B})}(X, X[n])$, 乘法来自 $\cate{K}(\mathcal{B})$ 中的态射合成.
+\end{example}
+
+\begin{example}
+	取 $\Bbbk = \CC$, $I = \Z$ 和 $\epsilon(p) = p \;\bmod 2$. 光滑流形 $\mathfrak{X}$ 上的 $p$ 次 $\CC$-值微分形式构成向量空间 $A^p(\mathfrak{X})$. 命 $A(\mathfrak{X}) := \bigoplus_{p=0}^{\dim X} A^p(\mathfrak{X})$, 它对乘法 $\mu(\omega \otimes \eta) := \omega \wedge \eta$ 和外微分运算 $\dd$ 构成微分 $\Z$-分次代数, 微分的次数为 $1$. 对应的 $\Hm(A(\mathfrak{X}), \dd) = \bigoplus_p \Hm^p_{\mathrm{dR}}(\mathfrak{X})$ 无非 $\mathfrak{X}$ 的 de Rham 上同调, 来自 $\wedge$ 的乘法给出其上的分次代数结构. 这是拓扑学的基本对象, 它和 $\mathfrak{X}$ 的奇异上同调环分次地同构.
+	
+	留意到 $\Hm(A(\mathfrak{X}), \dd)$ 的乘法还满足 $xy = (-1)^{pq} yx$, 其中 $x$ 和 $y$ 分别是 $p$ 次和 $q$ 次齐次元, 这是因为 $A(\mathfrak{X})$ 的乘法已有此性质. 举个简单美好的例子: 复射影空间 $\mathfrak{X} := \mathbb{P}^n(\CC)$ 给出分次代数 $\Hm(A(\mathfrak{X}), \dd) \simeq \CC[t]/(t^{n+1})$, 变元 $t$ 对应到次数 $2$ 的齐次元.
+\end{example}
+
+言归正传, 本节考虑的情形是:
+\begin{center}\begin{tabular}{|c|c|c|} \hline
+	简称 & $I$ & $\epsilon: I \to \Z/2\Z$ \\ \hline
+	单分次 & $\Z$ & $\epsilon(p) = p \;\bmod 2$ \\
+	双分次 & $\Z^2$ & $\epsilon(p,q) = p+q \;\bmod 2$ \\ \hline
+\end{tabular}\end{center}
+
+相关理论和定义 \ref{def:differential-object} 有所重叠, 但本节的重心在于先前未提及的乘法.
+
+为了减省符号, 以下经常将种种情况统称为``分次'', 主要倚靠上标 $p$ 或 $(p,q)$ 来区分, 并且相应地将微分 $I$-分次代数统称为微分分次代数.
+
+\begin{convention}
+	对于 $\mathcal{A} = \Bbbk\dcate{Mod}$ 情形的上同调双分次谱序列 $\mathscr{E}$, 我们将每一页 $E_r$ 视同分次模 $\bigoplus_{p,q} E_r^{p,q}$, 将 $d_r = (d_r^{p,q})_{p,q}$ 看作分次模 $E_r$ 的自同态, 次数为 $(r, -r+1)$. 同调情形以及单分次的情形依此类推.
+\end{convention}
+
+简言之, 带有乘法结构的谱序列是由微分分次代数构成的谱序列.
+
+\begin{definition}\label{def:mult-ss}
+	\index{puxulie!乘法结构 (multiplicative structure)}
+	上同调双分次谱序列 $\mathscr{E}$ 上的\emph{乘法结构}是一族同态 $\mu_r: E_r \otimes E_r \to E_r$ (即``乘法''), 使得
+	\begin{itemize}
+		\item 每个 $(E_r, \mu_r, d_r)$ 都成为微分分次代数, 微分次数为 $(r, -r+1)$;
+		\item 谱序列资料中的 $t_{r+1}: \Hm(E_r, d_r) \rightiso E_{r+1}$ 是分次代数的同构.
+	\end{itemize}
+	对于单分次或同调谱序列, 也能类似地定义乘法结构.
+\end{definition}
+
+之前的讨论蕴涵 $Z_r = \Ker(d_r)$ 是 $E_r$ 的分次子代数, 而 $B_r = \Image(d_r)$ 是 $Z_r$ 的双边分次理想, 故 $\Hm(E_r, d_r)$ 成为分次代数, 这是定义 \ref{def:mult-ss} 的严谨解释.
+
+进一步, 在极限存在的前提下, $Z_\infty = \bigoplus_{p,q} Z_{\infty}^{p,q}$ 也是分次子代数, 以 $B_\infty = \bigoplus_{p,q} B_{\infty}^{p,q}$ 为其分次理想, 因而 $E_\infty$ 也是分次代数.
+
+\index{dg daishu@dg-代数}
+作为实例, 以下考虑微分次数为 $1$ 的微分分次代数, 也简称 dg-代数. 展开定义可见这相当于由 $\Bbbk$-模构成的复形 $X = (X^n, d_X^n)_{n \in \Z}$, 使得 $X \xlongequal{\text{等同}} \bigoplus_n X^n$ 带有乘法 $\mu: X \otimes X \to X$, 满足于 $X^p \cdot X^{p'} \subset X^{p+p'}$ 和 Leibniz 律
+\[ d(xy) = dx \cdot y + (-1)^p x \cdot dy, \quad x \in X^p, \; y \in X^{p'}. \]
+现在设资料 $(X, d)$ 扩充为滤过复形 $(X, d, \mathrm{F}^\bullet X)$, 回忆到这已蕴涵 $d(\mathrm{F}^p X) \subset \mathrm{F}^p X$; 我们进一步要求 $X$ 的乘法与滤过相容:
+\[ \mathrm{F}^p X^n \cdot \mathrm{F}^{p'} X^{n'} \subset \mathrm{F}^{p+p'} X^{n+n'}. \]
+此时称 $(X, d, \mu, \mathrm{F}^\bullet X)$ 为滤过微分分次代数. 对于 $\Hm(X, d)$ 上的诱导滤过, 上述条件确保
+\[ \gr \Hm(X, d) \xlongequal{\text{等同}} \bigoplus_{(p,q) \in \Z^2} \gr^p \Hm^{p+q}(X, d) \]
+自然地成为分次代数.
+\index{weifenfencidaishu!滤过 (filtered)}
+
+\begin{proposition}\label{prop:dga-mult-ss}
+	设 $(X, d, \mu, \mathrm{F}^\bullet X)$ 为滤过微分分次代数, 微分次数为 $1$.
+	\begin{enumerate}[(i)]
+		\item 滤过复形 $(X, d, \mathrm{F}^\bullet X)$ 的谱序列 $\mathscr{E}$ 具有典范的乘法结构.
+		\item 经典收敛定理 \ref{prop:classical-convergence} 包含的 $E_\infty^{p,q} \simeq \gr^p \Hm^{p+q}(X, d)$ 实际还给出分次代数的同构 $E_\infty \simeq \gr \Hm(X, d)$.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	设 $x \in E_r^{p,q}$, $y \in E_r^{p', q'}$, 基于命题 \ref{prop:filtered-cplx-ss} 的描述, 取它们的原像
+	\begin{gather*}
+		\tilde{x} \in \mathrm{F}^p X^{p+q} \cap d^{-1}\left( \mathrm{F}^{p+r} X^{p+q+1} \right), \quad \tilde{y} \in \mathrm{F}^{p'} X^{p'+q'} \cap d^{-1}\left( \mathrm{F}^{p'+r} X^{p'+q'+1} \right).
+	\end{gather*}
+	按定义可得
+	\begin{gather*}
+		\tilde{x}\tilde{y} \in \mathrm{F}^{p+p'} X^{p+q+p'+q'}, \\
+		d(\tilde{x}\tilde{y}) = d\tilde{x} \cdot \tilde{y} + (-1)^{p+q} \tilde{x} \cdot d\tilde{y} \; \in \mathrm{F}^{p+p'+r} X^{p+q+p'+q'+1}.
+	\end{gather*}
+	于是 $\tilde{x}\tilde{y}$ 确定元素 $xy \in E_r^{p+p', q+q'}$; 例行计算 (请验证!) 表明 $xy$ 仅依赖 $x$ 和 $y$.
+	
+	其次, $d_r: E_r \xrightarrow{(r, -r+1)} E_r$ 是由 $X$ 上的微分 $d$ 诱导的, 这就给出 $E_r$ 的微分分次代数结构, 所需的结合律以及 Leibniz 律等性质全部化到 $(X, d)$ 上去检验; 同理可见 $\Hm(E_r, d_r) \simeq E_{r+1}$ 也是分次代数的同构.
+	
+	关于经典收敛定理中的典范同构 $E_\infty^{p,q} \simeq \gr^p \Hm^{p+q}(X, d)$ 保乘法的断言同样是化约到 $X$ 上来检验, 不必赘述.
+\end{proof}
+
+\begin{remark}
+	\index{Cartan--Eilenberg xi@Cartan--Eilenberg 系 (Cartan--Eilenberg system)}
+	乘法结构是拓扑学所倚重的工具. 脱离乘法的代数拓扑学几乎不可思议, 或至少是味同嚼蜡的. 历史上, Leray 初逢谱序列时就已考虑了乘法结构, 称之为``谱环''. 拓扑学中关于谱序列的计算经常可借此大大地简化. 这也是本节简介乘法结构的考量, 尽管仅及皮毛.
+	
+	在套用乘法结构的定义 \ref{def:mult-ss} 时有一个显而易见的麻烦. 定义中所有 $E_r$ 的微分分次代数结构必须全体给定, 因为单从定义看, 上一页的乘法毫无理由能诱导至下一页. 这种给法在一些场合确实可以办到, 例如命题 \ref{prop:dga-mult-ss}.
+	
+	对于一般的或者难以手算的情形, 鉴于谱序列的构造往往是从简单的资料起步, 例如 \S\ref{sec:exact-couples} 的正合偶, 我们自然要问: 能否提炼出关于正合偶的简单条件, 使得对应的谱序列带有乘法结构?
+	
+	答案似乎是否定的. 我们需要正合偶之外的信息. 对此, 一个有用的构造来自同样经典的 \emph{Cartan--Eilenberg 系}及其上的谱积, 详阅 \cite[II.A]{Dou58}. 作为应用, 拓扑学中至关重要的 Serre--Atiyah--Hirzebruch 谱序列对于任何满足乘性的广义上同调理论都具有乘法结构. 由于相关内容已经偏离主线, 这边点到为止.
+\end{remark}
+
+
+\begin{Exercises}
+	\item 对于 Abel 范畴 $\mathcal{A}$, 针对滤过对象构成的范畴 $\mathrm{Fil}^\bullet(\mathcal{A})$ 验证以下性质.
+	\begin{enumerate}[(i)]
+		\item 它是加性范畴, 所有态射都有核, 余核, 像, 余像; 尽量具体地描述.
+		\item 对于 $\mathrm{Fil}^\bullet(\mathcal{A})$ 的态射 $f: X \to Y$, 若 $f(\mathrm{F}^n X) \to f(X) \cap \mathrm{F}^n Y$ 对所有 $n$ 都是同构, 则称 $f$ 是严格态射; 证明此概念和定义 \ref{def:strict-morphism} 的版本等价.
+		
+		\begin{hint}
+			这相当于说 $f(X)$ 上的两个自然滤过相等: 一者是 $\mathrm{F}^\bullet X$ 的像, 一者是 $\mathrm{F}^\bullet Y$ 的限制. 前者对应 $\mathrm{Fil}^\bullet(\mathcal{A})$ 中的 $\Coim(f)$, 后者则对应 $\Image(f)$.
+		\end{hint}
+		\item 举例说明 $\mathrm{Fil}^\bullet(\mathcal{A})$ 一般不是 Abel 范畴.
+	\end{enumerate}
+	尽管滤过对象不成 Abel 范畴, 对于有限滤过的情形, 几何学中依然有必要引进滤过导出范畴 $\cate{DF}(\mathcal{A})$, 其定义需要比较深入的技巧, 见 \cite[Tag 05RX]{stacks}.\index{daochufanchou!滤过 (filtered)}
+	
+	\item 给定 Abel 范畴 $\mathcal{A}$ 上的滤过微分对象 $(X, d, \mathrm{F}^\bullet X)$, 证明谱序列中的 $d_1^p: E_1^p \to E_1^{p+1}$ 是微分对象的短正合列
+	\[ 0 \to \gr^{p+1} X \to \mathrm{F}^p X / \mathrm{F}^{p+2} X \to \gr^p X \to 0 \]
+	所诱导的连接态射.
+	
+	\item (Bockstein 谱序列) 设 $f$ 为交换环 $R$ 的非零因子, 对任意 $R$-模 $M$ 定义 $M[f] := \{m \in M: fm=0 \}$; 满足 $M[f] = \{0\}$ 的 $M$ 称为 $f$-无挠的. 设 $C$ 为链复形, 每个 $C_n$ 都是 $f$-无挠的. 于是乘以 $f$ 给出链复形的单态射 $\alpha: C \to C$. 对于资料 $(C, \alpha)$, 命题 \ref{prop:differential-exact-couple} 给出正合偶
+	\[\begin{tikzcd}[column sep=tiny]
+		\Hm_\bullet(C) \arrow[rr, "{\Hm_\bullet(\alpha)}"] & & \Hm_\bullet(C) \arrow[ld] \\
+		& \Hm_\bullet\left(C \dotimes{R} R/(f)\right) \arrow[lu, "{-1}"] &
+	\end{tikzcd}\]
+	和相应的同调分次谱序列 $(E^r_q)_{\substack{r \geq 0 \\ q \in \Z}}$. 敬请尽量明确地描述每一页 $(E^r, d^r)$ 以及 $E^\infty$.
+	\index{puxulie!Bockstein}
+	
+	\item 承上题, 取 $R = \Z$ 和素数 $f = p$, 并且设每个 $C_n$ 都是有限秩自由 $\Z$-模. 对任意 $\Z$-模 $M$, 其挠元构成的子模记为 $M_{\mathrm{tor}}$; 定义 $M$ 的无挠商 $M_{\mathrm{tf}} := M/M_{\mathrm{tor}}$. 证明
+	\[ E^\infty_q \simeq \Hm_q(C)_{\mathrm{tf}} \dotimes{\Z} \F_p , \quad q \in \Z. \]
+	由此推导
+	\[ \dim_{\F_p} \Hm_q\left( C \dotimes{\Z} \F_p\right) \geq \dim_{\F_p} \left( \Hm_q(C)_{\mathrm{tf}} \dotimes{\Z} \F_p \right). \]
+	举例说明可以有严格的不等式.
+	
+	\item (两列和两行的谱序列) 设有强收敛谱序列 $E_2^{p, q} \Rightarrow H^{p+q}$, 按约定 \ref{con:ss-conv} 理解.
+	\begin{enumerate}[(i)]
+		\item 证明若 $E_2^{p,q}$ 仅在 $p \in \{0, 1\}$ 时非零, 则对所有 $q \in \Z$ 皆有典范短正合列
+		\[ 0 \to E_2^{1, q-1} \to H^q \to E_2^{0, q} \to 0. \]
+		\item 证明若 $E_2^{p,q}$ 仅在 $q \in \{0, 1\}$ 时非零, 则对所有 $p \in \Z$ 皆有典范正合列
+		\[ \cdots \to H^{p-1} \to E_2^{p-2, 1} \xrightarrow{d_2} E_2^{p, 0} \to H^p \to E_2^{p-1, 1} \xrightarrow{d_2} E_2^{p+1, 0} \to H^{p+1} \to \cdots. \]
+		\item 试处理 $E^2_{p,q} \Rightarrow H_{p+q}$ 的版本.
+		\begin{hint}
+			上下对调, 箭头反转, 其余不变.
+		\end{hint}
+	\end{enumerate}
+
+	\item 考虑满足定理 \ref{prop:Grothendieck-ss} 前提的左正合函子 $F'$ 和 $F$, 进一步要求 $\mathrm{R}F'$ 和 $\mathrm{R}F$ 都是有限维的.
+	\begin{enumerate}[(i)]
+		\item 证明 $F'F$ 也是有限维的, 并给出维数的一个上界.
+		\item 考虑由三角函子 $\mathrm{R}F$, $\mathrm{R}F'$ 和 $\mathrm{R}(F'F)$ 确定的同态 $\chi_F: \mathrm{K}_0(\mathcal{A}) \to \mathrm{K}_0(\mathcal{A}')$ 和类似的 $\chi_{F'}$, $\chi_{F'F}$; 详见\CHref{sec:cplx}习题. 证明 $\chi_{F'F} = \chi_{F'} \circ \chi_F$.
+	\end{enumerate}
+	这些性质也可以用导出范畴来论证. 右正合函子和 $\mathrm{L}F'$, $\mathrm{L}F$ 的情形当然是对偶的.
+
+	\item 考虑有足够内射对象的 Abel 范畴 $\mathcal{A}$ 和 $X \in \Obj(\mathcal{A})$, 带有限滤过 $X = \mathrm{F}^0 X \supset \cdots \supset \mathrm{F}^{N+1} X = 0$. 设 $G: \mathcal{A} \to \mathcal{A}'$ 是左正合加性函子. 证明存在强收敛谱序列
+	\[ E_1^{p,q} = \mathrm{R}^{p+q} G \left( \gr^p X \right) \Rightarrow \mathrm{R}^{p+q}G(X). \]
+	% Reference: [Knapp-Vogan 1995, Proposition D.57]
+	\begin{hint}
+		一种方法是仿照 Cartan--Eilenberg 解消的构造 (定理 \ref{prop:CE-resolution}, 倚靠命题 \ref{prop:horseshoe}), 从 $\mathrm{F}^N X$ 起步, 取适当的一列内射解消
+		\[\begin{tikzcd}[row sep=small]
+			\vdots & & \vdots \\
+			\mathrm{F}^0 I^1 \arrow[u] \arrow[phantom, r, "\supset" description] & \cdots \arrow[phantom, r, "\supset" description] & \mathrm{F}^N I^1 \arrow[u] \\
+			\mathrm{F}^0 I^0 \arrow[u] \arrow[phantom, r, "\supset" description] & \cdots \arrow[phantom, r, "\supset" description] & \mathrm{F}^N I^0 \arrow[u] \\
+			\mathrm{F}^0 X \arrow[u] \arrow[phantom, r, "\supset" description] & \cdots \arrow[phantom, r, "\supset" description] & \mathrm{F}^N X \arrow[u] \\
+			0 \arrow[u] & & 0 \arrow[u]
+		\end{tikzcd}\]
+		使得对 $\mathrm{F}^\bullet (I)$ 取 $\cate{C}G$ 后依然得到滤过复形, 并且使相应的谱序列满足所求.
+	\end{hint}
+
+	\item 设 $R$ 为环, $C = \left(C_n, d^C_n\right)_n$ 是右 $R$-模构成的链复形, $D$ 是左 $R$-模. 设每个 $C_n$ 都是平坦模, 而且 $n \ll 0 \implies C_n = 0$. 取投射解消 $\cdots \to P_1 \to P_0 \to D \to 0$ 并构造双复形 $C_\bullet \dotimes{R} P_\bullet$.
+	\begin{enumerate}[(i)]
+		\item 说明对应的同调双分次谱序列 $\mathscr{E}_{\mathrm{I}}$ 在 $E_{\mathrm{I}}^1$ 页退化.
+		\item 说明 $(E_{\mathrm{II}}^2)_{p,q} = \Tor^R_p\left( \Hm_q(C), D \right) \Rightarrow \Hm_{p+q}\left( C_\bullet \dotimes{R} D \right)$.
+		\item 证明当所有 $\Image\left( d^C_n \right)$ 皆平坦时, 这给出同调 Künneth 定理 \ref{prop:Kunneth-homology} 的短正合列.
+		\begin{hint}
+			平坦解消 $0 \to \Image\left( d_C^{n+1} \right) \to \Ker\left(d_C^n\right) \to \Hm_n(C) \to 0$ 导致 $E_{\mathrm{II}}^2$ 的非零项集中在 $p \in \{0, 1\}$.
+		\end{hint}
+	\end{enumerate}
+
+	\item 设 $R$, $S$ 为环, $X$ 为右 $R$-模, $Y$ 为 $(R, S)$-双模, $Z$ 为左 $S$-模. 构造双复形使得相应的谱序列满足
+	\[ (E_{\mathrm{I}}^2)_{p,q} = \Tor^R_p\left( X, \Tor^S_q(Y_S, Z) \right), \quad (E_{\mathrm{II}}^2)_{p,q} = \Tor^S_p\left( \Tor^R_q(X, {}_R Y), Z \right). \]
+	\begin{hint}
+		取 $X$ 和 $Z$ 的解消. 熟悉导出范畴的读者可对照关于结合约束的命题 \ref{prop:otimesL-associativity-constraint} (取 $A = \Bbbk = B$).
+	\end{hint}
+
+	\item 试明确例 \ref{eg:change-of-rings-SS-bis} 的短正合列中的典范同态 $\Ext^n_R(Y, {}_R X) \to \Hom_S\left( \Tor^R_n(S_R, Y), X \right)$.
+\end{Exercises}

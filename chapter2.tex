@@ -1,0 +1,2132 @@
+% LaTeX source for book ``代数学方法'' in Chinese
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% To be included
+\chapter{Abel 范畴}\label{sec:Abel-cat}
+Abel 范畴是具有核, 余核, 而且所有态射皆严格的加性范畴; 它们是环 $R$ 上的左模范畴 $R\dcate{Mod}$ 或右模范畴 $\cated{Mod}R$ 的推广, 其上可以开展对于内射对象, 投射对象, 复形, 同调/上同调以及正合列等种种概念的研究.
+
+模范畴可谓是 Abel 范畴的原型, 却不足以穷尽 Abel 范畴的底蕴, 这点可以从两方面来说明.
+\begin{enumerate}
+	\item 在一般的 Abel 范畴中, 对象无元素可言, 态射亦非映射, 因此模范畴中的图追踪方法不再适用, 而必须从对象与函子的操作来推导最基本的几种正合列. 突出的例子是 \S\ref{sec:diagram-lemmas} 讨论的蛇形引理和五项引理, 其证明基于图追踪的某种代替品 (引理 \ref{prop:Abel-cat-exact-aux}); 即便如此, 论证也比模范畴的版本复杂不少.
+	
+	\item 即便从模范畴或其 Abel 子范畴出发, 在探讨函子范畴, 局部化或 Serre 商时也会引出抽象 Abel 范畴. 在几何学和拓扑学的场景中, 层论的研究自然地导向这类构造.
+\end{enumerate}
+
+Freyd--Mitchell 嵌入定理 \ref{prop:FM} 断言任何 Abel 小范畴都能全忠实地嵌入某个 $\cated{Mod}R$, 而且嵌入函子保正合列. 一旦接受这一结果, 关于正合列的许多断言便容易化约到 $\cated{Mod}R$ 情形. 这种化约技巧让图追踪仍有用武之地, 但是它主要提供心理层面的慰藉, 因为一方面这回避了 Abel 范畴的本质, 另一方面, 无论如何证明嵌入定理都避不开 Abel 范畴的若干核心事实, 总须白手起家. 本章内容不依赖嵌入定理, 逻辑上也不依赖模论, 但预期读者对模范畴上的同调代数有基本的了解; 追图技能依然有益, 就学习次第来说兴许还是必要的, 建议读者参考 \cite{Li1} 或其他教材的相关内容. 本书附录的 \S\ref{sec:FM} 将把嵌入定理作为 Ind 化技巧的一则应用来推导.
+
+余完备, 具有生成元, 而且滤过小 $\varinjlim$ 正合的 Abel 范畴称为 Grothendieck 范畴, 这是最后一节 \S\ref{sec:Grothendieck-cat} 探讨的主题; 这些条件和集合大小的假设直接相关. Grothendieck 范畴在几何学中频繁出现, 它们具有更好的性质, 比如说完备性 (推论 \ref{prop:Grothendieck-cat-complete}), 以及存在典范内射解消 (定理 \ref{prop:Grothendieck-injective}). 相较于一般的 Abel 范畴, Grothendieck 范畴之于模范畴是一种更接近的类比, 这一断言的实义当由附录的 Gabriel--Popescu 定理 \ref{prop:GP} 来解释.
+
+模论中几个基本的同构定理对于一般的 Abel 范畴依然适用. 关于子对象, 商对象, 直和分解, 不可分解对象, 单对象, 合成列等基本概念也是如此; 这些都是代数学的关注重点. 本章的 \S\S\ref{sec:direct-sum}---\ref{sec:semisimple} 将予以处理. 譬如关于直和分解的 Krull--Remak--Schmidt 定理便有抽象推广 (定理 \ref{prop:Krull-Schmidt-gen}). 格论语言对此是实用的, 详见 \S\ref{sec:lattices} 的解说. 必须指出的是, 涉及无穷直和的各种陈述往往在 Grothendieck 范畴中方能成立.
+
+本章的 \S\ref{sec:Serre-subcat} 从子 Abel 范畴的定义与刻画入手, 然后介绍 Abel 范畴对一类子 Abel 范畴 (称为 Serre 子范畴) 的取商操作 (称为 Serre 商); 这些商由泛性质刻画, 可以由 \S\ref{sec:cat-localization} 介绍的局部化来构造. 该节也将对 Abel 范畴介绍 $\mathrm{K}_0$ 群及其初步性质, 包括 Euler--Poincaré 原理 (定理 \ref{prop:EP}) 和 $\mathrm{K}_0$ 对 Serre 商的正合列 (命题 \ref{prop:K0-exact-seq}). 这些技术都是实际应用中所常见的. 必须指出, $\mathrm{K}_0$ 群的构造涵盖较 Abel 范畴更广泛的一类结构, 称为正合范畴, 相关理论可参阅 \cite{Bu10}, 而 $\mathrm{K}_0$ 群不过是一列交换群 $\mathrm{K}_n$ 的起点 ($n \in \Z_{\geq 0}$). 高阶 K-群的合理解释需要同伦论的观点, 特别是``谱''的概念, 不属本书范围.
+\index{zhenghefanchou@正合范畴 (exact category)}
+
+\begin{wenxintishi}
+	如上所述, 读者应该对模范畴上的具体操作有一定程度的了解. 对于复形及其上同调的基础理论, 必须掌握 \S\S\ref{sec:Abel-cat-def}---\ref{sec:inj-proj} 的内容; \S\ref{sec:Serre-subcat} 除了子 Abel 范畴之外的内容在后续部分较少用到, 但仍属常识, 并且和导出范畴部分的某些定义相关. 关于 Grothendieck 范畴的 \S\ref{sec:Grothendieck-cat} 属于补充内容, 需要相对复杂的论证和附录知识, 初学者可先略过.
+	
+	表作资料 $(X^n, d^n)_n$ (其中 $d^n: X^n \to X^{n+1}$) 的复形又称上链复形; 若改用下标记为 $(X_n, d_n)_n$, 其中 $d_n: X_n \to X_{n-1}$, 则称之为链复形. 除\CHref{sec:simplicial}之外, 本书主要采用上链复形的记法.
+\end{wenxintishi}
+
+
+\section{Abel 范畴的定义}\label{sec:Abel-cat-def}
+在 \S\ref{sec:Ker-Coker} 已经介绍了何谓 $\cate{Ab}$-范畴及加性范畴. 本章探究的 Abel 范畴是一类具有特殊性质的加性范畴.
+
+\begin{definition}[Abel 范畴]
+	\index{Abel fanchou@Abel 范畴 (abelian category)}
+	设 $\mathcal{A}$ 是加性范畴. 若 $\mathcal{A}$ 的所有态射都有核以及余核, 而且所有态射皆严格 (定义 \ref{def:strict-morphism}), 则称 $\mathcal{A}$ 为 Abel 范畴.
+
+	如果 $\mathcal{A}$ 本身还是 $\Bbbk$-线性范畴 (定义 \ref{def:k-linear-cat}), 则称之为 $\Bbbk$-线性 Abel 范畴.
+\end{definition}
+
+\begin{remark}\label{rem:Abel-cat-finite-lim}
+	Abel 范畴具有所有的有限 $\varprojlim$ 和有限 $\varinjlim$, 这是因为有限积和有限余积存在 (都是双积), 而等化子和余等化子也都存在 (注记 \ref{rem:equalizer-Ker}), 借此足以构造一切有限 $\varprojlim$ 和有限 $\varinjlim$; 详见 \cite[定理 2.8.3]{Li1}.
+\end{remark}
+
+根据例 \ref{eg:strict-morphism}, 对任何环 $R$, 范畴 $R\dcate{Mod}$ 都是 Abel 范畴, 以 $R^{\text{op}}$ 代 $R$ 可知右模范畴 $\cated{Mod}R$ 亦然; 取特例 $R = \Z$ 可见 $\cate{Ab}$ 是 Abel 范畴. 同一例子中考虑的 $\cate{Ban}_{\CC}$ 则非 Abel 范畴, 因为 $\cate{Ban}_{\CC}$ 有非严格的态射.
+
+\begin{proposition}\label{prop:abelian-cat-duality}
+	若加性范畴 $\mathcal{A}$ 是 Abel 范畴, 则 $\mathcal{A}^{\opp}$ 亦然.
+\end{proposition}
+\begin{proof}
+	核与余核相对偶, 而注记 \ref{rem:im-coim-duality} 表明 $\mathcal{A}$ 中的 $\Coim(f) \to \Image(f)$ 无非是 $\mathcal{A}^{\opp}$ 中的 $\Coim(f^{\opp}) \to \Image(f^{\opp})$.
+\end{proof}
+
+从已有的 Abel 范畴构造新的 Abel 范畴的一种抽象方式是取函子范畴. 首先注意到若 $\mathcal{A}$ 是 $\cate{Ab}$-范畴, 则对任意\footnote{若不希望 $\mathcal{A}^I$ 成为大范畴, 则应当设 $I$ 是小的. 此处无实质影响.}范畴 $I$, 函子范畴 $\mathcal{A}^I$ 也自然地是 $\cate{Ab}$-范畴, 方式是对函子 $F, G: I \rightrightarrows \mathcal{A}$ 在 $\Hom_{\mathcal{A}^I}(F, G)$ 中``逐对象''地定义加法为 $(\varphi_i)_i + (\psi_i)_i := (\varphi_i + \psi_i)_i$.
+
+\begin{proposition}\label{prop:functor-cat-Abel}
+	设 $\mathcal{A}$ 为 Abel 范畴. 对于任意范畴 $I$, 函子范畴 $\mathcal{A}^I$ 也是 Abel 范畴.
+\end{proposition}
+\begin{proof}
+	基于命题 \ref{prop:forget-create} 逐对象地构造 $\mathcal{A}^I$ 的有限积/余积, 核/余核. 态射的像/余像; 典范态射 $\Coim \to \Image$ 因而也有逐对象的构造. 由此对 $\mathcal{A}^I$ 将 Abel 范畴的所有条件化到 $\mathcal{A}$ 上来验证.
+\end{proof}
+
+Abel 范畴中的态射 $f: X \to Y$ 皆有唯一的满--单分解 (命题 \ref{prop:epi-mono-uniqueness}), 具体取作 $X \twoheadrightarrow \left(\Coim(f) \simeq \Image(f)\right) \hookrightarrow Y$. 于是引理 \ref{prop:mono-epi-ker-coker} (iii) 即刻给出
+\[ \Ker(f) = \Ker[X \to \Image(f)], \quad \Coker(f) = \Coker[\Image(f) \to Y]. \]
+
+\begin{remark}\label{rem:Abel-cat-fibered-product}
+	对于 Abel 范畴中的态射 $X \xrightarrow{f} Z \xleftarrow{g} Y$, 纤维积的构造 (参看注记 \ref{rem:Abel-cat-finite-lim}) 表明 $X \dtimes{Z} Y$ 无非是
+	$\begin{tikzcd}
+		X \oplus Y \arrow[r, yshift=0.3em, "{(f,0)}"] \arrow[r, yshift=-0.3em, "{(0,g)}"'] & Z
+	\end{tikzcd}$
+	的等化子, 亦即 $\Ker[ X \oplus Y \xrightarrow{(f, -g)} Z ]$. 当然地, 纤维积带有的态射 $X \leftarrow X \dtimes{Z} Y \rightarrow Y$ 来自投影 $X \xleftarrow{p_1} X \oplus Y \xrightarrow{p_2} Y$.
+	
+	对于 $X' \xleftarrow{f'} Z' \xrightarrow{g'} Y'$, 纤维余积的构造则将 $X' \dsqcup{Z'} Y'$ 实现为 $\Coker[ Z' \xrightarrow{(-f', g')} X' \oplus Y']$, 而态射 $X' \rightarrow X' \dsqcup{Z'} Y' \leftarrow Y'$ 来自 $X' \xrightarrow{\iota_1} X' \oplus Y' \xleftarrow{\iota_2} Y'$. 这些性质在模的情形理应是显然的.
+\end{remark}
+
+下一条结果尔后将被反复运用.
+
+\begin{proposition}\label{prop:Abel-cat-pull-push}
+	若 Abel 范畴 $\mathcal{A}$ 中的图表
+	\[\begin{tikzcd}
+		X \arrow[r, "f"] \arrow[d, "a"'] & Y \arrow[d, "b"] \\
+		X' \arrow[r, "g"'] & Y'
+	\end{tikzcd}\]
+	是拉回 (或推出) 图表, 而且 $g$ 满 (或 $f$ 单), 则图表同时也是推出 (或拉回), 而且 $f$ 满 (或 $g$ 单).
+\end{proposition}
+\begin{proof}
+	处理拉回图表的情形即可. 兹断言
+	\begin{compactitem}
+		\item $X \xrightarrow{(a, f)} X' \oplus Y$ 给出 $\Ker\left[ X' \oplus Y \xrightarrow{(g, -b)} Y' \right]$;
+		\item $(g, -b): X' \oplus Y \to Y'$ 满.
+	\end{compactitem}
+
+	诚然, 关于 $\Ker$ 的断言是缘于注记 \ref{rem:Abel-cat-fibered-product} 对 $X \simeq X' \dtimes{Y'} Y$ 作为核的描述; 又因为 $g = (g, -b) \iota_1$, 故 $g$ 满蕴涵 $(g, -b)$ 满.
+	
+	综上可见 $Y' = \Image((g, -b)) \leftiso \Coker[X \xrightarrow{(a,f)} X' \oplus Y ]$. 对此调换视角, 代入注记 \ref{rem:Abel-cat-fibered-product} 关于纤维余积作为余核的描述, 立见
+	\[\begin{tikzcd}
+		X \arrow[r, "f"] \arrow[d, "-a"'] & Y \arrow[d, "-b"] \\
+		X' \arrow[r, "g"'] & Y'
+	\end{tikzcd}\]
+	是推出图表; 左右两列分别合成自同构 $-\identity_X$ 和 $-\identity_Y$ 后复归原图, 仍是推出. 应用推出情形下已知的 $\Coker(f) \rightiso \Coker(g)$ (命题 \ref{prop:pull-back-ker}), 即得 $f$ 满 (引理 \ref{prop:mono-epi-ker-coker}).
+\end{proof}
+
+\begin{corollary}\label{prop:Abel-cat-subquotient}
+	Abel 范畴中的子商可以等价地定义为子对象的商对象, 或商对象的子对象.
+\end{corollary}
+\begin{proof}
+	命题 \ref{prop:Abel-cat-pull-push} 说明命题 \ref{prop:subquotient-equiv} 可施于任何 Abel 范畴.
+\end{proof}
+
+对于任意环 $R$ 上的左模范畴 $R\dcate{Mod}$, 以上结果当然是熟知的; 右模范畴亦然.
+
+\section{初识复形}\label{sec:cohomology}
+本节的起点是 Abel 范畴中满足 $gf = 0$ 的态射 $X \xrightarrow{f} Y \xrightarrow{g} Z$. 取 $\Ker(g) \hookrightarrow Y \twoheadrightarrow \Coker(f)$ 的合成 $\Ker(g) \to \Coker(f)$; 我们关心的是它的满--单分解. 对之有两种相互对偶的视角.
+
+\begin{lemma}\label{prop:image-to-kernel}
+	设 Abel 范畴 $\mathcal{A}$ 中的态射 $f: X \to Y$, $g: Y \to Z$ 满足 $gf = 0$.
+	\begin{enumerate}[(i)]
+		\item 存在唯一的态射 $\varphi$, $\psi$ 使以下图表交换:
+		\begin{equation}\label{eqn:cplx-transition}\begin{tikzcd}
+			X \arrow[r, "f"] \arrow[twoheadrightarrow, d] & Y \\
+			\Coim(f) \arrow[r, "\varphi"'] & \Ker(g) \arrow[hookrightarrow, u]
+		\end{tikzcd} \qquad \begin{tikzcd}
+			Z & Y \arrow[twoheadrightarrow, d] \arrow[l, "g"'] \\
+			\Image(g) \arrow[hookrightarrow, u] & \Coker(f) \arrow[l, "\psi"]
+		\end{tikzcd}\end{equation}
+		而且 $\varphi$ 为单, $\psi$ 为满.
+		\item 态射 $\Ker(g) \to \Coker(f)$ 有下图所示的两种满--单分解, 由唯一的同构 $\Coker(\varphi) \simeq \Ker(\psi)$ 相联系:
+		\[\begin{tikzcd}[row sep=tiny]
+			& \Ker(\psi) \arrow[hookrightarrow, rd, "\text{典范}"] \arrow[dd, "\sim" sloped] & \\
+			\Ker(g) \arrow[twoheadrightarrow, ru] \arrow[twoheadrightarrow, rd, "\text{典范}"'] & & \Coker(f) . \\
+			& \Coker(\varphi) \arrow[hookrightarrow, ru] &
+		\end{tikzcd}\]
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	首先考虑 (i). 左右图表相互对偶 (注记 \ref{rem:im-coim-duality} 和命题 \ref{prop:abelian-cat-duality}): 右图相当于在 $\mathcal{A}^{\opp}$ 中考虑 $Z \xrightarrow{g^{\opp}} Y \xrightarrow{f^{\opp}} X$, 故对 \eqref{eqn:cplx-transition} 考虑 $\varphi$ 的情形即可.
+
+	条件 $gf=0$ 相当于说 $f$ 通过 $\Ker(g) \hookrightarrow Y$ 分解. 将此代入关于余像的引理 \ref{prop:Im-Coim-fac} 即得 $\varphi$. 其次, 基于 $X \to \Coim(f)$ 的满性, $f$ 的分解 $X \twoheadrightarrow \Coim(f) \xrightarrow{\overline{f}} Y$ 是唯一的, 其中的 $\overline{f}$ 既可取为 $\Coim(f) \xrightarrow{\varphi} \Ker(g) \hookrightarrow Y$ 的合成, 亦可取为 $\Coim(f) \rightiso \Image(f) \hookrightarrow Y$ 的合成, 后者单蕴涵 $\varphi$ 单.
+	
+	为了推导 (ii), 兹断言存在唯一的单态射 $\Coker(\varphi) \hookrightarrow \Coker(f)$ (或满态射 $\Ker(g) \twoheadrightarrow \Ker(\psi)$) 使下图交换:
+	\[\begin{tikzcd}[column sep=small]
+		X \arrow[r, "f"] \arrow[twoheadrightarrow, d] & Y \arrow[twoheadrightarrow, r] & \Coker(f) \\
+		\Coim(f) \arrow[hookrightarrow, r, "\varphi"'] & \Ker(g) \arrow[twoheadrightarrow, r, "\text{典范}"' inner sep=0.6em] \arrow[hookrightarrow, u] & \Coker(\varphi) \arrow[hookrightarrow, u]
+	\end{tikzcd} \quad \begin{tikzcd}[column sep=small]
+		Z & Y \arrow[twoheadrightarrow, d] \arrow[l, "g"'] & \Ker(g) \arrow[twoheadrightarrow, d] \arrow[hookrightarrow, l] \\
+		\Image(g) \arrow[hookrightarrow, u] & \Coker(f) \arrow[twoheadrightarrow, l, "\psi"] & \Ker(\psi) \arrow[hookrightarrow, l, "\text{典范}" inner sep=0.6em]
+	\end{tikzcd}\]
+	承认这点, 便可读出 (ii) 的图表中的两路满--单分解, 即其外框部分, 其中路同构则由命题 \ref{prop:epi-mono-uniqueness} 唯一地给出.
+
+	问题归结为构造上图. 因为两者对偶, 讨论左图即可. 引理 \ref{prop:mono-epi-ker-coker} (iii) 说明 $\Coker(\varphi)$ 也等同于合成 $X \to \Ker(g)$ 的余核, 故所求态射来自余核的函子性, 由 \eqref{eqn:Ker-Coker-functoriality} 刻画. 单性何来? 命题 \ref{prop:Ker-Coker-composite} 将合成态射的余核表为原余核的推出, 具体地说即是
+	\[\begin{tikzcd}
+		\Ker(g) \arrow[hookrightarrow, r] \arrow[twoheadrightarrow, d] & Y \arrow[twoheadrightarrow, d] \\
+		\Coker{[X \to \Ker(g)]} \arrow[r] & \Coker(f) \arrow[phantom, lu, "\boxplus" description]
+	\end{tikzcd} \quad \text{(推出图表)}\]
+	其中所有态射都是典范的. 于是命题 \ref{prop:Abel-cat-pull-push} 蕴涵第二行为单. 
+\end{proof}
+
+在引理 \ref{prop:image-to-kernel} 的场景中, 记
+\index[sym1]{HXYZ@$\Hm\left[X \to Y \to Z \right]$}
+\begin{equation}\label{eqn:homology-3}\begin{aligned}
+	\Hm\left[ X \xrightarrow{f} Y \xrightarrow{g} Z \right] & := \Coker\left[ \Image(f) \xrightarrow{\varphi} \Ker(g) \right] \\
+	& \simeq \Ker\left[ \Coker(f) \xrightarrow{\psi} \Image(g) \right] ;
+\end{aligned}\end{equation}
+它也可以刻画为 $\Ker(g) \to \Coker(f)$ 的满--单分解的中项. 不出所料, \eqref{eqn:homology-3} 具有函子性.
+
+\begin{proposition}\label{prop:homology-functoriality}
+	给定 Abel 范畴中的交换图表
+	\[\begin{tikzcd}
+		X \arrow[r, "f"] \arrow[d, "a"'] & Y \arrow[r, "g"] \arrow[d, "b"] & Z \arrow[d, "c"] \\
+		X' \arrow[r, "{f'}"'] & Y' \arrow[r, "{g'}"'] & Z'
+	\end{tikzcd} \qquad g'f' = 0, \quad gf = 0, \]
+	存在唯一的态射 $\Phi: \Hm[X \to Y \to Z] \to \Hm[X' \to Y' \to Z']$ 使下图交换:
+	\[\begin{tikzcd}
+		\Ker(g) \arrow[twoheadrightarrow, r]  \arrow[d, "\text{由 $(b,c)$ 诱导}"'] & {\Hm[X \to Y \to Z]} \arrow[hookrightarrow, r] \arrow[d, "\Phi"] & \Coker(f) \arrow[d, "\text{由 $(a,b)$ 诱导}"] \\
+		\Ker(g') \arrow[twoheadrightarrow, r] & {\Hm[X' \to Y' \to Z']} \arrow[hookrightarrow, r] & \Coker(f')
+	\end{tikzcd}\]
+	两侧垂直箭头来自核以及余核的函子性, 水平箭头如引理 \ref{prop:image-to-kernel}.
+\end{proposition}
+\begin{proof}
+	根据引理 \ref{prop:epi-mono-morphism} 的熟悉套路, $\Phi$ 若存在则是唯一的, 而且验证 $\Phi$ 使右侧方块交换即可. 构造如下. 因为 $\Image(g) = \Ker[Z \to \Coker(g)]$, $\Image(g') = \Ker[Z' \to \Coker(g')]$, 核的函子性给出唯一的 $\Image(g) \to \Image(g')$ 使下图的右半部交换:
+	\[\begin{tikzcd}
+		\Coker(f) \arrow[d] \arrow[twoheadrightarrow, r, "\psi"] & \Image(g) \arrow[d] \arrow[hookrightarrow, r] & Z \arrow[d, "c"] \\
+		\Coker(f') \arrow[twoheadrightarrow, r, "{\psi'}"'] & \Image(g') \arrow[hookrightarrow, r] & Z' ;
+	\end{tikzcd}\]
+	引理 \ref{prop:epi-mono-morphism} 的套路说明左半部也交换. 由此诱导的 $\Ker(\psi) \to \Ker(\psi')$ 即所求.
+\end{proof}
+
+\begin{proposition}\label{prop:homology-biproduct}
+	给定满足 $gf = 0$ 和 $g' f' = 0$ 的态射, 存在典范同构
+	\begin{multline*}
+		\Hm\left[ X \xrightarrow{f} Y \xrightarrow{g} Z \right] \oplus \Hm\left[ X' \xrightarrow{f'} Y' \xrightarrow{g'} Z' \right] \\
+		\simeq \Hm\left[ X \oplus X' \xrightarrow{f \oplus f'} Y \oplus Y' \xrightarrow{g \oplus g'} Z \oplus Z' \right].
+	\end{multline*}
+\end{proposition}
+\begin{proof}
+	取双积带有的态射 $\iota$, $p$ 等等, 如 \eqref{eqn:biproduct-identities}. 按照命题 \ref{prop:homology-functoriality} 的函子性, 它们也诱导相应的
+	\[\begin{tikzcd}[column sep=small]
+		\Hm{\left[ X \to Y \to Z \right]} \arrow[shift left, r, "\iota"] & \Hm{\left[ X \oplus X' \to Y \oplus Y' \to Z \oplus Z' \right]} \arrow[shift left, l, "p"] \arrow[shift right, r, "p"'] & \Hm\left[ X' \to Y' \to Z' \right] \arrow[shift right, l, "\iota"'].
+	\end{tikzcd}\]
+
+	基于命题 \ref{prop:homology-functoriality} 对诱导态射 $\Phi$ 的刻画, 我们还知道 $(a,b,c) \mapsto \Phi$ 与合成兼容, 保持加法, 映 $0$ 为 $0$, 映 $\identity$ 为 $\identity$. 综之, 在 $\Hm[\cdots]$ 层面诱导出的态射也满足双积所需的等式 \eqref{eqn:biproduct-identities}.
+\end{proof}
+
+注意: 以上陈述对于一般 Abel 范畴中的无穷余积或无穷积未必成立.
+
+\begin{definition}[复形]\label{def:complex}
+	\index{fuxing@复形 (complex)}
+	设 $\mathcal{A}$ 是加性范畴. 考虑 $\mathcal{A}$ 中的一列态射
+	\[ \cdots \to X^n \xrightarrow{d^n} X^{n+1} \xrightarrow{d^{n+1}} X^{n+2} \to \cdots, \]
+	它可以仅含有限项, 也可以沿单边或双边无穷延伸, 或者成环状. 若 $d^{n+1} d^n = 0$ 对所有 $n$ 成立, 则称资料 $(X^n, d^n)_n$ 为\emph{复形}, 常记为 $(X^\bullet, d^\bullet)$, $X^\bullet$ 或 $X$. 习惯称 $X^n$ 为复形 $X$ 的第 $n$ 次项.
+\end{definition}
+
+本章主要着眼于 Abel 范畴的情形, 这时可以探讨复形的上同调和正合性.
+
+\begin{definition}[上同调和正合列]\label{def:cohomology}
+	\index{shangtongdiao@上同调 (cohomology)}
+	\index{zhenghelie@正合列 (exact sequence)}
+	\index{fuxing!零调 (acyclic)}
+	\index{fuxing!正合 (exact)}
+	\index[sym1]{Hn@$\Hm^n$}
+	设 $\mathcal{A}$ 是 Abel 范畴.
+	\begin{itemize}
+		\item 对于复形 $X$, 按 \eqref{eqn:homology-3} 定义它在非端点项 $X^n$ 处的\emph{上同调}为
+		\[ \Hm^n(X) = \Hm^n(X^\bullet, d^\bullet) := \Hm\left[ X^{n-1} \xrightarrow{d^{n-1}} X^n \xrightarrow{d^n} X^{n+1}  \right]. \]
+		\item 若 $\Hm^n(X) = 0$, 则称复形 $X$ 在 $X^n$ 处正合; 这等价于 $\Image(d^{n-1}) = \Ker(d^n)$. 处处正合的复形称为\emph{正合列}; 正合复形也称为\emph{零调}的.
+	\end{itemize}
+\end{definition}
+
+上同调的性质是本书主题之一, 将在 \S\ref{sec:Abel-cplx} 继续探讨.
+
+\begin{remark}[链复形的同调]\label{rem:cochain-vs-chain}
+	\index{fuxing!上链 (cochain)}
+	\index{fuxing!链 (chain)}
+	\index{tongdiao@同调 (homology)}
+	\index[sym1]{Hnn@$\Hm_n$}
+	如在定义 \ref{def:complex} 中改取递降的标号, 用下标记作
+	\[ \cdots \to X_n \xrightarrow{d_n} X_{n-1} \to \cdots, \quad d_{n-1} d_n = 0, \]
+	则前述定义可以全盘照搬. 基于拓扑学的渊源, 经常称标号递增版本 $(X^\bullet, d^\bullet)$ 为上链复形, 称递降者 $(X_\bullet, d_\bullet)$ 为链复形. 对于 Abel 范畴中的链复形 $X$, 定义它在 $X_n$ 处的\emph{同调}为 $\mathcal{A}$ 的对象
+	\[ \Hm_n(X) = \Hm_n(X_\bullet, d_\bullet) := \Hm\left[ X_{n+1} \xrightarrow{d_{n+1}} X_n \xrightarrow{d_n} X_{n-1} \right]. \]
+	
+	在代数学中, 复形 (亦即上链复形) 和链复形仅只是记法有差异, 其间的过渡直截了当: 对于加性范畴 $\mathcal{A}$, 内部解决的方案是作镜射
+	\[ X^n := X_{-n}, \quad d^n := d_{-n}. \]
+	另一种方案是反转箭头, 这涉及相反范畴: 将 $\mathcal{A}$ 上的复形
+	\[ \cdots \to X^n \xrightarrow{d^n} X^{n+1} \to \cdots \]
+	置于 $\mathcal{A}^{\opp}$ 中考察, 则变为链复形
+	\begin{gather*}
+		\cdots \leftarrow X_n \xleftarrow{d_{n+1}} X_{n+1} \leftarrow \cdots, \\
+		X_n := X^n, \quad d_{n+1} := d^{n, \opp}.
+	\end{gather*}
+
+	当 $\mathcal{A}$ 是 Abel 范畴时, 以反转箭头定义 $\mathcal{A}^{\opp}$ 上的链复形 $(X_\bullet, d_\bullet)$, 则有典范同构 $\Hm^n(X^\bullet) \simeq \Hm_n(X_\bullet)$, 特别地, $X^\bullet$ 正合当且仅当 $X_\bullet$ 正合. 为了说明这点, 仅须注意到 $\Hm[X \xrightarrow{f} Y \xrightarrow{g} Z]$ 可以刻画为 $\Ker(g) \to \Coker(f)$ 的满--单分解的中项, 如在 $\mathcal{A}^{\opp}$ 中考量, 这也正是 $\Ker(f^{\opp}) \to \Coker(g^{\opp})$ 的满--单分解的中项.
+\end{remark}
+
+复形的正合性可以分段考察. 往后将不加说明地运用以下几种典型.
+\begin{description}
+	\item[单态射] 复形 $0 \to X' \xrightarrow{f} X$ 正合等价于 $\Ker(f) = 0$, 亦即 $f$ 单 (引理 \ref{prop:mono-epi-ker-coker}); 这也等价于 $X' \rightiso \Coim(f)$ (引理 \ref{prop:epi-image}).
+	\item[满态射] 对偶地, 复形 $X \xrightarrow{g} X'' \to 0$ 正合等价于 $g$ 满, 也等价于 $\Image(g) \rightiso X''$.
+	
+	\item[核] 考虑复形 $0 \to X' \xrightarrow{f} X \xrightarrow{g} X''$. 按 \eqref{eqn:cplx-transition} 将 $f$ 通过 $X' \twoheadrightarrow \Image(f) \hookrightarrow \Ker(g)$ 分解. 兹断言 $0 \to X' \to X \to X''$ 正合当且仅当 $X' \to \Ker(g)$ 是同构; 这也相当于说精确到同构, 上述正合列总是 $0 \to \Ker(g) \to X \xrightarrow{g} X''$ 的形式, 由态射的核给出.
+	
+	论证不难. 考虑 \eqref{eqn:cplx-transition}. 复形在 $X$ 处正合等价于 $\Image(f) \rightiso \Ker(g)$, 在 $X'$ 处正合等价于 $X' \rightiso \Image(f)$; 再施命题 \ref{prop:epi-mono-isomorphism} 于 $X' \twoheadrightarrow \Image(f) \hookrightarrow \Ker(g)$ 便是.
+
+	\item[余核] 对偶地, 复形 $X' \xrightarrow{f} X \xrightarrow{g} X'' \to 0$ 按 \eqref{eqn:cplx-transition} 诱导态射 $\Coker(f) \to X''$. 此复形正合当且仅当 $\Coker(f) \rightiso X''$. 所以精确到同构, 这型正合列来自余核.
+
+	\item[短正合列] 形如 $0 \to X' \to X \to X'' \to 0$ 的正合列称为\emph{短正合列}. 以上两条一并给出两种等价而相互对偶的正合性刻画:
+	\begin{compactitem}
+		\item $X' \to X$ 单, 而 $X'' = \Coker[X' \hookrightarrow X]$;
+		\item $X \to X''$ 满, 而 $X' = \Ker[X \twoheadrightarrow X'']$.
+	\end{compactitem}
+	\index{duanzhenghelie@短正合列 (short exact sequence)}
+\end{description}
+
+作为应用, 每个态射 $f: X \to Y$ 都给出短正合列
+\[ 0 \to \Ker(f) \to X \to \Image(f) \to 0, \quad 0 \to \Image(f) \to Y \to \Coker(f) \to 0, \]
+它们拼接为正合列 $0 \to \Ker(f) \to X \xrightarrow{f} Y \to \Coker(f) \to 0$.
+
+另外, 若 $f$ 能置入形如
+\[ L' \xrightarrow{\lambda} L \to X \xrightarrow{f} Y \to R \xrightarrow{\rho} R'' \]
+的正合列, 其中 $\lambda, \rho$ 皆为同构, 则正合性将导致 $L \to X$ 和 $Y \to R$ 皆为 $0$, 从而有 $\Ker(f) = 0$ 和 $\Image(f) = Y$, 亦即 $f$ 为同构. 这是判定同构的常用技巧.
+
+在 \S\ref{sec:Ker-Coker} 回顾的双积给出一类格外简单的短正合列, 命题 \ref{prop:split-ses} 将予以刻画.
+\begin{proposition}\label{prop:biproduct-ses}
+	令 $X_1, X_2$ 为 Abel 范畴 $\mathcal{A}$ 的对象, 则 $0 \to X_1 \xrightarrow{\iota_1} X_1 \oplus X_2 \xrightarrow{p_2} X_2 \to 0$ 是短正合列.
+\end{proposition}
+\begin{proof}
+	取短正合列 $0 \to X_1 \xrightarrow{\identity} X_1 \to 0 \to 0$ 和 $0 \to 0 \to X_2 \xrightarrow{\identity} X_2 \to 0$, 命题 \ref{prop:homology-biproduct} 说明其直和仍然正合.
+\end{proof}
+
+\section{若干图表引理}\label{sec:diagram-lemmas}
+本节的论证取法 \cite[Chapter 8, 12]{KS06}. 我们从正合性的一个判准入手, 不妨视其为图追踪 \cite[\S 6.8]{Li1} 在一般 Abel 范畴中的代替品. 以下选定 Abel 范畴 $\mathcal{A}$.
+
+\begin{lemma}\label{prop:Abel-cat-exact-aux}
+	设 $X' \xrightarrow{f} X \xrightarrow{g} X''$ 为复形, 则此复形正合当且仅当对于任何满足 $gh=0$ 的态射 $S \xrightarrow{h} X$, 存在态射 $S' \to X'$ 和满态射 $S' \twoheadrightarrow S$ 使得下图交换
+	\[\begin{tikzcd}
+		S' \arrow[twoheadrightarrow, r] \arrow[d] & S \arrow[d, "h"] \\
+		X' \arrow[r, "f"'] & X .
+	\end{tikzcd}\]
+\end{lemma}
+\begin{proof}
+	考虑``仅当''的方向. 首先, $f$ 和 $h$ 皆通过 $\Ker(g)$ 分解, 依此取 $S' := S \dtimes{\Ker(g)} X'$, 而 $S' \to S$ 和 $S' \to X'$ 取为纤维积的自然态射. 正合性蕴涵 $X' \twoheadrightarrow \Ker(g)$, 故命题 \ref{prop:Abel-cat-pull-push} 蕴涵 $S' \to S$ 亦满.
+	
+	考虑``当''的方向. 对 $S := \Ker(g)$ 自带的态射 $h: S \hookrightarrow X$, 按条件得到下图的实线部分
+	\[\begin{tikzcd}
+		S' \arrow[d] \arrow[twoheadrightarrow, r] & S \arrow[d, "h"] \\
+		X' \arrow[dashed, ru, "\alpha" description] \arrow[r, "f"'] & X
+	\end{tikzcd}\]
+	而虚线部分的 $\alpha$ 来自 $gf=0$ 对 $f$ 所给出的分解. 兹断言上图交换. 外框部分和右下三角已知交换. 于是左上三角的两路态射左合成 $h$ 后相等; 既然 $h$ 单, 这表明左上三角也交换, 断言得证. 最后, 上图表明 $\alpha$ 右合成 $S' \to X'$ 为满, 故 $\alpha$ 满; 综上, $f$ 有满--单分解 $X' \twoheadrightarrow \Ker(g) \hookrightarrow X$, 导致 $\Image(f) = \Ker(g)$. 正合性得证.
+\end{proof}
+
+关于图追踪在一般 Abel 范畴中的其他替代方案, 可见 \cite[Tag 05PL]{stacks}.
+
+言归正传, 接着讨论实用中不可或缺的蛇形引理. 考虑图表
+\begin{equation}\label{eqn:snake}\begin{tikzcd}
+	& \Ker' \arrow[r] \arrow[d] & \Ker \arrow[r] \arrow[d] & \Ker'' \arrow[d] & \\
+	& X' \arrow[d] \arrow[r, "f"]  & X \arrow[d] \arrow[r, "g"]  & X'' \arrow[r] \arrow[d, ""{coordinate, name=Z}] & 0  \\
+	0 \arrow[r] & Y' \arrow[r, "u"] \arrow[d] & Y \arrow[r, "v"] \arrow[d] & Y'' \arrow[d] & \\
+	& \Coker' \arrow[uuurr, "\delta" description, crossing over, dashed, leftarrow, rounded corners, to path= {-- ([xshift=-2ex]\tikztostart.west) |- (Z) [near end]\tikztonodes -| ([xshift=2ex]\tikztotarget.east) -- (\tikztotarget) } ] \arrow[r] & \Coker \arrow[r] & \Coker'' &
+\end{tikzcd}\end{equation}
+其中
+\begin{itemize}
+	\item $X' \xrightarrow{f} X \xrightarrow{g} X'' \to 0$ 和 $0 \to Y' \xrightarrow{u} Y \xrightarrow{v} Y''$ 为给定的正合列,
+	\item $\Ker' := \Ker[X' \to Y'] \hookrightarrow X'$, 而 $\Ker$ 和 $\Ker''$ 依此类推,
+	\item $Y' \twoheadrightarrow \Coker' := \Coker[X' \to Y']$, 而 $\Coker$ 和 $\Coker''$ 依此类推,
+	\item $\Ker' \to \Ker$ 和 $\Coker' \to \Coker$ 等态射来自核及余核的函子性 \eqref{eqn:Ker-Coker-functoriality}.
+\end{itemize}
+
+因此 \eqref{eqn:snake} 是每列和中间两行皆正合的交换图表. 以下说明如何构造虚线标出的\emph{连接态射} $\delta: \Ker'' \to \Coker'$.
+\index{lianjietaishe@连接态射 (connecting morphism)}
+
+第一步是从 \eqref{eqn:snake} 构造行正合的交换图表
+\begin{equation}\label{eqn:snake-conn}\begin{tikzcd}
+	0 \arrow[r] & \Ker(g) \arrow[hookrightarrow, r, "s"] \arrow[equal, d] & X \dtimes{X''} \Ker'' \arrow[twoheadrightarrow, r] \arrow[d] \arrow[phantom, rd, "\Box" description] & \Ker'' \arrow[d] & \\
+	0 \arrow[r] & \Ker(g) \arrow[hookrightarrow, r] \arrow[dashrightarrow, d] & X \arrow[r, "g"'] \arrow[d] & X'' \arrow[dashrightarrow, d] \arrow[r] & 0 \\
+	0 \arrow[r] & Y' \arrow[r, "u"] \arrow[d] & Y \arrow[twoheadrightarrow, r] \arrow[d] & \Coker(u) \arrow[equal, d] \arrow[r] & 0 \\
+	& \Coker' \arrow[hookrightarrow, r] & \Coker' \dsqcup{Y'} Y \arrow[r] \arrow[phantom, lu, "\boxplus" description] \arrow[twoheadrightarrow, r, "t"'] & \Coker(u) \arrow[r] & 0
+\end{tikzcd}\end{equation}
+其中
+\begin{compactitem}
+	\item $\Box$ 和 $\boxplus$ 代表相应的方块是拉回和推出, 既然拉回保核而推出保余核, 这就解释了图中的左上和右下方块;
+	\item 命题 \ref{prop:Abel-cat-pull-push} 可施于 \eqref{eqn:snake-conn} 的 $\Box$ 和 $\boxplus$ 部分, 这就解释了 $X \dtimes{X''} \Ker'' \to \Ker''$ 满而 $\Coker' \to \Coker' \dsqcup{Y'} Y$ 单;
+	\item 箭头 $\Ker(g) \dashrightarrow Y'$ 无非自然态射 $\Ker(g) \to \Ker(v)$, 来自核的函子性 \eqref{eqn:Ker-Coker-functoriality};
+	\item 同理, 余核的函子性给出虚线箭头 $X'' \simeq \Coker(f) \to \Coker(u)$.
+\end{compactitem}
+
+观察到 \eqref{eqn:snake-conn} 中 $\Ker(g) \dashrightarrow Y' \to \Coker'$ 合成为 $0$, 这是因为它右合成 $X' \twoheadrightarrow \Image(f) \rightiso \Ker(g)$ 之后为 $0$; 同理, $\Ker'' \to X'' \dashrightarrow \Coker(u)$ 合成为 $0$, 因为它左合成 $\Coker(u) \rightiso \Image(v) \hookrightarrow Y''$ 之后为 $0$.
+
+记 \eqref{eqn:snake-conn} 中路的合成态射为 $\delta_0: X \dtimes{X''} \Ker'' \to \Coker' \dsqcup{Y'} Y$. 上述观察即刻给出
+\[ \delta_0 s = 0, \quad t \delta_0 = 0. \]
+于是 $\delta_0$ 具唯一分解
+\[ X \dtimes{X''} \Ker'' \twoheadrightarrow \Coker(s) \xrightarrow{\exists!} \Ker(t) \hookrightarrow \Coker' \dsqcup{Y'} Y . \]
+
+已知 \eqref{eqn:snake-conn} 的右上和左下角水平态射分别是满的和单的, 故 $\Coker(s) \rightiso \Ker''$ 而 $\Coker' \rightiso \Ker(t)$. 综之即得所求的典范态射 $\delta: \Ker'' \to \Coker'$.
+
+\begin{remark}\label{rem:connecting-canonical}
+	连接态射的典范性有更明确的表述如下. 考虑交换图表
+	\[\begin{tikzcd}[row sep=tiny, column sep=small]
+		& & X' \arrow[rr] \arrow[ld] \arrow[dd] & & X \arrow[rr] \arrow[ld] \arrow[dd] & & X'' \arrow[r] \arrow[ld] \arrow[dd] & 0 \\
+		0 \arrow[r] & Y' \arrow[rr, crossing over] & & Y \arrow[rr, crossing over] & & Y'' & & \\
+		& & \underline{X'} \arrow[rr] \arrow[ld] & & \underline{X} \arrow[rr] \arrow[ld] & & \underline{X''} \arrow[ld] \arrow[r] & 0 \\
+		0 \arrow[r] & \underline{Y'} \arrow[rr] \arrow[leftarrow, uu, crossing over] & & \underline{Y} \arrow[rr] \arrow[leftarrow, uu, crossing over] & & \underline{Y''} \arrow[leftarrow, uu, crossing over] & &
+	\end{tikzcd}\]
+	使得每行皆正合. 相应地有 $\Ker'$, $\underline{\Ker'}$ 等等; 那么连接态射 $\delta$, $\underline{\delta}$ 可置入交换图表
+	\[\begin{tikzcd}
+		\Ker'' \arrow[r, "\delta"] \arrow[d, "\text{自然态射}"'] & \Coker' \arrow[d, "\text{自然态射}"] \\
+		\underline{\Ker''} \arrow[r, "\underline{\delta}"'] & \underline{\Coker'} .
+	\end{tikzcd}\]
+	按定义, 为此只需说明 $\delta_0$ 和 $\underline{\delta_0}$ 也能放入相应的交换方块. 一切归结遂为核, 余核, 积, 余积的函子性. 细节谨留给读者.
+\end{remark}
+
+稍后的证明将用到如下两点观察.
+\begin{itemize}
+	\item 连接态射的构造自对偶: 若将 \eqref{eqn:snake} 放在 $\mathcal{A}^{\opp}$ 中考量, 则所有箭头反转, $\Ker'$ 和 $\Coker'$ 等等的角色对调, 所得 $\mathcal{A}^{\opp}$ 中图表仍和 \eqref{eqn:snake} 相似, 只是旋转半圈; 相应的连接态射放回 $\mathcal{A}$ 中考量, 仍从 $\Ker''$ 打向 $\Coker'$, 它和先前构造的 $\delta$ 吻合.
+	
+	\item 态射 $\Ker \to \Ker''$ 可分解为 $\Ker \to X \dtimes{X''} \Ker'' \to \Ker''$. 于是细观 \eqref{eqn:snake-conn} 可见态射
+	\[ \Ker \to \Ker'' \xrightarrow{\delta} \Coker' \hookrightarrow \Coker' \dsqcup{Y'} Y, \qquad \Ker \to X \dtimes{X''} \Ker'' \xrightarrow{\delta_0} \Coker' \dsqcup{Y'} Y \]
+	的合成相等, 但右式也和 $\Ker \to X \to Y \to \Coker' \dsqcup{Y'} Y $ 有相等的合成, 即 $0$. 由此归结出
+	\begin{equation}\label{eqn:snake-conn-complex}
+		\Ker \to \Ker'' \xrightarrow{\delta} \Coker' \quad \text{合成为}\; 0.
+	\end{equation}
+\end{itemize}
+
+\begin{theorem}[蛇形引理]\label{prop:snake-lemma}\index{shexingyinli@蛇形引理 (Snake Lemma)}
+	考虑 Abel 范畴 $\mathcal{A}$ 中的图表 \eqref{eqn:snake}, 则 $\Ker' \to \Ker \to \Ker'' \xrightarrow{\delta} \Coker' \to \Coker \to \Coker''$ 是正合列. 如果图表中 $f: X' \to X$ 单 (或 $v: Y \to Y''$ 满), 则 $\Ker' \to \Ker$ (或 $\Coker \to \Coker''$) 亦然.
+\end{theorem}
+\begin{proof}
+	最后一部分的断言是简单的: 若 $f$ 单, 则 $\Ker' \hookrightarrow X' \xrightarrow{f} X$ 之合成亦单, 故 \eqref{eqn:snake} 交换蕴涵 $\Ker' \to \Ker$ 单. 倒转箭头可得 $v$ 满的情形.
+
+	主要问题是第一部分断言的正合列. 基于先前已观察到的对偶性, 只需证明 $\Ker' \to \Ker \to \Ker'' \to \Coker'$ 正合.
+	
+	首先说明 $\Ker' \to \Ker \to \Ker''$ 是复形. 这是因为 $\Ker' \to \Ker \to \Ker''$ 是 $X' \to X \to X''$ 诱导的, 而后者合成为 $0$. 接着应用引理 \ref{prop:Abel-cat-exact-aux} 来证明正合性: 假设态射 $\psi: S \to \Ker$ 使得 $S \xrightarrow{\psi} \Ker \to \Ker''$ 合成为 $0$, 我们寻求交换图表
+	\begin{equation}\label{eqn:snake-lemma-aux-1}\begin{tikzcd}
+			S' \arrow[twoheadrightarrow, r, "h"] \arrow[d] & S \arrow[d, "\psi"] \arrow[rd, "0"] & \\
+			\Ker' \arrow[r] \arrow[hookrightarrow, d] & \Ker \arrow[hookrightarrow, d] \arrow[r] & \Ker'' \arrow[hookrightarrow, d] \\
+			X' \arrow[r, "f"'] & X \arrow[r, "g"'] & X''
+	\end{tikzcd}\end{equation}
+	其中的 $\Ker' \leftarrow S' \xrightarrow{h} S$ 有待构造. 为此, 首先对 $S \xrightarrow{\psi} \Ker \to X$ 的合成应用引理 \ref{prop:Abel-cat-exact-aux} 以获取交换图表
+	\[\begin{tikzcd}
+		S' \arrow[twoheadrightarrow, r, "h"] \arrow[d] & S \arrow[d] \arrow[rd, "0"] & \\
+		X' \arrow[r, "f"'] & X \arrow[r, "g"'] & X'' .
+	\end{tikzcd}\]
+	于是 $S' \to X' \to Y' \xrightarrow{u} Y$ 和 $S' \xrightarrow{\psi h} \Ker \to X \to Y$ 一样合成为 $0$, 而 $u$ 单, 故 $S' \to X' \to Y'$ 合成为 $0$. 这使 $S' \to X'$ 通过 $\Ker'$ 分解, 给出 \eqref{eqn:snake-lemma-aux-1} 的所有箭头.
+	
+	现在观察 \eqref{eqn:snake-lemma-aux-1} 的左半部: 其外框和下半方块交换; 熟悉的引理 \ref{prop:epi-mono-morphism} 遂说明上半方块也交换. 综之, $\Ker' \to \Ker \to \Ker''$ 正合.
+	
+	以下处理 $\Ker \to \Ker'' \xrightarrow{\delta} \Coker'$. 首先 \eqref{eqn:snake-conn-complex} 说明这是复形. 正合性仍有赖于引理 \ref{prop:Abel-cat-exact-aux}: 假设态射 $\psi: S \to \Ker''$ 满足 $\delta \psi = 0$, 我们寻求形如
+	\begin{equation}\label{eqn:snake-lemma-aux-2}\begin{tikzcd}
+		S_0 \arrow[d] \arrow[twoheadrightarrow, r] & S \arrow[d, "\psi"] \\
+		\Ker \arrow[r] & \Ker''
+	\end{tikzcd}\end{equation}
+	之交换图表. 关于 $\delta$ 的构造中已经说明 $X \dtimes{X''} \Ker'' \to \Ker'' \to 0$ 正合, 故存在交换图表
+	\begin{equation}\label{eqn:snake-lemma-aux-3}\begin{tikzcd}
+		S_1 \arrow[twoheadrightarrow, r] \arrow[d] & S \arrow[d, "\psi"'] \arrow[rd, "0"] & \\
+		X \dtimes{X''} \Ker'' \arrow[r] & \Ker'' \arrow[r] & 0 .
+	\end{tikzcd}\end{equation}
+
+	考虑 $S_1 \to X \dtimes{X''} \Ker'' \to X \to Y \xrightarrow{v} Y''$. 比较上图和 \eqref{eqn:snake}, \eqref{eqn:snake-conn} 可知此合成为 $0$, 故 $S_1 \to X \dtimes{X''} \Ker'' \to X \to Y$ 可分解为 $S_1 \xrightarrow{\xi} Y' \xrightarrow{u} Y$. 以下论证 $S_1 \xrightarrow{\xi} Y' \to \Coker'$ 合成为 $0$. 出发点是交换图表
+	\[\begin{tikzcd}
+		S \arrow[r, "\psi"] & \Ker'' \arrow[r, "\delta"] & \Coker' \arrow[hookrightarrow, d] \\
+		S_1 \arrow[twoheadrightarrow, u] \arrow[r] & X \dtimes{X''} \Ker'' \arrow[r, "\delta_0"] \arrow[u] \arrow[d] & \Coker' \dsqcup{Y'} Y \\
+		& X \arrow[r] & Y \arrow[u]
+	\end{tikzcd}\]
+
+	上图第一行合成为 $\delta \psi = 0$, 故第二行亦然, 从而 $S_1 \xrightarrow{\xi} Y' \xrightarrow{u} Y \to \Coker' \dsqcup{Y'} Y$ 合成为 $0$. 因为 $Y' \xrightarrow{u} Y \to \Coker' \dsqcup{Y'} Y$ 和 $Y' \to \Coker' \to \Coker' \dsqcup{Y'} Y$ 有相同的合成, 而在 $\delta$ 的构造中已说明 $\Coker' \to \Coker' \dsqcup{Y'} Y$ 为单, 故 $S_1 \xrightarrow{\xi} Y' \to \Coker'$ 的确合成为 $0$.
+
+	下一步是对正合列 $X' \to Y' \to \Coker'$ 应用引理 \ref{prop:Abel-cat-exact-aux}, 得到交换图表
+	\[\begin{tikzcd}
+		S_0 \arrow[twoheadrightarrow, r] \arrow[d, "k"'] & S_1 \arrow[d, "\xi"] \arrow[rd, "0"] & \\
+		X' \arrow[r] & Y' \arrow[r] & \Coker' .
+	\end{tikzcd}\]
+
+	记 $\lambda$ 为 $S_0 \twoheadrightarrow S_1 \to X \dtimes{X''} \Ker'' \to X$ 的合成. 分别记态射 $X' \to Y'$ 和 $X \to Y$ 为 $a$ 和 $b$. 综上可得交换图表
+	\[\begin{tikzcd}
+		S_0 \arrow[twoheadrightarrow, r] \arrow[d, "k"' near end] \arrow[rrd, "\lambda" description, near end] & S_1 \arrow[d, crossing over, "\xi"' near end] \arrow[r] & X \dtimes{X''} \Ker'' \arrow[d] \\
+		X' \arrow[r, "a"] \arrow[d, "f"'] & Y' \arrow[d, "u"'] & X \arrow[ld, "b"] \\
+		X \arrow[r, "b"] & Y &
+	\end{tikzcd}\]
+	其中两个方块的交换性已知, 三角交换来自 $\lambda$ 的定义, 右侧梯形交换则缘于之前对 $\xi$ 的讨论.
+	
+	由此立见 $b\lambda = bfk$, 故 $\lambda - fk: S_0 \to X$ 通过 $\Ker = \Ker(b) \hookrightarrow X$ 分解. 最后请端详图表
+	\[\begin{tikzcd}
+		S_0 \arrow[twoheadrightarrow, r] \arrow[d] \arrow[dd, bend right=50, "{\lambda -fk}"'] & S_1 \arrow[twoheadrightarrow, r] & S \arrow[d, "\psi"] \\
+		\Ker \arrow[hookrightarrow, d] \arrow[rr] & & \Ker'' \arrow[hookrightarrow, d] \\
+		X \arrow[rr, "g"] & & X'' .
+	\end{tikzcd}\]
+	若能说明上部方块交换即可完成 \eqref{eqn:snake-lemma-aux-2} 设定的目标. 下部方块和弓形部分已知交换, 熟知的论证遂将问题归结为外框的交换性. 注意到 $g(\lambda - fk) = g\lambda$, 于是外框的交换性归结为已知的交换图表 (见 \eqref{eqn:snake-lemma-aux-3}):
+	\[\begin{tikzcd}
+		S_0 \arrow[twoheadrightarrow, r] \arrow[rdd, bend right, "\lambda"'] & S_1 \arrow[twoheadrightarrow, r] \arrow[d] & S \arrow[d, "\psi"] \\
+		& X \dtimes{X''} \Ker'' \arrow[r] \arrow[d] & \Ker'' \arrow[d] \\
+		& X \arrow[r, "g"] & X'' .
+	\end{tikzcd}\]
+	这就验证了全部所需的条件.
+\end{proof}
+
+连接同态 $\delta$ 和定理 \ref{prop:snake-lemma} 在模范畴 $R\dcate{Mod}$ 的情形大大地简化, 见 \cite[命题 6.8.6]{Li1}.
+
+\begin{proposition}[五项引理]\label{prop:5-lemma}
+	\index{wuxiangyinli@五项引理 (Five Lemma)}
+	考虑 Abel 范畴 $\mathcal{A}$ 中行正合的交换图表:
+	\[\begin{tikzcd}
+		X_1 \arrow[r] \arrow[d, "f_1"'] & X_2 \arrow[r] \arrow[d, "f_2"'] & X_3 \arrow[r] \arrow[d, "f_3" description] & X_4 \arrow[r] \arrow[d, "f_4"] & X_5 \arrow[d, "f_5"] \\
+		Y_1 \arrow[r] & Y_2 \arrow[r] & Y_3 \arrow[r] & Y_4 \arrow[r] & Y_5
+	\end{tikzcd}\]
+	\begin{enumerate}[(i)]
+		\item 若 $f_1$ 满而 $f_2, f_4$ 单, 则 $f_3$ 为单 (仅涉及前四列);
+		\item 若 $f_5$ 单而 $f_2, f_4$ 满, 则 $f_3$ 为满 (仅涉及后四列);
+		\item 若 $f_1$ 满, $f_5$ 单而 $f_2, f_4$ 皆为同构, 则 $f_3$ 为同构.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	显然 (i) 和 (ii) 对偶, 而 (iii) 是 (i)---(ii) 和命题 \ref{prop:strict-isomorphism} 的推论, 以下仅证 (i).
+	
+	设态射 $h: S \to X_3$ 满足 $f_3 h = 0$, 目标是证明 $h = 0$. 合成 $S \xrightarrow{h} X_3 \to X_4 \xrightarrow{f_4} Y_4$ 为 $0$, 故合成 $S \xrightarrow{h} X_3 \to X_4$ 也为 $0$. 引理 \ref{prop:Abel-cat-exact-aux} 施于正合列 $X_2 \to X_3 \to X_4$ 遂给出交换图表
+	\[\begin{tikzcd}
+		S' \arrow[twoheadrightarrow, r] \arrow[d] & S \arrow[d, "h"] \\
+		X_2 \arrow[r] & X_3 .
+	\end{tikzcd}\]
+
+	今将构造交换图表
+	\[\begin{tikzcd}[row sep=small]
+		S''' \arrow[twoheadrightarrow, r] \arrow[dd] & S'' \arrow[twoheadrightarrow, r] \arrow[dd] & S' \arrow[d] \\
+		& & X_2 \arrow[d, "f_2" inner sep=0.5em] \\
+		X_1 \arrow[r, "f_1"'] & Y_1 \arrow[r] & Y_2 . 
+	\end{tikzcd}\]
+	方式如下: 既然 $S' \to X_2 \xrightarrow{f_2} Y_2 \to Y_3$ 因 $f_3 h = 0$ 合成为 $0$, 对 $S' \to Y_2$ 和正合列 $Y_1 \to Y_2 \to Y_3$ 应用引理 \ref{prop:Abel-cat-exact-aux}, 便给出右半部; 应用引理 \ref{prop:Abel-cat-exact-aux} 于 $S'' \to Y_1$ 和正合列 $X_1 \xrightarrow{f_1} Y_1 \to 0$, 便给出左半部.
+	
+	取合成态射 $S''' \to S'$ 并考量下图
+	\[\begin{tikzcd}
+		S''' \arrow[twoheadrightarrow, r] \arrow[d] & S' \arrow[twoheadrightarrow, r] \arrow[d] & S \arrow[d, "h"] & \\
+		X_1 \arrow[r] \arrow[d, "f_1"'] & X_2 \arrow[r] \arrow[d, "f_2"] & X_3 \arrow[r] & X_4 \\
+		Y_1 \arrow[r] & Y_2 & &
+	\end{tikzcd}\]
+	兹断言图表交换. 唯一问题显然是左上方块: 将其中的
+	\begin{tikzpicture}[scale=0.3]
+		\draw[->] (0,1) -- (1,1) -- (1,0); \end{tikzpicture}
+	和
+	\begin{tikzpicture}[scale=0.3]
+		\draw[->] (0,1) -- (0,0) -- (1,0);
+	\end{tikzpicture}
+	同合成 $f_2$, 则因为方块
+	$\begin{tikzcd}[row sep=small, column sep=small]
+		X_1 \arrow[r] \arrow[d] & X_2 \arrow[d] \\
+		Y_1 \arrow[r] & Y_2
+	\end{tikzcd}$ 和 $\begin{tikzcd}[row sep=small, column sep=small]
+		S''' \arrow[r] \arrow[d] & S' \arrow[d] \\
+		Y_1 \arrow[r] & Y_2
+	\end{tikzcd}$
+	皆交换, 而 $f_2$ 单, 可知左上方块也交换.
+	
+	由此知 $S''' \twoheadrightarrow S' \twoheadrightarrow S \xrightarrow{h} X_3$ 合成为 $0$, 从而 $h=0$. 明所欲证.
+\end{proof}
+
+本节介绍的只是众多图表引理中最常用的两则. 基于双复形的语言, G.\ Bergman 发现了包罗万象的蝾螈引理, 它可以统摄蛇形引理和同调代数中一些经典的图表引理, 请雅好此道的读者移步 \cite{Be12}.
+\index{rongyuanyinli@蝾螈引理 (Salamander Lemma)}
+
+\section{格论一瞥}\label{sec:lattices}
+本节旨在简介称为格的一类偏序结构. 这有助于厘清 Abel 范畴的结构.
+
+以下将考虑种种偏序集 $(P, \leq)$, 其对应的范畴记为 $\mathcal{P}$.
+
+对于偏序集 $(P, \leq)$ 的任何一族子集 $S$, 对之有上界, 下界, 上确界 $\sup S$ 和下确界 $\inf S$ 的概念. 子集 $S \subset P$ 有上确界 (或下确界) 当且仅当 $S$ 中所有对象在范畴 $\mathcal{P}$ 中的余积 (或积) 存在, 此时该上确界 (或下确界) 即是此余积 (或积).
+
+\begin{definition}\label{def:lattice-order}
+	\index{ge@格 (lattice)}
+	\index{ge!有界 (bounded)}
+	\index{qujian@区间 (interval)}
+	\index[sym1]{veewedge@$\vee$, $\wedge$}
+	如果偏序集 $(P, \leq)$ 中的任两个元素 $a,b$ 都有上确界 $a \vee b$ 和下确界 $a \wedge b$, 则称 $(P, \leq)$ 为\emph{格}. 若进一步要求 $(P, \leq)$ 本身有上界和下界, 则它们皆唯一, 分别记为 $1$ 和 $0$, 此时称 $P$ 为\emph{有界格}.
+	
+	若 $a, b$ 是偏序集 $(P, \leq)$ 的元素, $a \leq b$, 则 $[a, b] := \left\{x \in P: a \leq x \leq b \right\}$ 对 $\leq$ 也构成偏序集, 称为 $a, b$ 确定的\emph{区间}.
+\end{definition}
+
+若 $P$ 为格, 则 $P$ 中的区间皆对 $\vee$ 和 $\wedge$ 封闭, 并且皆是有界格. 若 $P$ 是有界格则 $P = [0, 1]$, 而且 $x \wedge 0 = 0$, $x \vee 0 = x = x \wedge 1$, $x \vee 1 = 1$ 对所有 $x \in P$ 皆成立.
+
+按范畴的观点, $a \wedge b$, $a \vee b$, $1$, $0$ 分别对应到两个对象的积, 余积和范畴中的终对象 (即空积), 始对象 (即空余积), 请读者自行验证.
+
+为了示范 $\wedge$ 和 $\vee$ 的操作, 我们来证明以下事实: 若 $a^\flat, a, b \in P$ 满足 $a^\flat \leq a$, 则
+\begin{equation}\label{eqn:modular-inequality}
+	a^\flat \vee (a \wedge b) \leq (a^\flat \vee b) \wedge a.
+\end{equation}
+根据上确界定义, 问题首先化为证 $a^\flat \leq (a^\flat \vee b) \wedge a$ 和 $(a \wedge b) \leq (a^\flat \vee b) \wedge a$. 根据下确界定义, 这又分别化为证
+\[ a^\flat \leq a^\flat \vee b, \quad a^\flat \leq a, \quad a \wedge b \leq a^\flat \vee b, \quad a \wedge b \leq a; \]
+第三式归结为 $a \wedge b \leq b \leq a^\flat \vee b$, 其余自明.
+
+\begin{definition}\label{def:modular-lattice}
+	\index{ge!模 (modular)}
+	\index{bu@补 (complement)}
+	设 $P$ 为格.
+	\begin{itemize}
+		\item 当以下性质成立时, 称 $P$ 为\emph{模格}: 若 $a^\flat, a, b \in P$ 满足 $a^\flat \leq a$, 则
+		\[ a^\flat \vee (a \wedge b) = (a^\flat \vee b) \wedge a. \]
+		\item 设 $P$ 为有界格. 若 $x, c \in P$ 满足 $x \vee c = 1$, $x \wedge c = 0$, 则称 $c$ 是 $x$ 在 $P$ 中的\emph{补}.
+	\end{itemize}
+\end{definition}
+
+且来考察格的基本例子.
+\begin{itemize}
+	\item 正整数集 $\Z_{\geq 1}$ 对于整除关系构成格 ($x \mid y \iff x \leq y$): $x \vee y = \mathrm{lcm}(x,y)$ 而 $x \wedge y = \mathrm{gcd}(x,y)$. 请读者验证这是模格, 有下界 $1$ 而无上界.
+
+	\item 取 $R$ 为环, $M$ 为左 $R$-模, 其子模构成的集合 $\mathrm{Sub}_M$ 对 $\subset$ 构成有界模格: $x \vee y = x + y$ 而 $x \wedge y = x \cap y$; 上界为 $M$ 而下界为 $\{0\}$. 这是``模格''一词的渊源.
+	
+	\item Hilbert 空间 $H$ 的所有闭子空间对 $\subset$ 构成有界格: $x \vee y := \overline{x+y}$ 而 $x \wedge y = x \cap y$. 可以证明当 $H$ 为无穷维时这不是模格 (Birkhoff--von Neumann).
+	% Possible reference: Proposition 4.4 in https://link.springer.com/chapter/10.1007/978-94-015-9026-6_4
+\end{itemize}
+
+\begin{remark}\label{rem:lattice-duality}
+	格的定义也含藏对偶性. 对集合 $P$ 上给定的偏序 $\leq$, 可考虑其相反偏序 $\leq^{\opp}$: $x \leq^{\opp} y \iff x \geq y$; 这相当于用 $\mathcal{P}^{\opp}$ 代替 $\mathcal{P}$. 若 $(P, \leq)$ 是格 (或有界格), 则 $(P, \leq^{\opp})$ 亦然. 而且 $(P, \leq)$ 中的 $\wedge, \vee, 0, 1$ 分别对应 $(P, \leq^{\opp})$ 中的 $\vee, \wedge, 1, 0$.
+\end{remark}
+
+\begin{lemma}\label{prop:modularity-criterion}
+	设 $P$ 为格, 则 $P$ 为模格当且仅当以下性质对 $P$ 中的所有区间 $I$ 都成立: 若 $c^\flat, c$ 皆是 $x \in I$ 在 $I$ 中的补, $c^\flat \leq c$, 则 $c^\flat = c$.
+\end{lemma}
+\begin{proof}
+	若 $P$ 为模格, 则任意区间 $I$ 亦然. 不妨假设 $I=P$; 对于断言中的 $x, c^\flat, c$, 我们有
+	\[ c = c \wedge 1 = c \wedge (x \vee c^\flat) = c^\flat \vee (x \wedge c) = c^\flat \vee 0 = c^\flat . \]
+	
+	反之, 假定关于补的条件对所有区间成立. 设 $a^\flat, a, b \in P$ 满足 $a^\flat \leq a$. 命
+	\[ b \wedge a \leq c_1 := a^\flat \vee (b \wedge a) \underset{\because \eqref{eqn:modular-inequality}}{\leq} a \wedge (b \vee a^\flat) =: c_2 \leq b \vee a^\flat. \]
+	今将证明 $c_1, c_2$ 皆是 $b$ 在 $\left[ b \wedge a, \; b \vee a^\flat \right]$ 中的补, 从而 $c_1 = c_2$. 首先按定义验证 $c_1 \leq a$, 故
+	\[ b \wedge a \geq b \wedge c_1 = (a^\flat \vee (b \wedge a)) \wedge b \underset{\because \eqref{eqn:modular-inequality}}{\geq} (a^\flat \wedge b) \vee (b \wedge a) = b \wedge a , \]
+	于是 $b \wedge c_1 = b \wedge a$. 另一方面, $b \vee c_1 = a^\flat \vee (b \wedge a) \vee b = a^\flat \vee b$. 综之, $c_1$ 的确是 $b$ 在 $\left[ b \wedge a, \; b \vee a^\flat \right]$ 中的补.
+
+	格的对偶性 (注记 \ref{rem:lattice-duality}) 将 $a^\flat, a$ 的序关系互换, $\wedge$ 和 $\vee$ 互换, $c_1$ 和 $c_2$ 的角色也互换. 以上论证在 $(P, \leq^{\opp})$ 中操作遂说明 $c_2$ 是 $b$ 在 $\left[ b \wedge a, \; b \vee a^\flat \right]$ 中的补.
+\end{proof}
+
+\begin{proposition}\label{prop:lattice-diamond-isom}
+	\index{biaozhuntonggou@标准同构 (standard isomorphism)}
+	设 $a, b$ 为模格 $(P, \leq)$ 的元素, 则存在偏序集的同构
+	\[\begin{tikzcd}[row sep=tiny]
+		{[a \wedge b, a]} \arrow[leftrightarrow, r, "1:1"] & {[b, a \vee b]} \\
+		x \arrow[mapsto, r] & x \vee b \\
+		y \wedge a & y \arrow[mapsto, l]
+	\end{tikzcd}\]
+	称之为\emph{标准同构}.
+\end{proposition}
+\begin{proof}
+	双向的映射显然良定义而且保序. 对于 $x \in [a \wedge b, a]$, 模格的定义给出 $(x \vee b) \wedge a = (a \wedge b) \vee x$, 右式即 $x$. 对偶地, $y \in [b, a \vee b]$ 蕴涵 $(y \wedge a) \vee b = y$ (注记 \ref{rem:lattice-duality}), 故双向映射互逆.
+\end{proof}
+
+初等代数学中的 Zassenhaus 引理 (见 \cite[引理 4.6.4]{Li1}, 确切地说是其模论版本) 及其推论可以用格论进行提炼.
+
+\begin{theorem}[模格的 Zassenhaus 引理]\label{prop:lattice-Zassenhaus}
+	\index{Zassenhaus yinli@Zassenhaus 引理 (Zassenhaus Lemma)}
+	设 $(P, \leq)$ 为模格. 给定元素 $u^\flat \leq u$ 和 $v^\flat \leq v$, 则有下图
+	\[ \begin{tikzcd}[column sep=tiny, row sep=small]
+		u^\flat \vee (u \wedge v) \arrow[dash, dd] \arrow[dash, rd] & & (u \wedge v) \vee v^\flat \arrow[dash, dd] \arrow[dash, ld] \\
+		& u \wedge v \arrow[dash, dd] & \\
+		u^\flat \vee (u \wedge v^\flat) \arrow[dash, rd] & & (u^\flat \wedge v) \vee v^\flat \arrow[dash, ld] \\
+		& (u^\flat \wedge v) \vee (u \wedge v^\flat)
+	\end{tikzcd} \]
+	其意义是图的各项满足
+	\begin{equation}\label{eqn:Zassenhaus-cases} \begin{tikzcd}
+		x \arrow[dash, d, "\geq" description, sloped] \\ y
+	\end{tikzcd} \qquad
+	\begin{tikzcd}[column sep=tiny]
+		x \arrow[dash, rd] & & y \arrow[dash, ld] \\
+		& x \wedge y &
+	\end{tikzcd} \quad
+	\begin{tikzcd}[column sep=tiny]
+		{} & x \vee y \arrow[dash, ld] \arrow[dash, rd] & \\
+		x & & y
+	\end{tikzcd} . \end{equation}
+	此外, 存在区间的标准同构
+	\begin{multline*}
+		\left[ u^\flat \vee (u \wedge v^\flat), \; u^\flat \vee (u \wedge v) \right] \leftiso \left[ (u^\flat \wedge v) \vee (v \wedge v^\flat), \; u \wedge v \right] \\
+		\rightiso \left[ (u^\flat \wedge v) \vee v^\flat, \; (u \wedge v) \vee v^\flat \right],
+	\end{multline*}
+	它们由命题 \ref{prop:lattice-diamond-isom} 中的映射 $x \vee u^\flat \vee (u \wedge v) \mapsfrom x \mapsto x \vee (u^\flat \wedge v) \vee v^\flat$ 实现.
+\end{theorem}
+\begin{proof}
+	最后一部分的同构是对图中两个平行四边形运用命题 \ref{prop:lattice-diamond-isom} 的结果, 关键在检查 \eqref{eqn:Zassenhaus-cases} 的关系. 注意到图表对 $u \leftrightarrow v$, $u^\flat \leftrightarrow v^\flat$ 左右对称, 故端详左半部即可. 各项之间的偏序不难看透. 接着验证 $\wedge$ 情形: 按模格定义导出
+	\begin{equation*}
+		\left( u^\flat \vee (u \wedge v^\flat)\right) \wedge (u \wedge v) = \left( u^\flat \wedge (u \wedge v) \right) \vee (u \wedge v^\flat) = (u^\flat \wedge v) \vee (u \wedge v^\flat).
+	\end{equation*}
+	至于 $\vee$ 的情形, 由 $u \wedge v^\flat \leq u \wedge v$ 立见
+	\begin{equation*}
+		u^\flat \vee (u \wedge v^\flat) \vee (u \wedge v) = u^\flat \vee (u \wedge v). 
+	\end{equation*}
+	由此即知 \eqref{eqn:Zassenhaus-cases} 成立.
+\end{proof}
+
+以下考虑格中的有限降链, 写作 $x_0 \geq x_1 \geq \cdots \geq x_r$ 的形式 ($r \in \Z_{\geq 0}$). 插入有限多个中间项所得的降链称为原降链的\emph{加细}; 如果插入项包含某个 $y \notin \{x_0, \ldots, x_r\}$, 则称之为真加细.
+
+\begin{definition}\label{def:Schreier-equiv}
+	对于模格中的两条等长降链 $x_0 \geq \cdots \geq x_r$ 和 $x'_0 \geq \cdots \geq x'_r$, 当以下条件成立时称两者是\emph{等价}的: 存在 $\{0, \ldots, r\}$ 到自身的双射 $\sigma$ (亦即重排), 使得对每个 $i$ 都存在偏序集的同构
+	\[ \tau_i: \left[ x_{i+1}, x_i \right] \simeq \left[ x'_{\sigma(i) + 1}, x'_{\sigma(i)} \right], \]
+	并且 $\tau_i$ 分解为有限多个标准同构 (命题 \ref{prop:lattice-diamond-isom}) 或其逆的合成.
+\end{definition}
+
+\begin{theorem}[模格的 Schreier 加细定理]\label{prop:Schreier-refinement}
+	\index{Schreier jiaxidingli@Schreier 加细定理 (Schreier Refinement Theorem)}
+	考虑模格 $(P, \leq)$ 中的降链
+	\[ x_0 \geq \cdots \geq x_r, \quad y_0 \geq \cdots \geq y_s, \]
+	使得 $x_0 = y_0$, $x_r = y_s$, 其中 $r, s \in \Z_{\geq 0}$. 那么两者有等价的加细.
+\end{theorem}
+\begin{proof}
+	论证与群的情形 \cite[定理 4.6.6]{Li1} 无异, 皆基于定理 \ref{prop:lattice-Zassenhaus}, 在此略陈梗概. 定义
+	\[ x_{i, j} := x_{i+1} \vee (x_i \wedge y_j), \quad y_{j, i} := (x_i \wedge y_j) \vee y_{j+1}, \]
+	其中对 $x_{i, j}$ 要求 $0 \leq i < r$ 而 $0 \leq j \leq s$, 对 $y_{j, i}$ 要求 $0 \leq i \leq r$ 而 $0 \leq j < s$. 那么 $x_{i, j+1} \leq x_{i, j}$, $x_{i, 0} = x_i$, $x_{i, s} = x_{i+1}$, 所以 $\left( x_{i,j} \right)_{i,j}$ 按此顺序加细了 $x_0 \geq \cdots \geq x_r$; 同理, $\left( y_{j,i} \right)_{j,i}$ 加细 $y_0 \geq \cdots \geq y_s$. 在定理 \ref{prop:lattice-Zassenhaus} 中取 $u^\flat = x_{i+1}$, $u = x_i$ 和 $v^\flat = y_{j+1}$, $v = y_j$ 可得
+	\[ \left[ x_{i, j+1}, x_{i,j} \right] \simeq \left[ y_{j, i+1}, y_{j, i} \right], \]
+	而且此同构能分解为标准同构及其逆. 明所欲证.
+\end{proof}
+
+今后仅考虑严格升/降链.
+
+\begin{definition}\index{hechenglie@合成列 (composition series)}
+	选定偏序集 $P$ 及其元素 $a < b$. 若 $P$ 中的降链 $b = x_0 > \cdots > x_r = a$ 无真加细, 则称之为 $[a, b]$ 的\emph{合成列}.
+\end{definition}
+
+合成列的长度定义为上述之 $r \in \Z_{\geq 0}$; 留意到 $r=0$ 当且仅当 $a=b$. \index{changdu@长度 (length)}
+
+\begin{theorem}[模格的 Jordan--Hölder 定理]\label{prop:lattice-JH}
+	\index{Jordan-Holder@Jordan--Hölder 定理}
+	设 $a < b$ 为模格 $(P, \leq)$ 的元素, 则 $[a, b]$ 的任两个合成列都等长, 并且在定义 \ref{def:Schreier-equiv} 的意义下相互等价. 
+\end{theorem}
+\begin{proof}
+	这是定理 \ref{prop:Schreier-refinement} 的直接推论.
+\end{proof}
+
+关键在于哪些偏序集中的区间具有合成列. 类比于熟知的模论情形, 这点可以由升链/降链条件来确保.
+
+\begin{definition}\label{def:lattice-Noether-Artin}
+	\index{pianxuji!有限长度 (finite length)}
+	\index{pianxuji!Artin, Noether}
+	设 $(P, \leq)$ 为偏序集, 若 $P$ 中不存在无穷升链 $x_1 < x_2 < x_3 < \cdots$, 则称 $P$ 是 \emph{Noether} 的; 若不存在无穷降链 $x_1 > x_2 > x_3 > \cdots$, 则称 $P$ 是 \emph{Artin} 的. 既是 Artin 又是 Noether 的偏序集称为\emph{有限长度}的.
+\end{definition}
+
+若 $(P, \leq)$ 具有 Noether (或 Artin, 或有限长度) 之性质, 则其子集亦然. 易证 Noether (或 Artin) 条件等价于 $P$ 的任意非空子集都含有相对于 $\leq$ 的极大元 (或极小元). 本章主要将这些概念应用于子对象构成的偏序集, 见定义 \ref{def:sub-quot-obj}.
+
+\begin{definition}\label{def:finite-length-object}
+	\index{duixiang!有限长度 (of finite length)}
+	\index{duixiang!Noether (Noetherian)}
+	\index{duixiang!Artin (Artinian)}
+	选定范畴 $\mathcal{C}$. 我们称 $\mathcal{C}$ 的对象 $X$ 是 Noether (或 Artin, 或有限长度) 的, 如果其子对象构成的偏序集 $(\mathrm{Sub}_X, \subset)$ 是 Noether (或 Artin, 或有限长度) 的.
+\end{definition}
+
+焦点转回一般的偏序集.
+
+\begin{lemma}\label{prop:lattice-composition-series}
+	考虑偏序集 $(P, \leq)$ 的元素 $a \leq b$.
+	\begin{enumerate}[(i)]
+		\item 若 $[a, b]$ 是有限长度的, 则其中的链都能加细为合成列; 特别地, $[a,b]$ 有合成列.
+		\item 若假设 $[a, b]$ 是模格, 并且有合成列, 则 $[a,b]$ 是有限长度的.
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	无妨设 $a < b$. 对于 (i), 给定链 $y_0 > \cdots > y_r$, 说明每个 $[y_i, y_{i+1}]$ 都有合成列即可. 不妨设 $y_i = a$ 而 $y_{i+1} = b$. Artin 条件确保存在极小之 $x^0 \in [a, b]$ 使得 $x^0 > a$. 同理, 若 $x^0 \neq b$ 则存在极小之 $x^1 \in [a, b]$ 使得 $x^1 > x^0$, 依此类推. 根据 Noether 条件, 步骤必在有限步内停止, 给出之链 $b > \cdots > x^0 > a$ 无真加细.
+
+	对于 (ii), 选定合成列 $b = x_0 > \cdots > x_r = a$. 定理 \ref{prop:Schreier-refinement} 表明任意有限长度的链 $\cdots > y_i > y_{i+1} > \cdots$ 都与上述合成列有等价的加细, 故链长不能超过合成列的长度. 于是 $[a, b]$ 是有限长度偏序集.
+\end{proof}
+
+\begin{definition}\label{def:lattice-length}
+	设 $(P, \leq)$ 是有限长度的有界模格. 任取 $P$ 的合成列 $1 = x_0 > \cdots > x_r = 0$. 称 $r \in \Z_{\geq 0}$ 为 $(P, \leq)$ 的\emph{长度}.
+\end{definition}
+
+定理 \ref{prop:lattice-JH} 说明长度良定义, 无关合成列的选取; $(P, \leq)$ 的长度为 $0$ 当且仅当 $P$ 是独点集.
+
+\section{直和分解}\label{sec:direct-sum}
+首先讨论如何以矩阵表示直和之间的态射. 相关论证和模论的情形 \cite[\S 6.3]{Li1} 如出一辙, 在此仅作简要回顾.
+
+选定加性范畴 $\mathcal{A}$. 考虑 $\mathcal{A}$ 的对象 $X_1, \ldots, X_n$ 和 $X'_1, \ldots, X'_m$. 定义 \ref{def:additive-category} 介绍的直和 $\bigoplus_{i=1}^n X_i$ 带有一族态射 $X_j \xrightarrow{\iota_j} \bigoplus_{i=1}^n X_i \xrightarrow{p_j} X_j$. 同理对 $\bigoplus_{i=1}^m X'_i$ 亦有 $p'_j, \iota'_j$ 等等. 积和余积的泛性质给出
+\begin{align*}
+	\Hom \left( \bigoplus_{j=1}^n X_j, \bigoplus_{i=1}^m X'_i \right) & \xrightarrow[\sim]{\phi \mapsto (p'_i \phi)_i } \prod_{i=1}^m \Hom\left(\bigoplus_{j=1}^n X_j , X'_i \right) \\
+	& \xrightarrow[\sim]{(p'_i \phi)_i \mapsto (p'_i \phi \iota_j)_{i, j}} \prod_{j=1}^n \prod_{i=1}^m  \Hom(X_j, X'_i).
+\end{align*}
+因此任意态射 $\phi: \bigoplus_{j=1}^n X_j \to \bigoplus_{i=1}^m X'_i$ 对应到矩阵
+\[ \mathcal{M}(\phi) = (\phi_{ij})_{\substack{1 \leq i \leq m \\ 1 \leq j \leq n}} = \begin{pmatrix}
+	\phi_{11} & \cdots & \phi_{1n} \\
+	\vdots & \ddots & \vdots \\
+	\phi_{m1} & \cdots & \phi_{mn} 
+\end{pmatrix}, \quad \phi_{ij} := p'_i \phi \iota_j: X_j \to X'_i. \]
+
+反过来说, 任何由 $\phi_{ij}: X_j \to X'_i$ 构成的矩阵 $\mathcal{M} = (\phi_{ij})_{\substack{ 1 \leq i \leq m \\ 1 \leq j \leq n }}$ 都唯一确定了态射 $\phi$ 使得 $\mathcal{M} = \mathcal{M}(\phi)$. 态射合成与矩阵乘法匹配:
+\[ \mathcal{M}(\psi\phi) = \mathcal{M}(\psi) \mathcal{M}(\phi) \]
+其中矩阵元的相乘由合成 $\Hom(X'_j, X''_i) \times \Hom(X_k, X'_j) \to \Hom(X_k, X''_i)$ 给出.
+
+\begin{lemma}\label{prop:isomorphism-matrix}
+	给定 $\mathcal{A}$ 中的一族态射 $\phi_i: X_i \to X'_i$, 其中 $i = 1, \ldots, n$, 令 $\phi := (\phi_1, \ldots, \phi_n): \bigoplus_{i=1}^n X_i \to \bigoplus_{i=1}^n X'_i$. 则 $\phi$ 是同构 $\iff$ 每个 $\phi_i$ 都是同构.
+\end{lemma}
+\begin{proof}
+	方向 $\impliedby$ 属显然. 至于 $\implies$, 记矩阵 $\mathcal{M}(\phi^{-1})$ 为 $(\psi_{ij})_{i,j}$, 那么
+	\[ \mathcal{M}(\phi^{-1}) \mathcal{M}(\phi) = \begin{pmatrix}
+		\psi_{11} \phi_1 & \cdots & \psi_{1n} \phi_n \\
+		\vdots & \ddots & \vdots \\
+		\psi_{n1} \phi_1 & \cdots & \psi_{nn} \phi_n 
+	\end{pmatrix} = \begin{pmatrix}
+		\identity_{X_1} & & \\
+		& \ddots & \\
+		& & \identity_{X_n}
+	\end{pmatrix}\]
+	故 $\phi_1, \ldots, \phi_n$ 左可逆; 同理可知它们右可逆.
+\end{proof}
+
+仍考虑直和分解 $X \simeq \bigoplus_{i=1}^n X_i$, 其中 $n \geq 1$ 而 $\forall i,\; X_i \neq 0$; 由此得到态射族 $\iota_i: X_i \to X$ 和 $p_i: X \to X_i$. 对每个 $1 \leq i \leq n$, 命 $e_i := \iota_i p_i \in \End(X)$, 它们具备以下性质. 回忆到环 $\End(X)$ 的\emph{幂等元}意谓满足 $e^2 = e$ 的元素 $e \in \End(X)$; 不致混淆时, 我们也说 $e$ 是 $\mathcal{A}$ 的幂等元.
+\index{midengyuan@幂等元 (idempotent)}
+
+\begin{enumerate}[(E1)]
+	\item 每个 $e_i$ 皆是幂等元: $e_i^2 = (\iota_i p_i) (\iota_i p_i) = \iota_i (p_i \iota_i) p_i = \iota_i p_i$.
+	\item 正交性: $i \neq j \implies e_i e_j = \iota_i p_i \iota_j p_j = 0$.
+	\item 等式 $\sum_{i=1}^n e_i = 1$ 在环 $\End(X)$ 中成立.
+\end{enumerate}
+
+今后一律视直和项 $X_i$ 为 $X$ 的子对象, 并将分解写作等式 $X = \bigoplus_{i=1}^n X_i$. 若进一步要求 $\mathcal{A}$ 是 Abel 范畴, 则满足 (E1)---(E3) 的幂等元族 $e_1, \ldots, e_n \in \End(X)$ 反过来定义 $X$ 的子对象
+\[ X_i := \Ker\left( \sum_{j \neq i} e_j \right) = \Image(e_i), \quad i=1, \ldots, n \]
+一方面它们带有单态射 $X_i \xrightarrow{\iota_i} X$, 另一方面 $e_i: X \to X$ 唯一地分解为 $X \xrightarrow{p_i} X_i \xrightarrow{\iota_i} X$. 这正是直和所需的资料.
+
+从幂等元 $e_1, \ldots, e_n$ 到直和项 $X_1, \ldots, X_n$ 的过渡无需 Abel 范畴的全部性质; 我们只须假设 $\mathcal{A}$ 是具零对象的 $\cate{Ab}$-范畴, 使得幂等元皆有核; 这种范畴称为 \emph{Karoubi 范畴}或 \emph{伪 Abel 范畴}. 本章习题部分将有进一步讨论.
+\index{fanchou!Karoubi (Karoubian)}
+
+\begin{proposition}\label{prop:idempotent-decomposition}
+	给定 Abel 范畴 (或更一般的 Karoubi 范畴) $\mathcal{A}$ 的对象 $X \neq 0$ 和 $n \in \Z_{\geq 1}$, 以上构造给出双射
+	\[\begin{tikzcd}[row sep=small]
+		\left\{ \text{直和分解}\; X = \bigoplus_{i=1}^n X_i \right\} \arrow[leftrightarrow, r, "1:1"] & \left\{ (e_i)_{i=1}^n \in \End(X)^n : \text{满足 (E1)---(E3)} \right\}.
+	\end{tikzcd}\]
+	直和项 $X_1, \ldots, X_n$ 的重排对应到 $e_1, \ldots, e_n$ 的重排.
+\end{proposition}
+\begin{proof}
+	如 \cite[命题 6.12.4]{Li1}.
+\end{proof}
+
+对于 $n=2$ 的特例, 直和分解联系于一类特殊的短正合列, 称为分裂短正合列.
+
+\begin{proposition}\label{prop:split-ses}
+	\index{duanzhenghelie!分裂 (split)}
+	对于 Abel 范畴中的短正合列 $0 \to X' \xrightarrow{f} X \xrightarrow{g} X'' \to 0$, 以下陈述等价.
+	\begin{enumerate}[(i)]
+		\item 存在 $s: X'' \to X$ 使得 $gs = \identity_{X''}$.
+		\item 存在 $r: X \to X'$ 使得 $rf = \identity_{X'}$.
+		\item 存在图表
+		$\begin{tikzcd}
+			X' \arrow[yshift=-0.7ex, r, "f"'] & X \arrow[yshift=0.7ex, l, "r"'] \arrow[yshift=-0.7ex, r, "g"'] & X'' \arrow[yshift=0.7ex, l, "s"']
+		\end{tikzcd}$
+		使 $X \simeq X' \oplus X''$, 见 \S\ref{sec:Ker-Coker} 关于双积的回顾.
+		\item 映射 $g_*: \Hom(S, X) \to \Hom(S, X'')$ (映 $\varphi$ 为 $g\varphi$) 对一切对象 $S$ 皆满.
+		\item 映射 $f^*: \Hom(X, S) \to \Hom(X', S)$ (映 $\psi$ 为 $\psi f$) 对一切对象 $S$ 皆满.
+	\end{enumerate}
+	当上述任一条件成立时, 称短正合列 $0 \to X' \to X \to X'' \to 0$ \emph{分裂}. 陈述 (i) 的态射 $s: X'' \to X$, (ii) 的 $r: X' \to X$ 与 (iii) 的同构 $X \rightiso X' \oplus X''$ (且记为 $\Phi$) 之间相互对应如下
+	\begin{compactitem}
+		\item 从 $\Phi$ 到 $s$: 取合成 $X'' \xrightarrow{\iota_2} X' \oplus X'' \xrightarrow{\Phi^{-1}} X$;
+		\item 从 $s$ 到 $r$: 态射 $\identity_X - sg: X \to X$ 唯一地分解为 $X \xrightarrow{r} X' \xrightarrow{f} X$, 此即所求之 $r$;
+		\item 从 $r$ 到 $\Phi$: 取 $(r, g): X \to X' \oplus X''$, 此为同构.
+	\end{compactitem}
+
+	此外, 给定 $s$ 或相应的 $r$, 与 (iii) 的直和分解对应的正交幂等元是
+	\[ e' := fr = \identity_X - sg, \quad e'' := sg = \identity_X - fr. \]
+\end{proposition}
+\begin{proof}
+	模的情形见 \cite[命题 6.8.5]{Li1}; 由于其证明仅涉及 $\Hom$ 集里的代数操作和双积的刻画, 而这些性质在 Abel 范畴中同样成立, 论证可以一字不易地照搬. 这里不再赘述.
+\end{proof}
+
+在命题 \ref{prop:split-ses} 的场景中, 给定 $f: X' \to X$ 和 $g: X \to X''$, 当 $gs = \identity_{X''}$ 时称 $s$ 为 $g$ 的一个\emph{截面}, 当 $rf = \identity_{X'}$ 时称 $r$ 为 $f$ 的一个\emph{收缩}; 这些术语源于拓扑学. 截面和收缩的存在性分别蕴涵 $g$ 满, $f$ 单, 反之则不然.
+\index{jiemian@截面 (section)}
+\index{shousuo@收缩 (retract)}
+
+另外, 注意到命题的 (i) --- (v) 整体是自对偶的.
+
+\begin{definition}\label{def:indecomposable}\index{duixiang!不可分解 (indecomposable)}
+	设 $S$ 为 Abel 范畴 $\mathcal{A}$ 中的非零对象. 若 $S = S' \oplus S''$ 蕴涵 $S' = 0$ 或 $S'' = 0$, 则称 $S$ 是\emph{不可分解对象}.
+\end{definition}
+
+\begin{corollary}\label{prop:indecomposable-criterion}
+	Abel 范畴中的非零对象 $X$ 不可分解当且仅当
+	\[ \forall e \in \End(X), \quad e^2 = e \iff (e = 0 \;\vee\; e = 1). \]
+\end{corollary}
+\begin{proof}
+	应用命题 \ref{prop:idempotent-decomposition}.
+\end{proof}
+
+我们希望研究形如 $X = X_1 \oplus \cdots \oplus X_n$ 的分解, $X \neq 0$ 而每个 $X_i$ 皆是不可分解对象. 问题分成存在性和唯一性. 对于模的情形, 这是 Krull--Remak--Schmidt 定理的内容, 见 \cite[推论 6.12.9]{Li1}. 对于一般的 Abel 范畴则需要一些准备. 以下参照 \cite{Kr15} 的进路.
+
+\begin{definition}\label{def:bichain}
+	\index{shuangliantiaojian@双链条件 (bi-chain condition)}
+	设 $\mathcal{A}$ 为任意范畴. 其中的\emph{双链}意谓资料 $(X_n, \alpha_n, \beta_n)_{n=0}^\infty$, 其中 $X_n$ 是 $\mathcal{A}$ 的对象而
+	$\begin{tikzcd}
+		X_n \arrow[twoheadrightarrow, r, shift left, "\alpha_n"] & X_{n+1} \arrow[hookrightarrow, l, shift left, "\beta_n"]
+	\end{tikzcd}$
+	是其间的态射, $\alpha_n$ 满而 $\beta_n$ 单 ($n \in \Z_{\geq 0}$). 对于 $\mathcal{A}$ 的对象 $X$, 当以下条件成立时称 $X$ 满足\emph{双链条件}: 对于所有满足 $X_0 = X$ 的双链 $(X_n, \alpha_n, \beta_n)$, 当 $n \gg 0$ 时 $\alpha_n$, $\beta_n$ 皆是同构.
+\end{definition}
+
+以下结果是 \cite[引理 6.11.5]{Li1} 的推广.
+\begin{lemma}[Abel 范畴中的 Fitting 引理]\label{prop:Abel-cat-Fitting}
+	设 $\mathcal{A}$ 为 Abel 范畴, $X$ 为其中满足双链条件的非零对象, $f \in \End(X)$.
+	\begin{enumerate}[(i)]
+		\item 当 $n \gg 0$ 时 $\Ker(f^n)$ 和 $\Image(f^n)$ 与 $n$ 无关, 分别记为 $\Ker(f^\infty)$ 和 $\Image(f^\infty)$. 我们有 $X = \Ker(f^\infty) \oplus \Image(f^\infty)$.
+		\item 若 $X$ 不可分解, 则 $f$ 在环 $\End(X)$ 中或者可逆, 或者幂零.
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	对 $n \in \Z_{\geq 0}$ 定义 $X_n := \Image(f^n)$, 因此 $X_0 = X$. 应用命题 \ref{prop:Images-f-gf} 和 $\Coim \rightiso \Image$ 得到满态射 $\alpha_n: X_n \to X_{n+1}$ (由 $f$ 诱导) 和单态射 $\beta_n: X_{n+1} \to X_n$.	如是遂有双链 $(X_n, \alpha_n, \beta_n)_{n=0}^\infty$.
+
+	当 $n \gg 0$ 时 $\alpha_n$ 和 $\beta_n$ 为同构. 因此可以良定义 $X$ 的子对象 $\Image(f^\infty) := \Image(f^n)$, 其中 $n \gg 0$, 相应的单态射记为 $\iota: \Image(f^\infty) \hookrightarrow X$. 而 $\Ker(f^n) = \Ker[X \to \Image(f^n)]$ 在 $n \gg 0$ 时也是与 $n$ 无关的子对象 $\Ker(f^\infty)$.
+
+	于是当 $n \gg 0$ 时态射 $\alpha_{2n-1} \cdots \alpha_n: X_n \to X_{2n}$ 可逆, 记其逆为 $\psi: \Image(f^\infty) \rightiso \Image(f^\infty)$. 命
+	\[ p := \psi f^n: X \to \Image(f^\infty), \quad \Ker(p) = \Ker(f^\infty) \qquad (n \gg 0). \]
+	从 $p \iota = \identity_{\Image(f^\infty)}$ 可知 $e := \iota p \in \End(X)$ 为幂等元, $\Image(e) = \Image(f^\infty)$, $\Ker(e) = \Ker(f^\infty)$, 代入命题 \ref{prop:idempotent-decomposition} 即见 (i) 的分解.
+	
+	若 $X$ 不可分解, 则或者 $\Image(f^\infty) = 0$ 而 $\Ker(f^\infty) = X$, 此时 $f$ 幂零, 或者 $\Image(f^\infty) = X$ 而 $\Ker(f^\infty) = 0$, 此时 $f$ 可逆. 此即 (ii).
+\end{proof}
+
+回忆 \cite[定义 6.12.3]{Li1}: 若 $S$ 是环, 而且 $S \smallsetminus S^\times$ 是双边理想, 则称 $S$ 为\emph{局部环}.
+\index{jubuhuan@局部环 (local ring)}
+
+\begin{corollary}\label{prop:indecomposable-local-ring}
+	设 Abel 范畴中的非零对象 $X$ 满足双链条件, 则 $X$ 不可分解当且仅当 $\End(X)$ 是局部环.
+\end{corollary}
+\begin{proof}
+	引理 \ref{prop:Abel-cat-Fitting} 说明若 $X$ 不可分解, 则 $\End(X)$ 的元素或者幂零或者可逆, 二者必居其一. 剩下的论证仅涉及 $\End(X)$ 的环结构, 和 \cite[引理 6.12.6]{Li1} 无异.
+\end{proof}
+
+现在可以陈述 Krull--Remak--Schmidt 定理在 Abel 范畴中的版本.
+\begin{theorem}[M.\ Atiyah]\label{prop:Krull-Schmidt-gen}
+	\index{Krull-Remak-Schmidt dingli@Krull--Remak--Schmidt 定理 (Krull--Remak--Schmidt Theorem)}
+	设 $X$ 是 Abel 范畴中的非零对象.
+	\begin{enumerate}[(i)]
+		\item 若 $X$ 满足双链条件, 则存在 $n \in \Z_{\geq 1}$ 和不可分解子对象 $X_1, \ldots, X_n$, 使得 $X = \bigoplus_{i=1}^n X_i$, 而且每个 $\End(X_i)$ 都是局部环.
+		\item 设 $X$ 能分解为 $\bigoplus_{i=1}^n X_i$ 和 $\bigoplus_{j=1}^m X'_j$, 其中每个 $X_i$, $X'_j$ 皆不可分解, $\End(X_i)$, $\End(X'_j)$ 皆是局部环. 那么 $n=m$, 并且存在从 $\{1, \ldots, n\}$ 到自身的双射 $\sigma$ 使得 $X_i \simeq X'_{\sigma(i)}$ 对所有 $i$ 皆成立.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	问题在于论证满足双链条件之 $X$ 必然有如 (i) 的分解, 其余只涉及 $\End$ 环中的代数操作, 和 \cite[定理 6.12.8]{Li1} 无异. 故以下假设双链条件成立.
+
+	注意到若有分解 $X = Y \oplus Z$, 其中 $Y$ 非零, 则 $Y$ 也满足双链条件: 诚然, 对于满足 $Y_0 = Y$ 的双链 $(Y_n, \alpha_n, \beta_n)_{n=0}^\infty$, 取 $X_n := Y_n \oplus Z$ 和 $\tilde{\alpha}_n := \alpha_n \oplus \identity_Z$, $\tilde{\beta}_n := \beta_n \oplus \identity_Z$ 则得到满足 $X_0 = X$ 的双链, 而引理 \ref{prop:isomorphism-matrix} 蕴涵 $\tilde{\alpha}_n$ (或 $\tilde{\beta}_n$) 为同构当且仅当 $\alpha_n$ (或 $\beta_n$) 亦然.
+
+	若 $X$ 已不可分解, 推论 \ref{prop:indecomposable-local-ring} 蕴涵 $\End(X)$ 是局部环, 此即 (i). 若断言 (i) 对 $X$ 不成立, 则必存在非零子对象 $X_1, Y_1$ 使得 $X = X_1 \oplus Y_1$ 而且断言 (i) 对 $X_1$ 不成立. 对 $X_1$ 续行如是操作, 给出 $X_1 = X_2 \oplus Y_2$; 迭代给出双链 $(X_n, \alpha_n, \beta_n)_{n=0}^\infty$, 其中 $\alpha_n: X_n \twoheadrightarrow X_{n+1}$ 和 $\beta_n: X_{n+1} \hookrightarrow X_n$ 来自 $X_n = X_{n+1} \oplus Y_{n+1}$, 恒非同构, 而且 $X_0 := X$, 与双链条件矛盾. 明所欲证.
+\end{proof}
+
+实践中的要点是知悉双链条件何时成立. 一个充分条件如下.
+
+\begin{proposition}
+	设 $X$ 是 Abel 范畴中的有限长度对象 (定义 \ref{def:finite-length-object}), 则 $X$ 满足双链条件.
+\end{proposition}
+\begin{proof}
+	给定双链 $(X_n, \alpha_n, \beta_n)_{n=0}^\infty$ 满足 $X_0 = X$. 那么 $\left( \Image(\beta_0 \cdots \beta_n) \right)_{n=0}^\infty$ 是偏序集 $\mathrm{Sub}_X$ 中的降链; 因为 $\beta_n$ 皆单, 当 $n \gg 0$ 时 Artin 条件给出交换图表
+	\[\begin{tikzcd}
+		X_{n+1} \arrow[d, "\beta_n"'] \arrow[r, "\sim"] & \Image(\beta_0 \cdots \beta_n) \arrow[d, "\sim" sloped] \arrow[hookrightarrow, r] & X_0 \\
+		X_n \arrow[r, "\sim"] & \Image(\beta_0 \cdots \beta_{n-1}) \arrow[hookrightarrow, ru] &
+	\end{tikzcd}\]
+	此时 $\beta_n$ 为同构. 同理, 对升链 $\left( \Ker(\alpha_n \cdots \alpha_0) \right)_{n=0}^\infty$ 应用 Noether 条件并利用 $\alpha_n$ 的满性, 当 $n \gg 0$ 时可得行正合交换图表
+	\[\begin{tikzcd}
+		0 \arrow[r] & \Ker(\alpha_{n-1} \cdots \alpha_0) \arrow[d, "\sim" sloped] \arrow[r] & X_0 \arrow[r, "{\alpha_{n-1} \cdots \alpha_0}" inner sep=0.7em] \arrow[equal, d] & X_n \arrow[d, "{\alpha_n}"] \arrow[r] & 0 \\
+		0 \arrow[r] & \Ker(\alpha_n \cdots \alpha_0) \arrow[r] & X_0 \arrow[r, "{\alpha_n \cdots \alpha_0}"' inner sep=0.7em] & X_{n+1} \arrow[r] & 0
+	\end{tikzcd}\]
+	此时 $\alpha_n$ 为同构.
+\end{proof}
+
+习题部分将介绍更多推导双链条件的方法.
+
+\section{子对象和同构定理}\label{sec:Abel-cat-subobjects}
+本节取定 Abel 范畴 $\mathcal{A}$. 对于 $\mathcal{A}$ 的任何对象 $X$, 其子对象构成的偏序集按 \S\ref{sec:subquot} 的惯例标为 $(\mathrm{Sub}_X, \subset)$.
+
+本节的结果对于 $\mathcal{A} = R\dcate{Mod}$ 的情形都是熟知的, 其中 $R$ 是任意环; 但对于 Abel 范畴需要不同的论证.
+
+\begin{definition}\label{def:intersection-sum}
+	\index{shang@商 (quotient)}
+	\index[sym1]{XoverY@$X/Y$}
+	令 $X$ 为 $\mathcal{A}$ 的对象.
+	\begin{itemize}
+		\item 给定 $X$ 的子对象 $X'$, 相应的\emph{商}定为 $X/X' := \Coker[X' \to X]$, 它自然是 $X$ 的商对象. 任何满态射 $f: X \twoheadrightarrow X''$ 皆可理解为 $X$ 对 $\Ker(f)$ 的商.
+		\item 给定 $X$ 的一族子对象 $X_1, \ldots, X_n$, 相应的\emph{交}与\emph{和}分别定义为
+		\begin{align*}
+			X_1 \cap \cdots \cap X_n & := X_1 \dtimes{X} \cdots \dtimes{X} X_n, \\
+			X_1 + \cdots + X_n & := \Image\left[ X_1 \oplus \cdots \oplus X_n \xrightarrow{\sigma} X \right],
+		\end{align*}
+		其中 $\sigma$ 由诸 $X_i \hookrightarrow X$ 诱导 (可想成求和). 它们自然地是 $X$ 的子对象: $X_1 \cap \cdots \cap X_n$ 的情形归结为引理 \ref{prop:mono-product}, 而 $X_1 + \cdots + X_n$ 的情形则来自定义.
+	\end{itemize}
+\end{definition}
+
+举例明之, 上同调的定义可以用商改写为
+\[ \Hm^n(X) := \Ker(d_X^n)/\Image(d_X^{n-1}). \]
+
+推而广之, 对于任何集合 $I$ 和 $X$ 的一族子对象 $(X_i)_{i \in I}$, 只要它们在 $X$ 上的纤维积 (或它们在 $\mathcal{A}$ 中的余积 $\bigsqcup_{i \in I} X_i$) 存在, 同样方法可以良定义 $\bigcap_{i \in I} X_i$ (或 $\sum_{i \in I} X_i$). 此定义的角色由下述事实阐明.
+
+\begin{proposition}\label{prop:subobject-inf-sup}
+	给定 $X$ 的一族子对象 $(X_i)_{i \in I}$. 一旦它们在 $X$ 上的纤维积 (或在 $\mathcal{A}$ 中的余积 $\bigsqcup$) 存在, 便给出 $(X_i)_{i \in I}$ 在偏序集 $(\mathrm{Sub}_X, \subset)$ 中的下确界 (或上确界).
+\end{proposition}
+\begin{proof}
+	按构造可见 $\bigcap_{j \in I} X_j \subset X_i \subset \sum_{j \in I} X_j$ 对每个 $i$ 皆成立.
+
+	接着考虑子对象 $Y \hookrightarrow X$. 对于交的情形, 假定 $\forall i \in I, \; Y \subset X_i$, 亦即存在一族交换图表
+	$\begin{tikzcd}[row sep=small, column sep=small]
+		Y \arrow[hookrightarrow, r] \arrow[d] & X \\
+		X_i \arrow[hookrightarrow, ru] &
+	\end{tikzcd}$,
+	则纤维积的泛性质给出态射 $Y \to \bigcap_{i \in I} X_i$ 使得 $Y \subset \bigcap_{i \in I} X_i$. 对于和的情形, 假定 $\forall i \in I, \; X_i \subset Y$. 以余积的泛性质构作交换图表
+	\[\begin{tikzcd}
+		\coprod_{i \in I} X_i \arrow[r, "\sigma"] \arrow[rd] & X \\
+		& Y \arrow[hookrightarrow, u].
+	\end{tikzcd}\]
+
+	代入引理 \ref{prop:Im-Coim-fac} 可知 $\bigsqcup_{i \in I} X_i \to Y$ 唯一地通过 $\Coim(\sigma) \simeq \Image(\sigma)$ 分解, 与映入 $X$ 的态射兼容, 此即 $\sum_{i \in I} X_i := \Image(\sigma) \subset Y$.
+\end{proof}
+
+\begin{convention}\label{con:increasing-union}
+	\index[sym1]{Xsum@$\sum_{i \in I} X_i$}
+	\index[sym1]{Xunion@$\bigcup_{i \in I} X_i$}
+	鉴于命题 \ref{prop:subobject-inf-sup}, 我们也不妨绕开纤维积或余积, 直接将一族子对象 $(X_i)_{i \in I}$ 的交 $\bigcap_i X_i$ (或和 $\sum_i X_i$) 定为它们在 $\mathrm{Sub}_X$ 中的下确界 (或上确界), 前提是它存在. 此处总默认指标集 $I$ 是小集. 若 $I$ 带有滤过偏序, 而 $i \leq j \implies X_i \subset X_j$, 则上确界 $\sum_{i \in I} X_i$ 也可以合理地记作递增并 $\bigcup_{i \in I} X_i$.
+\end{convention}
+
+\begin{corollary}
+	对于任意对象 $X$, 偏序集 $(\mathrm{Sub}_X, \subset)$ 是定义 \ref{def:lattice-order} 意义下的有界格.
+\end{corollary}
+\begin{proof}
+	任两个子对象 $Y, Z$ 的上确界是 $Y+Z$, 下确界是 $Y \cap Z$; 偏序集 $\mathrm{Sub}_X$ 的上界为 $X$, 下界为 $0$.
+\end{proof}
+
+本节着眼于 $(\mathrm{Sub}_X, \subset)$ 的结构, 但商对象的版本 $(\mathrm{Quot}_X, \twoheadleftarrow)$ 实无不同, 这是基于显然的倒序双射 $\mathrm{Sub}_X \simeq \mathrm{Quot}_X$: 子对象 $X'$ 和商对象 $X''$ 对应, 当且仅当它们能置入短正合列 $0 \to X' \to X \to X'' \to 0$. 故今后不另外讨论.
+
+\begin{definition}\label{def:subobject-image}
+	\index[sym1]{finvY@$f^{-1}(Y')$}
+	\index[sym1]{fX@$f(X')$}
+	给定态射 $f: X \to Y$ 及子对象 $X' \hookrightarrow X$, $Y' \hookrightarrow Y$, 记
+	\[ f^{-1}(Y') := X \dtimes{Y} Y', \quad f(X') := \Image\left[ X' \hookrightarrow X \xrightarrow{f} Y \right]; \]
+	它们分别是 $X$ 和 $Y$ 的子对象. 这给出双向的保序映射
+	$\begin{tikzcd}
+		\mathrm{Sub}_X \arrow[r, yshift=0.3em, "f(\cdot)"] & \mathrm{Sub}_Y \arrow[l, yshift=-0.3em, "f^{-1}(\cdot)"]
+	\end{tikzcd}$.
+\end{definition}
+
+\begin{lemma}\label{prop:image-sum-preimage-intersection}
+	给定 $f: X \to Y$ 如上.
+	\begin{enumerate}[(i)]
+		\item 对一切 $X' \in \mathrm{Sub}_X$ 和 $Y' \in \mathrm{Sub}_Y$, 皆有
+		\[ X' \subset f^{-1}(Y') \iff f(X') \subset Y'. \]
+		\item 给定 $\mathrm{Sub}_X$ (或 $\mathrm{Sub}_Y$) 的一族元素 $(X_i)_{i \in I}$, $(Y_i)_{i \in I}$, 我们有
+		\[ f\left( \sum_{i \in I} X'_i \right) = \sum_{i \in I} f(X'_i), \quad f^{-1}\left( \bigcap_{i \in I} Y'_i \right) = \bigcap_{i \in I} f^{-1}(Y'_i), \]
+		前提是所论的交与和存在.
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	对于 (i), 循定义可知 $X' \subset f^{-1}(Y')$ 等价于存在交换图表
+	\[\begin{tikzcd}
+		X' \arrow[dashed, r, "\exists"] \arrow[hookrightarrow, d] & Y' \arrow[hookrightarrow, d] \\
+		X \arrow[r, "f"'] & Y .
+	\end{tikzcd}\]
+	因为 $f(X')$ 是 $X' \hookrightarrow X \xrightarrow{f} Y$ 的余像, 引理 \ref{prop:Im-Coim-fac} 表明这般交换图表一一对应于
+	\[\begin{tikzcd}
+		X' \arrow[r] \arrow[d, hookrightarrow] & f(X') \arrow[hookrightarrow, d] \arrow[dashed, r, "\exists"] & Y' \arrow[hookrightarrow, ld] \\
+		X \arrow[r, "f"'] & Y &
+	\end{tikzcd}\]
+	此即 (i). 若考虑与偏序集对应的范畴 $\cate{Sub}_X$ 等等, 则 (i) 相当于说 $f(\cdot): \cate{Sub}_X \to \cate{Sub}_Y$ 是 $f^{-1}(\cdot): \cate{Sub}_Y \to \cate{Sub}_X$ 的左伴随函子. 既然积 (或余积) 对应下确界 (或上确界), 因而 (ii) 是 \cite[定理 2.8.12]{Li1} 的推论.
+\end{proof}
+
+\begin{proposition}\label{prop:biproduct-sum-intersection}
+	考虑子对象 $i: A \hookrightarrow X$, $j: B \hookrightarrow X$, 则态射 $(i,j): A \oplus B \to X$ 为同构当且仅当
+	\[ A \cap B = 0, \quad A + B = X. \]
+	此外, 交换图表
+	\[\begin{tikzcd}
+		A \cap B \arrow[r, "\delta_1"] \arrow[d, "\delta_2"'] & A \arrow[d, "i"] \\
+		B \arrow[r, "j"'] & A + B
+	\end{tikzcd}\]
+	既是推出又是拉回, 其中 $\delta_1$ 和 $\delta_2$ 是典范态射.
+\end{proposition}
+\begin{proof}
+	定义 $\Delta: A \cap B \to A \oplus B$ 为对角态射, 其刻画为 $p_i \Delta = \delta_i$ (其中 $i=1,2$); 另定义反对角态射 $\Delta^-: A \cap B \to A \oplus B$ 使得 $p_1 \Delta^- = -\delta_1$ 而 $p_2 \Delta^- = \delta_2$.
+	
+	注记 \ref{rem:Abel-cat-fibered-product} 蕴涵 $\Delta$ 使得 $A \cap B := A \dtimes{X} B \rightiso \Ker\left[ A \oplus B \xrightarrow{(i, -j)} X \right]$. 若以 $(i,j)$ 代 $(i,-j)$, 则 $A \oplus B \to X$ 的像仍是 $A+B$, 而其核由 $\Delta$ 变为 $\Delta^-$. 于是有行正合交换图表
+	\[\begin{tikzcd}
+		& & & X & \\
+		0 \arrow[r] & A \cap B \arrow[r, "{\Delta^-}"'] & A \oplus B \arrow[ru, "{(i, j)}" description] \arrow[r] & A+B \arrow[r] \arrow[hookrightarrow, u] & 0
+	\end{tikzcd}\]
+	因此 $(i,j): A \oplus B \to X$ 为同构当且仅当 $A + B = X$ 而且 $A \cap B = 0$.
+
+	注记 \ref{rem:Abel-cat-fibered-product} 将 $A \dsqcup{A \cap B} B$ 等同于 $(A \oplus B)/\Image(\Delta^-)$. 于是我们有交换图表
+	\[\begin{tikzcd}[column sep=small]
+		A \cap B \arrow[r, "\delta_1"] \arrow[d, "\delta_2"'] & A \arrow[d] \arrow[rdd, bend left, "i" description] & \\
+		B \arrow[r] \arrow[rrd, bend right, "j" description] & (A \oplus B)/\Image(\Delta^-) \arrow[rd, "\simeq" description] & \\
+		& & A + B
+	\end{tikzcd}\]
+	而且其左上方块是推出图表, 故整个外框亦然. 因为 $\delta_1$ 单, 命题 \ref{prop:Abel-cat-pull-push} 蕴涵它也是拉回.
+\end{proof}
+
+易言之, $B$ 是 $A$ 在格 $\mathrm{Sub}_X$ 中的补 (定义 \ref{def:modular-lattice}) 当且仅当 $(i, j): A \oplus B \rightiso X$; 后者也经常写作等式 $A \oplus B = X$. 以此为起点, 可以递归地用格论语言刻画 $X$ 能否表为有限多个给定子对象 $X_1, \ldots, X_n$ 的直和, 结论和模论的情形是类似的. 至于无穷多个子对象的情形, 一般需要在 Grothendieck 范畴中操作, 见 \S\ref{sec:Grothendieck-cat}, 相关内容划入本章习题.
+
+模论奠基于几个基本同构定理; 参看 \cite[命题 6.1.11, 6.1.12, 6.1.13]{Li1}. 以下将扩之于一般的 Abel 范畴 $\mathcal{A}$.
+
+\begin{theorem}\label{prop:Abel-cat-isom-thm}
+	选定对象 $X$.
+	\begin{enumerate}[(i)]
+		\item 对任何态射 $f: X \to Y$, 存在典范同构 $X/\Ker(f) \rightiso \Image(f)$ 使得图表
+		\[\begin{tikzcd}
+			X \arrow[twoheadrightarrow, r] \arrow[twoheadrightarrow, d] & \Image(f) \\
+			X/\Ker(f) \arrow[ru, "\sim" sloped]
+		\end{tikzcd} \quad \text{交换}. \]
+		\item 选定子对象 $Z \hookrightarrow X$, 记自然态射 $X \twoheadrightarrow \overline{X} := X/Z$ 为 $\pi$. 存在保序双射
+		\[\begin{tikzcd}[row sep=tiny]
+			\left\{ Y \in \mathrm{Sub}_X : Z \subset Y \right\} \arrow[leftrightarrow, r, "1:1"] & \mathrm{Sub}_{\overline{X}} \\
+			Y \arrow[r, mapsto] & \pi(Y) = Y/Z =: \overline{Y} \\
+			\pi^{-1}(\overline{Y}) & \overline{Y} \arrow[mapsto, l] ,
+		\end{tikzcd}\]
+		符号如定义 \ref{def:subobject-image}; 若 $Y \supset Z$ 如上, 则存在典范同构 $X/Y \rightiso \overline{X}/\overline{Y}$ 使图表
+		\[\begin{tikzcd}
+			X \arrow[r] \arrow[twoheadrightarrow, d] & \overline{X} \arrow[twoheadrightarrow, d] \\
+			X/Y \arrow[r, "\sim"'] & \overline{X}/\overline{Y}
+		\end{tikzcd}\]
+		交换, 并且 $\overline{Y_1 \cap Y_2} = \overline{Y_1} \cap \overline{Y_2}$, $\overline{Y_1 + Y_2} = \overline{Y_1} + \overline{Y_2}$.
+		\item 对于 $Y, Z \in \mathrm{Sub}_X$, 存在典范同构 $Y/(Y \cap Z) \rightiso (Y+Z)/Z$ 使图表
+		\[\begin{tikzcd}
+			Y \arrow[hookrightarrow, r] \arrow[twoheadrightarrow, d] & Y+Z \arrow[twoheadrightarrow, d] \\
+			Y/(Y \cap Z) \arrow[r, "\sim"'] & (Y+Z)/Z
+		\end{tikzcd} \quad \text{交换.} \]
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	鉴于短正合列 $0 \to \Ker(f) \to X \to \Image(f) \to 0$, 断言 (i) 仅是复述定义.
+	
+	至于 (ii). 给定 $Y$, 首先构造行正合的交换图表
+	\[\begin{tikzcd}
+		0 \arrow[r] & Z \arrow[r] \arrow[equal, d] & Y \arrow[r] \arrow[hookrightarrow, d] & Y/Z \arrow[dashed, d, "\exists!"] \arrow[r] & 0 \\
+		0 \arrow[r] & Z \arrow[r] & X \arrow[r, "\pi"'] & \overline{X} \arrow[r] & 0
+	\end{tikzcd}\]
+	虚线箭头源自余核的函子性 \eqref{eqn:Ker-Coker-functoriality}. 应用定理 \ref{prop:snake-lemma} 立见 $\Ker[Y/Z \to \overline{X}] = 0$ 而 $X/Y \rightiso \Coker[Y/Z \to \overline{X}]$; 特别地,
+	\[ Y/Z =  \Image[Y \to \overline{X}] = \pi(Y) \;\in \mathrm{Sub}_{\overline{X}}, \quad X/Y \simeq \overline{X}/\pi(Y). \]
+	
+	先前已说明 (ii) 的双向映射皆保序. 以下证明它们互逆. 给定 $Y$, 因为 $\overline{Y} \hookrightarrow \overline{X}$ 是 $\overline{X} \to \overline{X}/\overline{Y}$ 的核, 命题 \ref{prop:Ker-Coker-composite} 表明 $\pi^{-1}(\overline{Y}) := X \dtimes{\overline{X}} \overline{Y} \hookrightarrow X$ 是合成态射 $X \to \overline{X} \to \overline{X}/\overline{Y}$ 的核, 但后者又是 $X \to X/Y$ 的核, 这就将子对象 $\pi^{-1}(\overline{Y})$ 等同于 $Y$.
+	
+	反之给定 $\overline{Y}$, 记 $Y := X \dtimes{\overline{X}} \overline{Y} = \pi^{-1} (\overline{Y})$. 试端详拉回图表
+	\[\begin{tikzcd}
+		Y \arrow[r] \arrow[hookrightarrow, d] & \overline{Y} \arrow[hookrightarrow, d] \\
+		X \arrow[r, "\pi"'] & \overline{X} \arrow[phantom, lu, "\Box" description] .
+	\end{tikzcd}\]
+	第二行的 $\pi$ 既然满, 命题 \ref{prop:Abel-cat-pull-push} 蕴涵第一行亦满, 这就说明 $\overline{Y} = \pi(Y)$.
+	
+	最后, 等式 $\overline{Y_1 \cap Y_2} = \overline{Y_1} \cap \overline{Y_2}$, $\overline{Y_1 + Y_2} = \overline{Y_1} + \overline{Y_2}$ 是 $Y \leftrightarrow \overline{Y}$ 保序的直接推论.
+
+	对于 (iii), 考虑行正合的交换图表
+	\[\begin{tikzcd}
+		0 \arrow[r] & Y \cap Z \arrow[r] \arrow[hookrightarrow, d] & Y \arrow[hookrightarrow, d] \arrow[r] & Y/(Y \cap Z) \arrow[r] \arrow[dashed, d, "\exists! \theta"] & 0 \\
+		0 \arrow[r] & Z \arrow[r] & Y+Z \arrow[r] & (Y+Z)/Z \arrow[r] & 0
+	\end{tikzcd}\]
+	其中 $\theta$ 来自余核的函子性. 命题 \ref{prop:biproduct-sum-intersection} 蕴涵左侧方块是推出. 推出保余核 (命题 \ref{prop:pull-back-ker}), 故 $\theta$ 是同构. 明所欲证.
+\end{proof}
+
+\begin{corollary}\label{prop:Abel-cat-Coker-pull}
+	考虑交换图表
+	\[\begin{tikzcd}
+		\Ker(g') \arrow[hookrightarrow, r] \arrow[d, "k"'] & W \arrow[r, "{g'}"] \arrow[d, "{f'}"'] & Y \arrow[d, "f"] \arrow[twoheadrightarrow, r] & \Coker(g') \arrow[d, "c"] \\
+		\Ker(g) \arrow[hookrightarrow, r] & X \arrow[r, "g"'] & Z \arrow[twoheadrightarrow, r] & \Coker(g)
+	\end{tikzcd}\]
+	其中 $k, c$ 是函子性 \eqref{eqn:Ker-Coker-functoriality} 刻画的态射. 若中间方块是拉回 (或推出), 则 $c$ 单 (或 $k$ 满).
+\end{corollary}
+\begin{proof}
+	处理拉回情形即可. 由于沿 $f$ 的拉回可以分步进行, 问题简化为 $f$ 满和 $f$ 单两种情形. 若 $f$ 满, 命题 \ref{prop:Abel-cat-pull-push} 蕴涵中间方块也是推出, 此时 $c$ 是同构. 若 $f$ 单, 将沿 $g$ 的拉回分段拆成
+	\[\begin{tikzcd}
+		W \arrow[d, "{f'}"'] \arrow[r] & \Image(g) \dtimes{Z} Y \arrow[r, "{g''}"] \arrow[d] & Y \arrow[d, "f"] \\
+		X \arrow[twoheadrightarrow, r] & \Image(g) \arrow[hookrightarrow, r] \arrow[phantom, lu, "\Box" description] & Z ; \arrow[phantom, lu, "\Box" description]
+	\end{tikzcd}\]
+	命题 \ref{prop:Abel-cat-pull-push} 蕴涵 $W \to \Image(g) \dtimes{Z} Y$ 满, 从而 $\Coker(g') = \Coker(g'')$. 问题遂简化到 $f, g$ 皆单的情形. 此时 $W = Y \cap X$, 而 $c$ 分解为 $Y/(Y \cap X) \rightiso (Y+X)/X \hookrightarrow Z/X$.
+\end{proof}
+
+\begin{theorem}\label{prop:subobject-modularity}
+	对于所有对象 $X$, 偏序集 $(\mathrm{Sub}_X, \subset)$ 都是定义 \ref{def:modular-lattice} 意义下的有界模格.
+\end{theorem}
+\begin{proof}
+	已知 $(\mathrm{Sub}_X, \subset)$ 为有界格. 以下考虑 $\mathrm{Sub}_X$ 中的任一区间 $[Y_1, Y_2]$. 引理 \ref{prop:modularity-criterion} 将问题化约为下述断言: 对于所有 $A, B, C \in [Y_1, Y_2]$,
+	\begin{equation}\label{eqn:Abel-cat-interval-complement}
+		\left( A, B \;\text{皆是}\; C\; \text{的补}, \; A \subset B \right) \implies A = B.
+	\end{equation}
+
+	首先, 定理 \ref{prop:Abel-cat-isom-thm} (ii) 的保序双射将 \eqref{eqn:Abel-cat-interval-complement} 简化到 $Y_1 = 0$ 而 $Y_2 = X$ 之情形. 关于
+	补的前提借由命题 \ref{prop:biproduct-sum-intersection} 化为 $A \oplus C \rightiso X \leftiso B \oplus C$, 其中的同构由从 $A, B, C$ 到 $X$ 的单态射 $\iota_A, \iota_B, \iota_C$ 诱导. 按假设, 存在 $\alpha: A \to B$ 使得 $\iota_A = \iota_B \alpha$. 如是则有交换图表
+	\[\begin{tikzcd}[column sep=large]
+		B \oplus C \arrow[r, "{(\iota_B, \iota_C)}"] & X \\
+		A \oplus C \arrow[ru, "{(\iota_A, \iota_C)}"'] \arrow[u, "{(\alpha, \identity_C)}"] &   
+	\end{tikzcd}\]
+	故 $(\alpha, \identity_C)$ 为同构, 根据引理 \ref{prop:isomorphism-matrix}, 这又蕴涵 $\alpha$ 为同构. 故 \eqref{eqn:Abel-cat-interval-complement} 得证.
+\end{proof}
+
+模格性质是将模论中的一些标准论证移植到 Abel 范畴上的重要桥梁.
+
+\section{单性和半单性}\label{sec:semisimple}
+本节取定 Abel 范畴 $\mathcal{A}$.
+
+\begin{convention}\label{con:direct-sum}
+	\index{zhihe}
+	按惯例, 将 Abel 范畴中一族对象 $(X_i)_{i \in I}$ 的余积 $\coprod_{i \in I} X_i$ (假设存在) 写作 $\bigoplus_{i \in I} X_i$ 的形式, 称为其\emph{直和}. 当 $I$ 有限时, 一切回归定义 \ref{def:additive-category} 的约定.
+\end{convention}
+
+\begin{definition}\index{duixiang!单 (simple)}
+	若 $\mathcal{A}$ 的对象 $X$ 非零, 而且 $\mathrm{Sub}_X = \left\{0, X \right\}$, 则称 $X$ 为\emph{单对象}.
+\end{definition}
+
+对象 $X$ 单相当于说对于任何短正合列 $0 \to X' \to X \to X'' \to 0$, 或者 $X' = 0$ 或者 $X' \rightiso X$, 二者必居其一; 等价地说, $X \rightiso X''$ 或 $X'' = 0$ 二者必居其一. 因此 $X$ 在 $\mathcal{A}$ 中和在 $\mathcal{A}^{\opp}$ 中的单性相等价.
+
+注意到 $X \neq 0 \iff \identity_X \neq 0 \iff \End(X) \;\text{非零环}$.
+
+\begin{lemma}[Schur 引理]
+	选定对象 $X, Y$. 若 $X$ (或 $Y$) 为单对象, 则 $\Hom(X, Y)$ 中的非零态射皆单 (或满). 作为推论, 当 $X$ 是单对象时 $\End(X)$ 是除环.
+\end{lemma}
+\begin{proof}
+	设 $X$ 单, $f: X \to Y$ 非零, 则必有 $\Ker(f) = 0$. 至于 $Y$ 单的情形则可用对偶性处理. 既单又满的态射是同构 (命题 \ref{prop:strict-isomorphism}), 故取 $X = Y$ 可知 $\End(X)$ 为除环.
+\end{proof}
+
+已知 $\mathrm{Sub}_X$ 是有界模格 (定理 \ref{prop:subobject-modularity}). 引理 \ref{prop:lattice-composition-series} 表明 $X$ 是有限长度的当且仅当偏序集 $[0, X]$ 有合成列; 后者也简称为 $X$ 的合成列. 有限长度对象 $X$ 的\emph{长度}定为 \index{changdu} \index[sym1]{lX@$\ell(X)$}
+\[ \ell(X) := \mathrm{Sub}_X \;\text{的长度} \; \in \Z_{\geq 0}; \]
+见定义 \ref{def:lattice-length}. 注意到 $\ell(X) = 0 \iff X = 0$. 按惯例, $Y \subsetneq Z$ 意谓 $Y \subset Z$ 且 $Y \neq Z$.
+
+\begin{definition-theorem}[Abel 范畴的 Jordan--Hölder 定理]\label{def:JH}
+	\index{Jordan-Holder}
+	\index{hechengyinzi@合成因子 (composition factor)}
+	\index[sym1]{JH@$\mathrm{JH}(X)$}
+	设 $X$ 是有限长度对象. 任取 $X$ 的合成列 $X = X_0 \supsetneq \cdots \supsetneq X_r = 0$; 精确到同构, 其子商 $X_i/X_{i+1}$ 称为 $X$ 的\emph{合成因子}. 合成因子都是单对象; 它们构成的集合 (元素容许带重数) 记为 $\mathrm{JH}(X)$, 与合成列的选取无关.
+\end{definition-theorem}
+\begin{proof}
+	合成因子必然单, 否则 $X_0 \supsetneq \cdots \supsetneq X_r$ 有真加细. 设 $X = X'_0 \supsetneq \cdots \supsetneq X'_s$ 为另一合成列. 定理 \ref{prop:lattice-JH} 蕴涵它和 $X_0 \supsetneq \cdots \supsetneq X_r$ 等价; 特别地, 它们的指标集之间存在双射 $i \leftrightarrow j$, 使得区间 $\left[ X_{i+1}, X_i \right]$ 和 $\left[ X'_{j+1}, X'_j \right]$ 可以通过模格中的标准同构 $[a \wedge b, a] \rightiso [b, a \vee b]$ (见命题 \ref{prop:lattice-diamond-isom}) 相连接.
+
+	迄今一切都是格论语言, 然而定理 \ref{prop:Abel-cat-isom-thm} (iii) 表明这类区间同构对应于商对象在 $\mathcal{A}$ 中的同构
+	\[ X_i/X_{i+1} \simeq X'_j/X'_{j+1}. \]
+	变动 $i \leftrightarrow j$ 可见精确到同构和重排, 合成因子无关合成列的选取.
+\end{proof}
+
+注意到 $\mathrm{JH}(X)$ 的元素个数 (计入重数) 正是 $\ell(X)$. 带重数的集合也能取并, 相当于重数相加, 此运算仍记为 $\cup$.
+
+\begin{lemma}
+	给定短正合列 $0 \to X' \to X \to X'' \to 0$. 对象 $X$ 长度有限当且仅当 $X', X''$ 亦然; 此时 $\mathrm{JH}(X) = \mathrm{JH}(X') \cup \mathrm{JH}(X'')$, 从而 $\ell(X) = \ell(X') + \ell(X'')$.
+\end{lemma}
+\begin{proof}
+	定理 \ref{prop:Abel-cat-isom-thm} (ii) 将偏序集 $\mathrm{Sub}_{X'}$ 和 $\mathrm{Sub}_{X''}$ 分别嵌为 $\mathrm{Sub}_X$ 的区间 $[0, X']$ 和 $[X', X]$. 故 $X$ 长度有限蕴涵 $X'$, $X''$ 长度有限. 反之设 $X', X''$ 长度有限, 取合成列
+	\[ X' = X'_0 \supsetneq \cdots \supsetneq X'_r = 0, \quad X'' = X''_0 \supsetneq \cdots \supsetneq X''_s = 0. \]
+	按定理 \ref{prop:Abel-cat-isom-thm} (ii) 将每个 $X''_i$ 都提升为 $X$ 的子对象 $Y_i \supset X'$, 特别地 $Y_0 = X$ 而 $Y_s = X'$; 于是
+	\[ X = Y_0 \supsetneq \cdots \supsetneq Y_s \supsetneq X'_1 \supsetneq \cdots \supsetneq X'_r = 0 \]
+	是合成列, 其子商组成 $\mathrm{JH}(X') \cup \mathrm{JH}(X'')$.
+\end{proof}
+
+\begin{definition}\label{def:semisimple}
+	\index{duixiang!半单 (semisimple)}
+	\index{duixiang!分裂 (split)}
+	\index{Abel fanchou!半单 (semisimple)}
+	\index{Abel fanchou!分裂 (split)}
+	对象 $X$ 称为
+	\begin{itemize}
+		\item \emph{半单}的, 如果存在一族单子对象 $(X_i)_{i \in I}$ 使得 $X = \bigoplus_{i \in I} X_i$;
+		\item \emph{分裂}的, 如果所有短正合列 $0 \to X' \to X \to X'' \to 0$ 皆分裂.
+	\end{itemize}
+	若所有对象皆半单 (或分裂), 则称 $\mathcal{A}$ 为半单 (或分裂) Abel 范畴\footnote{文献中的定义不尽统一, 有人将这里的分裂 Abel 范畴称为半单 Abel 范畴.}.
+\end{definition}
+
+许多文献在半单对象的定义中要求 $I$ 有限.
+
+\begin{lemma}
+	若 $X = \bigoplus_{i=1}^n X_i$, 其中 $X_1, \ldots, X_n$ 为单对象, 则 $X$ 是有限长度的, $\mathrm{JH}(X) = \left\{ X_1, \ldots, X_n \right\}$ (计重数), 而 $\ell(X) = n$.
+\end{lemma}
+\begin{proof}
+	考虑合成列 $\bigoplus_{i=1}^n X_i \supsetneq \bigoplus_{i=1}^{n-1} X_i \supsetneq \cdots \supsetneq 0$.
+\end{proof}
+
+\begin{remark}
+	对于一般的半单对象 $X = \bigoplus_{i \in I} X_i$, 关于 $X$ 的 Noether, Artin 和有限长度的性质全部等价于 $I$ 有限, 这是因为通过从 $I$ 添入 (或删去) 直和项, 极易在 $\mathrm{Sub}_X$ 中构造严格升链 (或严格降链).
+\end{remark}
+
+我们希望了解分裂对象和半单对象的联系. 论证类似于模的情况 \cite[命题 6.11.4]{Li1}.
+
+\begin{proposition}
+	设 $X$ 是分裂对象, 则 $X$ 的子对象和商对象亦分裂. 若进一步设 $X$ 是 Artin 对象, 则 $X$ 是有限长度半单对象.
+\end{proposition}
+\begin{proof}
+	给定短正合列 $0 \to X' \to X \to X'' \to 0$, 条件蕴涵 $X \simeq X' \oplus X''$, 故 $X''$ 嵌入为 $X$ 的子对象. 问题遂化约为证 $X$ 的每个子对象 $X'$ 皆分裂. 给定 $X'_0 \subset X'$, 存在 $Y \subset X$ 使得 $X = X'_0 \oplus Y$. 问题化为证
+	\[ X' = X'_0 \oplus (Y \cap X'). \]
+	这是命题 \ref{prop:biproduct-sum-intersection} 的应用: 一方面 $X'_0 \cap (Y \cap X') \subset X'_0 \cap Y = 0$, 另一方面 $\mathrm{Sub}_X$ 是模格, 故 $X'_0 + (Y \cap X') = X' \cap (Y + X'_0) = X' \cap X = X'$. 上式得证.
+	
+	进一步设 $X$ 是 Artin 对象. 若 $X \neq 0$ 则存在极小非零子对象 $X_1$, 它必然单, 并且存在直和分解 $X = X_1 \oplus Y_1$. 注意到 $Y_1$ 仍是分裂 Artin 对象; 若 $Y_1 \neq 0$ 则继续取 $Y_1 = X_2 \oplus Y_2$ 等等. Artin 条件确保严格降链 $X \supsetneq Y_1 \supsetneq Y_2 \cdots$ 在有限步内停止, 给出所求分解 $X = X_1 \oplus \cdots \oplus X_n$.
+\end{proof}
+
+我们也可以反过来问半单对象是否分裂. 对于一般的 Abel 范畴, 同样需要有限性的假设.
+
+\begin{proposition}\label{prop:ss-decomp}
+	对选定的对象 $X$ 考虑以下性质.
+	\begin{enumerate}[(i)]
+		\item $X = \sum_{Y \in \mathcal{F}} Y$, 其中 $\mathcal{F}$ 是 $\mathrm{Sub}_X$ 的某个有限子集, 每个 $Y \in \mathcal{F}$ 皆单;
+		\item $X = \bigoplus_{Y \in \mathcal{F}} Y$, 其中 $\mathcal{F}$ 是 $\mathrm{Sub}_X$ 的某个有限子集, 每个 $Y \in \mathcal{F}$ 皆单;
+		\item $X$ 分裂.
+	\end{enumerate}
+	我们有 (i) $\implies$ (ii) $\implies$ (iii).
+\end{proposition}
+\begin{proof}
+	重复 \cite[命题 6.11.4]{Li1} 中对 (i) $\implies$ (ii) $\implies$ (iii) 的论证.
+\end{proof}
+
+\begin{remark}\label{rem:Grothendieck-ss-decomp}
+	若要将命题 \ref{prop:ss-decomp} 的陈述扩及无穷子集 $\mathcal{F} \subset \mathrm{Sub}_X$, 则应当要求 $\mathcal{A}$ 是 \S\ref{sec:Grothendieck-cat} 行将介绍的 Grothendieck 范畴. 于是 Grothendieck 范畴的半单对象必分裂, 而半单 Grothendieck 范畴自动分裂. 只要读者掌握了相关定义, 则论证类似于模的情形, 故留作本章习题.
+\end{remark}
+
+\section{正合函子, 内射对象和投射对象}\label{sec:inj-proj}
+对于给定的函子 $F: \mathcal{A} \to \mathcal{B}$, 可以谈论它是否保 $\varinjlim$ 或 $\varprojlim$, 详见 \cite[\S 2.8]{Li1} 或 \S\ref{sec:limit-functor} 的介绍. 本节关注 $\mathcal{A}$ 和 $\mathcal{B}$ 为 Abel 范畴而 $F$ 为加性函子的情形. 考虑 $\varprojlim$ (或 $\varinjlim$) 的特例 $\Ker$ (或 $\Coker$), 对 $\mathcal{A}$ 中的任意态射 $f: X \to Y$, 我们得到典范态射 $F \Ker(f) \to \Ker F(f)$ 及其对偶版本 $\Coker F(f) \to F\Coker(f)$, 使得下图交换
+\[\begin{tikzcd}[column sep=small]
+	F \Ker(f) \arrow[rd, "{F[\Ker(f) \hookrightarrow X]}"'] \arrow[rr] & & \Ker F(f) \arrow[hookrightarrow, ld] \\
+	& FX &
+\end{tikzcd} \quad \begin{tikzcd}[column sep=small]
+	\Coker F(f) \arrow[rr] & & F \Coker(f) \\
+	& FY \arrow[twoheadrightarrow, lu] \arrow[ru, "{ F[Y \twoheadrightarrow \Coker(f)] }"'] . &
+\end{tikzcd}\]
+\begin{itemize}
+	\item 若 $F \Ker(f) \rightiso \Ker F(f)$ 对一切 $f$ 都成立, 则称函子 $F$ \emph{保核};
+	\item 若 $\Coker F(f) \rightiso F \Coker(f)$ 对一切 $f$ 都成立, 则称 $F$ \emph{保余核}.
+\end{itemize}
+
+如果 $(X^\bullet, d^\bullet)$ 是 Abel 范畴中的复形, 则 $(FX^\bullet, Fd^\bullet)$ 亦然, 问题在于正合性.
+
+\begin{proposition}\label{prop:left-right-exact-functor}
+	设 $F: \mathcal{A} \to \mathcal{B}$ 为 Abel 范畴之间的加性函子. 以下陈述等价:
+	\begin{enumerate}[(L1)]
+		\item $F$ 保核;
+		\item 设 $0 \to X' \xrightarrow{f} X \xrightarrow{g} X''$ 在 $\mathcal{A}$ 中正合, 则 $0 \to F(X') \xrightarrow{Ff} F(X) \xrightarrow{Fg} F(X'')$ 在 $\mathcal{B}$ 中正合;
+		\item $F$ 保有限 $\varprojlim$.
+	\end{enumerate}
+	对偶地, 以下陈述也等价:
+	\begin{enumerate}[(R1)]
+		\item $F$ 保余核;
+		\item 设 $X' \xrightarrow{f} X \xrightarrow{g} X'' \to 0$ 在 $\mathcal{A}$ 中正合, 则 $F(X') \xrightarrow{Ff} F(X) \xrightarrow{Fg} F(X'') \to 0$ 在 $\mathcal{B}$ 中正合;
+		\item $F$ 保有限 $\varinjlim$.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	基于对偶性, 以下仅讨论 (L1)---(L3).
+	
+	(L1) $\implies$ (L2). 形如 $0 \to \bullet \to \bullet \to \bullet$ 的正合列恰好对应到态射的核, 见 \S\ref{sec:cohomology} 后半部的说明.
+
+	(L2) $\implies$ (L3). 一切有限 $\varprojlim$ 都可以从有限积和等化子来构造. 已知加性函子保双积, 而 $F$ 保 $\Ker$ 故保所有等化子 (注记 \ref{rem:equalizer-Ker}). 因此 $F$ 保有限 $\varprojlim$.
+	
+	(L3) $\implies$ (L1) 是平凡的.
+\end{proof}
+
+对于加性函子 $F$ 如上, 若 $(X^\bullet, d^\bullet)$ 正合蕴涵 $(FX^\bullet, Fd^\bullet)$ 正合, 则称 $F$ 保正合列; 类似地, 我们也可以谈论 $F$ 是否保短正合列; 两者实则是等价的.
+
+\begin{proposition}\label{prop:exact-functor}
+	设 $F: \mathcal{A} \to \mathcal{B}$ 为 Abel 范畴之间的加性函子. 以下陈述等价:
+	\begin{enumerate}[(E1)]
+		\item $F$ 保短正合列;
+		\item $F$ 保正合列;
+		\item $F$ 保有限 $\varprojlim$ 和有限 $\varinjlim$.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	(E1) $\implies$ (E2). 给定 $\mathcal{A}$ 中的正合列 $(X^\bullet, d^\bullet)$, 将之拆解为短正合列
+	\[\begin{tikzcd}
+		0 \arrow[r] & \Ker(d^n) \arrow[r, "{\iota^n}"] & X^n \arrow[r, "{\mathbf{d}^n}"] & \Ker(d^{n+1}) \arrow[r] & 0
+	\end{tikzcd}\]
+	其中的态射 $\mathbf{d}^n$ 由 $d^n = \iota^{n+1} \mathbf{d}^n$ 刻画; 上标 $n$ 可任取, 但 $X^n$ 不能是正合列的右端点.
+
+	按假设 $0 \to F(\Ker(d^n)) \xrightarrow{F\iota^n} F(X^n) \xrightarrow{F \mathbf{d}^n} F (\Ker(d^{n+1})) \to 0$ 依然正合, $Fd^n = F\iota^{n+1} F \mathbf{d}^n$.
+	于是这些短正合列重新组装为 $\mathcal{B}$ 中的正合列 $(FX^\bullet, Fd^\bullet)$.
+	
+	(E2) $\implies$ (E3). 若 $F$ 保正合列, 则它满足命题 \ref{prop:left-right-exact-functor} 的性质 (L2) 和 (R2).
+	
+	(E3) $\implies$ (E1). 设 $0 \to X' \to X \to X'' \to 0$ 在 $\mathcal{A}$ 中正合. 再度应用命题 \ref{prop:left-right-exact-functor}, 可见 $0 \to F(X') \to F(X) \to F(X'')$ 和 $F(X') \to F(X) \to F(X'') \to 0$ 皆正合, 故 $0 \to F(X') \to F(X) \to F(X'') \to 0$ 正合.
+\end{proof}
+
+请留意到 (E3) $\iff$ (L3) $\wedge$ (R3).
+
+\begin{definition}[正合函子]\label{def:exact-functor}
+	\index{hanzi!左正合, 右正合, 正合 (left exact, right exact, exact)}
+	对于 Abel 范畴间的加性函子 $F: \mathcal{A} \to \mathcal{B}$, 考虑命题 \ref{prop:left-right-exact-functor} 中的条件 (L1)---(L3), (R1)---(R3) 以及命题 \ref{prop:exact-functor} 中的条件 (E1)---(E3).
+	\begin{itemize}
+		\item 若 (L1)---(L3) 之中的任一条成立, 则称 $F$ \emph{左正合}.
+		\item 若 (R1)---(R3) 之中的任一条成立, 则称 $F$ \emph{右正合}.
+		\item 若 (E1)---(E3) 之中的任一条成立, 则称 $F$ \emph{正合}; 这也相当于说 $F$ 左, 右皆正合.
+	\end{itemize}
+\end{definition}
+
+举例明之, Abel 范畴之间的等价当然是正合函子. 另一则极端的例子是零函子: 它映一切对象为零对象, 映一切态射为零态射; 这也是正合的.
+
+根据引理 \ref{prop:mono-epi-ker-coker}, 左正合函子保持单态射, 右正合函子保持满态射.
+
+\begin{remark}\label{rem:exactness-mono-epi}
+	鉴于 (E1), 若已知 $F$ 左正合 (或右正合), 则 $F$ 正合等价于 $F$ 保持满态射 (或单态射).
+\end{remark}
+
+验证左/右正合性质的常用手段是伴随函子.
+
+\begin{theorem}\label{prop:exactness-adjoint}
+	考虑 Abel 范畴 $\mathcal{A}$ 和 $\mathcal{B}$ 之间的一对加性函子
+	\[\begin{tikzcd}
+		F: \mathcal{A} \arrow[r, yshift=0.3em] & \mathcal{B} :G \arrow[l, yshift=-0.3em] .
+	\end{tikzcd}\]
+	设 $F, G$ 可以扩充为伴随对 $(F, G, \varphi)$, 则 $F$ 右正合而 $G$ 左正合; 事实上, 此时 $F$ 保 $\varinjlim$ 而 $G$ 保 $\varprojlim$.
+\end{theorem}
+\begin{proof}
+	应用 \cite[定理 2.8.12]{Li1} 与命题 \ref{prop:left-right-exact-functor} 中的条件 (L3), (R3).
+\end{proof}
+
+\begin{example}[极限的左/右正合性]\label{eg:limit-exactness}
+	设 $\mathcal{A}$ 为 Abel 范畴, $I$ 为任意范畴, 并且假设所有函子 $\alpha: I \to \mathcal{A}$ 都有 $\varinjlim$ (或 $\varprojlim$). 按命题 \ref{prop:functor-cat-Abel} 赋 $\mathcal{A}^I$ 以 Abel 范畴的结构. 以下来说明函子 $\varinjlim: \mathcal{A}^I \to \mathcal{A}$ (或 $\varprojlim$) 右正合 (或左正合).
+	
+	讨论 $\varinjlim$ 的情形即可. 鉴于定理 \ref{prop:exactness-adjoint}, 一种策略是说明 $\varinjlim$ 有右伴随. 定义对角函子 $\Delta: \mathcal{A} \to \mathcal{A}^I$, 映一切 $L \in \Obj(\mathcal{A})$ 为常值函子 $\Obj(I) \ni i \mapsto L$. 此时有伴随对
+	\[\begin{tikzcd}
+		\varinjlim : \mathcal{A}^I \arrow[shift left, r] & \mathcal{A}: \Delta \arrow[l, shift left] .
+	\end{tikzcd}\]
+	这是 $\varinjlim$ 的泛性质的立即推论: 在 $\mathcal{A}^I$ 中给定从函子 $\alpha: I \to \mathcal{A}$ 到 $\Delta(L)$ 的态射相当于给定一族相容的态射 $f_i: \alpha(i) \to L$, 换言之, 即给定以 $\alpha$ 为底, 以 $L$ 为顶点的锥; 相关回顾可见 \S\ref{sec:limit-functor}.
+\end{example}
+
+\begin{example}\label{eg:module-adjoint-pairs}
+	设 $f: R \to S$ 为环同态. 考虑左模范畴之间的函子
+	\[ \begin{tikzcd}[column sep=large]
+		R\dcate{Mod} \arrow[bend left=50, r, "{S \dotimes{R} (\cdot)}"] \arrow[bend right=50, r, "{\Hom_R({}_R S, \cdot)}"'] & S\dcate{Mod} \arrow[l, "{ {}_{R \to S} \mathcal{F} }"]
+	\end{tikzcd}\]
+	其中遗忘函子 ${}_{R \to S} \mathcal{F}$ 无非是将一个 $S$-模通过 $f$ 变为 $R$-模, 函子 $S \dotimes{R} (\cdot)$ 和 $\Hom_R({}_R S, \cdot)$ 的讨论则可见 \cite[\S 6.6]{Li1}, 此处 ${}_R S$ 意谓视 $S$ 为左 $R$-模. 根据 \cite[推论 6.6.8]{Li1},
+	\[ \left( S \dotimes{R} -, \; {}_{R \to S} \mathcal{F} \right) \quad \text{和} \quad \left( {}_{R \to S} \mathcal{F}, \; \Hom_R({}_R S, -) \right) \]
+	皆为伴随对. 定理 \ref{prop:exactness-adjoint} 遂蕴涵
+	\[ S \dotimes{R} (\cdot)\; \text{右正合}, \quad \Hom({}_R S, \cdot)\; \text{左正合}, \quad {}_{R \to S }\mathcal{F}\; \text{正合}. \]
+	这些正合性质也可以直接从代数上验证. 举遗忘函子 ${}_{R \to S} \mathcal{F}$ 为例: 一列模同态 $\cdots \to M^n \xrightarrow{d^n} M^{n+1} \to \cdots$ 是否为复形 (即 $d^{n+1} d^n = 0$), 或者是否正合 (即 $\Image(d^n) = \Ker(d^{n+1})$), 皆无关乎 $R$ 或 $S$ 的乘法, 而只依赖于 $M^n$ 的加法群结构; 换言之, ${}_{\Z \to S} \mathcal{F}: S\dcate{Mod} \to \cate{Ab}$ 已然是正合函子. 另一视角则是直接验证 ${}_{R \to S} \mathcal{F}$ 保持所有极限, 这点可以就 \cite[定理 6.2.2]{Li1} 的构造直接检查.
+\end{example}
+
+正合函子自动保持态射的 $\Image \simeq \Coim$ (定义 \ref{def:Im-Coim}, 命题 \ref{prop:Im-Coim-additive}); 它还保持上同调.
+\begin{proposition}\label{prop:exact-preserves-cohomologies}
+	设 $F: \mathcal{A} \to \mathcal{B}$ 是 Abel 范畴间的正合函子. 对于 $\mathcal{A}$ 中的任何复形 $(X^\bullet, d^\bullet)$, 在 $\mathcal{B}$ 中有典范同构
+	\[ F \Hm^n(X^\bullet, d^\bullet) \rightiso \Hm^n(FX^\bullet, Fd^\bullet), \quad n \in \Z. \]
+\end{proposition}
+\begin{proof}
+	问题化约到三项复形 $X' \xrightarrow{f} X \xrightarrow{g} X''$ 的情形. 回归 \eqref{eqn:homology-3} 的定义:
+	\begin{multline*}
+		F \left( \Hm\left[ X' \xrightarrow{f} X \xrightarrow{g} X'' \right] \right) = F \Coker\left[ \Image(f) \to \Ker(g) \right] \\
+		\simeq \Coker\left[ F\Image(f) \to F\Ker(g) \right] \\
+		\simeq \Coker\left[ \Image(Ff) \to \Ker(Fg) \right] = \Hm\left[ FX' \xrightarrow{Ff} FX \xrightarrow{Fg} FX'' \right],
+	\end{multline*}
+	涉及的所有同构都是典范的.
+\end{proof}
+
+忠实正合函子具有特别良好的性质.
+\begin{proposition}\label{prop:faithful-exact}\index{hanzi!忠实正合 (faithfully exact)}
+	对于 Abel 范畴之间的加性函子 $F: \mathcal{A} \to \mathcal{B}$, 以下陈述等价:
+	\begin{enumerate}[(i)]
+		\item $F$ 正合而且忠实;
+		\item $F$ 正合, 而且对所有 $X \in \Obj(\mathcal{A})$ 皆有 $FX = 0 \iff X = 0$;
+		\item $X' \to X \to X''$ 在 $\mathcal{A}$ 中正合当且仅当 $FX' \to FX \to FX''$ 在 $\mathcal{B}$ 中正合.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	(i) $\implies$ (ii): 若 $FX = 0$, 则 $F(\identity_X) = \identity_{FX} = 0$ 蕴涵 $\identity_X = 0$, 故 $X=0$.
+	
+	(ii) $\implies$ (iii): 应用命题 \ref{prop:exact-preserves-cohomologies} 处理上同调.
+	
+	(iii) $\implies$ (i): 条件已蕴涵 $F$ 正合. 设 $u: X \to Y$ 满足 $Fu = 0$, 由于
+	\[ X \xrightarrow{\identity} X \xrightarrow{u} Y \xrightarrow{\identity} Y, \]
+	在 $F$ 之下的像正合, 它本身亦正合, 从而 $u=0$.
+\end{proof}
+
+对于了解局部化 (见 \S\ref{sec:cat-localization}) 的读者, 它给出正合函子的重要例子.
+
+\begin{proposition}[局部化的正合性]\label{prop:Abel-cat-localization}
+	设 $\mathcal{A}$ 为 Abel 范畴, $S \subset \Mor(\mathcal{A})$ 为乘性系 (定义 \ref{def:multiplicative-family}), 则定理 \ref{prop:Gabriel-Zisman} 给出的范畴 $\mathcal{A}[S^{-1}]$ 带有典范的 Abel 范畴结构, 使得局部化函子 $Q: \mathcal{A} \to \mathcal{A}[S^{-1}]$ 正合.
+\end{proposition}
+\begin{proof}
+	定理 \ref{prop:localization-additivity} 赋予 $\mathcal{A}[S^{-1}]$ 典范的加性范畴结构, 使得 $Q$ 为加性函子. 今将说明 $\mathcal{A}[S^{-1}]$ 中的每个态射 $f$ 都有核及余核, 并且是严格态射. 根据 $\mathcal{A}[S^{-1}]$ 的构造, 将 $f$ 合成一个来自 $S$ 的同构之后, 可确保 $f$ 是 $\mathcal{A}$ 中某个态射对 $Q$ 的像, 这不影响欲证的性质. 引理 \ref{prop:localization-prod} 说明 $Q$ 保持一切有限 $\varinjlim$ 和 $\varprojlim$, 特别地, 它将 $\mathcal{A}$ 中的 $\Ker$, $\Coker$, $\Image$, $\Coim$ 映为 $\mathcal{A}[S^{-1}]$ 中的相应构造, 因而也保持图表 \eqref{eqn:strict-morphism}. 如是表明 $\mathcal{A}[S^{-1}]$ 是 Abel 范畴; 命题 \ref{prop:exact-functor} 的 (E3) 表明 $Q$ 正合.
+\end{proof}
+
+注意到如果进一步要求 $\mathcal{A}$ 是 $\Bbbk$-线性的, 其中 $\Bbbk$ 是交换环, 则 $Q$ 是 $\Bbbk$-线性 Abel 范畴之间的函子. 这同样是定理 \ref{prop:localization-additivity} 的内容.
+
+另一类格外重要的例子是 $\Hom$ 函子. 设 $T$ 是 Abel 范畴 $\mathcal{A}$ 的对象, 则 $\Hom(T, \cdot)$ 给出函子 $\mathcal{A} \to \cate{Ab}$, 而 $\Hom(\cdot, T)$ 给出函子 $\mathcal{A}^{\opp} \to \cate{Ab}$; 在态射的层面上, 它们分别映 $f: X \to Y$ 为 $\Hom$ 上的 $f_*$ 和 $f^*$. 显然两者都是加性函子.
+
+如果 $\mathcal{A}$ 是 $\Bbbk$-线性 Abel 范畴, 则 $\Hom$ 函子可取值在 $\Bbbk\dcate{Mod}$ 中, 成为 $\Bbbk$-线性的函子; 这层推广对此后的讨论影响甚小, 不另外阐述.
+
+\begin{proposition}[$\Hom$ 函子左正合]\label{prop:Hom-left-exact}
+	设 $\mathcal{A}$ 为 Abel 范畴, $T$ 为 $\mathcal{A}$ 的对象. 那么 $\Hom(T, \cdot): \mathcal{A} \to \cate{Ab}$ 和 $\Hom(\cdot, T): \mathcal{A}^{\opp} \to \cate{Ab}$ 都是左正合函子.
+\end{proposition}
+\begin{proof}
+	基于对偶性 (以 $\mathcal{A}^{\opp}$ 代 $\mathcal{A}$), 处理 $\Hom(T, \cdot)$ 即可. 问题归结为证 $\Hom(T, \cdot)$ 保 $\Ker$. 因为 $\cate{Ab}$ 中的 $\Ker$ 无非是群论中定义的核, 一切转译为 $\Ker$ 的泛性质.
+\end{proof}
+
+\begin{definition}\label{def:injective-projective-obj}
+	\index{duixiang!内射 (injective)}
+	\index{duixiang!投射 (projective)}
+	设 $X$ 是 Abel 范畴 $\mathcal{A}$ 的对象. 若 $\Hom(X, \cdot): \mathcal{A} \to \cate{Ab}$ 是正合函子, 则称 $X$ 为\emph{投射对象}; 若 $\Hom(\cdot, X): \mathcal{A}^{\opp} \to \cate{Ab}$ 是正合函子, 则称 $X$ 为\emph{内射对象}.
+\end{definition}
+
+依注记 \ref{rem:exactness-mono-epi} 和命题 \ref{prop:Hom-left-exact}, 为了判断对象 $X$ 是否投射 (或内射), 仅须检查函子 $\Hom(X, \cdot)$ (或 $\Hom(\cdot, X)$) 是否保持满态射. 因此:
+\begin{itemize}
+	\item 对象 $P$ 是投射的当且仅当对 $\mathcal{A}$ 中的任何正合列 $Y \xrightarrow{g} X \to 0$ 和态射 $P \to X$, 存在 $P \to Y$ 使下图交换
+	\[\begin{tikzcd}
+		& P \arrow[d] \arrow[ld, "\exists"'] & \\
+		Y \arrow[r, "g"'] & X \arrow[r] & 0 \\
+	\end{tikzcd}\]
+	(相当于 $g_*: \Hom(P, Y) \to \Hom(P, X)$ 满.)
+	\item 对象 $I$ 是内射的当且仅当对 $\mathcal{A}$ 中的任何正合列 $0 \to X \xrightarrow{f} Y$ 和态射 $X \to I$, 存在 $Y \to I$ 使下图交换
+	\[\begin{tikzcd}
+		0 \arrow[r] & X \arrow[r, "f"] \arrow[d] & Y \arrow[ld, "\exists"] \\
+		& I &
+	\end{tikzcd}\]
+	(相当于 $f^*: \Hom(Y, I) \to \Hom(X, I)$ 满.)
+\end{itemize}
+
+\begin{lemma}\label{prop:inj-proj-split}
+	考虑 Abel 范畴中的短正合列 $0 \to X' \xrightarrow{f} X \xrightarrow{g} X'' \to 0$. 若 $X'$ 是内射对象, 或者 $X''$ 是投射对象, 则此短正合列分裂.
+\end{lemma}
+\begin{proof}
+	基于对偶性, 不妨设 $X'$ 是内射对象. 在上述讨论中考虑交换图表
+	\[\begin{tikzcd}
+		0 \arrow[r] & X' \arrow[r, "f"] \arrow[d, "{\identity_{X'}}"'] & X \arrow[ld, "\exists r"] \\
+		& X' &
+	\end{tikzcd}\]
+	再将 $rf = \identity_{X'}$ 代入命题 \ref{prop:split-ses}.
+\end{proof}
+
+\begin{lemma}\label{prop:prod-injective-projective}
+	考虑 Abel 范畴 $\mathcal{A}$ 中一族对象 $(X_i)_{i \in I}$. 设余积 $\coprod_{i \in I} X_i$ (或积 $\prod_{i \in I} X_i$) 在 $\mathcal{A}$ 中存在, 则它是投射 (或内射) 对象当且仅当每个 $X_i$ 亦然.
+\end{lemma}
+\begin{proof}
+	基于对偶性, 仅须考虑余积 $\coprod_{i \in I} X_i$ 情形. 泛性质给出函子的同构
+	\[ \Hom_{\mathcal{A}}\left( \coprod_{i \in I} X_i, - \right) \rightiso \prod_{i \in I} \Hom_{\mathcal{A}}\left( X_i, - \right): \mathcal{A} \to \cate{Ab}. \]
+	一切归结为以下的初等观察: 给定一族映射 $\left( f_i: A_i \to B_i \right)_{i \in I}$, 其中 $A_i, B_i$ 为集合, 则诱导映射 $(f_i)_{i \in I}: \prod_{i \in I} A_i \to \prod_{i \in I} B_i$ 是满射当且仅当每个 $f_i$ 皆满.
+\end{proof}
+
+举例明之, 考虑环 $R$, 则所有自由 $R$-模皆是 $R\dcate{Mod}$ 的投射对象. 诚然, 问题归结为证 $R$ 本身是投射对象, 然而 $\Hom(R, \cdot): R\dcate{Mod} \to \cate{Ab}$ 同构于忘却函子 $\mathcal{F}: R\dcate{Mod} \to \cate{Ab}$, 方法是映同态 $\varphi: R \to X$ 为 $\varphi(1) \in X$, 由此知 $\Hom(R, \cdot)$ 正合.
+
+自由模同时也是 $R\dcate{Mod}$ 的生成元, 见定义 \ref{def:generators} 和例 \ref{eg:generators}. 兼为余生成元 (或生成元) 的内射 (或投射) 对象格外实用. 谨奉上一则简单刻画.
+
+\begin{proposition}[内射余生成元和投射生成元]\label{prop:injective-cogenerator}
+	Abel 范畴 $\mathcal{A}$ 中的内射 (或投射) 对象 $X$ 是余生成元 (或生成元) 的充要条件是: 对于任何 $T \in \Obj(\mathcal{A})$, $T \neq 0$, 皆有 $\Hom(T, X) \neq 0$ (或 $\Hom(X, T) \neq 0$).
+	
+	这也等价于 $\Hom(\cdot, X)$ (或 $\Hom(X, \cdot)$) 是忠实正合函子.
+\end{proposition}
+\begin{proof}
+	仅论 $X$ 为内射对象的情形. 首先设 $X$ 是余生成元. 对
+	$\begin{tikzcd}
+		T \arrow[r, shift left, "{\identity_T}"] \arrow[r, shift right, "0"'] & T
+	\end{tikzcd}$
+	应用余生成元的定义, 知存在 $\delta \in \Hom(T, X)$ 使得 $\delta = \delta \circ \identity_T \neq \delta \circ 0 = 0$.
+	
+	现在考虑另一方向. 目标是说明若 $h: S \to T$ 非零, 则存在 $\delta \in \Hom(T, X)$ 使得 $\delta h \neq 0$. 观察到存在 $\delta' \in \Hom(\Image(h), X)$, $\delta' \neq 0$. 关于满态射的考量表明 $S \twoheadrightarrow \Image(h) \xrightarrow{\delta'} X$ 合成非零; 现在应用 $X$ 作为内射对象的性质 (见定义 \ref{def:injective-projective-obj} 之下的讨论) 将 $\delta'$ 延拓为 $\delta: T \to X$ 便是.
+	
+	关于忠实正合函子的断言是命题 \ref{prop:faithful-exact} 的直接应用.
+\end{proof}
+
+为了在 Abel 范畴上开展同调代数, 我们经常要求其中有足够的内射对象或投射对象.
+\begin{definition}\label{def:enough-injectives}
+	\index{zugoudeneisheduixiang@足够的内射对象 (enough injectives)}
+	\index{zugoudetousheduixiang@足够的投射对象 (enough projectives)}
+	设 $\mathcal{A}$ 为 Abel 范畴.
+	\begin{itemize}
+		\item 若对于所有 $X \in \Obj(\mathcal{A})$, 存在内射对象 $I$ 和单态射 $X \hookrightarrow I$, 则称 $\mathcal{A}$ 有\emph{足够的内射对象}.
+		\item 若对于所有 $X \in \Obj(\mathcal{A})$, 存在投射对象 $P$ 和满态射 $P \twoheadrightarrow X$, 则称 $\mathcal{A}$ 有\emph{足够的投射对象}.
+	\end{itemize}
+\end{definition}
+
+两个概念相对偶. 构造内射对象或投射对象的常见手段是运用正合函子的伴随, 细说如下.
+
+\begin{proposition}\label{prop:adjoint-injective-projective}
+	考虑 Abel 范畴之间的一对函子
+	$\begin{tikzcd}
+		\mathcal{A} \arrow[r, shift left, "F"] & \mathcal{B} \arrow[l, shift left, "G"]
+	\end{tikzcd}$,
+	并且假设 $F$ 是正合函子.
+	\begin{itemize}
+		\item 若 $G$ 是 $F$ 的左伴随, 则 $G$ 映 $\mathcal{B}$ 的投射对象为 $\mathcal{A}$ 的投射对象;
+		\item 若 $G$ 是 $F$ 的右伴随, 则 $G$ 映 $\mathcal{B}$ 的内射对象为 $\mathcal{A}$ 的内射对象.
+	\end{itemize}
+\end{proposition}
+\begin{proof}
+	基于对偶性, 考虑 $G$ 是左伴随的情形即可. 此时 $G$ 必是加性函子 (推论 \ref{prop:automatic-additivity}). 设 $P$ 为 $\mathcal{B}$ 的投射对象. 对于 $\mathcal{A}$ 中任意的正合列 $(X^\bullet, d^\bullet)$, 我们有 $\cate{Ab}$ 中的复形的同构
+	\[ \Hom_{\mathcal{A}}(GP, X^\bullet) \simeq \Hom_{\mathcal{B}}(P, FX^\bullet). \]
+	因为 $F$ 正合, $(FX^\bullet, Fd^\bullet)$ 是正合列, 从而右式在 $\cate{Ab}$ 中正合. 这就说明 $\Hom_{\mathcal{A}}(GP, \cdot): \mathcal{A} \to \cate{Ab}$ 是正合函子. 证毕.
+\end{proof}
+
+举例明之, 考虑环 $R$ 和遗忘函子 $\mathcal{F}: R\dcate{Mod} \to \cate{Ab}$. 根据例 \ref{eg:module-adjoint-pairs}, $\mathcal{F}$ 正合且有右伴随 $G := \Hom_{\cate{Ab}}(R, \cdot)$. 命题 \ref{prop:adjoint-injective-projective} 说明 $G$ 映 $\cate{Ab}$ 的内射对象为 $R\dcate{Mod}$ 的内射对象, 而 $\cate{Ab}$ 的内射对象容易刻画: 它们无非是可除 $\Z$-模. 这是模论中构造内射 $R$-模并说明 $R\dcate{Mod}$ 有足够内射对象的标准手法, 详见 \cite[定理 6.9.14]{Li1}.
+
+另一方面, $R\dcate{Mod}$ 也有足够的投射对象: 对任意 $R$-模 $X$, 任取子集 $A \subset X$ 使得 $A$ 生成 $X$, 则 $R^{\oplus A} \twoheadrightarrow X$.
+
+\begin{example}\label{eg:A2-injective-projective}
+	以下的综合演练涉及抽象的 Abel 范畴, 它将在 \S\ref{sec:derived-primer} 用于研究导出函子的长正合列. 设 $\mathcal{A}$ 为 Abel 范畴. 考虑范畴 $\mathbf{2}$ (图解为 $0 \to 1$, 见本书导言关于范畴论的说明). 函子范畴 $\mathcal{A}^{\mathbf{2}}$ 仍是 Abel 范畴 (命题 \ref{prop:functor-cat-Abel}): 它是``箭头范畴'': 其对象是 $\mathcal{A}$ 的态射 $X_0 \to X_1$, 其态射则是 $\mathcal{A}$ 中的交换方块
+	$\begin{tikzcd}[row sep=small, column sep=small]
+		X_0 \arrow[r] \arrow[d] & Y_0 \arrow[d] \\
+		X_1 \arrow[r] & Y_1
+	\end{tikzcd}$.
+	
+	对于 $i \in \{0, 1\}$, 求值函子 $\mathrm{ev}_i: \mathcal{A}^{\mathbf{2}} \to \mathcal{A}$ 映对象 $X_0 \to X_1$ 为 $X_i$; 另外按以下方式定义从 $\mathcal{A}$ 到 $\mathcal{A}^{\mathbf{2}}$ 的加性函子
+	\[ L_0: X \mapsto [X \to 0], \quad L_1: X \mapsto [0 \to X], \quad H: X \to [ X \xrightarrow{\identity_X} X ], \]
+	其中 $X \in \Obj(\mathcal{A})$, 它们在态射层面的定义自明. 现在来证明以下结果.
+	\begin{compactenum}[(i)]
+		\item 函子 $\mathrm{ev}_0$ 和 $\mathrm{ev}_1$ 皆正合, 皆映 $\mathcal{A}^{\mathbf{2}}$ 的内射对象 (或投射对象) 为 $\mathcal{A}$ 的内射对象 (或投射对象). 此外函子 $H$, $L_0$, $L_1$ 皆正合.
+		\item 函子 $L_0, H$ (或 $H, L_1$) 映 $\mathcal{A}$ 的内射对象 (或投射对象) 为 $\mathcal{A}^{\mathbf{2}}$ 的内射对象 (或投射对象).
+		\item 若 $\mathcal{A}$ 有足够的内射对象 (或投射对象), 则 $\mathcal{A}^{\mathbf{2}}$ 亦然.
+	\end{compactenum}
+
+	因为 $\varinjlim$ 和 $\varprojlim$ 在 $\mathcal{A}^{\mathbf{2}}$ 中是逐项构造的, 故 $\mathrm{ev}_0, \mathrm{ev}_1$ 和 $H$, $L_0$, $L_1$ 确实正合. 断言 (i) 的余下部分和 (ii) 渊源于 $\mathrm{ev}_i$ 满足的伴随关系, 图示如下, 其验证留作简单的习题:
+	\[\begin{tikzcd}[column sep=huge]
+		\mathcal{A}^{\mathbf{2}} \arrow[r, "{\mathrm{ev}_0}" description] & \mathcal{A} \arrow[l, bend right, "{H: \text{左伴随}}"'] \arrow[l, bend left, "L_0: \text{右伴随}"] 
+	\end{tikzcd} \quad \begin{tikzcd}[column sep=huge]
+		\mathcal{A}^{\mathbf{2}} \arrow[r, "{\mathrm{ev}_1}" description] & \mathcal{A} \arrow[l, bend right, "{L_1: \text{左伴随}}"'] \arrow[l, bend left, "{H: \text{右伴随}}"] .
+	\end{tikzcd}\]
+
+	至于断言 (iii), 先论内射对象情形. 给定 $\mathcal{A}^{\mathbf{2}}$ 的对象 $[X_0 \xrightarrow{f} X_1]$, 取单态射 $\epsilon_i: X_i \hookrightarrow I_i$, 其中 $I_i$ 是内射对象, $i \in \{0, 1\}$. 由此得到 $\mathcal{A}^{\mathbf{2}}$ 中的两个态射, 记为交换图表
+	\[\begin{tikzcd}[column sep=large, /tikz/execute at end picture={
+			\node[rectangle, draw, dashed, fit=(NE) (SE), inner xsep=0.5em, inner ysep=0em] {};
+		}]
+		X_0 \arrow[d, "f"'] \arrow[hookrightarrow, r, "\epsilon_0"] & |[alias=NE]| I_0 \arrow[d] \\
+		X_1 \arrow[r] & |[alias=SE]| 0
+	\end{tikzcd} \quad \text{和} \quad \begin{tikzcd}[column sep=large, /tikz/execute at end picture={
+		\node[rectangle, draw, dashed, fit=(NE) (SE), inner xsep=0.5em, inner ysep=0em] {};
+		}]
+		X_0 \arrow[d, "f"'] \arrow[r, "\epsilon_1 f"] & |[alias=NE]| I_1 \arrow[d, "\identity"] \\
+		X_1 \arrow[hookrightarrow, r, "\epsilon_1"'] & |[alias=SE]| I_1
+	\end{tikzcd}\]
+	框出两列分别是 $L_0(I_0)$ 和 $H(I_1)$, 由 (ii) 知皆为 $\mathcal{A}^{\mathbf{2}}$ 的内射对象, 其直和亦然 (引理 \ref{prop:prod-injective-projective}). 于是交换图表
+	\[\begin{tikzcd}[column sep=large]
+		X_0 \arrow[d, "f"'] \arrow[hookrightarrow, r, "{(\epsilon_0, \epsilon_1 f)}"] & I_0 \oplus I_1 \arrow[d, "\text{投影}"] \\
+		X_1 \arrow[hookrightarrow, r, "{\epsilon_1}"'] & I_1
+	\end{tikzcd}\]
+	将 $[X_0 \xrightarrow{f} X_1]$ 嵌入内射对象. 对于投射对象的情形, 改用函子 $H$ 和 $L_1$ 便是.
+\end{example}
+
+例 \ref{eg:A2-injective-projective} 的讨论可以从 $\mathcal{A}^{\mathbf{2}}$ 扩及一般的函子范畴 $\mathcal{A}^{\mathcal{C}}$, 论证并无本质困难. 本章习题将予以勾勒.
+
+\section{Serre 子范畴和 \texorpdfstring{$\mathrm{K}_0$}{K0} 群}\label{sec:Serre-subcat}
+
+Abel 范畴的全子范畴自动继承 $\cate{Ab}$-范畴的结构, 因此可以探讨全子范畴是否具有加性或 Abel 范畴的性质.
+
+\begin{definition}\index{Abel fanchou!子 Abel 范畴}
+	如果 $\mathcal{B}$ 是 Abel 范畴 $\mathcal{A}$ 的全子范畴, $\mathcal{B}$ 本身是 Abel 范畴, 而且包含函子 $\iota: \mathcal{B} \to \mathcal{A}$ 正合 (定义 \ref{def:exact-functor}), 则称 $\mathcal{B}$ 为 $\mathcal{A}$ 的 \emph{子 Abel 范畴}.
+\end{definition}
+
+\begin{proposition}\label{prop:Abel-subcat}
+	Abel 范畴 $\mathcal{A}$ 的全子范畴 $\mathcal{B}$ 是子 Abel 范畴当且仅当下述条件成立.
+	\begin{itemize}
+		\item $0 \in \Obj(\mathcal{B})$;
+		\item 若 $X, Y \in \Obj(\mathcal{B})$ 则 $X \oplus Y$ 也可以取在 $\mathcal{B}$ 中;
+		\item 对于任意态射 $f: X \to Y$, 若 $X, Y \in \Obj(\mathcal{B})$, 则 $\Ker(f)$ 和 $\Coker(f)$ 也可以取在 $\mathcal{B}$ 中.
+	\end{itemize}
+\end{proposition}
+\begin{proof}
+	观察到这些条件自对偶. ``仅当''方向是明白的. 现在假设以上条件成立, 则 $\mathcal{B}$ 是加性范畴, 而 $\iota: \mathcal{B} \to \mathcal{A}$ 是加性函子. 接着说明 $\iota$ 保持有限 $\varprojlim$ 和有限 $\varinjlim$. 首先 $\iota$ 保持 $0$ 和有限直和. 其次, 等化子可用 $\Ker$ 来表示 (注记 \ref{rem:equalizer-Ker}), 而条件表明子范畴 $\mathcal{B}$ 对取 $\Ker$ 封闭. 由此知 $\iota$ 保有限 $\varprojlim$, 而 $\varinjlim$ 之情形是对偶的.
+
+	回顾 $\Image$ 和 $\Coim$ 的定义 \ref{def:Im-Coim}, 配合上一步可知 $\mathcal{B}$ 也对之封闭. 对于 $\mathcal{B}$ 中的任意态射 $f$, 图表 \eqref{eqn:strict-morphism} 的典范态射 $\Coim(f) \rightiso \Image(f)$ 是 $\mathcal{A}$ 的同构, 从而是 $\mathcal{B}$ 的同构. 综上可知 $\mathcal{B}$ 是子 Abel 范畴.
+\end{proof}
+
+\begin{definition}[J.-P.\ Serre]\label{def:Serre-subcat}
+	\index{Serre zifanchou@Serre 子范畴 (Serre subcategory)}
+	\index{ruo Serre zifanchou@弱 Serre 子范畴 (weak Serre subcategory)}
+	Abel 范畴 $\mathcal{A}$ 的全子范畴 $\mathcal{T}$ 若满足以下条件, 则称为 $\mathcal{A}$ 的 \emph{Serre 子范畴}.
+	\begin{itemize}
+		\item $0 \in \Obj(\mathcal{T})$;
+		\item 对于 $\mathcal{A}$ 中的任意短正合列 $0 \to X' \to X \to X'' \to 0$, 我们有 $X \in \Obj(\mathcal{T})$ 当且仅当 $X', X'' \in \Obj(\mathcal{T})$.
+	\end{itemize}
+	若将最后一条放宽为: 对于 $\mathcal{A}$ 的任意正合列
+	\[ W \to X' \to X \to X'' \to Y, \]
+	我们有 $W, X', X'', Y \in \Obj(\mathcal{T}) \implies X \in \Obj(\mathcal{T})$, 则称 $\mathcal{T}$ 为 $\mathcal{A}$ 的\emph{弱 Serre 子范畴}\footnote{这个略显突兀的定义是为导出范畴量身定制的, 见 \S\ref{sec:derived-cat}.}.
+\end{definition}
+
+举例来说, 对于交换环 $R$, 所有 Noether (或 Artin) 模构成 $R\dcate{Mod}$ 的 Serre 子范畴. 这是模论常识 \cite[引理 6.10.2]{Li1}.
+
+若 $\mathcal{T}$ 是 $\mathcal{A}$ 的 Serre 子范畴 (或弱 Serre 子范畴), 则 $\mathcal{T}^{\opp}$ 之于 $\mathcal{A}^{\opp}$ 亦然.
+
+弱 Serre 子范畴 $\mathcal{T}$ 具有以下的饱和性质: 若 $X \in \Obj(\mathcal{A})$ 同构于 $\mathcal{T}$ 的对象, 则 $X \in \Obj(\mathcal{T})$; 这是将最后一则条件施于正合列 $0 \to 0 \to X \rightiso Y \to 0$ 的结论.
+
+\begin{corollary}\label{prop:Serre-subcat-abelian}
+	设 $\mathcal{T}$ 为 Abel 范畴 $\mathcal{A}$ 的弱 Serre 子范畴, 则 $\mathcal{T}$ 是 $\mathcal{A}$ 的子 Abel 范畴.
+\end{corollary}
+\begin{proof}
+	验证命题 \ref{prop:Abel-subcat} 的条件即可. 首先 $0 \in \Obj(\mathcal{T})$. 其次, 在弱 Serre 子范畴的定义中代入以下正合列
+	\begin{gather*}
+		0 \to X \to X \oplus Y \to Y \to 0 \quad \text{(命题 \ref{prop:biproduct-ses})}, \\
+		0 \to 0 \to \Ker(f) \to X \xrightarrow{f} Y , \quad
+		X \xrightarrow{f} Y \to \Coker(f) \to 0 \to 0,
+	\end{gather*}
+	可见 $\mathcal{T}$ 对直和与 $\Ker$, $\Coker$ 封闭.
+\end{proof}
+
+\begin{example}\index[sym1]{kerF@$\Ker(F)$}
+	若 $F: \mathcal{A} \to \mathcal{B}$ 是 Abel 范畴之间的正合函子, 则所有满足 $FX = 0$ 的对象构成 $\mathcal{A}$ 的 Serre 子范畴, 记为 $\Ker(F)$.
+\end{example}
+
+\begin{theorem}[Serre 商]\label{prop:Serre-quotient}
+	\index{Serre shang@Serre 商 (Serre quotient)}
+	设 $\mathcal{T}$ 为 Abel 范畴 $\mathcal{A}$ 的 Serre 子范畴, 则存在 Abel 范畴 $\mathcal{A}/\mathcal{T}$ (容许是大范畴) 连同本质满的正合函子 $Q: \mathcal{A} \to \mathcal{A}/\mathcal{T}$, 使得 $\Ker(Q) = \mathcal{T}$, 并且以下泛性质成立: 对所有 Abel 范畴 $\mathcal{B}$ 和满足 $\Ker(F) \supset \mathcal{T}$ 的正合函子 $F: \mathcal{A} \to \mathcal{B}$, 存在唯一的正合函子 $G: \mathcal{A}/\mathcal{T} \to \mathcal{B}$ 使得 $F = GQ$.
+	
+	泛性质中的 $G$ 是忠实函子当且仅当 $\Ker(F) = \mathcal{T}$.
+\end{theorem}
+\begin{proof}
+	命 $S := \left\{f \in \Mor(\mathcal{A}) : \Ker(f), \Coker(f) \in \Obj(\mathcal{T}) \right\}$. 兹断言 $S$ 是定义 \ref{def:multiplicative-family} 所谓的乘性系.
+
+	显然 $S$ 包含所有恒等态射, 故 (S1) 成立. 设 $f: X \to Y$ 和 $g: Y \to Z$ 为 $S$ 的元素. 基于相互对偶的正合列
+	\begin{gather*}
+		0 \to \Ker(f) \to \Ker(gf) \xrightarrow{f} \Ker(g), \\
+		\Coker(f) \xrightarrow{g} \Coker(gf) \to \Coker(g) \to 0,
+	\end{gather*}
+	立见 $gf \in S$, 故 (S2) 成立. 接着考虑态射 $X \xrightarrow{s \in S} Z \xleftarrow{f} Y$. 命 $W := X \dtimes{Z} Y$, 带有态射 $s': W \to Y$. 注意到 $\Ker(s') \simeq \Ker(s)$ (命题 \ref{prop:pull-back-ker}), 而 $f$ 诱导 $\Coker(s') \hookrightarrow \Coker(s)$ (推论 \ref{prop:Abel-cat-Coker-pull}), 由此可知 $s' \in S$. 故 (S3) 成立. 最后考虑态射
+	$\begin{tikzcd}
+		X \arrow[r, "f", shift left] \arrow[r, "g"', shift right] & Y \arrow[r, "s \in S"] & W
+	\end{tikzcd}$,
+	满足 $sf = sg$; 从 $\Image(f-g) \hookrightarrow \Ker(s)$ 可见 $\Image(f-g) \in \Obj(\mathcal{T})$, 于是 $Z := \Ker(f-g) \hookrightarrow X$ 是 $S$ 中的态射, 这验证了 (S4).
+	
+	综上, $S$ 是左乘性系. 诸条件自对偶, 故 $S$ 也是右乘性系. 现在取 $Q: \mathcal{A} \to \mathcal{A}/\mathcal{T} := \mathcal{A}[S^{-1}]$ 为局部化函子. 命题 \ref{prop:localization-extra-property} 表明 $Q$ 本质满 (事实上 $\Obj(\mathcal{A}) = \Obj(\mathcal{A}/\mathcal{T})$); 命题 \ref{prop:Abel-cat-localization} 表明 $Q$ 是 Abel 范畴之间的正合函子. 注意到 $\identity_{QX} = Q(\identity_X)$ 为 $0$ 等价于存在 $U \in \Obj(\mathcal{A})$ 使得 $U \xrightarrow{0} X$ 属于 $S$ (基于推论 \ref{prop:fraction-zero} 的简单练习), 后者蕴涵 $X = \Coker[U \xrightarrow{0} X] \in \Obj(\mathcal{T})$; 反之若 $X \in \Obj(\mathcal{T})$ 则可取 $U = X$. 综上, $\Ker(Q) = \mathcal{T}$.
+
+	以下验证泛性质. 若 $\Ker(F) \supset \mathcal{T}$, 则正合列 $\Ker(s) \to X \xrightarrow{s \in S} Y \to \Coker(s)$ 表明 $F$ 映 $S$ 为同构, 而局部化的泛性质确定所求之 $G$.
+	
+	其次验证 $G$ 正合. 首先定理 \ref{prop:localization-additivity} 确保它是加性的. 由于 $\mathcal{A}[S^{-1}]$ 中的任意态射总可以适当地合成来自 $S$ 的同构, 以确保它来自 $\mathcal{A}$, 所以保核性质归结为 $F$ 与 $Q$ 的正合性. 同理可知 $G$ 保余核. 既然 $Q$ 本质满而 $\Ker(Q) = \mathcal{T}$, 忠实性质的刻画容易归结为命题 \ref{prop:faithful-exact} 的陈述 (ii).
+\end{proof}
+
+注意到 $\mathcal{A}/\mathcal{T}$ 被构造为局部化, 因此它有可能是``大范畴''. 习题将给出 $\mathcal{A}/\mathcal{T}$ 的另一种描述, 以在 $\mathcal{A}$ 良幂 (定义 \ref{def:well-powered}) 的前提下控制 Serre 商的大小.
+\index{daxiaowenti}
+
+\begin{example}
+	设 $S$ 为交换环 $R$ 的乘性子集. 定义 $R\dcate{Mod}$ 的全子范畴 $\mathcal{T}$, 使得 $M \in \Obj(\mathcal{T})$ 当且仅当对每个 $m \in M$ 皆存在 $s \in S$ 使得 $sm = 0$. 容易验证 $\mathcal{T}$ 是 Serre 子范畴. 以下说明 $R\dcate{Mod} / \mathcal{T}$ 和 $R[S^{-1}]\dcate{Mod}$ 等价.
+	
+	诚然, $M \mapsto M[S^{-1}] := M \dotimes{R} R[S^{-1}]$ 给出正合函子 $F: R\dcate{Mod} \to R[S^{-1}]\dcate{Mod}$, 映 $\mathcal{T}$ 为零, 故泛性质给出正合函子 $G: R\dcate{Mod}/\mathcal{T} \to R[S^{-1}] \dcate{Mod}$. 易见 $\Ker(F) = \mathcal{T}$, 所以 $G$ 忠实. 此外 $G$ 本质满: 将任意 $R[S^{-1}]$-模 $N$ 视为 $R$-模, 请读者验证 $R[S^{-1}]$-模的同构 $N \dotimes{R} R[S^{-1}] \simeq N$.
+
+	于是问题归结为证明 $G$ 是全忠实的. 给定 $R[S^{-1}]$-模同态 $\varphi: M_1[S^{-1}] \to M_2[S^{-1}]$, 取 $M_0 := \left\{ m \in M_1: \varphi(m \otimes 1) \;\text{来自}\; M_2 \right\}$, 则包含映射 $\iota: M_0 \hookrightarrow M_1$ 是 $R$-模同态, $\Coker(\iota) \in \Obj(\mathcal{T})$, 而且图表
+	$\begin{tikzcd}
+		M_1 & M_0 \arrow[l, "\iota"'] \arrow[r, "{\varphi|_{M_0}}"] & M_2
+	\end{tikzcd}$
+	在 $R\dcate{Mod}/\mathcal{T}$ 中确定的态射映至 $\varphi$. 明所欲证.
+\end{example}
+
+我们接着介绍和 Serre 子范畴密切相关的一种重要构造.
+
+\begin{definition}\label{def:K0}
+	\index{K0 qun@$\mathrm{K}_0$ 群}
+	\index[sym1]{K0@$\mathrm{K}_0$}
+	设 $\mathcal{A}$ 为 Abel 范畴. 按如下方式定义交换群 $\mathrm{K}_0(\mathcal{A})$, 群运算写作加法. 考虑以 $\Obj(\mathcal{A})$ 为基的自由 $\Z$-模 $F$, 记 $X \in \Obj(\mathcal{A})$ 对应的元素为 $\lrangle{X} \in F$. 令 $R \subset F$ 为由如下元素生成的子模
+	\[ \lrangle{X} - \lrangle{X'} - \lrangle{X''}, \quad 0 \to X' \to X \to X'' \to 0: \mathcal{A}\;\text{中的短正合列}, \]
+	则 $\mathrm{K}_0(\mathcal{A}) := F/R $ 称为 $\mathcal{A}$ 的 \emph{$\mathrm{K}_0$ 群}. 今后记 $X \in \Obj(\mathcal{A})$ 在 $\mathrm{K}_0(\mathcal{A})$ 中的像为 $[X]$.
+\end{definition}
+
+\begin{lemma}\label{prop:K0-prep}
+	对于任意 Abel 范畴 $\mathcal{A}$, 以下等式在 $\mathrm{K}_0(\mathcal{A})$ 中成立.
+	\begin{compactenum}[(i)]
+		\item $[0] = 0$;
+		\item 设 $X, Y \in \Obj(\mathcal{A})$, 则 $X \simeq Y$ 蕴涵 $[X] = [Y]$;
+		\item $[X \oplus Y] = [X] + [Y]$;
+		\item 若 $0 \to X^1 \xrightarrow{f^1} \cdots \xrightarrow{f^{n-1}} X^n \to 0$ 为 $\mathcal{A}$ 中的正合列, 则 $\sum_{i=1}^n (-1)^i [X^i] = 0$；
+		\item 循 \S\ref{sec:Abel-cat-subobjects} 的符号, 考虑 $X$ 的一族子对象 $X = X_0 \supset \cdots \supset X_r = 0$, 则
+		\[ [X] = \sum_{i=0}^{r-1} [X_i/X_{i+1}]. \]
+	\end{compactenum}
+\end{lemma}
+\begin{proof}
+	考虑短正合列 $0 \to 0 \to 0 \to 0 \to 0$ 可得 (i). 若 $X \simeq Y$, 则 $0 \to X \rightiso Y \to 0 \to 0$ 配合 (i) 给出 (ii). 命题 \ref{prop:biproduct-ses} 的短正合列蕴涵 (iii).
+
+	对于 (iv), 不妨补上零项, 将正合列向左右无穷延伸. 考虑短正合列
+	\[ 0 \to \Ker(f^i) \to X^i \to \Image(f^i) \to 0, \quad i=1, \ldots, n. \]
+	于是 $\left[ X^i \right] = \left[ \Ker(f^i) \right] + \left[ \Image(f^i) \right] = \left[ \Ker(f^i) \right] + \left[ \Ker(f^{i+1}) \right]$, 再取交错和即可.
+	
+	最后, (v) 是借 $0 \to X_1 \to X_0 \to X_0/X_1 \to 0$ 对 $r$ 递归论证的结果.
+\end{proof}
+
+\begin{remark}
+	\index{daxiaowenti}
+	由于本书惯例是将群实现在小集上, 鉴于引理 \ref{prop:K0-prep} (ii), 彻底规范的办法应当是在定义 $\mathrm{K}_0(\mathcal{A})$ 时要求 $\mathcal{A}$ 有一副小骨架 \cite[引理 2.2.12]{Li1}, 此处影响不大.
+\end{remark}
+
+\begin{theorem}[Euler--Poincaré 原理]\label{prop:EP}
+	设 $\cdots \to X^i \xrightarrow{d_X^i} X^{i+1} \to \cdots$ 是 Abel 范畴 $\mathcal{A}$ 中的复形, 仅有限多项非零, 则等式
+	\[ \sum_i (-1)^i \left[\Hm^i(X) \right] = \sum_i (-1)^i \left[X^i \right], \quad \Hm^i(X) := \Hm\left[ X^{i-1} \xrightarrow{d_X^{i-1}} X^i \xrightarrow{d_X^i} X^{i+1} \right] \]
+	在 $\mathrm{K}_0(\mathcal{A})$ 中成立.
+\end{theorem}
+\begin{proof}
+	对每个 $i$ 都有正合列
+	\[ 0 \to \Ker\left(d_X^{i-1}\right) \to X^{i-1} \xrightarrow{d_X^{i-1}} \Ker\left( d_X^i \right) \to \Hm^i(X) \to 0, \]
+	而且当 $|i| \gg 0$ 时各项皆为 $0$. 应用引理 \ref{prop:K0-prep} (iv) 在 $\mathrm{K}_0(\mathcal{A})$ 中求和, 可得
+	\[ \sum_i (-1)^i \left( \left[ X^{i-1} \right] + \left[\Hm^i(X)\right] \right) = \sum_i (-1)^i \left( \left[\Ker\left(d_X^{i-1}\right)\right] + \left[ \Ker\left(d_X^i\right)\right] \right). \]
+	右式相消为 $0$, 整理后导出 $\sum_i (-1)^i \left[\Hm^i(X) \right] = \sum_i (-1)^i \left[X^i \right]$.
+\end{proof}
+
+\begin{example}
+	取 $\mathcal{A}$ 为除环 $D$ 上的有限维向量空间所成之 Abel 范畴. 由于向量空间有基, $\mathrm{K}_0(\mathcal{A}) = \Z \cdot [D]$. 另一方面, 易见 $[X] \mapsto \dim_D X$ 确定群同态 $\dim: \mathrm{K}_0(\mathcal{A}) \to \Z$, 映 $[D]$ 为 $1$. 综上可知 $\dim: \mathrm{K}_0(\mathcal{A}) \rightiso \Z$.
+	
+	倘若容许无穷维向量空间, $\mathrm{K}_0$ 群将是平凡的. 原因在于对任何 $D$-向量空间 $V$, 由集合基数的考量可知存在 $D$-向量空间 $W$ 使得 $V \oplus W \simeq W$, 而且 $\dim_D W = \max\{ \dim_D V, \aleph_0 \}$; 这将导致 $[V] = 0$.
+\end{example}
+
+对于 Abel 范畴之间的正合函子 $F: \mathcal{A} \to \mathcal{B}$, 由于 $F$ 保短正合列, 故 $[X] \mapsto [FX]$ 确定群同态 $\mathrm{K}_0(f): \mathrm{K}_0(\mathcal{A}) \to \mathrm{K}_0(\mathcal{B})$. 因此若 $\mathcal{A}$ 是 $\mathcal{B}$ 的 Abel 子范畴, 则有自然同态 $\mathrm{K}_0(\mathcal{A}) \to \mathrm{K}_0(\mathcal{B})$.
+
+\begin{proposition}\label{prop:K0-exact-seq}
+	设 $\mathcal{T}$ 为 Abel 范畴 $\mathcal{A}$ 的 Serre 子范畴. 记其 Serre 商为 $\mathcal{B} := \mathcal{A}/\mathcal{T}$, 则正合函子 $\mathcal{T} \to \mathcal{A} \xrightarrow{Q} \mathcal{B}$ 诱导的同态给出加法群的正合列
+	\[ \mathrm{K}_0(\mathcal{T}) \to \mathrm{K}_0(\mathcal{A}) \xrightarrow{\mathrm{K}_0(Q)} \mathrm{K}_0(\mathcal{B}) \to 0. \]
+\end{proposition}
+\begin{proof}
+	首先 $Q: \mathcal{A} \to \mathcal{B}$ 本质满, 故 $\mathrm{K}_0(\mathcal{A}) \to \mathrm{K}_0(\mathcal{B})$ 满. 其次, $\mathrm{K}_0(\mathcal{T}) \to \mathrm{K}_0(\mathcal{A}) \to \mathrm{K}_0(\mathcal{B})$ 显然合成为 $0$. 问题在于证 $\Ker(\mathrm{K_0}(Q)) \subset \Image\left[ \mathrm{K}_0(\mathcal{T}) \to \mathrm{K}_0(\mathcal{A}) \right]$.
+	
+	设 $\sum_{i=1}^n a_i [X_i] \in \Ker\left( \mathrm{K}_0(Q)\right)$, 其中 $a_1, \ldots, a_n \in \Z$. 这相当于说存在一族 $\mathcal{B}$ 中的短正合列 $0 \to Y'_j \xrightarrow{f_j} Y_j \xrightarrow{g_j} Y''_j \to 0$ 和 $b_j \in \Z$, 其中 $j=1, \ldots, m$, 使得等式
+	\begin{equation}\label{eqn:K0-exact-seq-aux-0}
+		\sum_{i=1}^n a_i \lrangle{Q X_i} = \sum_{j=1}^m b_j \left( \lrangle{Y_j} - \lrangle{Y'_j} - \lrangle{Y''_j} \right)
+	\end{equation}
+	在以 $\Obj(\mathcal{B})$ 为基的自由 $\Z$-模中成立. 由于 $Q: \mathcal{A} \to \mathcal{B}$ 在定理 \ref{prop:Serre-quotient} 中是以局部化构造的, 回忆该定理和 \S\ref{sec:cat-localization} 的内容可知
+	\begin{compactitem}
+		\item $Q$ 等同 $\Obj(\mathcal{A})$ 与 $\Obj(\mathcal{B})$, 故 \eqref{eqn:K0-exact-seq-aux-0} 导致 $\mathrm{K}_0(\mathcal{A})$ 中的等式
+		\begin{equation}\label{eqn:K0-exact-seq-aux-1}
+			\sum_{i=1}^n a_i [X_i] = \sum_{j=1}^m b_j \left( [Y_j] - [Y'_j] - [Y''_j] \right);
+		\end{equation}
+		\item 此外, 只要适当地以 $\mathcal{B}$ 中来自 $S$ 的同构调整 $Y_j$, $Y'_j$, $Y''_j$ 和 $f_j$, $g_j$, 还能确保存在 $\mathcal{A}$ 中的态射 $u_j$, $v_j$ 使得 $f_j = Q(u_j)$ 而 $g_j = Q(v_j)$. 根据 $Q(v_j u_j) = g_j f_j = 0$ 和推论 \ref{prop:fraction-zero}, 还可以继续用 $S$ 调整, 使得 $v_j u_j = 0$.
+	\end{compactitem}
+
+	于是对每个 $1 \leq j \leq m$, 在 $\mathcal{A}$ 中都有正合列
+	\begin{gather*}
+		0 \to \Ker(v_j) \to Y_j \xrightarrow{v_j} Y''_j \to \Coker(v_j) \to 0, \\
+		0 \to \Ker(u_j) \to Y'_j \xrightarrow{u_j} \Ker(v_j) \to \frac{\Ker(v_j)}{\Image(u_j)} \to 0.
+	\end{gather*}
+	由 $Q$ 正合可见 $\Coker(v_j)$, $\Ker(u_j)$ 以及 $\frac{\Ker(v_j)}{\Image(u_j)}$ 都是 $\mathcal{T} = \Ker(Q)$ 的对象. 由此在 $\mathrm{K}_0(\mathcal{A})$ 中推得
+	\[ [Y_j] - [Y'_j] - [Y''_j] \in \Image\left[ \mathrm{K}_0(\mathcal{T}) \to \mathrm{K}_0(\mathcal{A}) \right]. \]
+	上式代回 \eqref{eqn:K0-exact-seq-aux-1}, 即得 $\Ker(\mathrm{K_0}(Q)) \subset \Image\left[ \mathrm{K}_0(\mathcal{T}) \to \mathrm{K}_0(\mathcal{A}) \right]$.
+\end{proof}
+
+面对形如命题 \ref{prop:K0-exact-seq} 的正合列, 屡试不爽的思路是设法将它左延, 亦即寻求一族高阶 $K$-群 $\mathrm{K}_i(\cdot)$, 其中 $i \in \Z_{\geq 0}$, 连同典范的正合列
+\[ \cdots \to \mathrm{K}_{i+1}(\mathcal{B}) \to \mathrm{K}_i(\mathcal{T}) \to \mathrm{K}_i(\mathcal{A}) \to \mathrm{K}_i(\mathcal{B}) \to \cdots \]
+我们还期盼 $(\mathrm{K}_i(\mathcal{A}))_{i \geq 0}$ 蕴藏关于 $\mathcal{A}$ 的深刻信息, 而且在一定程度上是可算的. 这些内容属于 K-理论, 应用范围可扩及所谓的正合范畴, 比 Abel 范畴更广. 由于相关构造基于同伦论的见地, 本书无法细述, 请感兴趣的读者参阅 \cite{Lai19}, 或 \cite[\S 13.6]{Bu10} 的概述.
+\index{zhenghefanchou}
+
+\section{Grothendieck 范畴}\label{sec:Grothendieck-cat}
+本节的主要陈述均关乎 Grothendieck 宇宙的选取, 不论``大''范畴.
+
+请先回忆何谓小极限, 完备性和生成元 (定义 \ref{def:generators}).
+
+\begin{definition}[Grothendieck 范畴 {\cite{Gr57}}]\label{def:Grothendieck-cat}
+	\index{Grothendieck fanchou@Grothendieck 范畴 (Grothendieck category)}
+	设 $\mathcal{A}$ 是 Abel 范畴. 当以下条件成立时, 我们称 $\mathcal{A}$ 是 Grothendieck 范畴.
+	\begin{itemize}
+		\item $\mathcal{A}$ 是余完备的, 换言之, 它具备所有小 $\varinjlim$;
+		\item $\mathcal{A}$ 有生成元;
+		\item 对于所有滤过小范畴 $I$ (见 \S\ref{sec:filtered-indlim}), 函子 $\varinjlim: \mathcal{A}^I \to \mathcal{A}$ 正合, 或等价地说, 对于 $\mathcal{A}^I$ 中的任何态射 $\alpha \to \beta \to \gamma$, 我们有
+		\begin{multline*}
+			\forall i \in \Obj(I), \; 0 \to \alpha(i) \to \beta(i) \to \gamma(i) \to 0 \; \text{正合} \\
+			\implies 0 \to \varinjlim \alpha \to \varinjlim \beta \to \varinjlim \gamma \to 0 \; \text{正合}.
+		\end{multline*}
+	\end{itemize}
+\end{definition}
+
+由于例 \ref{eg:limit-exactness} 已说明 $\varinjlim$ 保余核, 根据注记 \ref{rem:exactness-mono-epi}, 最后一则条件也等价于滤过小 $\varinjlim$ 保单态射. 以下论证颇能说明这一条件的用法.
+
+\begin{proposition}\label{prop:Grothendieck-cat-coprod-exact}
+	设 $\mathcal{A}$ 为 Grothendieck 范畴, 则对于任意小集 $I$, 取直和 (亦即余积) 给出正合函子 $\bigoplus_I: \mathcal{A}^I \to \mathcal{A}$.
+\end{proposition}
+\begin{proof}
+	有限情形是明显的, 而命题 \ref{prop:limit-filtered-approx} 将 $\bigoplus_I$ 表成有限直和的滤过 $\varinjlim$.
+\end{proof}
+
+其次是一条貌不惊人却颇为实用的性质, 它同样基于滤过 $\varinjlim$ 的正合性.
+
+\begin{proposition}\label{prop:Grothendieck-cat-intersection}
+	取定滤过偏序小集 $(I, \leq)$. 设 $\mathcal{A}$ 是 Grothendieck 范畴, 或者更一般地说, 设 $\varinjlim: \mathcal{A}^{(I, \leq)} \to \mathcal{A}$ 存在而且正合. 对于任意
+	\begin{compactitem}
+		\item $X \in \Obj(\mathcal{A})$ 和子对象 $Y \subset X$,
+		\item $X$ 的子对象族 $\left( X_i \right)_{i \in I}$, 满足 $i \leq j \implies X_i \subset X_j$ 者,
+	\end{compactitem}
+	按照约定 \ref{con:increasing-union} 的符号, 我们有
+	\begin{gather*}
+		\varinjlim_{i \in I} X_i \rightiso \bigcup_{i \in I} X_i \subset X, \\
+		Y \cap \left( \bigcup_{i \in I} X_i \right) = \bigcup_{i \in I} (Y \cap X_i) \; \in \mathrm{Sub}_X.
+	\end{gather*}
+\end{proposition}
+\begin{proof}
+	由于 $\varinjlim_i$ 正合, 诸 $X_i \hookrightarrow X$ 和 $\varinjlim$ 的泛性质确定的典范态射 $\iota: \varinjlim_i X_i \to X$ 仍然单. 若所有 $X_i \hookrightarrow X$ 都通过某个子对象 $Z \subset X$ 分解, 则泛性质将 $\iota$ 分解为 $\varinjlim_i X_i \to Z \subset X$. 这就表明 $\iota: \varinjlim_i X_i \hookrightarrow X$ 确实给出 $(X_i)_{i \in I}$ 在 $\mathrm{Sub}_X$ 中的上确界. 第一式得证.
+	
+	其次, 记商态射 $X \to X/Y$ 为 $q$, 则有 $Y = \Ker(q)$ 和 $Y \cap X_i = \Ker(q|_{X_i})$. 考虑相容的态射族 $q|_{X_i}: X_i \to X/Y$; 既然取 $\varinjlim_i$ 保核, 配合上一段遂有 $Y \cap \left( \bigcup_{i \in I} X_i \right) = \bigcup_{i \in I} (Y \cap X_i)$.
+\end{proof}
+
+\begin{example}[模范畴]
+	设 $R$ 为环, 则 $R\dcate{Mod}$ 是 Grothendieck 范畴. 诚然, 余完备性是熟知的 \cite[定理 6.2.2]{Li1}, 滤过 $\varinjlim$ 的正合性则见诸 \cite[引理 6.8.3]{Li1}. 作为 $R = \Z$ 的特例, $\cate{Ab}$ 是 Grothendieck 范畴.
+\end{example}
+
+为了铺陈更深入的理论, 需要和生成元相关的一些准备.
+
+\begin{definition}\index{shengchengyuan!强 (strong)}
+	设 $s$ 为范畴 $\mathcal{C}$ 的生成元. 若对于 $\mathcal{C}$ 中的所有单态射 $i: S_1 \hookrightarrow S_2$, 相应的 $i_*: \Hom(s, S_1) \hookrightarrow \Hom(s, S_2)$ 为双射当且仅当 $i$ 为同构, 则称 $s$ 为 $\mathcal{C}$ 的\emph{强生成元}.
+\end{definition}
+
+\begin{proposition}\label{prop:strong-generator-well-powered}
+	设范畴 $\mathcal{C}$ 有强生成元, 而且对于所有对象 $X$ 和单态射 $S_i \hookrightarrow X$ (其中 $i=1,2$), 存在纤维积 $S_1 \cap S_2 := S_1 \dtimes{X} S_2$. 令 $\kappa := |\Hom(s, X)|$, 则 $|\mathrm{Sub}_X| \leq 2^\kappa$.
+\end{proposition}
+\begin{proof}
+	设 $s$ 为强生成元, $X$ 为任意对象. 兹断言
+	\begin{align*}
+		\mathrm{Sub}_X & \to \left\{ \Hom(s,X)\; \text{的子集} \right\} \\ 
+		S & \mapsto \Hom(s, S)
+	\end{align*}
+	为单射, 这将给出所求的性质.
+	
+	给定 $S_1, S_2 \in \mathrm{Sub}_X$ 使得 $\Hom(s, S_1) = \Hom(s, S_2)$. 设 $S_1 \subset S_2$, 则强生成元的定义即刻导致 $S_1 = S_2$. 一般情形下, $S_1 \cap S_2 \subset S_i$ (其中 $i=1,2$, 参见定义 \ref{def:intersection-sum}), 而且作为 $\Hom(s, X)$ 的子集有
+	\[ \Hom\left(s, S_1 \cap S_2 \right) = \Hom\left( s, S_1 \right) \cap \Hom(s, S_2) = \Hom(s, S_i), \quad i = 1, 2. \]
+	由上一步可知 $S_1 = S_1 \cap S_2 = S_2$. 明所欲证.
+\end{proof}
+
+\begin{proposition}\label{prop:Abel-strong-generator}
+	Abel 范畴中的生成元自动是强生成元.
+\end{proposition}
+\begin{proof}
+	设 $\mathcal{A}$ 为 Abel 范畴, $s$ 为其生成元. 对给定的单态射 $i: S_1 \hookrightarrow S_2$, 考虑态射对
+	\[\begin{tikzcd}[column sep=large]
+		S_2 \arrow[shift left, r, "q: \text{商态射}"] \arrow[shift right, r, "0"'] & S_2/S_1
+	\end{tikzcd}\]
+	若 $i$ 非同构则 $q \neq 0$, 故生成元的定义说明存在 $\epsilon \in \Hom(s, S_2)$ 使得 $q\epsilon \neq 0 \epsilon = 0$; 此 $\epsilon$ 无法通过 $S_1 = \Ker(q)$ 分解.
+\end{proof}
+
+\begin{corollary}\label{prop:Grothendieck-cat-wellpowered}
+	Grothendieck 范畴都是良幂而且余良幂的 (定义 \ref{def:well-powered}).
+\end{corollary}
+\begin{proof}
+	由于 Abel 范畴中存在有限纤维积, 而任两个对象之间的 $\Hom$ 集按假设总是小集, 结合命题 \ref{prop:strong-generator-well-powered} 和 \ref{prop:Abel-strong-generator} 可得良幂性质. 此外, 在 Abel 范畴中 $\mathrm{Sub}_X$ 和 $\mathrm{Quot}_X$ 总是等势的.
+\end{proof}
+
+\begin{corollary}\label{prop:Grothendieck-cat-complete}
+	任何 Grothendieck 范畴 $\mathcal{A}$ 都是完备的; 换言之, 它具备所有小 $\varprojlim$.
+\end{corollary}
+\begin{proof}
+	已知 $\mathcal{A}$ 余完备而且余良幂. 代入推论 \ref{prop:SAFT-completeness}.
+\end{proof}
+
+因此 Grothendieck 范畴有任意的小直和与小直积. 习题部分将说明 \eqref{eqn:coprod-prod-delta} 的典范态射 $\delta: \bigoplus_{i \in I} X_i \to \prod_{i \in I} X_i$ 为单; 这点对于模范畴的情形自属显然.
+
+\begin{corollary}\label{prop:Grothendieck-cat-rep1}
+	设 $\mathcal{A}$ 为 Grothendieck 范畴, 则函子 $G: \mathcal{A}^{\opp} \to \cate{Set}$ 可表当且仅当它保小 $\varprojlim$, 或更具体地说, $G$ 将 $\mathcal{A}$ 中的小 $\varinjlim$ 化为 $\cate{Set}$ 中的小 $\varprojlim$.
+\end{corollary}
+\begin{proof}
+	对 $\mathcal{A}^{\opp}$ 应用推论 \ref{prop:cogenerator-representability}.
+\end{proof}
+
+注意: 尽管 Grothendieck 范畴的定义非自对偶, 上述结果的对偶版本仍然成立; 见推论 \ref{prop:Grothendieck-cat-rep2}.
+
+以下着手说明 Grothendieck 范畴有足够的内射对象; 事实上, 我们将说明定义 \ref{def:enough-injectives} 中的 $X \hookrightarrow I$ 不仅存在, $I$ 还可以取为以 $X$ 为变量的函子。
+
+\begin{lemma}\label{prop:Grothendieck-injective-criterion}
+	设 $\mathcal{A}$ 是 Grothendieck 范畴, $s$ 为其生成元. 对象 $I$ 是内射对象当仅当对于所有单态射 $X \hookrightarrow s$, 任何态射 $X \to I$ 都能延拓为 $s \to I$; 换言之, 这些资料延拓为交换图表
+	$\begin{tikzcd}[row sep=small, column sep=small]
+		X \arrow[r] \arrow[hookrightarrow, d] & I \\
+		s \arrow[dashed, ru, "\exists"'] &
+	\end{tikzcd}$.
+\end{lemma}
+\begin{proof}
+	内射性质等价于以下陈述: 对任意单态射 $A \hookrightarrow B$, 所有态射 $f: A \to I$ 都能延拓为 $B \to I$. 故``仅当''方向显然.
+
+	现论证另一方向. 回忆到 $\mathcal{A}$ 良幂; 给定 $I \xleftarrow{f} A \hookrightarrow B$ 如上, 考虑小集
+	\[ \mathcal{S} := \left\{\begin{array}{r|l}
+		(A', f') & A \subset A' \subset B \; \text{(子对象)}, \\
+		& f': A' \to I \;\text{延拓}\; f
+	\end{array}\right\}, \]
+	它按延拓关系赋有偏序. 应用滤过 $\varinjlim$ 的正合性, 可知 $\mathcal{S}$ 的任何全序子集 $\mathcal{T}$ 都有上界
+	\[ \tilde{A} := \varinjlim_{(A', f') \in \mathcal{T}} A', \quad \tilde{f} := \varinjlim_{(A', f') \in \mathcal{T}} f' : \tilde{A} \to I . \]
+	Zorn 引理遂表明 $\mathcal{S}$ 有极大元 $(A', f')$. 目标是证 $A' = B$. 设若不然, 则由于 $s$ 是强生成元, 存在 $g: s \to B$ 使得 $g$ 无法通过 $A' \hookrightarrow B$ 分解. 以下说明 $f'$ 可以延拓为 $A' + g(s) \to I$, 这将与 $(A', f')$ 的极大性矛盾.
+
+	令 $Y := A' \cap g(s)$. 考虑实线部分的交换图表
+	\[\begin{tikzcd}[row sep=large]
+		\Ker(g) \arrow[hookrightarrow, r] & g^{-1}(Y) \arrow[twoheadrightarrow, r, "g"] \arrow[hookrightarrow, d] & Y \arrow[hookrightarrow, r] \arrow[hookrightarrow, d] & A' \arrow[r, "{f'}"] & I \\
+		& s \arrow[twoheadrightarrow, r, "g"'] \arrow[dashed, rrru, crossing over, "\varphi" description] & g(s) \arrow[dashed, bend right, rru, "{f''}" description] & &
+	\end{tikzcd}\]
+	按假设, 存在虚线所示之 $\varphi$ 使三角部分交换. 又由于 $\varphi$ 在 $\Ker(g)$ 上为零, 故存在虚线所示之 $f''$ 使得 $\varphi = f'' g$. 用 $g^{-1}(Y) \twoheadrightarrow Y$ 拉回 (满性缘于命题 \ref{prop:Abel-cat-pull-push}), 可推得 $f'$ 和 $f''$ 限制在 $Y$ 上相同, 故它们按纤维余积的泛性质黏合为 $A' + g(s) \to I$. 明所欲证.
+\end{proof}
+
+行将介绍的是所谓``小对象论证''的一种变体. 请读者先简要浏览定义 \ref{def:regular-cardinal} 及相关讨论所涉及的正则基数, 以下内容需要其操作和简单性质.
+
+\begin{definition}\label{def:I-small}
+	\index{xiaoduixianglunzheng@小对象论证 (small object argument)}
+	设 $\mathcal{C}$ 为具备所有滤过小 $\varinjlim$ 的范畴, $I \subset \Mor(\mathcal{C})$ 为任意子集, $\alpha$ 为正则小基数.
+	\begin{enumerate}[(i)]
+		\item 当以下条件成立时, 称 $X \in \Obj(\mathcal{C})$ 相对于 $I$ 是 $\alpha$-小对象: 设 $\tilde{\alpha}$ 为正则小基数, $\tilde{\alpha} \geq \alpha$. 对于所有从滤过范畴 $\tilde{\alpha}$ 到 $\mathcal{C}$ 的函子 $\beta \mapsto Y_\beta$, 若态射 $Y_\beta \to Y_{\beta'}$ 对所有 $\beta \leq \beta'$ 皆属于 $I$, 则典范映射
+		\[ \varinjlim_{\beta} \Hom\left( X, Y_\beta \right) \to \Hom\left( X, \varinjlim_\beta Y_\beta \right) \]
+		(参阅 \eqref{eqn:I-small-gen}) 是双射.
+		
+		\item 若 $X$ 相对于 $\Mor(\mathcal{C})$ 是 $\alpha$-小的, 则称 $X$ 为 $\alpha$-小对象.
+	\end{enumerate}
+\end{definition}
+
+相对于选定的 $I$, 若 $\alpha \leq \alpha'$, 则 $\alpha$-小蕴涵 $\alpha'$-小.
+
+\begin{lemma}\label{prop:alpha-small}
+	设 $\mathcal{A}$ 是 Grothendieck 范畴, $X$ 为其对象, $\alpha$ 为正则小基数. 若 $\alpha > \kappa := |\mathrm{Sub}_X|$, 则 $X$ 相对于单态射是 $\alpha$-小对象 (定义 \ref{def:I-small}).
+\end{lemma}
+\begin{proof}
+	考虑定义 \ref{def:I-small} (i) 中的资料 $\beta \mapsto Y_\beta$, 并要求 $\beta \leq \beta'$ 时 $Y_\beta \to Y_{\beta'}$ 为单态射. 不失一般性, 不妨在该定义中取 $\alpha = \tilde{\alpha}$.
+
+	由于 $\mathcal{A}$ 中的滤过 $\varinjlim$ 正合, 易见 $Y_\beta \to \varinjlim_\gamma Y_\gamma$ 仍是单态射. 既然 $\cate{Ab}$ 中的滤过 $\varinjlim$ 也正合, $\displaystyle\varinjlim_{\gamma < \alpha} \Hom(X, Y_\gamma) \to \Hom(X, \displaystyle\varinjlim_{\gamma < \alpha} Y_\gamma)$ 亦单, 问题化为证其满性. 以下将每个 $Y_\beta$ 都视为 $\varinjlim_\gamma Y_\gamma$ 的子对象.
+	
+	给定态射 $f: X \to \varinjlim_\gamma Y_\gamma$, 每个 $\beta < \alpha$ 都确定 $X$ 的子对象 $f^{-1}(Y_\beta)$; 可设 $f^{-1}(Y_\beta) \neq X$ 对每个 $\beta$ 成立, 否则无劳论证. 回忆到 $f^{-1}$ 由纤维积给出; 再次应用滤过 $\varinjlim$ 的正合性导出自然同构
+	\[ \varinjlim_\beta f^{-1}(Y_\beta) \simeq f^{-1} \left( \varinjlim_\beta Y_\beta \right) = X. \]
+	由于子对象 $f^{-1}(Y_\beta)$ 的数量不超过 $\kappa$, 存在 $\alpha$ 的子集 $S$ 使得 $|S| \leq \kappa$, 而且左式可改为 $\varinjlim_{\beta \in S}$.
+	
+	考虑序数 $\sigma := \sup S \leq \alpha$. 兹断言 $\sigma < \alpha$. 设若不然, 则由于 $|S| \leq \kappa < \alpha$ 而 $|S| \geq \mathrm{cf}(\alpha)$ (命题 \ref{prop:cf-generalities} (ii)), 这将导致 $\mathrm{cf}(\alpha) < \alpha$, 与 $\alpha$ 为正则基数的条件矛盾. 此断言确保 $f^{-1}(Y_\beta)$ 总是 $f^{-1}(Y_\sigma)$ 的子对象 (其中 $\beta \in S$). 这导致 $f^{-1}(Y_\sigma) = X$, 从而 $f$ 通过 $Y_\sigma$ 分解. 证毕.
+\end{proof}
+
+\begin{theorem}[A.\ Grothendieck]\label{prop:Grothendieck-injective}
+	设 $\mathcal{A}$ 为 Grothendieck 范畴. 记 $\mathcal{I}$ 为由 $\mathcal{A}$ 中的内射对象构成的全子范畴, 其包含函子记为 $\iota: \mathcal{I} \to \mathcal{A}$. 存在函子 $F: \mathcal{A} \to \mathcal{I}$ 连同态射 $\varphi: \identity_{\mathcal{A}} \to \iota F$, 使得每个
+	\[ \varphi_X: X \to F(X), \quad X \in \Obj(\mathcal{A}) \]
+	皆为 $\mathcal{A}$ 中的单态射. 特别地, $\mathcal{A}$ 有足够的内射对象.
+\end{theorem}
+\begin{proof}
+	选定生成元 $s$. 命 $F_0$ 为函子 $\identity_{\mathcal{A}}$. 第一步是对每个对象 $X$ 构造推出图表
+	\[\begin{tikzcd}
+		\bigoplus_{Y \in \mathrm{Sub}_s} \bigoplus_{\varphi: Y \to X} Y \arrow[r] \arrow[hookrightarrow, d] & X \arrow[d, "{\varphi(0, 1)_X}"] \\
+		\bigoplus_{Y \in \mathrm{Sub}_s} \bigoplus_{\varphi: Y \to X} s \arrow[r] & F_1(X) \arrow[phantom, lu, "\boxplus" description]
+	\end{tikzcd}\]
+	命题 \ref{prop:Abel-cat-pull-push} 确保上图的 $\varphi(0, 1)_X: X \to F_1(X)$ 为单. 当 $X$ 变动, $X \mapsto F_1(X)$ 是从 $\mathcal{A}$ 到自身的函子, $\varphi(0,1): F_0 \to F_1$ 是态射.
+	
+	推而广之, 今将对所有小序数 $\alpha$ 构造函子 $F_\alpha: \mathcal{A} \to \mathcal{A}$, 连同态射族 $\varphi(\beta, \alpha): F_\beta \to F_\alpha$ (其中 $\beta \leq \alpha$), 使得
+	\begin{compactitem}
+		\item $\varphi(\alpha, \alpha) = \identity_{F_\alpha}$,
+		\item $\varphi(\beta, \alpha)_X: F_\beta(X) \to F_\alpha(X)$ 对所有 $X$ 皆单,
+		\item 若 $\gamma \leq \beta \leq \alpha$ 则 $\varphi(\beta, \alpha) \varphi(\gamma, \beta) = \varphi(\gamma, \alpha)$.
+	\end{compactitem}
+	构造基于超穷递归 \cite[\S 1.3]{Li1}: 从 $\alpha = 0$ 的情形出发, 假设对每个序数 $\beta < \alpha$ 皆已定义了 $F_\beta$ 和相应的态射族 $\varphi(\beta', \beta)$, 命
+	\[ F_\alpha(X) := \begin{cases}
+		F_1(F_\beta(X)), & \alpha = \beta + 1, \\
+		\varinjlim_{\beta < \alpha} F_\beta(X), & \alpha: \text{极限序数},
+	\end{cases}\]
+	其中 $\varinjlim$ 的构造是相对于 $(\varphi(\beta', \beta))_{\beta' \leq \beta < \alpha}$ 而言. 鉴于 $F_1$ 的性质和滤过 $\varinjlim$ 保单态射, $\varphi(\beta, \alpha)$ 的取法理应是明显的.
+
+	以引理 \ref{prop:enough-regular-cardinal} 取正则小基数 $\alpha$ 使 $\alpha > |\mathrm{Sub}_s|$. 以下说明 $F_\alpha X$ 对所有 $X$ 都是内射对象. 给定 $Y \hookrightarrow s$ 和 $f: Y \to F_\alpha X$. 正则基数的定义 \ref{def:regular-cardinal} 蕴涵 $\alpha$ 必为极限序数; 按 $F_\alpha$ 的构造, $\mathrm{Sub}_Y \subset \mathrm{Sub}_s$ 和引理 \ref{prop:alpha-small} 可知 $f$ 通过某个 $\varphi: Y \to F_\beta X$ 分解, 其中 $\beta+1 < \alpha$. 考虑交换图表
+	\[\begin{tikzcd}
+		Y \arrow[r, "{\text{通过}\; (Y, \varphi)}" inner sep=0.8em] \arrow[hookrightarrow, d] & \bigoplus_{Y' \in \mathrm{Sub}_s} \bigoplus_{\varphi': Y' \to F_\beta X} Y' \arrow[r] \arrow[hookrightarrow, d] & F_\beta X \arrow[d] \arrow[rd] & \\
+		s \arrow[r, "{\text{通过}\; (Y, \varphi)}"' inner sep=0.8em] & \bigoplus_{Y' \in \mathrm{Sub}_s} \bigoplus_{\varphi': Y' \to F_\beta X} s \arrow[r] & F_{\beta + 1} X \arrow[phantom, lu, "\boxplus" description] \arrow[r] & F_\alpha X
+	\end{tikzcd}\]
+	凝神观照, 依此延拓 $f$ 为 $s \to F_\alpha X$. 引理 \ref{prop:Grothendieck-injective-criterion} 遂蕴涵 $F_\alpha X$ 是内射对象. 最后, 取 $F := F_\alpha: \mathcal{A} \to \mathcal{I}$ 和 $\varphi := \varphi(0, \alpha)$ 即所求.
+\end{proof}
+
+\begin{corollary}\label{prop:Grothendieck-cat-cogenerator}
+	任何 Grothendieck 范畴皆有内射余生成元.
+\end{corollary}
+\begin{proof}
+	取 Grothendieck 范畴 $\mathcal{A}$ 的生成元 $s$. 已知 $\mathrm{Quot}_s$ 是小集. 取定内射对象 $I$ 连同单态射 $\bigoplus_{Q \in \mathrm{Quot}_s} Q \hookrightarrow I$. 以下运用命题 \ref{prop:injective-cogenerator} 的判准来说明 $I$ 是余生成元.
+
+	设 $T \in \Obj(\mathcal{A})$ 非零. 存在非零态射 $s \to T$, 分解为 $s \twoheadrightarrow Q' \hookrightarrow T$. 于是有
+	\[ Q' \stackrel{\text{自明}}{\hookrightarrow} \bigoplus_{Q \in \mathrm{Quot}_s} Q \hookrightarrow I. \]
+	根据内射对象定义, 此合成态射有延拓 $T \to I$, 它显然非零. 明所欲证.
+\end{proof}
+
+\begin{corollary}\label{prop:Grothendieck-cat-rep2}
+	设 $\mathcal{A}$ 为 Grothendieck 范畴, 则函子 $F: \mathcal{A} \to \cate{Set}$ 可表当且仅当它保小 $\varprojlim$.
+\end{corollary}
+\begin{proof}
+	已知 $\mathcal{A}$ 有余生成元, 代入推论 \ref{prop:cogenerator-representability} 便是.
+\end{proof}
+
+关于 Grothendieck 范畴的进一步描述, 可参阅本书附录部分的 Gabriel--Popescu--Kuhn 定理 \ref{prop:GP}.
+
+% Force page break here for typographical reasons.
+\vfill
+\begin{Exercises}
+	\item 说明自由 $\Z$-模在 $\Z\dcate{Mod}$ 中构成的加性全子范畴不是 Abel 范畴.
+	
+	\item 设 $X$ 是 Abel 范畴中的对象, $Y, Z \in \mathrm{Sub}_X$. 考虑偏序集之间的同构
+	\[\begin{tikzcd}
+		\left[Y \cap Z, Y \right] \arrow[d, "\simeq"] \arrow[r, "\sim"] & \left[ Z, Y+Z \right] \arrow[d, "\simeq"] \\
+		\mathrm{Sub}_{Y/(Y \cap Z)} \arrow[r, "\sim"] & \mathrm{Sub}_{(Y+Z)/Z}
+	\end{tikzcd}\]
+	其中垂直箭头来自定理 \ref{prop:Abel-cat-isom-thm} (ii), 底部水平箭头来自定理 \ref{prop:Abel-cat-isom-thm} (iii) 的 $Y/(Y \cap Z) \simeq (Y+Z)/Z$, 而顶部水平箭头则是 $W \mapsto W + Z$, 来自命题 \ref{prop:lattice-diamond-isom}. 说明上图交换.
+
+	\item 设 $\Bbbk$ 为交换环, $\mathcal{A}$ 为 $\Bbbk$-线性 Abel 范畴. 证明若 $\Hom(X, X)$ 对所有 $X \in \Obj(\mathcal{A})$ 都是 Artin $\Bbbk$-模, 则 $\mathcal{A}$ 具备定义 \ref{def:bichain} 的双链条件.
+	\begin{hint}
+		给定双链 $(X_n, \alpha_n, \beta_n)_{n=0}^\infty$, 则 $f \mapsto \beta_n f \alpha_n$ 确定 $\Bbbk$-模的一列单同态 $\Hom(X_{n+1}, X_{n+1}) \hookrightarrow \Hom(X_n, X_n)$; 说明它是同构当且仅当 $\alpha_n$ 和 $\beta_n$ 皆为同构.
+	\end{hint}
+
+	\index{fanchou!Karoubi (Karoubian)}
+	\item 若 $\cate{Ab}$-范畴 $\mathcal{K}$ 有零对象, 而且对于所有 $X \in \Obj(\mathcal{K})$ 和幂等元 $e \in \End(X)$, 存在核 $\Ker(e)$, 则称 $\mathcal{K}$ 为 \emph{Karoubi 范畴}.
+	\begin{enumerate}[(i)]
+		\item 证明 Karoubi 范畴中的每个幂等元 $e$ 都有余核, 而且有典范同构 $\Ker(e) \simeq \Coker(e)$.
+		\item 对任意具有零对象的 $\cate{Ab}$-范畴 $\mathcal{C}$, 典范地构造 Karoubi 范畴 $\mathrm{kar}(\mathcal{C})$ 连同全忠实加性函子 $\varphi_{\mathcal{C}}: \mathcal{C} \to \mathrm{kar}(\mathcal{C})$, 使得对于每个 Karoubi 范畴 $\mathcal{K}$, 函子
+		\[ \varphi_{\mathcal{C}}^*: \mathcal{K}^{\mathrm{kar}(\mathcal{C})} \to \mathcal{K}^{\mathcal{C}}, \quad F \mapsto F\varphi_{\mathcal{C}} \]
+		是等价; 这里的 $\mathcal{K}^{\mathcal{C}}$ 是所有加性函子 $\mathcal{C} \to \mathcal{K}$ 所成的函子范畴, 依此类推.
+		\item 若 $\Bbbk$ 是交换环, $\mathcal{C}$ 是 $\Bbbk$-线性的, 则 $\mathrm{kar}(\mathcal{C})$ 也有自然的 $\Bbbk$-线性结构.
+	\end{enumerate}
+	一般称 $\mathrm{kar}(\mathcal{C})$ 为 $\mathcal{C}$ 的 Karoubi 包, 它是向 $\mathcal{C}$ 形式地添入所有直和项的产物.
+	
+	\begin{hint}
+		命 $\mathrm{kar}(\mathcal{C})$ 的对象为形如 $(X, e)$ 的资料, $X \in \Obj(\mathcal{C})$ 而 $e \in \End(X)$ 是幂等元; 态射 $(X, p) \to (Y, q)$ 由 $\mathcal{C}$ 中满足 $qf = f = fp$ 的态射 $f: X \to Y$ 确定, 而 $\varphi_{\mathcal{C}}(X) = (X, \identity_X)$.
+	\end{hint}
+
+	\item 对给定的环 $R$, 验证所有投射 $R$-模构成一个 Karoubi 范畴, 它不是 Abel 范畴.
+	
+	\item 设 Abel 范畴 $\mathcal{A}$ 具备所有小直和 $\bigoplus_{i \in I}$ (或小直积 $\prod_{i \in I}$). 证明小集 $\Sigma \subset \Obj(\mathcal{A})$ 是生成系 (或余生成系) 当且仅当对所有 $X \in \Obj(\mathcal{A})$ 皆存在 $\Sigma$ 中元素的小直和 (或小直积) $S$ 连同满态射 $S \twoheadrightarrow X$ (或单态射 $X \hookrightarrow S$).
+	
+	\begin{hint}
+		对于生成系情形, ``当''的方向容易. 对生成系的``仅当''方向, 取自明态射
+		\[ f: \bigoplus_{s \in \Sigma} \bigoplus_{\varphi \in \Hom(s, X)} s \to X; \]
+		对所有 $(s, \varphi)$, 态射 $\varphi$ 都通过 $f$ 分解, 从而 $s \xrightarrow{\varphi'} X \to \Coker(f)$ 合成总是 $0$, 以此推导 $\Coker(f) = 0$.
+	\end{hint}
+	
+	\item 设 $A, B, C$ 是 Abel 范畴中的对象 $X$ 的子对象, 满足 $A \cap (B+C) = 0 = B \cap C$. 证明 $A \cap B = 0$ 而 $(A+B) \cap C = 0$.
+	
+	\begin{hint}
+		构造单态射 $(A+B) \cap C \to A$, 并说明它通过 $A \cap (B+C)$ 分解, 不妨先尝试模范畴的情形.
+	\end{hint}
+	
+	\item 证明有限生成 $\Z$-模构成的 Abel 范畴有足够的投射对象, 但没有足够的内射对象.
+	
+	\item (Schanuel 引理) 考虑任意 Abel 范畴中的投射对象 $P$, $Q$ 和短正合列
+	\begin{gather*}
+		0 \to K \to P \xrightarrow{\phi} M \to 0, \\
+		0 \to L \to Q \xrightarrow{\psi} M \to 0.
+	\end{gather*}
+	由此构造拉回图表
+	\[\begin{tikzcd}
+		X \arrow[r, "{\psi'}"] \arrow[d, "{\phi'}"'] & P \arrow[d, "\phi"] \\
+		Q \arrow[r, "\psi"'] & M \arrow[phantom, lu, "\Box" description] .
+	\end{tikzcd}\]
+	请给出短正合列 $0 \to L \to X \xrightarrow{\psi'} P \to 0$ 和 $0 \to K \to X \xrightarrow{\phi'} Q \to 0$, 然后证明存在同构 $K \oplus Q \simeq L \oplus P$.
+	\begin{hint} 应用命题 \ref{prop:pull-back-ker}, \ref{prop:Abel-cat-pull-push}. \end{hint}
+
+	\item 证明 $\Q/\Z$ 是 $\cate{Ab}$ 的内射余生成元.
+	
+	\item 详细验证例 \ref{eg:A2-injective-projective} 中的伴随关系.
+	
+	\item 设 $\mathcal{C}$ 为非空范畴, $\mathcal{A}$ 为 Abel 范畴. 对每个 $c \in \Obj(\mathcal{C})$, 求值函子 $\mathrm{ev}_c: \mathcal{A}^{\mathcal{C}} \to \mathcal{A}$ 映 $F$ 为 $Fc$.
+	\begin{enumerate}[(i)]
+		\item 假设 $\mathcal{A}$ 具备所有形如 $\bigoplus_{c \in \Obj(\mathcal{C})}$ 和 $\bigoplus_{f \in \Hom_{\mathcal{C}}(c, c')}$ 的直和. 对每个 $c \in \Obj(\mathcal{C})$ 定义函子 $\mathcal{L}_c: \mathcal{A} \to \mathcal{A}^{\mathcal{C}}$ 如下: 在对象层次, $(\mathcal{L}_c X)(c') = \bigoplus_{\Hom(c, c')} X$. 补全态射层面的定义, 使得 $\mathcal{L}_c$ 成为 $\mathrm{ev}_c$ 的左伴随.
+%		\begin{hint}
+%			给定 $c' \to c''$, 函子在态射层面的定义由 $\Hom(c, c') \to \Hom(c, c'')$ 和 $\identity_X$ 确定.
+%		\end{hint}
+		\item 承上, 证明若 $\mathcal{A}$ 有足够的投射对象, 则 $\mathcal{A}^{\mathcal{C}}$ 亦然.
+		\item 探讨对偶版本: 假设 $\mathcal{A}$ 具备所有形如 $\prod_{c \in \Obj(\mathcal{C})}$ 和 $\prod_{f \in \Hom_{\mathcal{C}}(c', c)}$ 的积, 定义函子 $\mathcal{R}_c: \mathcal{A} \to \mathcal{A}^{\mathcal{C}}$ 使得 $(\mathcal{R}_c X)(c') = \prod_{\Hom(c',c)} X$, 给出 $\mathrm{ev}_c$ 的右伴随; 继而证明若 $\mathcal{A}$ 有足够的内射对象, 则 $\mathcal{A}^{\mathcal{C}}$ 亦然.
+		\item 探讨当 $\mathcal{C} = \mathbf{2}$ 时它们与例 \ref{eg:A2-injective-projective} 的联系.
+	\end{enumerate}
+
+	\item 承上题, 设 $\mathcal{C}$ 是小范畴. 证明若 $s$ 是 $\mathcal{A}$ 的生成元 (或余生成元), 则所有 $\mathcal{L}_c(s)$ (或 $\mathcal{R}_c(s)$) 构成 $\mathcal{A}^{\mathcal{C}}$ 的生成系 (或余生成系), 其中 $c$ 取遍 $\Obj(\mathcal{C})$, 前提是所需的直和 (或直积) 存在.
+
+	\begin{hint}
+		以生成元情形为例, 对所有 $c \in \Obj(\mathcal{C})$ 和 $\mathcal{A}^{\mathcal{C}}$ 的态射 $f: X \to Y$ 皆有交换图表
+		\[\begin{tikzcd}
+			\Hom_{\mathcal{A}}(s, Y(c)) \arrow[r, "\sim"] & \Hom_{\mathcal{A}^{\mathcal{C}}}(\mathcal{L}_c(s), Y) \\
+			\Hom_{\mathcal{A}}(s, X(c)) \arrow[r, "\sim"'] \arrow[u, "{f(c)_*}"] & \Hom_{\mathcal{A}^{\mathcal{C}}}(\mathcal{L}_c(s), X) \arrow[u, "{f_*}"'] .
+		\end{tikzcd}\]
+		生成系所需的条件相当于说当 $c$ 遍历 $\Obj(\mathcal{C})$, 第二列的所有 $f_*$ 唯一确定了 $f$.
+	\end{hint}
+
+	\item (Serre 商的直接构造) 对于 Abel 范畴 $\mathcal{A}$ 的 Serre 子范畴 $\mathcal{T}$, 定义新的范畴使得它的对象集等于 $\Obj(\mathcal{A})$, 而从 $X$ 到 $Y$ 的态射集等于
+	\[ \varinjlim_{X' \subset X, Y' \subset Y} \Hom_{\mathcal{A}}(X', Y/Y'), \quad \text{其中}\; X/X', \; Y' \in \Obj(\mathcal{T}). \]
+	\begin{enumerate}[(i)]
+		\item 补全态射合成的定义, 并且说明此范畴和定理 \ref{prop:Serre-quotient} 的 Serre 商 $\mathcal{A}/\mathcal{T}$ 相等价.
+		\begin{hint}
+			% Reference: Gelfand-Manin, p.121
+			验证它具有定理 \ref{prop:Serre-quotient} 所述的泛性质.
+		\end{hint}
+		\item 以此说明当 $\mathcal{A}$ 良幂 (定义 \ref{def:well-powered}) 时 $\mathcal{A}/\mathcal{T}$ 也是 $\mathcal{U}$-范畴, $\mathcal{U}$ 是选定的 Grothendieck 宇宙.
+	\end{enumerate}
+	\index{daxiaowenti}
+
+	\item 设 $\mathcal{B}$ 是 $\mathcal{A}$ 的子 Abel 范畴, 而且对每个 $X \in \Obj(\mathcal{A})$ 都存在一列子对象 $0 = X_0 \subset \cdots \subset X_n = X$ 使得 $X_i/X_{i-1} \in \Obj(\mathcal{B})$, 则包含函子 $\mathcal{B} \to \mathcal{A}$ 诱导群同构 $\mathrm{K}_0(\mathcal{B}) \rightiso \mathrm{K}_0(\mathcal{A})$.
+	
+	\begin{hint}
+		以 Schreier 加细定理 \ref{prop:Schreier-refinement} 说明 $[X] \mapsto \sum_{i=1}^n [X_i/X_{i-1}]$ 给出逆映射, 和子对象列的选取无关.
+	\end{hint}
+
+	\item 记 $\mathrm{isom}$ 为加性范畴 $\mathcal{A}$ 的所有对象的同构类所成集合; 记对象 $X$ 的同构类在自由 $\Z$-模 $\Z^{\oplus \mathrm{isom}}$ 中的像为 $\lrangle{X}$. 定义 $\mathrm{K}_0$ 群的直和版本如下:
+	\[ \mathrm{K}_{\oplus}(\mathcal{A}) := \Z^{\oplus \mathrm{isom}} \big/ \text{所有}\; \lrangle{X \oplus Y} - \lrangle{X} - \lrangle{Y} \;\text{生成的子模}. \]
+	
+	另记 $\mathrm{ind}$ 为不可分解对象的同构类所成的集合. 证明若 $\mathcal{A}$ 是 Karoubi 范畴, 而且所有非零对象都有有限直和分解 $X \simeq X_1 \oplus \cdots \oplus X_k$, 使得 $X_i \neq 0$ 而 $\End(X_i)$ 是局部环 (见推论 \ref{prop:indecomposable-local-ring} 之前的讨论), 则有典范同构
+	\[ \Z^{\oplus \mathrm{ind}} \rightiso \mathrm{K}_{\oplus}(\mathcal{A}). \]
+
+	\begin{hint}
+		先回忆到 $\End(X_i)$ 是局部环蕴涵 $X_i$ 不可分解; 可自证或见 \cite[引理 6.12.6]{Li1}. 其次应用 \cite[定理 6.12.8]{Li1} 以得出分解的唯一性.
+	\end{hint}
+
+	\item 设 $\mathcal{A}$ 为 Grothendieck 范畴, $(X_i)_{i \in I}$ 为一族对象, 其中 $I$ 为小集. 证明 \eqref{eqn:coprod-prod-delta} 的典范态射 $\delta: \bigoplus_{i \in I} X_i \to \prod_{i \in I} X_i$ 为单.
+	
+	\begin{hint}
+		对所有有限子集 $F \subset I$ 考虑交换图表
+		\[\begin{tikzcd}
+			\bigoplus_{i \in I} X_i \arrow[r, "\delta"] & \prod_{i \in I} X_i \\
+			\bigoplus_{i \in F} X_i \arrow[r, "\sim", "\delta_F"'] \arrow[hookrightarrow, u] & \prod_{i \in F} X_i \arrow[hookrightarrow, u, "{\iota_F}"']
+		\end{tikzcd}\]
+		取滤过之 $\varinjlim_{F \subset I: \;\text{有限}} \iota_F \delta_F$ 以推导 $\delta$ 为单态射, 见命题 \ref{prop:limit-filtered-approx}.
+	\end{hint}
+
+	\item 证明若 $\mathcal{A}$ 是 Grothendieck 范畴, 则复形范畴 $\cate{C}(\mathcal{A})$ (见 \S\ref{sec:additive-cplx}) 和函子范畴 $\mathcal{A}^{\mathcal{C}}$ 都是 Grothendieck 范畴, 其中 $\mathcal{C}$ 是任意小范畴.
+	
+	\item (直和的刻画) 设 $\mathcal{A}$ 为 Grothendieck 范畴. 考虑 $X \in \Obj(\mathcal{A})$ 及 $X$ 的一族子对象 $(X_i)_{i \in I}$, 其中 $I$ 是小集. 典范态射 $\bigoplus_{i \in I} X_i \to X$ 限制在每个 $X_i$ 上都是包含态射 $X_i \hookrightarrow X$. 证明 $\bigoplus_{i \in I} X_i \rightiso X$ 当且仅当以下性质成立:
+	\begin{enumerate}[(i)]
+		\item $X = \sum_{i \in I} X_i$;
+		\item 对任何 $i \in I$ 皆有 $X_i \cap \sum_{\substack{j \in I \\ j \neq i}} X_j = 0$.
+	\end{enumerate}
+	留意到 (ii) 的条件仅须对 $I$ 的有限子集来检验. 当 $I$ 本身有限时, 以上陈述适用于任意 Abel 范畴.
+
+	\begin{hint}
+		性质 (i) 等价于典范态射满, (ii) 等价于典范态射单. 前者容易看出, 后者则可利用滤过 $\varinjlim$ 化约到 $I$ 有限的情况. 
+	\end{hint}
+	
+	\item 考虑 Grothendieck 范畴 $\mathcal{A}$ 的对象 $X$.
+	\begin{enumerate}[(i)]
+		\item 试补全注记 \ref{rem:Grothendieck-ss-decomp} 的严谨证明.
+		\begin{hint}
+			以前一道习题处理无穷直和.
+		\end{hint}
+		\item 当以下条件成立时, 证明 $X$ 分裂蕴涵 $X$ 半单: 对任意非零之 $Y \in \Obj(\mathcal{A})$, 存在非零子对象 $Y_0 \subset Y$ 使得偏序集 $\mathrm{Sub}_{Y_0} \smallsetminus \{Y_0\}$ 中每个链都有上界. 对 $\mathcal{A} = R\dcate{Mod}$ 验证此前提.
+		\begin{hint}
+			不妨参考 \cite[命题 6.11.4]{Li1} 证明的 (iii) $\implies$ (i) 部分, 以及 \cite[引理 6.11.3]{Li1} 的证明.
+		\end{hint}
+	\end{enumerate}
+\end{Exercises}

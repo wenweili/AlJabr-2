@@ -1,0 +1,101 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8
+
+% LaTeX source for the errata of the book ``代数学方法'' (Volume 2) in Chinese
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% 《代数学方法》卷一勘误表 / 李文威
+% 使用自定义的文档类 AJerrata.cls. 自动载入 xeCJK.
+
+\documentclass{AJerrata}
+
+\usepackage{unicode-math}
+
+\usepackage[unicode, colorlinks, psdextra, bookmarksnumbered,
+	pdfpagelabels=true,
+	pdfauthor={李文威 (Wen-Wei Li)},
+	pdftitle={代数学方法卷二勘误},
+	pdfkeywords={}
+]{hyperref}
+
+\setmainfont[
+	BoldFont={texgyretermes-bold.otf},
+	ItalicFont={texgyretermes-italic.otf},
+	BoldItalicFont={texgyretermes-bolditalic.otf},
+	PunctuationSpace=2
+]{texgyretermes-regular.otf}
+
+\setsansfont[
+	BoldFont=FiraSans-Bold.otf,
+	ItalicFont=FiraSans-Italic.otf
+]{FiraSans-Regular.otf}
+
+\setCJKmainfont[
+	BoldFont=Noto Serif CJK SC Bold
+]{Noto Serif CJK SC}
+
+\setCJKsansfont[
+	BoldFont=Noto Sans CJK SC Bold
+]{Noto Sans CJK SC}
+
+\setCJKfamilyfont{emfont}[
+	BoldFont=FandolHei-Regular.otf
+]{FandolHei-Regular.otf}	% 强调用的字体
+
+\renewcommand{\em}{\bfseries\CJKfamily{emfont}} % 强调
+
+\setmathfont[
+	Extension = .otf,
+	math-style= TeX,
+]{texgyretermes-math}
+
+\usepackage{mathrsfs}
+\usepackage{stmaryrd} \SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}	% 避免警告 (stmryd 不含粗体故)
+% \usepackage{array}
+% \usepackage{tikz-cd}  % 使用 TikZ 绘图
+\usetikzlibrary{positioning, patterns, calc, matrix, shapes.arrows, shapes.symbols}
+
+\usepackage{myarrows}				% 使用自定义的可伸缩箭头
+\usepackage{mycommand}				% 引入自定义的惯用的命令
+
+
+\title{\bfseries 代数学方法（第二卷）勘误表 \\ 跨度: 2024 年 9 月正式出版迄今 }
+\author{李文威}
+\date{\today}
+
+\begin{document}
+	\maketitle
+
+	\begin{Errata}
+		\item[约定 2.6.3 第二行]
+		\Orig 上确界 (或下确界)
+		\Corr 下确界 (或上确界)
+		\Thx{感谢黄行知指正}
+		
+		\item[推论 3.12.7 证明倒数第二行的显示公式]
+		将末项的 $\mathrm{R}^1 F(Z)$ 换成 $\mathrm{R}^1 F(X)$
+		\Thx{感谢黄行知指正}
+		
+		\item[约定 3.12.8]
+		\Orig 高次左导出函子 (或右导出函子)
+		\Corr 高次右导出函子 (或左导出函子)
+		\Thx{感谢黄行知指正}
+		
+		\item[\S 3.14 倒数第四段]
+		\Orig 作为推论,... $\Hm^p(C) \otimes \Hm^q(D)$, 从它到 $\Hm^n(C \otimes D)$ ...
+		\Corr 作为推论,... $\Hm_p(C) \otimes \Hm_q(D)$, 从它到 $\Hm_n(C \otimes D)$ ...
+		\Thx{感谢黄行知指正}
+		
+		\item[定义 4.5.11 第三行]
+		\Orig ... $X$ 同构 $Y$ 的...
+		\Corr ... $X$ 通过 $Y$ 的...
+		\Thx{感谢郑维喆指正}
+		
+		\item[定义 5.1.1]
+		第一条的 $\mathrm{F}^{p+1}$ 改为 $\mathrm{F}^{p+1} X$, 定义之后第二段末尾的范畴 $\mathrm{F}_{\bullet}(\mathcal{A})$ 改为范畴 $\mathrm{Fil}_{\bullet}(\mathcal{A})$.
+	\end{Errata}
+\end{document}

@@ -1,0 +1,3141 @@
+% LaTeX source for book ``代数学方法'' in Chinese
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% To be included
+\chapter{群的同调与上同调}\label{sec:group-coh}
+设 $G$ 为群, $\Bbbk$ 为交换环. 所谓 $G$-模, 意谓带有左线性 $G$-作用的 $\Bbbk$-模, 作用写作左乘; $\Bbbk$ 在许多场合经常取作 $\Z$. 全体 $G$-模构成 Abel 范畴 $G\dcate{Mod}$, 它同构于 $\Bbbk[G]\dcate{Mod}$, 其中 $\Bbbk[G]$ 为 $G$ 的群代数. 对 $G$-模 $M$ 定义作为 $\Bbbk$-模的
+\begin{align*}
+	\text{不变量} \quad M^G & := \left\{x \in M: \forall g \in G, \; gx=x \right\}, \\
+	\text{余不变量} \quad M_G & := M / \lrangle{gx-x: g \in G, x \in M}.
+\end{align*}
+
+从代数的观点看, $G$-模 $M$ 的上同调 $\Hm^n(G, M)$ 和同调 $\Hm_n(G, M)$ 分别是 $(\cdot)^G$ 和 $(\cdot)_G$ 的右导出函子和左导出函子在 $M$ 的取值, 其中 $n \in \Z_{\geq 0}$.
+
+群的同调与上同调肇源甚古. W.\ Hurewicz 在 1935 年左右研究了高阶同伦群满足 $n > 1 \implies \pi_n(E) = 0$ 的道路连通拓扑空间 $E$, 证明了它们的同调和上同调群完全由基本群 $\pi_1(E)$ 确定, 这可能是群上同调可考的最早表述. 随着同调代数在 20 世纪中快速推进, 群的上同调与同调很快便得到了纯粹代数的表述, 并且被用于处理代数学内部的问题. 时至今日, 它们已成为数论, 拓扑和几何学中的基本工具.
+
+另一方面, $\Hm^n(G, M)$ 和 $\Hm_n(G, M)$ 也可以分别等同于 $\Bbbk[G]\dcate{Mod}$ 中的 $\Ext^n(\Bbbk, M)$ 和 $\Tor_n(\Bbbk, M)$, 其中 $\Bbbk$ 视同平凡 $G$-模. 通过取 $\Bbbk$ 的投射解消来计算 $\Ext$ 和 $\Tor$, 便能得到 $\Hm^n(G, M)$ 和 $\Hm_n(G, M)$ 的另一种描述. 事实上, 我们将对左 (或右) $\Bbbk[G]$-模 $\Bbbk$ 给出典范的解消 $\mathsf{L} \to \Bbbk$, 相应地得到标准复形 $(C^n(G, M))_n$ (或链复形 $(C_n(G, M))_n$) 来表示 $\Hm^n(G, M)$ (或 $\Hm_n(G, M)$); 见命题 \ref{prop:groupcoh-cochain} 和 \ref{prop:grouph-chain}. 之后的 \S\S\ref{sec:homology-computation}---\ref{sec:bar-resolution} 将从单纯形理论的高度来诠释这些典范解消.
+
+以上构成 \S\S\ref{sec:G-mod}---\ref{sec:group-coh-sub} 的主要内容. 本章将采取经典导出函子理论 (特别是泛 $\delta$-函子及其刻画) 和导出范畴的双重视角. 经典理论的优势在于``操作感'', 而导出范畴则提供比各个上同调或同调群更精细的信息, 思路通常也更明晰. 标准复形或链复形提供的信息最为精密而典范, 因为它是在复形层次操作的.
+
+在 \S\ref{sec:grp-low-degree}, 我们将就 $\Hm^1$ 和 $\Hm^2$ 给出具体的诠释: 它们分别对应到叉同态以及 $G$ 对交换群的扩张等价类. 群扩张的详细内涵可见定义 \ref{def:group-ext}. 事实上, 若将 $G$ 对 $M$ 的所有群扩张作成 $2$-范畴 $\cate{Ext}(G, M)$, 则正规化标准复形的截断 $\tau^{\leq 2} \overline{C}(G, M)$ 恰好是 $\cate{Ext}(G, M)$ 的一种线性化身, 这是注记 \ref{rem:Ext-incarnation} 的内容.
+
+对于任意群同态 $\varphi: H \to G$ 和 $G$-模 $M$, 可定义作为 $H$-模的拉回 $\varphi^* M$; 基于模论的一般构造, 对 $\varphi^*$ 可以简单地写下右伴随和左伴随. 对于 $\varphi$ 为子群的包含同态的情形, $\varphi^*$ 被称为 $G$-模的限制函子, 另记为 $\Res^G_H$, 而相应的右 (或左) 伴随记为 $\Ind^G_H$ (或 $\iInd^G_H$), 称为两种诱导函子. 我们将在 \S\ref{sec:induced-module} 着重探讨其性质. 特别地, 我们将证明所谓 Shapiro 引理 (定理 \ref{prop:Shapiro}):
+\[ \Hm^n\left(G, \Ind^G_H(N)\right) \simeq \Hm^n(H, N), \quad \Hm_n\left(G, \iInd^G_H(N)\right) \simeq \Hm_n(H, N). \]
+
+接续关于 $\varphi^*$ 的一般讨论, \S\ref{sec:change-of-group} 将定义一族典范同态
+\[ \Hm^n(G, M) \to \Hm^n(H, \varphi^* M), \quad \Hm_n(H, \varphi^* M) \to \Hm_n(G, M). \]
+它们可以和上同调或同调的函子性相结合, 从而使任意等变同态 $f: M \to N$ (或 $f: N \to M$) 诱导相应的典范同态 $\Hm^n(f)$ (或 $\Hm_n(f)$), 其中 $M$ 是 $G$-模而 $N$ 是 $H$-模; 详见定义 \ref{def:change-of-group-equiv}. 对于 $n=2$ 的特例, \S\ref{sec:group-ext-revisited} 将从群扩张的方面来诠释这些典范同态.
+
+为了具体起见, \S\ref{sec:coh-cyclic-free} 探讨有限循环群和自由群的例子. 相关论证是群论技巧与上同调的一曲协奏. 群的上同调维和同调维数 (定义 \ref{def:group-dim}) 也将不失时机地进入视野.
+
+群论的具体感觉延续到 \S\ref{sec:group-finite-index}. 我们将在 $(G:H)$ 有限的情形对限制函子和诱导函子陈述进一步的性质; 事实上, 此时 $\Ind^G_H = \iInd^G_H$. 定义--命题 \ref{def:cor} 将对此情形给出一族典范同态
+\[ \mathrm{cor}^n: \Hm^n(H, M) \to \Hm^n(G, M), \quad \mathrm{cor}_n: \Hm_n(G, M) \to \Hm_n(H, M), \]
+其中 $M$ 是 $G$-模, 而 $\Res^G_H M$ 也被简记为 $M$ 以减省符号. 这被称为余限制同态, 和 $H \hookrightarrow G$ 诱导的典范同态 (即限制, 记为 $\mathrm{res}^n$ 和 $\mathrm{res}_n$) 反向. 它们满足基本等式 $\mathrm{cor}^n \mathrm{res}^n = (G:H)$ 和 $\mathrm{res}_n \mathrm{cor}_n = (G:H)$ (命题 \ref{prop:res-cor}), 而特例 $\mathrm{cor}_1: \Hm_1(G, \Z) \to \Hm_1(H, \Z)$ 化为群论中经典的转移同态 $\mathrm{Ver}_{G|H}: G_{\mathrm{ab}} \to H_{\mathrm{ab}}$.
+
+设 $H$ 为 $G$ 的正规子群, $M$ 为 $G$-模, 此时 $\Hm^q(H, M)$ 和 $\Hm_q(H, M)$ 皆成为 $G/H$-模; \S\ref{sec:LHS-SS} 所探讨的 Lyndon--Hochschild--Serre 谱序列
+\begin{align*}
+	E_2^{p, q} = \Hm^p(G/H, \Hm^q(H, M)) & \Rightarrow \Hm^{p+q}(G, M), \\
+	E^2_{p, q} = \Hm_p(G/H, \Hm_q(H, M)) & \Rightarrow \Hm_{p+q}(G, M)
+\end{align*}
+是群上同调与同调理论中不可或缺的进阶工具, 详见定理 \ref{prop:LHS-SS}; 其低次项正合列蕴藏的信息尤其有用. Lyndon--Hochschild--Serre 谱序列既是 Grothendieck 谱序列的一则应用, 也来自于标准复形的一个典范滤过; 后者的信息更精细, 譬如注记 \ref{rem:LHS-SS-mult} 提及的乘法结构.
+
+确切地说, 群上同调的乘法运算是渊源于拓扑学的杯积. 我们在 \S\ref{sec:cup-product} 循两种观点切入: 一是将杯积理解为 $G$-模张量积运算的自然反映, 导出范畴的语言对此起到帮助. 二是在标准复形的层次直接写下公式 (定义--命题 \ref{def:group-cup-3}). 后者当然是前者的明确化. 推导的关键在于适当地将 $\Bbbk \rightiso \Bbbk \otimes \Bbbk$ 提升为``对角嵌入'' $\Delta: \mathsf{L} \to \mathsf{L} \otimes \mathsf{L}$, 论证涉及的一些正负号需要当心.
+
+对于 $G$ 有限的情形, \S\ref{sec:Tate-coh} 介绍的 Tate 上同调 $\TaHm^n(G, M)$ 是上同调和同调的融合, 其构造依赖于有限群特有的典范同态
+\[ \nu: M_G \to M^G, \quad (x \in M \;\text{的像}) \mapsto \sum_{g \in G} gx. \]
+Tate 上同调在 $n \geq 1$ (或 $n \leq -2$) 时等于 $\Hm^n(G, M)$ (或 $\Hm_{-n-1}(G, M)$), 而在 $n = 0$ (或 $n = -1$) 时等于 $\Coker(\nu)$ (或 $\Ker(\nu)$). 它依然满足长正合列和 Shapiro 引理等性质, 而且在许多方面比上同调或同调更易于操作, 在数论领域更有突出的应用.
+
+上述理论仅考虑离散群, 带拓扑的情形则棘手不少; \S\ref{sec:profinite-cohomology} 考虑的 pro-有限群 $G$ 和光滑 $G$-模情形是其中一类简单而实用的特例, 相关背景知识见诸 \S\ref{sec:profinite-groups}. 严格地说, 这套理论的本质依然是代数操作. 对应的上同调既能理解为右导出函子, 也能等价地定义为有限群上同调的 $\varinjlim$, 连续版本的标准复形则提供另一种计算方式. 数论中主要关心 $G$ 为 Galois 群或算术基本群的情形.
+
+最后, \S\ref{sec:nonabelian-coh} 介绍非交换群的上同调. 对于非交换群通常只能定义 $\Hm^0$ 和 $\Hm^1$, 长正合列相应地受限 (定理 \ref{prop:nonabelian-long}). 这套理论特别适合用以分类几何或代数对象, 因为这些对象的对称群往往是非交换的, 以后的 \S\ref{sec:Galois-H1} 将讨论部分例子. 这些构造同样适用 pro-有限群.
+
+\begin{wenxintishi}
+	系数环 $\Bbbk$ 在本章的角色是次要的, 经常取为 $\Z$, 请参阅注记 \ref{rem:Gmod-k} 的说明. 读者可以衡量自身情况, 略过涉及导出范畴的论证, 这不会影响大部分的经典应用; 特别地, 上同调的杯积可完全基于定义--命题 \ref{def:group-cup-3} 的方式以显式操作. 关于 $G$-模的概念 (见 \S\ref{sec:G-mod}) 在后续各章偶尔作为例子或习题出现, 通常只涉及基本定义, 但例外是 \S\ref{sec:descent-Galois} 和 \S\ref{sec:Galois-H1}, 它们分别用到 pro-有限群情形的光滑 $G$-模及其上同调. 此外, 关心数论的读者应当掌握 \S\S\ref{sec:Tate-coh}---\ref{sec:nonabelian-coh} 的内容.
+\end{wenxintishi}
+
+\section{\texorpdfstring{$G$}{G}-模及其解消}\label{sec:G-mod}
+除非另外说明, 本节选定交换环 $\Bbbk$ 和群 $G$. 记群 $G$ 的幺元为 $1_G$.
+
+\begin{definition}\label{def:G-mod}
+	\index{Gmo@$G$-模}
+	\index[sym1]{G-Mod@$G\dcate{Mod}$}
+	系数在 $\Bbbk$ 上的 \emph{$G$-模}是指一个带有左 $G$-作用的 $\Bbbk$-模 $M$, 左作用 $G \times M \to M$ 写作乘法, 使得
+	\begin{align*}
+		g(m + m') & = gm + gm', \\
+		g(tm) & = t(gm),
+	\end{align*}
+	其中 $g \in G$, $t \in \Bbbk$ 和 $m, m' \in M$ 任取; 换言之, $M$ 带有线性 $G$-作用.
+	
+	两个 $G$-模之间的同态 $f: M_1 \to M_2$ 定义为满足等变性 $f(gm_1) = gf(m_1)$ 的 $\Bbbk$-模同态 $f: M_1 \to M_2$, 其中 $g \in G$ 和 $m_1 \in M_1$ 任取.
+\end{definition}
+
+严格地说, 上述结构应当称为左 $G$-模; 完全类似的方法可以定义右 $G$-模, 这也相当于左 $G^{\opp}$-模. 不致混淆时, 我们在符号中省略系数环 $\Bbbk$, 并且将全体 $G$-模构成的范畴记为 $G\dcate{Mod}$; 此范畴是 $\Bbbk$-线性的 (定义 \ref{def:k-linear-cat}).
+
+\begin{example}\label{eg:trivial-G-mod}
+	\index{Gmo!平凡 (trivial)}
+	赋予 $\Bbbk$ 平凡的 $G$ 作用: $gm = m$, 称之为\emph{平凡 $G$-模}, 简记为 $\Bbbk$.
+\end{example}
+
+\begin{definition}
+	设 $M$ 为 $G$-模. 若 $\Bbbk$-子模 $N \subset M$ 对 $G$ 的作用保持封闭, 则称 $N$ 为 $G$-子模. 对 $\Bbbk$-商模 $M/N$ 按 $g(m+N) = gm + N$ 赋予 $G$-作用, 称为对应的 $G$-商模.
+\end{definition}
+
+从 $G$ 可构造群代数 $\Bbbk[G]$, 详见 \cite[定义 5.6.3]{Li1}, 其元素唯一地表作 $\sum_{g \in G} a_g g$ 的形式, 默认至多有限个系数 $a_g \in \Bbbk$ 非零. 今后将 $G$ 视同 $\Bbbk[G]$ 的子集.
+
+\begin{proposition}\label{prop:G-mod-kG}
+	我们有范畴的同构 $G\dcate{Mod} \rightiso \Bbbk[G]\dcate{Mod}$ 如下: 它保持底层的 $\Bbbk$-模不变; 若 $M$ 是 $G$-模, 则它作为左 $\Bbbk[G]$-模的纯量乘法来自同态
+	\[ \Bbbk[G] \dotimes{\Bbbk} M \to M, \quad (\sum_g a_g g) \otimes m \mapsto \sum_g a_g (gm), \]
+	而 $G$-模之间的同态依此对应到 $\Bbbk[G]$-模同态.
+\end{proposition}
+\begin{proof}
+	逆函子按以下方式确定: 给定左 $\Bbbk[G]$-模 $M$, 以乘法幺半群的嵌入 $G \hookrightarrow \Bbbk[G]$ 让 $G$ 左作用于 $M$, 使之成为 $G$-模. 可以毫不困难地验证双向都是良定义的, 而且互为逆.
+\end{proof}
+
+作为推论, $G\dcate{Mod}$ 是 $\Bbbk$-线性 Abel 范畴, 因为 $\Bbbk[G]\dcate{Mod}$ 亦然. 关于子 $G$-模, 商 $G$-模的性质都简单地转译到 $\Bbbk[G]$-模情形.
+
+\begin{definition}\label{def:HomG}
+	\index[sym1]{HomG@$\Hom_G$}
+	我们将 $G\dcate{Mod}$ 中的 $\Hom$ 记为 $\Hom_G$. 在命题 \ref{prop:G-mod-kG} 的对应下, 它也相当于 $\Bbbk[G]\dcate{Mod}$ 中的 $\Hom_{\Bbbk[G]}$.
+\end{definition}
+
+关于 $\Bbbk$-模的一些基本操作容易提升到 $G$-模层次:
+\begin{description}
+	\item[直和与直积] 给定一族 $G$-模 $(M_i)_{i \in I}$, 对 $\Bbbk$-模 $\prod_{i \in I} M_i$ 和 $\bigoplus_{i \in I} M_i$ 赋予以下的左 $G$-作用
+	\[ g (m_i)_{i \in I} := (gm_i)_{i \in I}, \]
+	称为对角作用, 这使得 $\prod_{i \in I} M_i$ 和 $\bigoplus_{i \in I} M_i$ 成为 $G$-模.
+	\item[张量积] 给定 $G$-模 $M$ 和 $N$, 依然按对角方式赋予 $M \otimes N := M \dotimes{\Bbbk} N$ 左 $G$-作用:
+	\[ g (x \otimes y) = gx \otimes gy, \quad x \in M, \quad y \in N ; \]
+	由于 $(x, y) \mapsto gx \otimes gy$ 是双线性映射, 上式良定义. 显然 $x \otimes y \mapsto y \otimes x$ 定义 $G$-模同构 $M \otimes N \simeq N \otimes M$.
+	\item[$\Hom$ 模] 给定 $G$-模 $M$ 和 $N$, 其间的 $\Bbbk$-模同态构成一个 $\Bbbk$-模 $\Hom(M, N) := \Hom_{\Bbbk}(M, N)$. 赋予 $\Hom(M, N)$ 左 $G$-作用
+	\[ ({}^g f)(x) = g(f(g^{-1} x)), \quad f \in \Hom(M, N), \quad x \in M, \]
+	右侧的 $g^{-1}$ 和 $g$ 分别来自 $G$ 对 $M$ 和 $N$ 的左作用; 作为三个 $\Bbbk$-模同态的合成, ${}^g f \in \Hom(M, N)$. 依此可 ${}^g f$ 将理解为``共轭'' $gfg^{-1}$, 而 $G$-模结构所需的性质也就明白了.
+	
+	\item[逆步模] 在 $\Hom$ 模的构造中取 $N = \Bbbk$ (平凡 $G$-模), 则 $\Hom(M, \Bbbk)$ 依此成为 $G$-模, 称为 $M$ 的逆步模. 其上的 $G$-作用是 ${}^g f = f \circ g^{-1}$.
+	\index{Gmo!逆步 (contragredient)}
+\end{description}
+
+这些构造对 $M$ 和 $N$ 都具有函子性. 定义立即导致
+\begin{align*}
+	\Hom_G(M, N) & = \Hom(M, N)^G \\
+	& := \left\{f \in \Hom(M, N): \forall g \in G, \; {}^g f = f \right\}.
+\end{align*}
+
+相对于命题 \ref{prop:G-mod-kG} 的范畴同构, $G$-模的直和与直积无非是 $\Bbbk[G]$-模的直和与直积; 张量积和 $\Hom$ 模的上的 $G$-模结构则稍加复杂, 就模论观之, 它们其实对应到 $\Bbbk[G]$ 上的 Hopf 代数结构 (例 \ref{eg:group-Hopf-algebra}), 感兴趣的读者可以尝试对照 \S\ref{sec:bialgebra} 和 \S\ref{sec:duality-examples} 的相关讨论, 此处不作展开.
+
+\begin{proposition}\label{prop:Gmod-monoidal}
+	相对于张量积运算, $G\dcate{Mod}$ 成为对称幺半范畴, 以平凡 $G$-模 $\Bbbk$ 为幺对象.
+\end{proposition}
+\begin{proof}
+	上述定义的简单结论.
+\end{proof}
+
+此外, $\Bbbk\dcate{Mod}$ 中熟知的典范同构
+\begin{equation*}
+	\begin{tikzcd}[row sep=tiny]
+		\Hom(L \otimes M, N) \arrow[leftrightarrow, r, "\sim"] & \Hom(L, \Hom(M, N)) \\
+		\varphi \arrow[mapsto, r] & {\left[ w \mapsto \varphi(w \otimes (\cdot)) \right]} \\
+		{\left[ w \otimes x \mapsto \psi(w)(x) \right]} & \psi \arrow[mapsto, l]
+	\end{tikzcd}
+\end{equation*}
+也拓展到 $G$-模层次: 设 $L$, $M$, $N$ 为 $G$-模, 赋上述张量积和 $\Hom$ 以 $G$-模结构, 则双向都是 $G$-模同构, 有请读者细心验证.
+
+作为推论, ${}^g \varphi = \varphi$ 等价于 ${}^g \psi = \psi$, 由此遂得伴随关系
+\begin{equation}\label{eqn:G-mod-tensor-Hom}
+	\begin{tikzcd}
+		\Hom_G(L \otimes M, N) \arrow[leftrightarrow, r, "\sim"] & \Hom_G(L, \Hom(M, N)),
+	\end{tikzcd}
+\end{equation}
+其中 $L$, $M$, $N$ 都是 $G$-模. 一则简单应用如下.
+
+\begin{proposition}\label{prop:group-tensor-proj}
+	设 $L$ 和 $M$ 为 $G$-模, $L$ 是投射 $G$-模, 而 $M$ 作为 $\Bbbk$-模是投射的, 则 $L \otimes M$ 是投射 $G$-模.
+\end{proposition}
+\begin{proof}
+	伴随关系 \eqref{eqn:G-mod-tensor-Hom} 说明函子 $(\cdot) \otimes M: G\dcate{Mod} \to G\dcate{Mod}$ 有正合的右伴随 $\Hom(M, \cdot)$, 故命题 \ref{prop:adjoint-injective-projective} 蕴涵 $(\cdot) \otimes M$ 保持投射对象.
+\end{proof}
+
+\begin{definition}[限制与膨胀]\label{def:Res-Infl}
+	\index{Gmo!限制/膨胀 (restriction/inflation)}
+	\index[sym1]{ResGH@$\Res^G_H$}
+	\index[sym1]{InflGH@$\mathrm{Infl}^G_{G/H}$}
+	给定群同态 $\varphi: H \to G$, 我们有相应的函子
+	\[ \varphi^*: G\dcate{Mod} \to H\dcate{Mod}; \]
+	对于 $G$-模 $M$, 它对 $\varphi^*$ 的像是相同的 $\Bbbk$-模 $M$, 让 $H$ 按 $hm := \varphi(h)m$ 作用. 函子 $\varphi^*$ 的两类重要特例是:
+	\begin{description}
+		\item[限制] 对于子群 $H \subset G$, 取 $\varphi: H \hookrightarrow G$, 对应的函子 $\Res^G_H: G\dcate{Mod} \to H\dcate{Mod}$ 将群作用限制到 $H$ 上;
+		\item[膨胀] 对正规子群 $H \lhd G$ 取 $\varphi: G \twoheadrightarrow G/H$, 对应的函子 $\mathrm{Infl}^G_{G/H}: (G/H)\dcate{Mod} \to G\dcate{Mod}$ 将群作用拉回到 $G$ 上.
+	\end{description}
+\end{definition}
+
+留意到若有一列群同态 $H \xrightarrow{\varphi} G \xrightarrow{\psi} F$, 则相应地有 $\varphi^* \psi^* = (\psi\varphi)^*$.
+
+若采取群代数观点, 则 $\varphi: H \to G$ 延拓为 $\Bbbk$-代数的同态 $\Bbbk[H] \to \Bbbk[G]$, 相应的函子 $\Bbbk[G]\dcate{Mod} \to \Bbbk[H]\dcate{Mod}$ 对应到 $\varphi^*$. 它也可以用张量积表作
+\begin{equation}\label{eqn:G-module-pullback-tensor}
+	\varphi^* M \simeq \Bbbk[G] \dotimes{\Bbbk[G]} M, \quad \Bbbk[G] \;\text{通过 $\varphi$ 视为}\; (\Bbbk[H], \Bbbk[G])\text{-双模}.
+\end{equation}
+
+函子 $\varphi^*$ 的左伴随, 右伴随, 连同相应的伴随同构皆可精确写下.
+
+\begin{proposition}\label{prop:pullback-two-adjoint}
+	符号同上. 对给定的群同态 $\varphi: H \to G$, 任意 $G$-模 $M$ 和 $H$-模 $N$,	我们有以下的典范 $\Bbbk$-模同构:
+	\[\begin{tikzcd}[row sep=tiny]
+		\Hom_H(\varphi^* M, N) \arrow[leftrightarrow, r, "\sim"] & \Hom_G\left( M, \Hom_H(\Bbbk[G], N) \right) \\
+		\theta \arrow[mapsto, r] & {[x \mapsto [G \ni g \mapsto \theta(gx)] ]} \\
+		{[x \mapsto \xi(x)(1_G)]} & \xi, \arrow[mapsto, l] \\
+		\Hom_H(N, \varphi^* M) \arrow[leftrightarrow, r, "\sim"] & \Hom_G\left( \Bbbk[G] \dotimes{\Bbbk[H]} N, M \right) \\
+		\psi \arrow[mapsto, r] & {[g \otimes y \mapsto g\psi(y)]} \\
+		{[y \mapsto \eta(1_G \otimes y) ]} & \eta \arrow[mapsto, l].
+ 	\end{tikzcd}\]
+	此处将 $\Bbbk[G]$ 视为 $(\Bbbk[H], \Bbbk[G])$-双模和 $(\Bbbk[G], \Bbbk[H])$-双模, 依此赋 $\Hom_H(\Bbbk[G], N)$ 和 $\Bbbk[G] \dotimes{\Bbbk[H]} N$ 以 $G$-模结构.
+\end{proposition}
+\begin{proof}
+	直接展开定义来验证两组映射都是良定义的 $\Bbbk$-模同态, 所需计算并不复杂; 一旦验证了这点, 互逆的性质便是明显的. 另一种方法则是代入 \cite[推论 6.6.8]{Li1} 的一般理论.
+\end{proof}
+
+既然 $G\dcate{Mod}$ 是 Abel 范畴, 自然可以讨论 $G$-模的投射解消和内射解消. 对于本章探讨的主题, 关键的是平凡 $G$-模 $\Bbbk$ 的投射解消; 它不仅存在, 而且有典范而明确的取法.
+
+\begin{definition}\label{def:resolution-trivial-module}
+	选定群 $G$. 对每个 $n \in \Z_{\geq 0}$ 定义
+	\[ \mathsf{L}_n := \text{以 $G^{n+1}$ 为基的自由 $\Bbbk$-模}, \]
+	其元素写作诸 $(g_0, \ldots, g_n) \in G^{n+1}$ 的 $\Bbbk$-线性组合. 对所有 $n \geq 1$, 定义同态
+	\begin{align*}
+		\partial_n, \partial'_n: \mathsf{L}_n & \to \mathsf{L}_{n-1}, \\
+		\partial_n\left( g_0, \ldots, g_n \right) & = \sum_{k=0}^n (-1)^{n-k} (\ldots, \widehat{g_k}, \ldots), \\
+		\partial'_n\left( g_0, \ldots, g_n \right) & = \sum_{k=0}^n (-1)^k (\ldots, \widehat{g_k}, \ldots),
+	\end{align*}
+	其中 $\widehat{g_k}$ 代表省略该项, 故 $\partial'_n = (-1)^n \partial_n$. 另定义同态
+	\[ \partial_0 = \partial'_0: \mathsf{L}_0 \to \Bbbk, \quad (g_0) \mapsto 1. \]
+	
+	命 $g(g_0, \ldots, g_n) = (gg_0, \ldots, gg_n)$ (或 $(g_0, \ldots, g_n)g = (g_0 g, \ldots, g_n g)$) 以使 $\mathsf{L}_n$ 成为左 $G$-模 (或右 $G$-模), 另外赋予 $\Bbbk$ 平凡 $G$-作用, 则每个 $\partial_n$ 和 $\partial'_n$ 皆是左 $G$-模 (或右 $G$-模) 同态.
+\end{definition}
+
+显然 $(\mathsf{L}_n, \partial_n)_n$ 和 $(\mathsf{L}_n, \partial'_n)_n$ 之间仅差一个翻转 $(g_0, \ldots, g_n) \mapsto (g_n, \ldots, g_0)$, 翻转和左右 $G$-作用皆交换, 故以下诸性质对 $\partial_n$ 和 $\partial'_n$ 择一处理即可.
+
+\begin{remark}\label{rem:augmentation-kG}
+	\index{zengguangtongtai@增广同态 (augmentation homomorphism)}
+	若将 $\mathsf{L}_0$ 等同于 $\Bbbk[G]$, 则 $\partial_0 = \partial'_0: \mathsf{L}_0 \to \Bbbk$ 等同于映射
+	\[ \Bbbk[G] \to \Bbbk, \quad \sum_g a_g g \mapsto \sum_g a_g; \]
+	由此显见它还是 $\Bbbk$-代数的满同态. 我们称之为 $\Bbbk[G]$ 的\emph{增广同态}, 其核
+	\[ \mathfrak{I} := \left\{ \sum_g a_g g : \sum_g a_g = 0 \right\} \]
+	称为 $\Bbbk[G]$ 的\emph{增广理想}. 作为 $\Bbbk$-模, $\mathfrak{I}$ 显然可用如下的基来展开
+	\[ \mathfrak{I} = \bigoplus_{\substack{g \in G \\ g \neq 1_G}} \Bbbk (g - 1_G). \]
+	\index{zengguanglixiang@增广理想 (augmentation ideal)}
+	\index[sym1]{I-aug@$\mathfrak{I}$}
+\end{remark}
+
+\begin{lemma}\label{prop:L-acyclic}
+	以上定义的 $\cdots \to \mathsf{L}_n \xrightarrow{\partial_n} \cdots \xrightarrow{\partial_0} \Bbbk \to 0$ 是正合复形; 若视为 $\Bbbk$-模的复形, 则其恒等态射零伦. 以 $\partial'_n$ 代 $\partial_n$ 亦同.
+\end{lemma}
+\begin{proof}
+	处理 $\partial'_n$ 的版本即可. 对所有 $n \geq 1$, 观察到 $\partial'_{n-1} \partial'_n$ 映 $(g_0, \ldots, g_n)$ 为形如
+	\[ \pm (\ldots, \widehat{g_p}, \ldots, \widehat{g_q}, \ldots), \quad 0 \leq p < q \leq n \]
+	的元素之和, 正负号两两相消, 从而给出复形, 简单的验证留给读者.
+	
+	接着对所有 $n \geq 0$ 定义 $\Bbbk$-模同态
+	\[ s_n: \mathsf{L}_n \to \mathsf{L}_{n+1}, \quad (g_0, \ldots, g_n) \mapsto (1_G, g_0, \ldots, g_n), \]
+	并且定义 $s_{-1}: \Bbbk \to \mathsf{L}_0$, 映 $1 \in \Bbbk$ 为 $1_G \in \mathsf{L}_0$. 易见
+	\[ \partial'_{n+1} s_n + s_{n-1} \partial'_n = \identity_{\mathsf{L}_n} \]
+	对所有 $n \geq -1$ 成立; 此处规定 $\mathsf{L}_{-1} := \Bbbk$ 和 $\partial'_{-1} := 0$. 这就说明了
+	\[ \cdots \to \mathsf{L}_n \xrightarrow{\partial'_n} \cdots \xrightarrow{\partial'_0} \Bbbk \to 0 \]
+	作为 $\Bbbk$-模复形其恒等态射零伦, 故正合.
+\end{proof}
+
+\index[sym1]{L-cplx@$\mathsf{L}$, $\overline{\mathsf{L}}$}
+记复形 $\cdots \to \mathsf{L}_n \xrightarrow{\partial_n} \cdots \to \mathsf{L}_0 \to 0$ 为 $\mathsf{L}$, 它既可以看作次数为 $\ldots, -n, \ldots, 0$ 的复形, 也可以看作次数为 $\ldots, n, \ldots, 0$ 的链复形. 无论如何, $\partial_0 = \partial'_0$ 都给出态射 $\mathsf{L} \to \Bbbk$.
+
+这些复形和态射既可以在左 $G$-模意义下理解, 也可以在右 $G$-模复形意义下理解. 基于对称性, 我们主要陈述左版本.
+
+\begin{proposition}\label{prop:trivial-mod-resolution}
+	以上定义的 $\mathsf{L} \to \Bbbk$ 给出平凡 $G$-模 $\Bbbk$ 的自由解消.
+\end{proposition}
+\begin{proof}
+	当 $(h_1, \ldots, h_n) \in G^n$ 变动, $(1_G, h_1, \ldots, h_n)$ 描绘 $\mathsf{L}^n$ 作为左 $\Bbbk[G]$-模的基.
+\end{proof}
+
+对 $\Bbbk$ 还能取到一个更紧凑的典范自由解消, 它有时比 $\mathsf{L}$ 更实用.
+
+\begin{definition-proposition}[正规化复形]
+	对所有 $n > 0$, 定义 $\mathrm{Triv}_n \subset \mathsf{L}_n$ 为元素
+	\[ (g_0, \ldots, g_n) \in G^{n+1}, \quad \exists\, 0 \leq k < n, \; g_k = g_{k+1} \]
+	生成的 $G$-子模, 另外定义 $\mathrm{Triv}_0 = 0$; 无论对 $\partial_n$ 或 $\partial'_n$, 它们皆生成 $\mathsf{L}$ 的子复形 $\mathrm{Triv}$. 依此定义 $\mathsf{L}$ 的正规化为商复形 $\overline{\mathsf{L}} := \mathsf{L}/\mathrm{Triv}$. 若视为 $\Bbbk$-模的复形, 则 $\mathrm{Triv}$ 的恒等态射零伦.
+\end{definition-proposition}
+\begin{proof}
+	显然 $\mathrm{Triv}_n$ 对 $(g_0, \ldots, g_n) \mapsto (g_n, \ldots, g_0)$ 不变, 故 $\partial_n$ 和 $\partial'_n$ 两种版本无异, 以下仅处理后者. 若 $(g_0, \ldots, g_n)$ 满足 $g_k = g_{k+1}$, 则在 $\partial'_n (g_0, \ldots, g_n) = \sum_i (-1)^i (\ldots, \widehat{g_i}, \ldots)$ 中, 对应到 $i = k, k+1$ 的项相消, 其余则落在 $\mathrm{Triv}_{n-1}$. 这就说明它们给出子复形.
+	
+	为了说明 $\mathrm{Triv}$ 作为 $\Bbbk$-模复形其恒等态射零伦, 将引理 \ref{prop:L-acyclic} 证明中的同伦 $s_n: \mathsf{L}_n \to \mathsf{L}_{n+1}$ 限制到 $\mathrm{Triv}_n$ 上即可 ($n \geq 0$).
+\end{proof}
+
+按构造, $\mathsf{L} \to \Bbbk$ 在 $\mathrm{Triv}$ 上为零, 故分解为 $\overline{\mathsf{L}} \to \Bbbk$.
+
+\begin{proposition}\label{prop:trivial-mod-nor-resolution}
+	以上定义的 $\overline{\mathsf{L}} \to \Bbbk$ 给出平凡 $G$-模 $\Bbbk$ 的自由解消.
+\end{proposition}
+\begin{proof}
+	首先说明每个 $\overline{\mathsf{L}}_n = \mathsf{L}_n / \mathrm{Triv}_n$ 都是自由 $G$-模: 基可取为 $(1_G, h_1, \ldots, h_n) \in G^{n+1}$ 的像, 其中 $h_1 \neq 1_G$ 而当 $1 \leq k < n$ 时 $h_k \neq h_{k+1}$.
+	
+	其次, $\mathrm{Triv}$ 零调蕴涵 $\mathsf{L} \to \overline{\mathsf{L}}$ 是拟同构, 于是命题 \ref{prop:trivial-mod-resolution} 蕴涵 $\overline{\mathsf{L}} \to \Bbbk$ 是拟同构.
+\end{proof}
+
+对于之后的应用, 将基用以下的``加杠''形式表出将是更方便的. 首先对整数 $a \leq b$ 和一列元素 $(g_a, \ldots, g_b) \in G^{b-a+1}$ 引进方便的记号
+\[ g_{[a, b]} := g_a g_{a+1} \cdots g_b. \]
+作为左 $G$-模, $\mathsf{L}_n$ 的基遂可取为
+\begin{equation}\label{eqn:L-basis}
+	(g_1 | \cdots | g_n) := \left( 1_G, g_{[1, 1]}, g_{[1, 2]}, \ldots, g_{[1, n]} \right), \quad (g_1, \ldots, g_n) \in G^n.
+\end{equation}
+观察到
+\begin{equation}\label{eqn:L-basis-partial}\begin{aligned}
+	\partial_n (g_1 | \ldots | g_n) & = (-1)^n \left( g_{[1, 1]}, \ldots, g_{[1, n]}\right) + (-1)^{n-1} \left(1_G, g_{[1, 2]}, \ldots, g_{[1, n]}\right) \\
+	& \quad + \cdots + \left( 1_G, g_{[1, 1]}, \ldots, g_{[1, n-1]}\right) \\
+	& = (-1)^n g_1 (g_2 | \cdots | g_n) + \sum_{k=1}^{n-1} (-1)^{n-k} (\cdots | g_k g_{k+1}| \cdots) \\
+	& \quad + (g_1 | \cdots |g_{n-1}), \\
+	\partial'_n(g_1 | \cdots | g_n) & = g_1 (g_2 | \cdots | g_n) + \sum_{k=1}^{n-1} (-1)^k (\cdots | g_k g_{k+1}| \cdots) \\
+	& \quad + (-1)^n (g_1 | \cdots |g_{n-1}).
+\end{aligned}\end{equation}
+
+现在考虑 \eqref{eqn:L-basis} 的镜像. 取右 $G$-模 $\mathsf{L}_n$ 的基为
+\begin{equation}\label{eqn:L-basis-right}
+	(g_1 | \cdots | g_n)^\dagger := \left( g_{[1, n]}, \ldots, g_{[n-1, n]} , g_{[n, n]}, 1_G \right), \quad (g_1, \ldots, g_n) \in G^n.
+\end{equation}
+于是 $\partial'_n (g_1 | \cdots | g_n)^\dagger = (-1)^n \partial_n (g_1 | \cdots | g_n)^\dagger$ 等于
+\begin{multline}\label{eqn:L-basis-partial-right}
+	\left( g_{[2, n]}, \ldots, g_{[n, n]}, 1_G \right) - \left( g_{[1, n]}, g_{[3, n]}, \ldots, g_{[n, n]}, 1_G \right) + \cdots \\
+	+ (-1)^n \left( g_{[1, n-1]}, \ldots, g_{[n-1, n-1]} \right) g_n  \\
+	= (g_2 | \cdots | g_n)^\dagger + \sum_{k=1}^{n-1} (-1)^k (\cdots | g_k g_{k+1} | \cdots)^\dagger \\
+	+ (-1)^n (g_1 | \cdots | g_{n-1})^\dagger g_n.
+\end{multline}
+
+正规化复形的情形依此类推: $\overline{\mathsf{L}}_n$ 作为左或右 $G$-模的基可分别取为诸
+\begin{equation}\label{eqn:nor-cochain}
+	(g_1| \cdots | g_n) \quad \text{或} \quad (g_1 | \cdots | g_n)^\dagger \quad \bmod \mathrm{Triv}_n,
+\end{equation}
+其中要求对所有 $1 \leq k \leq n$ 皆有 $g_k \neq 1_G$.
+
+\begin{remark}
+	上述解消有透彻的拓扑解释: $\mathsf{L}$ 是分类空间 $\mathrm{B}G$ 上的泛挠子 $\mathrm{E}G$ 给出的链复形; 详见例 \ref{eg:classifying-space-std-cplx} 和 \ref{eg:classifying-contractible}.
+\end{remark}
+
+\section{群的同调与上同调}\label{sec:group-coh-sub}
+本节依然选定交换环 $\Bbbk$ 和群 $G$.
+
+\begin{definition}
+	\index[sym1]{MGMG@$M^G$, $M_G$}
+	对任意 $G$-模 $M$, 定义 $\Bbbk$-模
+	\begin{align*}
+		M^G & := \left\{ m \in M : \forall g \in G, \; gm = m \right\}, \\
+		M_G & := M \big/ \lrangle{gm - m : g \in G, \; m \in M}.
+	\end{align*}
+	我们称 $M^G$ 为 $M$ 的\emph{不变量}子模, 称 $M_G$ 为 $M$ 的\emph{余不变量}商模.
+\end{definition}
+
+取不变量和余不变量都给出 $\Bbbk$-线性函子 $G\dcate{Mod} \to \Bbbk\dcate{Mod}$, 它们可以刻画为定义 \ref{def:Res-Infl} 的膨胀函子 $\mathrm{Infl}$ 在 $H = G$ 情形的伴随.
+
+\begin{proposition}\label{prop:inv-coinv-infl}
+	考虑函子 $\mathrm{Infl} := \mathrm{Infl}^G_{\{1\}}: \Bbbk\dcate{Mod} \to G\dcate{Mod}$, 它将任意 $\Bbbk$-模 $N$ 映为带平凡作用 $gy=y$ 的 $G$-模. 我们有伴随对
+	\[\begin{tikzcd}[row sep=tiny]
+		\mathrm{Infl}: \Bbbk\dcate{Mod} \arrow[shift left, r] & G\dcate{Mod} : (\cdot)^G , \arrow[shift left, l] \\
+		(\cdot)_G: G\dcate{Mod} \arrow[shift left, r] & \Bbbk\dcate{Mod}: \mathrm{Infl}. \arrow[shift left, l]
+	\end{tikzcd}\]
+\end{proposition}
+\begin{proof}
+	设 $M$ 为 $G$-模而 $N$ 为 $\Bbbk$-模. 指定 $G$-模的同态 $\varphi: \mathrm{Infl}(N) \to M$ 相当于指定 $\Bbbk$-模同态 $\varphi: N \to M$ 使得 $\varphi(y) = g \varphi(y)$ 恒成立, 这也相当于指定 $\Bbbk$-模同态 $\varphi: N \to M^G$.
+	
+	另一方面, 指定 $\Bbbk$-模同态 $\psi: M_G \to N$ 相当于指定 $\Bbbk$-模同态 $\varphi: M \to N$ 使得 $\varphi(gx-x) = 0$ 恒成立, 但后者等价于 $\varphi(gx) = g\varphi(x)$, 前提是右式按 $\mathrm{Infl}(N)$ 给出的 $G$-模结构定义.
+\end{proof}
+
+函子 $(\cdot)^G$ 和 $(\cdot)_G$ 也能依 $\Bbbk[G]$-模的观点理解. 以下将 $\Bbbk$ 通过注记 \ref{rem:augmentation-kG} 的增广同态视为 $(\Bbbk[G], \Bbbk[G])$-双模; 换言之, $G$ 对 $\Bbbk$ 的双边作用皆平凡.
+
+\begin{proposition}\label{prop:inv-coinv-Hom}
+	等同 $G$-模和左 $\Bbbk[G]$-模, 则有函子的自然同构
+	\begin{gather*}
+		(\cdot)^G \simeq \Hom_G(\Bbbk, \cdot), \quad  (\cdot)_G \simeq \Bbbk \dotimes{\Bbbk[G]} (\cdot).
+	\end{gather*}
+\end{proposition}
+\begin{proof}
+	考虑 $G$-模 $M$. 基于命题 \ref{prop:inv-coinv-infl}, 指定 $G$-模的同态 $\varphi: \Bbbk \to M$ 相当于指定 $\Bbbk$-模同态 $\varphi: \Bbbk \to M^G$, 后者又相当于指定 $M^G$ 的元素, 即 $\varphi(1)$. 这给出第一个同构.
+	
+	对于第二个同构, 先将 $\Bbbk$ 视同 $\Bbbk[G]/\mathfrak{I}$, 其中增广理想 $\mathfrak{I} = \bigoplus_{g \neq 1_G} \Bbbk (g - 1_G)$. 于是 $\Bbbk \dotimes{\Bbbk[G]} M \simeq M/\mathfrak{I}M = M_G$, 它映 $t \otimes x$ 为 $tx \in M$ 在 $M_G$ 中的像. 证毕.
+\end{proof}
+
+依此, 命题 \ref{prop:inv-coinv-infl} 的伴随关系遂可理解为命题 \ref{prop:pullback-two-adjoint} 的特例, 代入平凡同态 $\varphi: G \twoheadrightarrow \{1\}$ 即是.
+
+\begin{corollary}\label{prop:Ind-invariant}
+	给定群同态 $\varphi: H \to G$, 我们有函子的同构
+	\[\begin{array}{rlrl}
+		\Hom_H(\Bbbk[G], \cdot)^G & \rightiso (\cdot)^H, & (\cdot)_H & \rightiso (\Bbbk[G] \dotimes{\Bbbk[H]} \cdot)_G , \\
+		\varphi & \mapsto \varphi(1_G), & (x \;\text{的像}) & \mapsto (1_G \otimes x \;\text{的像}) .
+	\end{array}\]
+	两边都是从 $H\dcate{Mod}$ 到 $\Bbbk\dcate{Mod}$ 的函子, 其中左式涉及了命题 \ref{prop:pullback-two-adjoint} 引入的函子 $\Hom_H(\Bbbk[G], \cdot): H\dcate{Mod} \to G\dcate{Mod}$.
+\end{corollary}
+\begin{proof}
+	以下设 $N$ 为 $H$-模. 第一式归结为命题 \ref{prop:pullback-two-adjoint} 的伴随关系
+	\[ \Hom_G(\Bbbk, \Hom_H(\Bbbk[G], N)) \simeq \Hom_H(\varphi^* \Bbbk, N) = \Hom_H(\Bbbk, N). \]
+	
+	第二式归结为张量积的结合约束 $\Bbbk \dotimes{\Bbbk[G]} (\Bbbk[G] \dotimes{\Bbbk[H]} N) \simeq \Bbbk \dotimes{\Bbbk[H]} N$. 它们的具体映法留给读者验证. 此外, 直接说明断言中的映射良定义且可逆也是可行的.
+\end{proof}
+
+命题 \ref{prop:inv-coinv-infl} 的伴随对还确保 $(\cdot)_G$ 右正合而 $(\cdot)^G$ 左正合, 直接验证也毫无困难.
+
+\begin{definition}[群的同调与上同调]\label{def:group-coh-ho}
+	\index{quntongdiao@群的同调/上同调 (homology/cohomology of groups)}
+	\index[sym1]{HnGM@$\Hm_n(G, M)$, $\Hm^n(G, M)$}
+	选定群 $G$. 系数在 $\Bbbk$ 上的\emph{群同调}定义为 $(\cdot)_G$ 的左导出函子
+	\[ \Hm_n(G, \cdot) := \mathrm{L}_n (\cdot)_G: G\dcate{Mod} \to \Bbbk\dcate{Mod}, \]
+	而\emph{群上同调}定义为 $(\cdot)^G$ 的右导出函子
+	\[ \Hm^n(G, \cdot) := \mathrm{R}^n (\cdot)^G: G\dcate{Mod} \to \Bbbk\dcate{Mod}, \]
+	其中 $n \in \Z$. 它们仅在 $n \geq 0$ 时非零. 类似定义同样适用右 $G$-模.
+\end{definition}
+
+按照许多文献的惯例, 不指明系数时默认 $\Bbbk = \Z$, 此时的 $G$-模也相当于带左 $G$-作用的加法群, 同时要求群作用保加法.
+
+\begin{example}\label{eg:group-H1}
+	考虑 $\Bbbk[G]$ 的增广理想 $\mathfrak{I} = \bigoplus_{g \neq 1_G} \Bbbk (g - 1_G)$. 对任意 $G$-模 $M$ 皆有 $\Hm_0(G, M) \simeq M_G \simeq M/\mathfrak{I}M$; 特别地 $\Hm_0(G, \mathfrak{I}) \simeq \mathfrak{I}/\mathfrak{I}^2$.
+
+	现在考虑短正合列 $0 \to \mathfrak{I} \to \Bbbk[G] \to \Bbbk \to 0$, 其末段是增广同态. 因为 $\Bbbk[G]$ 是投射模, 移维的技巧 (命题 \ref{prop:dimension-shifting}) 说明
+	\[ \Hm_n(G, \Bbbk) \simeq \begin{cases}
+		\Hm_{n-1}(G, \mathfrak{I}), & n \geq 2 \\
+		\Ker\left[ \mathfrak{I}/\mathfrak{I}^2 \to \Bbbk[G]/\mathfrak{I} \right] = \mathfrak{I}/\mathfrak{I}^2 , & n = 1.
+	\end{cases}\]
+\end{example}
+
+基于 $\Bbbk[G]\dcate{Mod}$ 和 $G\dcate{Mod}$ 之间的同构和命题 \ref{prop:inv-coinv-Hom}, 群的同调和上同调也可以分别用 \S\ref{sec:Ext-Tor} 介绍的 $\Tor$ 和 $\Ext$ 函子诠释为
+\begin{equation}\label{eqn:grp-Hm-Tor-Ext}\begin{aligned}
+	\Hm_n(G, M) & \simeq \Tor^G_n(\Bbbk, M) := \Tor^{\Bbbk[G]}_n(\Bbbk, M), \\
+	\Hm^n(G, M) & \simeq \Ext_G^n(\Bbbk, M) := \Ext_{\Bbbk[G]}^n(\Bbbk, M).
+\end{aligned}\end{equation}
+
+这些诠释有时能将相关问题化约到模论的已知结果, 以下是一则基本而不尽平凡的例子, 涉及联系 $\Ext$ 与 $\Tor$ 的谱序列.
+
+\begin{proposition}[群同调与上同调的泛系数定理]\label{prop:group-UCT}
+	\index{fanxishudingli}
+	取 $\Bbbk = \Z$. 对 $\Z$-模 $M$ 赋予平凡作用, 使之成为 $G$-模, 则对所有 $n \in \Z_{\geq 0}$ 都有典范短正合列
+	\[\begin{tikzcd}[row sep=tiny, column sep=small]
+		0 \arrow[r] & \Ext^1_{\Z}\left( \Hm_{n-1}(G, \Z), M \right) \arrow[r] & \Hm^n(G, M) \arrow[r] & \Hom_{\Z}\left( \Hm_n(G, \Z), M \right) \arrow[r] & 0, \\
+		0 \arrow[r] & M \dotimes{\Z} \Hm_n(G, \Z) \arrow[r] & \Hm_n(G, M) \arrow[r] & \Tor^{\Z}_1(M, \Hm_{n-1}(G, \Z)) \arrow[r] & 0;
+	\end{tikzcd}\]
+	当 $n=0$ 时我们规定 $\Hm_{-1}(G, \Z) = 0$.
+\end{proposition}
+\begin{proof}
+	不妨设 $n \geq 1$. 先讨论上同调情形. 一旦读者掌握稍后将介绍的标准复形和链复形, 则不难将链复形 $C := \mathsf{L} \dotimes{\Bbbk[G]} \Z$ 和 $\Z$-模 $M$ 代入\CHref{sec:cplx}习题介绍的上同调泛系数定理, 以获取短正合列. 细节留给感兴趣的读者.
+	
+	在此介绍另一种论证. 在例 \ref{eg:change-of-rings-SS-bis} 中取环同态 $R := \Z[G] \to S := \Z$ 为增广; 另外取左 $R$-模 $Y = \Z$ (即平凡 $G$-模) 和左 $S$-模 $X = M$, 则该处的短正合列化为所求形式.
+	
+	对于同调情形, 同样可以将标准链复形代入同调 Künneth 定理 \ref{prop:Kunneth-homology}, 细节留给读者, 或者是依照例 \ref{eg:change-of-rings-SS-bis} 来理解.
+\end{proof}
+
+按照 \S\ref{sec:derived-primer} 业已介绍的构造, 还可以对一列下有界链复形 (或下有界复形) $M$ 取相应的导出函子, 称为群的超同调 (或超上同调), 或者进一步在导出范畴中考虑
+\[ \Bbbk \otimesL[{\Bbbk[G]}] M, \quad \RHom_G(\Bbbk, M) := \RHom_{\Bbbk[G]}(\Bbbk, M). \]
+
+根据 \eqref{eqn:grp-Hm-Tor-Ext}, 以及 $\Ext$ (或 $\Tor$) 函子可对第一个变元取投射解消来计算这一事实, 立可由命题 \ref{prop:trivial-mod-resolution} 的自由解消 $\mathsf{L} \to \Bbbk$ 得到具体的复形 (或链复形) 来计算群的上同调 (或同调). 定义 \ref{def:resolution-trivial-module} 提供将 $\mathsf{L}$ 作成左 $G$-模或右 $G$-模复形的两种方法: 或者取 $\partial_n: \mathsf{L}_n \to \mathsf{L}_{n-1}$, 或者取 $\partial'_n: \mathsf{L}_n \to \mathsf{L}_{n-1}$. 本书将视场合作不同选择, 以得到标准样貌的复形, 但这些选法不影响复形的上同调.
+
+\begin{proposition}[以标准复形计算群上同调]\label{prop:groupcoh-cochain}
+	\index{biaozhunfuxing@标准复形 (standard complex)}
+	\index[sym1]{CGM@$C(G, M)$}
+	对任意 $G$-模 $M$, 定义由 $\Bbbk$-模构成的\emph{标准复形} $C(G, M) = (C^n(G, M))_n$ 如下:
+	\begin{gather*}
+		C^n(G, M) := \left\{ \text{映射}\; f: G^n \to M \right\}, \quad n \in \Z_{\geq 0},
+	\end{gather*}
+	各项按逐点的加法和纯量乘法作成 $\Bbbk$-模, 负次项定义为 $0$, 而 $d^n: C^n(G, M) \to C^{n+1}(G, M)$ 定义为
+	\begin{multline*}
+		(d^n f)(g_1, \ldots, g_{n+1}) = g_1 f(g_2, \ldots, g_{n+1}) \\
+		+ \sum_{k=1}^n (-1)^k f(\ldots, g_k g_{k+1}, \ldots) + (-1)^{n+1} f(g_1, \ldots, g_n).
+	\end{multline*}
+
+	对所有 $n$ 皆有典范同构 $\Hm^n(C(G, M)) \simeq \Hm^n(G, M)$. 更精确地说, $C(G, M)$ 在导出范畴中给出 $\RHom_G(\Bbbk, M)$.
+\end{proposition}
+\begin{proof}
+	考虑复形 $\mathsf{L} = (\mathsf{L}_n, \partial_n)_n$. 基于左 $G$-模的自由解消 $\mathsf{L} \to \Bbbk$, 可知 $\RHom_G(\Bbbk, M)$ 由以下 $\Hom$ 复形 (定义 \ref{def:Hom-cplx}) 代表:
+	\begin{equation*}
+		\Hom^\bullet(\mathsf{L}, M) = \left[ \cdots \to \Hom_{\Bbbk[G]}(\mathsf{L}_n, M) \xrightarrow{(-1)^{n+1} \partial_{n+1}^*} \Hom_{\Bbbk[G]}(\mathsf{L}_{n+1}, M) \to \cdots \right] ,
+	\end{equation*}
+	其次数为 $\ldots, -n, -n-1, \ldots$; 符号 $(-1)^{n+1}$ 来自 $\Hom$ 复形的一般定义.
+	
+	对每个 $n \geq 0$, 按照 \eqref{eqn:L-basis} 取自由左 $\Bbbk[G]$-模 $\mathsf{L}_n$ 的基 $(g_1 | \cdots | g_n)$. 因此
+	\[\begin{tikzcd}[row sep=tiny, column sep=tiny]
+		\Hom_G(\mathsf{L}_n, M) \arrow[r, "\sim"] & C^n(G, M) \\
+		\phi \arrow[mapsto, r] & {\left[ f: (g_1, \ldots, g_n) \mapsto \phi\left( (g_1 | \cdots | g_n) \right)\right]} ,
+	\end{tikzcd}\]
+	这显然是 $\Bbbk$-模同构. 关键是在 $C^n(G, M)$ 上识别 $(-1)^{n+1} \partial_{n+1}^*$. 考虑 $(-1)^{n+1}\partial_{n+1}^* \phi = (-1)^{n+1} \phi \circ \partial_{n+1}$: 根据 \eqref{eqn:L-basis-partial}, 它映 $(g_1 | \cdots | g_{n+1}) \in \mathsf{L}_{n+1}$ 为
+	\begin{multline*}
+		\phi\left( g_1 (g_2 | \cdots | g_{n+1})\right) + \sum_{k=1}^n (-1)^k \phi\left((\cdots | g_k g_{k+1}| \cdots)\right) + \cdots + (-1)^{n+1} \phi\left((g_1 | \cdots |g_n)\right) \\
+		= g_1 f(g_2, \ldots, g_{n+1}) + \sum_{k=1}^n (-1)^k f(\ldots, g_k g_{k+1}, \ldots) + (-1)^{n+1} f(g_1, \ldots, g_n).
+	\end{multline*}
+	这正是断言中的 $(d^n f)(g_1, \ldots, g_n)$.
+\end{proof}
+
+右 $G$-模 $M$ 的上同调也有类似描述, 此处不赘. 我们接着对左 $G$-模的群同调表述相应的结果, 其证明是平凡的.
+
+\begin{proposition}[以标准链复形计算群同调]\label{prop:grouph-chain}
+	对任意 $G$-模 $M$ 和 $n \in \Z_{\geq 0}$, 我们有典范同构
+	\[ \Hm_n(G, M) \simeq \Hm_n\left( \mathsf{L} \dotimes{\Bbbk[G]} M\right), \quad n \in \Z_{\geq 0}, \]
+	此处采用 $(\mathsf{L}_n, \partial'_n)_n$ 作为右 $G$-模链复形的结构. 按照 \eqref{eqn:L-basis-right} 取右 $\Bbbk[G]$-模 $\mathsf{L}_n$ 的基 $(g_1 | \cdots | g_n)^\dagger$. 于是 $\mathsf{L}^n \dotimes{\Bbbk[G]} M$ 等同于直和 $M^{\oplus G^n}$, 其中 $(g_1, \ldots, g_n) \in G^n$ 对应的直和项其元素唯一地表为
+	\[ (g_1 | \cdots | g_n)^\dagger \otimes x, \quad x \in M, \]
+	而根据 \eqref{eqn:L-basis-partial-right}, $\partial'_n \otimes \identity_M: \mathsf{L}_n \dotimes{\Bbbk[G]} M \to \mathsf{L}_{n-1} \dotimes{\Bbbk[G]} M$ 表作
+	\begin{multline*}
+		(g_1 | \cdots | g_n)^\dagger \otimes x \mapsto \\
+		(g_2 | \cdots | g_n)^\dagger \otimes x + \sum_{k=1}^{n-1} (-1)^k (\cdots | g_k g_{k+1} | \cdots)^\dagger \otimes x \\
+		+ (-1)^n (g_1 | \cdots | g_{n-1})^\dagger \otimes g_n x.
+	\end{multline*}
+
+	为了和命题 \ref{prop:groupcoh-cochain} 对照, 我们记上述链复形为 $(C_n(G, M))_n$, 称为\emph{标准链复形}. 它在导出范畴中给出 $\Bbbk \otimesL[{\Bbbk[G]}] M$.
+\end{proposition}
+
+之后的例 \ref{eg:group-H-comonad} 将说明标准链复形和杠构造的关系.
+
+关于右 $G$-模 $M$ 的同调当然也有相应的描述. 考虑 $M \dotimes{\Bbbk[G]} \mathsf{L}$, 我们有 $M \dotimes{\Bbbk[G]} \mathsf{L}_n \simeq M^{\oplus G^n}$, 其中 $(g_1, \ldots, g_n)$ 对应的直和项其元素唯一地表为
+\[ x \otimes (g_1 | \cdots | g_n), \quad x \in M, \]
+而 $\identity_M \otimes \partial'_n$ 的映法是
+\begin{multline*}
+	x \otimes (g_1 | \cdots | g_n) \mapsto \\
+	x g_1 (g_2 | \cdots | g_n) + \sum_{k=1}^{n-1} (-1)^k x \otimes (\cdots | g_k g_{k+1} | \cdots) \\
+	+ (-1)^n x \otimes (g_1 | \cdots | g_{n-1}).
+\end{multline*}
+对应的标准链复形依然记为 $(C_n(G, M))_n$.
+
+熟悉 \S\ref{sec:HH} 内容的读者应该不难将这些复形等同于 Hochschild 复形和链复形的特例. 细说如下.
+
+\begin{proposition}[与 Hochschild 理论的关系]
+	令 $R := \Bbbk[G]$. 对于左 (或右) $G$-模 $M$, 记 $M_+$ (或 ${}_+ M$) 为下式所确定的 $(R, R)$-双模
+	\[ g_1 x g_2 := g_1 x \; (\text{或}\; g_1 x g_2 = x g_2 ), \quad g_1 , g_2 \in G, \; x \in M. \]
+	我们有兼容于长正合列的典范同构
+	\[ \Hm^n(G, M) \simeq \HHm^n(R, M_+), \quad (\text{或}\; \Hm_n(G, M) \simeq \HHm_n(R, {}_+ M)), \]
+	事实上, 复形 $(C^n(G, M))_n$ (或链复形 $(C_n(G, M))_n$) 同构于 \eqref{eqn:HH-cplx} 的 $(C^n(R, M_+))_n$ (或 $(C_n(R, {}_+ M))_n$).
+\end{proposition}
+\begin{proof}
+	观察到 $R^{\otimes n}$ 是自由 $\Bbbk$-模, 以 $G^n$ 为基: $(g_1, \ldots, g_n)$ 对应到 $g_1 \otimes \cdots \otimes g_n \in R^{\otimes n}$. 剩下的仅只是比较标准复形与 \eqref{eqn:HH-cplx} 描述的复形. 具体地说, 在上同调情形, 我们将 $f: G^n \to M$ 映为相应的 $n$ 重 $\Bbbk$-线性映射 $R^n \to M$; 在同调情形, 我们将 $x \otimes (g_1 | \cdots | g_n)^\dagger$ 映为 $(x|g_1| \cdots |g_n) \in C_n(R, {}_+ M)$. 剩下的比较留给读者.
+\end{proof}
+
+言归正传, 今后考虑的 $G$-模仍默认为左模.
+
+\begin{example}\label{eg:group-H1-further}
+	按照上述讨论来考察
+	\[ \Hm_1(G, \Bbbk) \simeq \frac{\Ker\left[ C_1(G, \Bbbk) \to C_0(G, \Bbbk) \right]}{\Image\left[ C_2(G, \Bbbk) \to C_1(G, \Bbbk) \right]}. \]
+	
+	将 $C_1(G, \Bbbk)$ 的元素唯一地表为诸 $[g] := (g)^\dagger \otimes 1$ 的 $\Bbbk$-线性组合 ($g \in G$). 观察到 $C_0(G, \Bbbk) \simeq \Bbbk$ 而
+	\[ \left( \partial'_1 \otimes \identity_{\Bbbk}\right)[g] = 1 - 1 = 0, \quad \left( \partial'_2 \otimes \identity_{\Bbbk}\right)((g_1 | g_2)^\dagger \otimes 1) = [g_2] - [g_1 g_2] + [g_1]. \]
+	因此 $\Hm_1(G, \Bbbk)$ 同构于 $\Bbbk$-模的商
+	\[ Q := \bigoplus_{g \in G} \Bbbk \cdot [g] \bigg/ \lrangle{ [g_1 g_2] - [g_1] + [g_2] : g_1, g_2 \in G }; \]
+	映射 $g \mapsto [g]$ 诱导群同态 $a: G \to (Q, +)$. 它具有以下泛性质: 对于任意 $\Bbbk$-模 $N$ 和群同态 $b: G \to (N, +)$, 存在唯一的 $\Bbbk$-模同态 $\varphi: Q \to N$ 使得 $b = \varphi a$. 请读者迅速验证此泛性质, 由之导出 $\Bbbk$-模的典范同构
+	\[\begin{tikzcd}[row sep=tiny]
+		G_{\mathrm{ab}} \dotimes{\Z} \Bbbk \arrow[r, "\sim"] & \Hm_1(G, \Bbbk) \\
+		(g \bmod G_{\mathrm{der}}) \otimes 1 \arrow[mapsto, r] & {[g] \;\text{的类}},
+	\end{tikzcd}\]
+	其中 $G_{\mathrm{ab}} := G/G_{\mathrm{der}}$ 是 $G$ 的交换化, $G_{\mathrm{der}}$ 是 $G$ 的导出子群, 如 \cite[定义 4.7.2]{Li1}. 读者若了知群同调的拓扑背景, 当可察觉这和同调论中的 Hurewicz 定理的关联.
+	
+	我们自然也希望了解例 \ref{eg:group-H1} 的同构 $\Hm_1(G, \Bbbk) \rightiso \mathfrak{I}/\mathfrak{I}^2$ 与上述同构的合成. 兹断言它具体表为
+	\[\begin{tikzcd}[row sep=tiny]
+		G_{\mathrm{ab}} \otimes \Bbbk \arrow[r, "\sim"] & \mathfrak{I}/\mathfrak{I}^2 \\
+		(g \bmod G_{\mathrm{der}}) \otimes 1 \arrow[mapsto, r] & 1_G - g \;\bmod \mathfrak{I}^2.
+	\end{tikzcd}\]
+	
+	何以故? 例 \ref{eg:group-H1} 的同构来自短正合列 $0 \to \mathfrak{I} \to \Bbbk[G] \to \Bbbk \to 0$ 所诱导的 $\Hm_1(G, \Bbbk) \to \Hm_0(G, \mathfrak{I}) \simeq \mathfrak{I}/\mathfrak{I}^2$, 对之写下行正合交换图表
+	\[\begin{tikzcd}
+		& & {(g)^\dagger \otimes 1_G} \arrow[phantom, d, "\in" description, sloped] \arrow[mapsto, r] & {[g] = (g)^\dagger \otimes 1} \arrow[phantom, d, "\in" description, sloped] & \\
+		0 \arrow[r] & C_1(G, \mathfrak{I}) \arrow[r] \arrow[d] & C_1(G, \Bbbk[G]) \arrow[r] \arrow[d, "{\partial'_1 \otimes \identity_{\Bbbk[G]}}"] & C_1(G, \Bbbk) \arrow[r] \arrow[d, "{\partial'_0 \otimes \identity_{\Bbbk[G]} = 0}"] & 0 \\
+		0 \arrow[r] & C_0(G, \mathfrak{I}) \arrow[r] & C_0(G, \Bbbk[G]) \arrow[r] & C_0(G, \Bbbk) \arrow[r] & 0 ,
+	\end{tikzcd}\]
+	而 $\partial'_1 \otimes \identity_{\Bbbk[G]}$ 映 $(g)^\dagger \otimes 1_{\Bbbk[G]}$ 为 $1_G - g \in C^0(G, \mathfrak{I}) = \mathfrak{I}$, 从而确定 $\mathfrak{I}/\mathfrak{I}^2 \simeq \Hm^0(G, \mathfrak{I})$ 的元素. 这正是蛇形引理的构造.
+\end{example}
+
+\begin{remark}\label{rem:Gmod-k}
+	标准复形 (或标准链复形) 的形式表明 $\Hm^n(G, M)$ (或 $\Hm_n(G, M)$) 作为加法群完全由 $M$ 的加法结构确定; 来自 $\Bbbk$ 的乘法仅赋予它们 $\Bbbk$-模结构. 这说明 $\Bbbk = \Z$ 的情形已经捕捉了群上同调 (或同调) 的实质, 尽管容许一般系数不会造成额外的困难.
+\end{remark}
+
+\begin{remark}[正规化版本]\label{rem:nor-cochain}
+	\index{biaozhunfuxing!正规化 (normalized)}
+	\index[sym1]{CGMbar@$\overline{C}(G, M)$}
+	计算 $\Hm^n(G, M)$ 和 $\Hm_n(G, M)$ 时也可以改用命题 \ref{prop:trivial-mod-nor-resolution} 提供的正规化自由解消 $\overline{\mathsf{L}} \to \Bbbk$. 相应的复形和链复形分别记为 $(\overline{C}^n(G, M))_n$ 和 $(\overline{C}_n(G, M))_n$, 称为相应的正规化标准复形和正规化标准链复形; 它们分别是原版本的子复形和商复形. 兹以上同调情形为例, 鉴于 \eqref{eqn:nor-cochain} 对 $\mathsf{L}_n$ 的描述,
+	\[ \overline{C}^n(G, M) = \left\{\begin{array}{r|l}
+		f \in C^n(G, M) & \exists 1 \leq k \leq n, \; g_k = 1_G \\
+		& \implies f(g_1, \ldots, g_n) = 0
+	\end{array}\right\}. \]
+\end{remark}
+
+\section{低次上同调: 叉同态和群扩张}\label{sec:grp-low-degree}
+本节旨在深化对 $\Hm^1$ 和 $\Hm^2$ 的理解. 选定群 $G$ 和交换环 $\Bbbk$. 给定 $G$-模 $M$, 对命题 \ref{prop:groupcoh-cochain} 的标准复形 $C(G, M)$ 定义 $C^n(G, M)$ 的子模
+\[ Z^n(G, M) := \Ker(d^n) \supset \Image(d^{n-1}) =: B^n(G, M), \]
+另规定 $B^0(G, M) = 0$. 我们等同
+\begin{equation*}
+	\Hm^n(G, M) \quad\text{和}\quad Z^n(G, M)/B^n(G, M).
+\end{equation*}
+
+基于拓扑学的渊源, $Z^n(G, M)$ 的元素也被称为 $n$-\emph{余圈}, 而 $B^n(G, M)$ 的元素也被称为 $n$-\emph{余边}.
+\index{yuquan@余圈 (cocycle)}
+\index{yubian@余边 (coboundary)}
+\index[sym1]{ZGM@$Z^n(G, M)$}
+\index[sym1]{BGM@$B^n(G, M)$}
+
+回忆到 $C^n(G, M)$ 由所有映射 $f: G^n \to M$ 组成. 标准复形的低次部分是
+\[\begin{tikzcd}[row sep=tiny, column sep=small]
+	C^0(G, M) \arrow[r, "{d^0}"] & C^1(G, M) \arrow[r, "{d^1}"] & C^2(G, M) \\
+	m \arrow[mapsto, r] & {[g \mapsto gm - m]} & \\
+	& f \arrow[mapsto, r] & {[(g_1, g_2) \mapsto g_1 f(g_2) - f(g_1 g_2) + f(g_1)]},
+\end{tikzcd}\]
+特别地, $Z^0(G, M) = M^G$. 下一步是考察 $n=1$ 情形.
+
+\begin{definition}[叉同态]\label{def:crossed-homomorphism}
+	\index{chatongtai@叉同态 (crossed homomorphism)}
+	设 $M$ 为 $G$-模, $Z^1(G, M)$ 的元素也被称为从 $G$ 到 $M$ 的叉同态; 换言之, 叉同态是满足以下性质的映射 $f: G \to M$
+	\[ f(g_1 g_2) = g_1 f(g_2) + f(g_1), \quad g_1, g_2 \in G. \]
+	当 $\Bbbk$ 给定, 它们对映射的逐点运算构成 $\Bbbk$-模.
+\end{definition}
+
+注意到 $B^1(G, M)$ 的元素是形如 $f_m: g \mapsto gm - m$ 的叉同态, 其中 $m \in M$.
+
+一般而言, 叉同态 $f$ 总满足 $f(1_G) = 0$ (取 $g_1 = g_2 = 1_G$) 和 $g^{-1} f(g) = -f(g^{-1})$ (取 $g_1 = g^{-1}$ 和 $g_2 = g$).
+
+\begin{example}
+	若 $M$ 带平凡 $G$-作用, 则叉同态无非是从 $G$ 到加法群 $(M, +)$ 的同态, 而 $B^1(G, M) = \{0\}$, 故此时
+	\[ \Hom_{\cate{Grp}}(G, M) \simeq \Hm^1(G, M). \]
+\end{example}
+
+理解叉同态的另一途径是半直积: 对于 $G$-模 $M$, 以 $G$-作用构造半直积 $M \rtimes G$, 其元素形如 $(m, g)$, 其中 $m \in M$ 而 $g \in G$, 并且带有映 $(m, g)$ 为 $g$ 的投影同态 $\pi: M \rtimes G \to G$.
+
+\begin{proposition}\label{prop:crossed-semidirect-product}
+	设 $M$ 为 $G$-模. 我们有典范双射
+	\[ Z^1(M, G) \xrightarrow{1:1} \left\{ \text{群同态}\; \sigma: G \to M \rtimes G \; \middle| \; \pi\sigma = \identity_G \right\}, \]
+	右式的 $\sigma$ 也称为 $\pi$ 的截面; 叉同态 $f$ 对应于截面 $\sigma(g) = (f(g), g)$.
+\end{proposition}
+\begin{proof}
+	满足 $\pi\sigma = \identity_G$ 的映射 $\sigma$ 必形如 $\sigma(g) = (f(g), g)$, 其中 $f: G \to M$ 为映射. 基于半直积的定义, 使 $\sigma$ 为群同态的充要条件是 $M$ 中的等式
+	\[ f(g_1) + g_1 f(g_2) = f(g_1 g_2), \quad g_1, g_2 \in G. \]
+	这正是叉同态的定义.
+\end{proof}
+
+叉同态也和注记 \ref{rem:augmentation-kG} 介绍的增广理想 $\mathfrak{I} \subset \Bbbk[G]$ 相联系.
+
+\begin{proposition}\label{prop:crossed-augmentation}
+	对任意 $G$-模 $M$, 我们有典范同构 $\Hom_G(\mathfrak{I}, M) \rightiso Z^1(G, M)$, 它映同态 $\varphi$ 为叉同态 $f(g) = \varphi(g - 1_G)$.
+\end{proposition}
+\begin{proof}
+	因为 $\mathfrak{I}$ 作为 $\Bbbk$-模以 $\{g - 1_G: g \in G, \; g \neq 1_G \}$ 为基, 指定 $\Bbbk$-模同态 $\varphi: \mathfrak{I} \to M$ 相当于指定满足 $f(1_G) = 0$ 的映射 $f: G \to M$, 其刻画是 $f(g) = \varphi(g - 1_G)$. 使 $\varphi$ 为 $G$-模同态的条件是 $\varphi(g_1 (g_2 - 1_G)) = g_1 \varphi(g_2 - 1_G)$, 然而
+	\[ \text{左式}\; = \varphi(g_1 g_2 - 1_G - g_1 + 1_G) = f(g_1 g_2) - f(g_1), \quad \text{右式}\; = g_1 f(g_2). \]
+	此即叉同态的条件.
+\end{proof}
+
+对于下一步 $n=2$ 的情形, 应当先回忆群扩张的概念. 取 $\Bbbk = \Z$ 并引进一些术语.
+
+\begin{definition}\label{def:group-ext}
+	\index{qunkuozhang@群扩张 (extension of groups)}
+	设 $A$ 为群, $G$ 对 $A$ 的\emph{扩张}意谓群的短正合列 \cite[定义 4.3.7]{Li1}:
+	\[ 0 \to A \to E \xrightarrow{\pi} G \to 1. \]
+	
+	今后将群扩张的资料简记为 $E$. 群同态 $s: G \to E$ 若满足 $\pi s = \identity_G$ 则称为该扩张的一个\emph{分裂}, 此时 $s$ 将 $G$ 嵌入为 $E$ 的子群, 借此使 $E$ 等同于半直积 $A \rtimes G$. 有分裂的扩张称为\emph{可裂}的. 细节见 \cite[\S 4.3]{Li1}.
+\end{definition}
+
+大而化之地说, 群扩张理论研究如何从正规子群和商群构造大群. 为了和 $G$-模的上同调相联系, 今后将上述的群 $A$ 改记为 $M$, 并要求 $M$ 交换, 群运算写作加法. 这般的群扩张确定群同态
+\[ \alpha: G \to \Aut_{\cate{Grp}}(M), \quad \alpha(g)(x) = exe^{-1}, \quad e \in \pi^{-1}(g) \;\text{任取.} \]
+于是 $M$ 通过 $\alpha$ 成为 $G$-模, 这是群扩张最基本的不变量.
+
+我们希望对给定的 $G$-模 $M$ 分类 $G$ 对 $M$ 的所有扩张, 使得对应的 $\alpha$ 正是 $M$ 的 $G$-模结构, 精确到扩张的等价 (或曰同构). 从扩张 $E$ 到 $E'$ 的等价有显然的定义, 具体表述为群的交换图表
+\begin{equation}\label{eqn:group-ext-diagram}\begin{tikzcd}
+	0 \arrow[r] & M \arrow[r] \arrow[equal, d] & E \arrow[r] \arrow[d, "\varphi"] & G \arrow[r] \arrow[equal, d] & 1 \\
+	0 \arrow[r] & M \arrow[r] & E' \arrow[r] & G \arrow[r] & 1.
+\end{tikzcd}\end{equation}
+请读者验证上图的 $\varphi$ 自动是群同构, 而扩张可裂当且仅当它等价于半直积 $M \rtimes G$.
+
+\begin{definition}
+	\index[sym1]{ExtGM@$\cate{Ext}(G, M)$}
+	将群 $G$ 对给定 $G$-模 $M$ 的所有扩张作成一个范畴 $\cate{Ext}(G, M)$, 其态射即交换图表 \eqref{eqn:group-ext-diagram}.
+\end{definition}
+
+这是一个广群 --- 所有态射皆可逆. 分类扩张相当于在范畴等价的意义下描述 $\cate{Ext}(G, M)$, 这又分为两个子问题:
+\begin{itemize}
+	\item 描述 $\Obj(\cate{Ext}(G, M)) / \simeq$, 亦即描述扩张的等价类, 并且在其中辨识可裂扩张;
+	\item 描述 $\cate{Ext}(G, M)$ 的态射, 亦即描述扩张之间的同构.
+\end{itemize}
+且从较简单的第二个子问题入手. 首先, 扩张 $E$ 有一类简单的自同构, 形如 $\Ad_m: e \mapsto m e m^{-1}$ (其中 $m \in M$, 群运算在 $E$ 中表为乘法), 称为内自同构. 基于抽象理由, 内自同构给出 $\Aut(E)$ 的正规子群, 相应的商群称为 $E$ 的外自同构群.
+
+为了分类群扩张, 有必要改用注记 \ref{rem:nor-cochain} 描述的正规化标准复形 $\overline{C}(G, M)$ 来计算上同调. 相应地定义
+\begin{gather*}
+	\overline{C}^n(G, M) \supset \overline{Z}^n(G, M) \supset \overline{B}^n(G, M), \\
+	\Hm^n(G, M) \simeq \overline{Z}^n(G, M) / \overline{B}^n(G, M).
+\end{gather*}
+
+我们有 $\overline{C}^0(G, M) = C^0(G, M) = M$. 先前关于叉同态的讨论中则已经说明 $\overline{Z}^1(G, M) = Z^1(G, M)$.
+
+\begin{lemma}\label{prop:factor-set-prep}
+	设 $0 \to M \to E \xrightarrow{\pi} G \to 1$ 为 $\cate{Ext}(G, M)$ 的对象, 则它的自同构群典范地同构于 $\overline{Z}^1(G, M)$, 而外自同构群典范地同构于 $\Hm^1(G, M)$. 更明确地说, $z \in \overline{Z}^1(G, M)$ 对应的自同构映 $e \in E$ 为 $z(\pi(e)) e$.
+\end{lemma}
+\begin{proof}
+	以下暂且将 $M$ 的群运算记为乘法. 在交换图表 \eqref{eqn:group-ext-diagram} 中取 $E' = E$, 则对任何 $e \in E$ 存在唯一的 $z(e) \in M$ 使得 $\varphi(e) = z(e)e$. 若 $m \in M$ 则 $\varphi(me) = m\varphi(e) = mz(e)e = z(e)me$, 故 $z(e)$ 只和 $e$ 在 $G$ 中的像相关, 今后记为映射 $z: G \to M$. 反之, 任何映射 $z: G \to M$ 皆按 $\varphi(e) = z(\pi(e)) e$ 确定映射 $\varphi: E \to E$, 使得图表 \eqref{eqn:group-ext-diagram} 在集合层次交换.
+	
+	考虑映射 $z: G \to M$ 和相应的 $\varphi$. 令 $g_i = \pi(e_i)$, $i=1,2$, 则
+	\begin{align*}
+		\varphi(e_1 e_2) & = z(g_1 g_2) e_1 e_2 , \\
+		\varphi(e_1) \varphi(e_2) & = z(g_1) e_1 z(g_2) e_2 \\
+		& = z(g_1) \underbracket{g_1 \cdot z(g_2)}_{\text{$M$ 的 $G$-模结构}} e_1 e_2.
+	\end{align*}
+	于是 $\varphi$ 为群同态相当于说 $z$ 是叉同态. 易见群同态的合成对应到叉同态的加法. 现在设 $m \in M$, 对应的内自同构是 $e \mapsto mem^{-1} = mem^{-1}e^{-1} e$. 易见 $mem^{-1}e^{-1} \in M$ 用加法表示正是 $m - \pi(e)m$. 证毕.
+\end{proof}
+
+\begin{definition}
+	广群 $\tau^{\leq 2}\overline{\cate{C}}(G, M)$ 定义如下: 其对象集是 $\overline{Z}^2(G, M)$, 态射集是
+	\[ \Hom(f, f') := \{w \in \overline{C}^1(G, M): f' = d^1 w + f \}, \]
+	态射合成按 $\overline{C}^1(G, M)$ 的加法定义. 于是对象的同构类一一对应于 $\Hm^2(G, M)$ 的元素.
+\end{definition}
+
+符号的意涵自明: $\tau^{\leq 2}\overline{\cate{C}}(G, M)$ 是由截断复形 $\tau^{\leq 2}\overline{C}(G, M)$ 确定的范畴.
+
+\begin{theorem}\label{prop:factor-set}
+	设 $M$ 为 $G$-模, 则范畴 $\cate{Ext}(G, M)$ 等价于 $\tau^{\leq 2}\overline{\cate{C}}(G, M)$; 特别地, $G$ 对 $M$ 的扩张等价类一一对应到 $\Hm^2(G, M)$ 的元素, 而可裂扩张的等价类对应到 $0 \in \Hm^2(G, M)$.
+\end{theorem}
+\begin{proof}
+	先来构造函子 $\tau^{\leq 2}\overline{\cate{C}}(G, M) \to \cate{Ext}(G, M)$. 给定映射 $f: G^2 \to M$, 在集合 $M \times G$ 上定义二元运算
+	\[ (m_1, g_1) \cdot (m_2, g_2) := \left( m_1 + g_1 \cdot m_2 + f(g_1, g_2)  , g_1 g_2 \right), \]
+	则结合律等价于恒等式
+	\begin{equation}\label{eqn:grp-2-cocycle}
+		f(g_1, g_2) + f(g_1 g_2, g_3) = g_1 \cdot f(g_2, g_3) + f(g_1, g_2 g_3),
+	\end{equation}
+	亦即 $f \in Z^2(G, M)$; 进一步, $(0, 1_G)$ 是幺元等价于
+	\[ f(g, 1_G) = 0 = f(1_G, g), \]
+	亦即 $f \in \overline{Z}^2(G, M)$. 留意到在 \eqref{eqn:grp-2-cocycle} 中取 $(g_1, g_2, g_3) = (g, g^{-1}, g)$ 再配合上式可得
+	\begin{equation}\label{eqn:grp-2-cocycle-inv}
+		f(g, g^{-1}) = g \cdot f(g^{-1}, g).
+	\end{equation}
+	
+	综上, $M \times G$ 从 $f \in \overline{Z}^2(G, M)$ 获取幺半群结构, 记为 $E$. 它自动是群: 由 \eqref{eqn:grp-2-cocycle-inv} 可推导
+	\[ (0, g)^{-1} = \left( -f(g^{-1}, g), g^{-1} \right), \quad (m, 1_G)^{-1} = \left(-m, 1_G\right). \]
+	易证映射 $m \mapsto (m, 1_G)$ 和 $(m, g) \mapsto g$ 给出群扩张 $0 \to M \to E \to G \to 1$, 它在 $M$ 上诱导的自同构正是原有的 $G$-作用. 请验证 $f = 0$ 对应到半直积 $E = M \rtimes G$.
+	
+	若另外给定 $w \in \overline{C}^1(G, M)$ 并且令 $f' := d^1 w + f$, 对应的扩张记为 $E'$, 则
+	\[ (m, g) \mapsto (m - w(g) , g) \]
+	给出从 $E$ 到 $E'$ 的同构: 诚然, 同构等价于上式保持乘法, 展开定义可知这又相当于
+	\[ - w(g_1) - g_1 \cdot w(g_2) + (d^1 w)(g_1, g_2) = - w(g_1 g_2) \]
+	恒成立, 然而这正是 $d^1 w$ 的定义.
+	
+	综上可得函子 $\tau^{\leq 2} \overline{\cate{C}}(G, M) \to \cate{Ext}(G, M)$, 两边都是广群. 故以引理 \ref{prop:factor-set-prep} 比较对象的自同构群可见它是全忠实的, 以下说明它本质满.
+	
+	设 $E$ 为 $\cate{Ext}(G, M)$ 的对象. 对扩张带有的映射 $\pi: E \to G$ 任取截面 $s: G \to E$, 亦即要求 $s$ 是满足 $\pi s = \identity_G$ 的映射; 这也相当于在 $E$ 的每个 $M$-陪集中选定代表元. 若 $s(1_G) = 1_E$ 则称 $s$ 为正规化截面. 对所有 $g_1, g_2 \in G$, 元素 $s(g_1 g_2)$ 和 $s(g_1) s(g_2)$ 对 $\pi$ 的像相同, 故存在唯一的 $f(g_1, g_2) \in M$ 使得
+	\[ s(g_1) s(g_2) = f(g_1, g_2) s(g_1 g_2). \]
+	
+	易证乘法结合律 $(s(g_1) s(g_2)) s(g_3) = s(g_1) (s(g_2) s(g_3))$ 转译为等式 \eqref{eqn:grp-2-cocycle}, 亦即 $f \in Z^2(G, M)$. 若 $s$ 是正规化的, 则 $f(1_G, g) = 0 = f(g, 1_G)$ 恒成立, 这也相当于说 $f \in \overline{Z}^2(G, M)$.
+	
+	对取定的正规化截面 $s$, 以相应的 $f$ 赋予 $M \times G$ 群结构. 考虑双射
+	\[ M \times G \xrightarrow{1:1} E, \quad (m, g) \mapsto m s(g). \]
+	总结以上讨论易见此双射保持群乘法, 并给出 $\cate{Ext}(G, M)$ 中的同构. 这就完全证明了等价.
+\end{proof}
+
+在后半段关于本质满的论证中, 变动截面 $s$ 相当于任取映射 $h: G \to M$ 并考虑 $s'(g) := h(g) s(g)$, 相应的 $f': G^2 \to M$ 化为
+\begin{align*}
+	f'(g_1, g_2) & = \left( h(g_1) + g_1 \cdot h(g_2) - h(g_1 g_2)\right) + f(g_1, g_2) \\
+	& = (d^1 h)(g_1, g_2) + f(g_1, g_2).
+\end{align*}
+若进一步要求 $h(1_G) = 0$, 则 $d^1 h \in \overline{B}^2(G, M)$. 从历史来看, 这些观察是联系扩张与 $\Hm^2(G, M)$ 的起点, 同时也为 $\overline{Z}^2(G, M)$ 和 $\overline{B}^2(G, M)$ 的定义提供了群扩张的解释, 只是证明中隐而不彰.
+
+\begin{remark}\label{rem:Ext-incarnation}
+	定理 \ref{prop:factor-set} 相当于说复形 $\tau^{\leq 2} \overline{C}(G, M)$ 是群扩张范畴 $\cate{Ext}(G, M)$ 的线性化身, 其 $2$ 次项描述对象, $1$ 次项描述态射, 尚待诠释的是 $0$ 次项. 对于 $m \in M = \overline{C}^0(G, M)$, 我们有群扩张的内自同构 $\Ad_m: e \mapsto mem^{-1}$, 它平凡当且仅当 $m \in M^G = \Hm^0(G, M)$. 不妨以内自同构的观点将 $M$ 的元素理解为 $\cate{Ext}(G, M)$ 的 $2$-态射: 对于 $m \in M$ 和 $\varphi_1, \varphi_2 \in \Hom_{\cate{Ext}(G, M)}(E, E')$,
+	\[ \text{将 $2$-胞腔图表}\; \begin{tikzcd}[column sep=large]
+		E \arrow[bend left=60, r, "\varphi_1", ""' {name=U}] \arrow[bend right=60, r, "\varphi_2"', "" {name=D}] & E' \arrow[Rightarrow, from=U, to=D, "m"]
+	\end{tikzcd} \; \text{诠释为}\; \varphi_2 = \Ad_m \varphi_1. \]
+	
+	留意到 $\Ad_m \varphi_1 = \varphi_1 \Ad_m$ 而 $\Ad_{m_1} \Ad_{m_2} = \Ad_{m_1 + m_2}$. 于是 $\Hm^0(G, M)$ 成为任意态射 $\varphi$ 的``$2$-自同构群''. 依此, 复形 $\tau^{\leq 2} \overline{C}(G, M)$ 可谓是 $2$-范畴 $\cate{Ext}(G, M)$ 的线性化身; 关于 $2$-范畴的定义详阅 \cite[\S 3.5]{Li1}.
+\end{remark}
+
+我们将在 \S\ref{sec:group-ext-revisited} 探讨群扩张的其他面向. 在此之前, 有必要介绍更多关于群同调与上同调的操作.
+
+\section{诱导模}\label{sec:induced-module}
+对于群同态 $\varphi: H \to G$, 命题 \ref{prop:pullback-two-adjoint} 给出了 $\varphi^*$ 的右伴随 $\Hom_H(\Bbbk[G], \cdot)$ 和左伴随 $\Bbbk[G] \dotimes{\Bbbk[H]} (\cdot)$. 本节关注的是 $H \subset G$ 为子群而 $\varphi$ 为包含同态的常用情形. 首先引入记号.
+
+\begin{definition}[诱导模]\label{def:induced-module}
+	\index{Gmo!诱导 (induced)}
+	\index[sym1]{Ind-ind@$\Ind^G_H$, $\iInd^G_H$}
+	设 $H$ 为 $G$ 的子群. 对于 $H$-模 $N$, 定义以下 $G$-模
+	\[ \Ind^G_H(N) := \Hom_H(\Bbbk[G], N), \quad \iInd^G_H(N) := \Bbbk[G] \dotimes{\Bbbk[H]} N. \]
+	当 $N$ 变动, 两者都给出函子 $H\dcate{Mod} \to G\dcate{Mod}$.
+\end{definition}
+
+两种操作都可以笼统地称为从 $H$ 到 $G$ 的\emph{诱导}; 有时也称 $\iInd^G_H$ 为有限支集诱导, 这一术语将由以后的引理 \ref{prop:Ind-as-mappings} 得到解释.
+
+\begin{proposition}\label{prop:Ind-preservation}
+	函子 $\Res^G_H: G\dcate{Mod} \to H\dcate{Mod}$ 和 $\Ind^G_H, \iInd^G_H: H\dcate{Mod} \to G\dcate{Mod}$ 皆正合; $\Ind^G_H$ 保持内射对象, $\iInd^G_H$ 保持投射对象, 而 $\Res^G_H$ 两者皆保持.
+\end{proposition}
+\begin{proof}
+	已知 $\Res^G_H$ 正合. 选取陪集代表元可知 $\Bbbk[G]$ 是自由左 $\Bbbk[H]$-模, 故函子 $\Hom_{\Bbbk[H]}(\Bbbk[G], \cdot)$ 正合. 类似地, $\Bbbk[G]$ 是自由右 $\Bbbk[H]$-模, 故 $\Bbbk[G] \dotimes{\Bbbk[H]} (\cdot)$ 正合. 基于伴随关系, 关于保持内射对象和投射对象的断言是命题 \ref{prop:adjoint-injective-projective} 的直接应用.
+\end{proof}
+
+命题 \ref{prop:Ind-preservation} 提供了一种在 $G\dcate{Mod}$ 中构造内射 (或投射) 解消的手段: 将给定的 $G$-模 $M$ 置于 $\Bbbk\dcate{Mod}$ 中取内射 (或投射) 解消, 再以 $\Ind^G_{\{1\}}$ (或 $\iInd^G_{\{1\}}$) 将解消诱导至 $G$ 便是.
+
+下述结果常被称为 \emph{Shapiro 引理}.
+
+\begin{theorem}[B.\ Eckmann, D.\ K.\ Faddeev, A.\ Shapiro]\label{prop:Shapiro}
+	\index{Shapiro yinli@Shapiro 引理 (Shapiro's Lemma)}
+	设 $H$ 为 $G$ 的子群. 对所有 $H$-模 $N$ 和 $n \in \Z$, 我们有典范同构
+	\[ \Hm^n\left(G, \Ind^G_H(N)\right) \simeq \Hm^n(H, N), \quad \Hm_n\left(G, \iInd^G_H(N)\right) \simeq \Hm_n(H, N). \]
+	同构两边作为以 $N$ 为变元的函子皆有长正合列, 而同构与长正合列兼容.
+\end{theorem}
+\begin{proof}
+	以下介绍两种方法. 对于上同调, 第一种方法是考虑函子
+	\[ A^n := \Hm^n\left(G, \Ind^G_H(\cdot)\right). \]
+	既然 $\Ind^G_H$ 正合, 此族函子具有来自 $\Hm^n(G, \cdot)$ 的长正合列, 给出定义 \ref{def:delta-functor} 所谓上同调 $\delta$-函子. 当 $n = 0$ 时, 推论 \ref{prop:Ind-invariant} 给出典范同构
+	\[ A^0(N) = (\Ind^G_H(N))^G \rightiso N^H, \quad \varphi \mapsto \varphi(1_G). \]
+	为了将此典范地延拓为上同调 $\delta$-函子的同构 $A^n \rightiso \Hm^n(H, \cdot)$, 问题归结为证明 $n >0 $ 时 $A^n$ 可拭 (定义 \ref{def:erasable}, 命题 \ref{prop:erasable-univ-delta}). 根据命题 \ref{prop:Ind-preservation}, 若将 $N$ 嵌入内射 $H$-模 $I$, 则 $\Ind^G_H(N) \hookrightarrow \Ind^G_H(I)$ 而 $\Ind^G_H(I)$ 是内射 $G$-模. 故 $n > 0$ 蕴涵 $\Hm^n(G, \Ind^G_H(I)) = 0$, 可拭性质得证.
+	
+	同调情形的思路类似, 涉及同调 $\delta$-函子的余可拭性质, 所需的 $0$ 次项同构 $N_H \rightiso (\iInd^G_H(N))_G$ 仍来自推论 \ref{prop:Ind-invariant}.
+	
+	第二种方法在导出范畴中操作. 对于上同调情形, 我们仍从典范同构
+	\[ \underbracket{\Hom_G(\Bbbk, \Ind^G_H(\cdot)))}_{\simeq \Ind^G_H(\cdot)^G} \simeq \underbracket{\Hom_H(\Bbbk, \cdot)}_{\simeq (\cdot)^H} : H\dcate{Mod} \to \Bbbk\dcate{Mod} \]
+	入手. 两边都是左正合函子. 由于 $\Ind^G_H$ 保持内射对象, 以定理 \ref{prop:localization-triangulated-composite} (iii) 取右导出函子可得同构
+	\begin{equation*}
+		\RHom_G(\Bbbk, \; \mathrm{R}\Ind^G_H(\cdot)) \simeq \RHom_H(\Bbbk, \cdot).
+	\end{equation*}
+	
+	然而 $\Ind^G_H$ 正合, 故 $\mathrm{R}\Ind^G_H(\cdot)$ 是以局部化的泛性质确定的函子, 不妨继续记为 $\Ind^G_H$. 综之, 在导出范畴层次有三角函子的同构
+	\[ \RHom_G(\Bbbk, \Ind^G_H(\cdot)) \simeq \RHom_H(\Bbbk, \cdot); \]
+	两边同取 $\Hm^n$ 即所求.
+	
+	同调情形的思路类似, 关键在运用
+	\[ \Bbbk \otimesL[{\Bbbk[G]}] \left( \Bbbk[G] \otimesL[{\Bbbk[H]}] (\cdot) \right) \simeq \Bbbk \otimesL[{\Bbbk[H]}] (\cdot); \]
+	这也是例 \ref{eg:change-of-rings} 或命题 \ref{prop:otimesL-associativity-constraint} (结合约束) 的特例. 由于 $\iInd^G_H$ 正合, $\Bbbk[G] \otimesL[{\Bbbk[H]}] (\cdot)$ 亦可改为 $\Bbbk[G] \dotimes{\Bbbk[H]} (\cdot)$, 其余无异.
+\end{proof}
+
+留意到如果按照 \eqref{eqn:G-module-pullback-tensor} 将 $\Res^G_H$ 诠释为 $\Bbbk[G] \dotimes{\Bbbk[G]} (\cdot)$, 则因为 $\Res^G_H \Bbbk = \Bbbk$, 同构 $\RHom_G(\Bbbk, \; \mathrm{R}\Ind^G_H(\cdot)) \simeq \RHom_H(\Bbbk, \cdot)$ 便化为 $\RHom$ 和 $\otimesL$ 的伴随关系 (定理 \ref{prop:RHom-otimesL-adjunction}).
+
+群的上同调和同调可以分别通过命题 \ref{prop:groupcoh-cochain} 和 \ref{prop:grouph-chain} 的标准复形和标准链复形具体地描述. 我们希望能以之明确定理 \ref{prop:Shapiro} 的同构. 这点没有本质的困难. 首先, 对任意群 $H$, 记定义 \ref{def:resolution-trivial-module} 的 $H$-模复形 $\mathsf{L}$ 为 $\mathsf{L}^H$ 以资区别; 它给出自由解消 $\mathsf{L}^H \to \Bbbk$.
+
+\begin{lemma}\label{prop:Shapiro-alpha-beta}
+	设 $\varphi: H \to G$ 为群同态. 相应的同态 $H^{n+1} \to G^{n+1}$ 诱导复形之间的拟同构 $\mathsf{L}^H \to \varphi^*(\mathsf{L}^G)$, 它与 $\varphi^* (\mathsf{L}^G) \to \varphi^* \Bbbk = \Bbbk$ 的合成等于 $\mathsf{L}^H \to \Bbbk$.
+	
+	作为特例, 若 $H$ 是 $G$ 的子群, 则有拟同构 $\mathsf{L}^H \to \Res^G_H \mathsf{L}^G$, 它具有上述合成性质.
+\end{lemma}
+\begin{proof}
+	回溯定义显见 $\mathsf{L}^H \to \varphi^*(\mathsf{L}^G)$ 是复形态射, 关于合成的断言同样明显. 既然 $\varphi^*$ 正合, 而 $\mathsf{L}^G \to \Bbbk$ 和 $\mathsf{L}^H \to \Bbbk$ 皆是拟同构, $\mathsf{L}^H \to \varphi^*(\mathsf{L}^G)$ 亦然.
+\end{proof}
+
+\begin{proposition}\label{prop:Shapiro-std-coh}
+	设 $H$ 为 $G$ 的子群, $N$ 为 $H$-模. 按命题 \ref{prop:groupcoh-cochain} 将 $\Hm^n(G, \Ind^G_H(N))$ (或 $\Hm^n(H, N)$) 等同于标准复形 $C(G, \Ind^G_H(N))$ (或 $C(H, N)$) 的 $\Hm^n$, 则同构
+	\[ \Hm^n\left(G, \Ind^G_H(N)\right) \simeq \Hm^n(H, N), \quad n \in \Z_{\geq 0} \]
+	来自复形的态射
+	\begin{align*}
+		C^m(G, \Ind^G_H(N)) & \to C^m(H, N) \\
+		\left[ f: G^m \to \Ind^G_H(N) \right] & \mapsto \left[ (h_1, \ldots, h_m) \mapsto f(h_1, \ldots h_m)(1_G) \right] \\
+		& \quad = (f|_{H^m})(\cdot)(1_G),
+	\end{align*}
+	其中 $h_1, \ldots, h_m \in H$.
+\end{proposition}
+\begin{proof}
+	方法同样有两种. 其一是先验证所示的 $C^m(G, \Ind^G_H(N)) \to C^m(H, N)$ 确实构成复形的态射. 由于 $\Ind^G_H$ 正合, 当 $N$ 变动, 它诱导上同调 $\delta$-函子之间的态射; 易见它在 $0$ 次项等同于典范同构 $\Ind^G_H(N)^G \rightiso N^H$, $\varphi \mapsto \varphi(1_G)$. 已知 $\Hm^n(G, \Ind^G_H(\cdot))$ 是泛上同调 $\delta$-函子 (定理 \ref{prop:Shapiro}), 故上述态射唯一, 必然等同于定理 \ref{prop:Shapiro} 的同构 $\Hm^n(G, \Ind^G_H(N)) \simeq \Hm^n(H, N)$.
+	
+	以下解释第二种方法. 设 $M$ (或 $N$) 是下有界 $G$-模 (或 $H$-模) 复形. 将函子 $\Ind^G_H$ 和 $\Res^G_H$ 逐次地拓展到复形层次, 记法不变, 则命题 \ref{prop:pullback-two-adjoint} 的伴随关系提升到 $\Hom$ 复形:
+	\[ \Hom^\bullet_G(\Res^G_H M, N) \simeq \Hom^\bullet_H(M, \Ind^G_H(N)). \]
+	直接验证并不难, 也可以按稍早介绍的方式理解为 $\Hom^\bullet$ 和 $\otimes$ 的伴随关系 (命题 \ref{prop:tensor-Hom-cplx}).
+	
+	现在设 $N$ 为 $H$-模, 取内射解消 $\iota: N \to I$, 则 $\Ind^G_H(N) \to \Ind^G_H(I)$ 仍是内射解消, 而 $\Hom$ 复形的自然性给出复形的交换图表 (实线部分)
+	\begin{equation}\label{eqn:Shapiro-explicit-diagram}\begin{tikzcd}[row sep=small]
+		\Hom^\bullet_H(\Bbbk, I) \arrow[d, "\alpha"'] & \Hom^\bullet_G(\Bbbk, \Ind^G_H(I)) \arrow[l, "\sim"'] \arrow[d] \\
+		\Hom^\bullet_H(\Res^G_H \mathsf{L}^G, I) \arrow[d, "\beta"'] & \Hom^\bullet_G(\mathsf{L}^G, \Ind^G_H(I)) \arrow[l, "\sim"] \\
+		\Hom^\bullet_H(\mathsf{L}^H, I) & \\
+		\Hom^\bullet_H(\mathsf{L}^H, N) \arrow[u] & \Hom^\bullet_G(\mathsf{L}^G, \Ind^G_H(N)), \arrow[uu] \arrow[dashed, l, "\gamma"]
+	\end{tikzcd}\end{equation}
+	其中 $\alpha$ 和 $\beta$ 来自引理 \ref{prop:Shapiro-alpha-beta} 的态射, 故 $\beta\alpha$ 即熟知的 $\Hom^\bullet_H(\Bbbk, I) \to \Hom^\bullet_H(\mathsf{L}^H, I)$; 水平实线同构来自伴随关系, 而垂直箭头皆为拟同构.
+	
+	回顾定理 \ref{prop:Shapiro} 的第二种证明, 可知 \eqref{eqn:Shapiro-explicit-diagram} 的第一行给出
+	\[ \Hm^n(H, N) \simeq \Hm^n(G, \Ind^G_H(N)), \quad n \in \Z \]
+	在导出范畴中的形态. 另一方面, 命题 \ref{prop:groupcoh-cochain} 的实质是复形的同构
+	\[ \Hom^\bullet_H(\mathsf{L}^H, N) \simeq C(H, N), \quad \Hom^\bullet_G(\mathsf{L}^G, \Ind^G_H(N)) \simeq C(G, \Ind^G_H(N)), \]
+	问题遂归结为补全 \eqref{eqn:Shapiro-explicit-diagram} 的箭头 $\gamma$ 以使方块交换, 并加以描述; 因为 $\iota$ 单, 这般的 $\gamma$ 若存在则唯一.
+	
+	设 $m \in \Z_{\geq 0}$ 而 $\phi \in \Hom^m_G(\mathsf{L}^G, \Ind^G_H(N))$; 细观构造可见它在 $\Hom^m_H(\mathsf{L}^H, I)$ 中的像是
+	\[ (h_0, \ldots, h_m) \mapsto \iota\left(\phi(h_0, \ldots, h_m)(1_G)\right). \]
+	和命题 \ref{prop:groupcoh-cochain} 证明中的同构相比较, 立见 $\gamma$ 可按所断言的方式来定义.
+\end{proof}
+
+现在表述同调版本. 沿用命题 \ref{prop:grouph-chain} 关于标准链复形的符号.
+
+\begin{proposition}\label{prop:Shapiro-std-ho}
+	设 $H$ 为 $G$ 的子群, $N$ 为 $H$-模. 按命题 \ref{prop:grouph-chain} 将 $\Hm_n(G, \iInd^G_H(N))$ (或 $\Hm_n(H, N)$) 等同于标准链复形 $C(G, \iInd^G_H(N))$ (或 $C(H, N)$) 的 $\Hm_n$, 则同构
+	\[ \Hm_n\left(G, \Ind^G_H(N)\right) \simeq \Hm_n(H, N), \quad n \in \Z_{\geq 0} \]
+	来自复形的态射
+	\begin{align*}
+		C_m(H, N) & \to C_m(G, \iInd^G_H(N)) \\
+		(h_1 | \cdots | h_m)^\dagger \otimes y & \mapsto (h_1 | \cdots |h_m)^\dagger \otimes (1_G \otimes y),
+	\end{align*}
+	其中 $h_1, \ldots, h_m \in H$ 而 $y \in N$.
+\end{proposition}
+\begin{proof}
+	以下仅解释导出范畴的进路. 取 $H$-模的投射解消 $\pi: P \to N$. 命题 \ref{prop:Shapiro-std-coh} 证明中的交换图表 \eqref{eqn:Shapiro-explicit-diagram} 须换成
+	\begin{equation*}\begin{tikzcd}[row sep=small]
+		\Bbbk \dotimes{\Bbbk[H]} P \arrow[r, "\sim"] & \Bbbk \dotimes{\Bbbk[G]} \iInd^G_H(P) \\
+		\Res^G_H \mathsf{L}^G \dotimes{\Bbbk[H]} P \arrow[r, "\sim"] \arrow[u, "\alpha"] & \mathsf{L}^G \dotimes{\Bbbk[G]} \iInd^G_H(P) \arrow[u] \arrow[dd] \\
+		\mathsf{L}^H \dotimes{\Bbbk[H]} P \arrow[u, "\beta"] \arrow[d] & \\
+		\mathsf{L}^H \dotimes{\Bbbk[H]} N \arrow[dashed, r, "\gamma"'] & \mathsf{L}^G \dotimes{\Bbbk[G]} \iInd^G_H(N),
+	\end{tikzcd}\end{equation*}
+	水平实线箭头来自张量积在复形层次的结合约束, 垂直箭头皆为拟同构, 问题依旧化为描述 $\gamma$. 其余理路和上同调版本类似.
+\end{proof}
+
+\section{群的变换}\label{sec:change-of-group}
+考虑群同态 $\varphi: H \to G$. 以下 $M$ 表示任意 $G$-模, $N$ 表示任意 $H$-模. 本节首务是定义两族典范同态
+\begin{equation}\label{eqn:change-of-group-coh}\begin{aligned}
+	\Hm^n(G, M) & \to \Hm^n(H, \varphi^* M), \\
+	\Hm_n(H, \varphi^* M) & \to \Hm_n(G, M),
+\end{aligned}\end{equation}
+其中 $n \in \Z_{\geq 0}$. 因为 $\varphi^*: G\dcate{Mod} \to H\dcate{Mod}$ 正合, 同态两边的函子都具有长正合列; 换言之, 它们都是上同调或同调 $\delta$-函子. 上述同态将兼容于长正合列. 我们介绍两种构造方法.
+
+对于上同调, 第一种方法是考虑一族函子 $B^n := \Hm^n(H, \varphi^* (\cdot))$. 我们有典范同态
+\[ M^G \hookrightarrow M^{\varphi(H)} = (\varphi^* M)^H =  B^0(M). \]
+由于 $(\Hm^n(G, \cdot))_n$ 是泛上同调 $\delta$-函子, 上式唯一地延拓为上同调 $\delta$-函子的态射 $\Hm^n(G, \cdot) \to B^n$.
+
+同调情形是类似的, 关键在运用典范同态 $(\varphi^* M)_H = M_{\varphi(H)} \twoheadrightarrow M_G$.
+
+第二种方法是在导出范畴中操作. 兹介绍一些相关记号.
+
+\begin{convention}
+	记 $\cate{C}(G) := \cate{C}(G\dcate{Mod})$, $\cate{K}(G) := \cate{K}(G\dcate{Mod})$, $\cate{D}(G) := \cate{D}(G\dcate{Mod})$; 对于加上单边或双边有界条件的情形, 记法类似. 同理有 $\cate{C}(\Bbbk) := \cate{C}(\Bbbk\dcate{Mod})$ 以及 $\cate{K}(\Bbbk)$, $\cate{D}(\Bbbk)$, 等等.
+\end{convention}
+
+正合函子 $\varphi^*$ 在导出范畴层次诱导的函子仍记为 $\varphi^*: \cate{D}(G) \to \cate{D}(H)$. 以惯用符号 $\mathrm{R}$ 和 $\mathrm{L}$ 分别代表右和左导出函子. 我们寻求三角函子之间的态射
+\begin{align*}
+	\mathrm{R}\left( (\cdot)^G \right) & \to \mathrm{R}\left( (\cdot)^H \right) \circ \varphi^* , \\
+	\mathrm{L}\left( (\cdot)_H \right) \circ \varphi^* & \to \mathrm{L}\left((\cdot)_G \right).
+\end{align*}
+
+要点在于泛性质. 对于上同调情形, 我们将函子 $(\cdot)^G$ 和 $(\cdot)^H$ 等提升到复形层次, 符号不变. 考虑关于范畴, 函子以及函子间的态射 (全默认为三角的) 构成的 $2$-胞腔图表
+\begin{equation}\label{eqn:grp-pullback-2-cell}
+	\begin{tikzcd}[column sep=huge, row sep=large]
+		\cate{K}^+(G) \arrow[d] \arrow[r, "{\varphi^*}"] \arrow[rr, bend left, "{(\cdot)^G}", "{}"' {name=U}] & \cate{K}^+(H) \arrow[d] \arrow[r, "{(\cdot)^H}"] \arrow[from=U, Rightarrow] \arrow[Rightarrow, ld, "\sim" sloped] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+		\cate{D}^+(G) \arrow[r, "{\varphi^*}"'] & \cate{D}^+(H) \arrow[r, "{\mathrm{R}((\cdot)^H)}"'] & \cate{D}^+(\Bbbk)
+	\end{tikzcd}
+\end{equation}
+弓形部分的 $\Rightarrow$ 来自先前曾运用的态射 $(\cdot)^G \to (\cdot)^H \circ \varphi^*$, 左侧方块的 $\stackrel{\sim}{\Rightarrow}$ 来自 $\varphi^*$ 的正合性, 右侧方块的 $\Rightarrow$ 是右导出函子 $\mathrm{R}((\cdot)^H)$ 自带的资料; 此处加上标 $+$ 只为简化, 无界版本需要 \S\ref{sec:unbounded-derived} 的理论.
+
+回忆到 $2$-胞腔图表可作纵合成, 亦即对函子间的态射 $\Rightarrow$ 作合成. 基于右导出函子的泛性质 (见注记 \ref{rem:derived-can-morphism} 及其上的讨论), 下式左图中存在唯一的 $\Downarrow$ 使得
+\begin{equation}\label{eqn:change-of-groups-univ}
+	\begin{tikzcd}[column sep=huge, row sep=large]
+		\cate{K}^+(G) \arrow[r, "{(\cdot)^G}"] \arrow[d] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+		\cate{D}^+(G) \arrow[r, "{\mathrm{R}((\cdot)^G)}", ""' {name=D}] \arrow[r, bend right=60, "" {name=U}, "{\mathrm{R}((\cdot)^H) \circ \varphi^*}"'] & \cate{D}^+(\Bbbk) \arrow[Rightarrow, from=D, to=U, "{\exists!}"']
+	\end{tikzcd} \xlongequal{\text{纵合成为}} \;\text{\eqref{eqn:grp-pullback-2-cell}\; \text{的纵合成}}
+	\begin{tikzcd}[column sep=huge, row sep=large]
+		\cate{K}^+(G) \arrow[r, "{(\cdot)^G}"] \arrow[d] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+		\cate{D}^+(G) \arrow[r, "{\mathrm{R}((\cdot)^H) \circ \varphi^*}"' inner sep=0.6em] & \cate{D}^+(\Bbbk)
+	\end{tikzcd}
+\end{equation}
+左图的 \rotatebox[origin=c]{45}{$\Leftarrow$} 是右导出函子 $\mathrm{R}\left((\cdot)^G\right)$ 自带的资料. 这就唯一地确定了态射
+\[ \mathrm{R}\left( (\cdot)^G \right) \to \mathrm{R}\left((\cdot)^H \right) \circ \varphi^* . \]
+
+同调情形的方法是对偶的, 涉及左导出函子的泛性质和先前曾运用的态射 $(\cdot)_H \circ \varphi^* \to (\cdot)_G$. 我们接着给出更直接的描述.
+
+\begin{lemma}\label{prop:change-of-groups-alt}
+	给定群同态 $\varphi: H \to G$. 先前刻画的态射可按如下方式定义.
+	\begin{itemize}
+		\item 在上同调情形, 取合成
+		\begin{equation}\label{eqn:change-of-group-dec-1}
+			\mathrm{R}\left( (\cdot)^G \right) \to \mathrm{R}\left( (\cdot)^H \circ \varphi^* \right) \to \mathrm{R}\left( (\cdot)^H \right) \circ \varphi^* .
+		\end{equation}
+		第一段来自 $(\cdot)^G \to (\cdot)^H \circ \varphi^*$, 这是因为函子之间的态射给出右导出函子之间的态射; 第二段来自定理 \ref{prop:localization-triangulated-composite} (i).
+		\item 同调情形类似, 取合成
+		\begin{equation}\label{eqn:change-of-group-dec-2}
+			\mathrm{L}\left( (\cdot)_H \right) \circ \varphi^* \to \mathrm{L} \left( (\cdot)_H \circ \varphi^* \right) \to \mathrm{L}\left( (\cdot)_G \right).
+		\end{equation}
+		第一段来自定理 \ref{prop:localization-triangulated-composite} (ii); 第二段来自 $(\cdot)_H \circ \varphi^* \to (\cdot)_G$.
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	仅论上同调情形. 首先对 \eqref{eqn:change-of-group-dec-1} 涉及的态射检验关于纵合成的等式
+	\[\begin{tikzcd}[column sep=huge, row sep=large]
+		\cate{K}^+(G) \arrow[r, "{(\cdot)^G}"] \arrow[d] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+		\cate{D}^+(G) \arrow[r, "{\mathrm{R}((\cdot)^G)}", ""' {name=D}] \arrow[r, bend right=60, "" {name=U}, "{\mathrm{R}((\cdot)^H \circ \varphi^*)}"'] & \cate{D}^+(\Bbbk) \arrow[Rightarrow, from=D, to=U]
+	\end{tikzcd} = \begin{tikzcd}[column sep=huge, row sep=large]
+		\cate{K}^+(G) \arrow[r, "{(\cdot)^H \circ \varphi^*}" {name=D}] \arrow[d] \arrow[r, bend left=60, ""' {name=U}, "{(\cdot)^G}"] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+		\cate{D}^+(G) \arrow[r, "{\mathrm{R}((\cdot)^H \circ \varphi^* ) }"'] & \cate{D}^+(\Bbbk) \arrow[Rightarrow, from=U, to=D]
+	\end{tikzcd}\]
+	和
+	\[\begin{tikzcd}[column sep=huge, row sep=large]
+		\cate{K}^+(G) \arrow[r, "{(\cdot)^H \circ \varphi^*}"] \arrow[d] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+		\cate{D}^+(G) \arrow[r, "{\mathrm{R}((\cdot)^H \circ \varphi^* ) }"' {name=U}] \arrow[r, bend right=60, "{\mathrm{R}((\cdot)^H) \circ \varphi^*}"', "" {name=D}] & \cate{D}^+(\Bbbk) \arrow[Rightarrow, from=U, to=D]
+	\end{tikzcd} = \begin{tikzcd}[column sep=huge, row sep=large]
+		\cate{K}^+(G) \arrow[d] \arrow[r, "{\varphi^*}"] & \cate{K}^+(H) \arrow[d] \arrow[r, "{(\cdot)^H}"] \arrow[Rightarrow, ld, "\sim" sloped] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+		\cate{D}^+(G) \arrow[r, "{\varphi^*}"'] & \cate{D}^+(H) \arrow[r, "{\mathrm{R}((\cdot)^H)}"'] & \cate{D}^+(\Bbbk).
+	\end{tikzcd}\]
+
+	诚然, 第一式刻画诱导态射 $\mathrm{R}((\cdot)^G) \to \mathrm{R}((\cdot)^H \circ \varphi^*)$, 第二式则刻画定理 \ref{prop:localization-triangulated-composite} 的典范态射, 两者皆来自右导出函子的泛性质; 详见 \S\ref{sec:triangulated-functor-localization} 开头的解释. 将这些等式拼接, 可见 \eqref{eqn:change-of-group-dec-1} 的合成满足 \eqref{eqn:change-of-groups-univ}.
+\end{proof}
+
+\begin{remark}\label{rem:change-of-group-Yoneda}
+	基于泛上同调 $\delta$-函子性质的第一种方法可以搭配导出范畴的理论, 来为 \eqref{eqn:change-of-group-coh} 的上同调情形提供另一种简洁构造. 回忆到对于任意 $G$-模 $M$ 和 $n$, 我们有典范同构
+	\[ \Hm^n(G, M) \simeq \Ext^n_G(\Bbbk, M) \simeq \Hom_{\cate{D}(G)}(\Bbbk, M[n]), \quad \Ext^\bullet_G := \Ext^\bullet_{\Bbbk[G]}; \]
+	对 $H$-模亦然. 基于 $\varphi^* \Bbbk \simeq \Bbbk$ 和 $\varphi^*$ 为三角函子这些事实, 兹断言所求的典范同态等于合成
+	\[ \Hom_{\cate{D}(G)}(\Bbbk, M[n]) \xrightarrow{\text{函子} \;\varphi^*} \Hom_{\cate{D}(H)}\left( \varphi^* \Bbbk, \varphi^* (M[n])\right) \simeq \Hom_{\cate{D}(H)}\left(\Bbbk, (\varphi^* M)[n]\right). \]
+	
+	为此, 仅须留意到当 $n=0$ 时上式化为自明的 $M^G \hookrightarrow (\varphi^* M)^H$ (缘于 $\varphi^* \Bbbk \simeq \Bbbk$ 映 $1$ 为 $1$), 而上式的每段态射都兼容于三角范畴的 $\Hom$ 函子对第二个变元的长正合列 (命题 \ref{prop:cohomological-Hom-functor}).
+\end{remark}
+
+\begin{remark}\label{rem:change-of-group-coh}
+	当 $\varphi$ 是子群的嵌入时, $\varphi^* = \Res^G_H$ 保持内射对象和投射对象. 根据定理 \ref{prop:localization-triangulated-composite} (iii) 和 (iv) 可见引理 \ref{prop:change-of-groups-alt} 涉及的
+	\[ \mathrm{R}\left( (\cdot)^H \circ \varphi^* \right) \to \mathrm{R}\left( (\cdot)^H \right) \circ \varphi^*, \quad
+	\mathrm{L}\left( (\cdot)_H \right) \circ \varphi^* \to \mathrm{L} \left( (\cdot)_H \circ \varphi^* \right) \]
+	皆为同构, 典范态射的描述遂进一步简化: 取内射解消 $M \to I := [I^0 \to I^1 \to \cdots]$, 则 $\Res^G_H(M) \to \Res^G_H(I)$ 也是内射解消, 而态射 $\mathrm{R}\left( (\cdot)^G \right) \to \mathrm{R}\left( (\cdot)^H \right) \circ \Res^G_H$ 在 $M$ 上的作用等同于
+	\[ I^G \to \left( \Res^G_H(I)\right)^H, \quad I^G := \left[ I^{0, G} \to I^{1, G} \to \cdots \right], \;\text{依此类推}. \]
+	
+	对于同调情形, 取投射解消 $P \to M$, 则态射 $\mathrm{L}\left( (\cdot)_H \right) \circ \Res^G_H \to \mathrm{L}\left((\cdot)_G \right)$ 在 $M$ 上的作用等同于 $\left(\Res^G_H(P)\right)_H \to P_G$.
+\end{remark}
+
+\begin{lemma}\label{prop:change-of-group-compo}
+	设 $F \xleftarrow{\psi} G \xleftarrow{\varphi} H$ 为群同态, $L$ 为 $F$-模, $n \in \Z_{\geq 0}$, 则 $\Hm^n(F, L) \to \Hm^n(G, \psi^* L) \to \Hm^n(H, \varphi^* \psi^* L)$ 的合成等于 $\Hm^n(F, L) \to \Hm^n(H, (\psi\varphi)^* L)$.
+	
+	同理, $\Hm_n(H, \varphi^* \psi^* L) \to \Hm_n(G, \psi^* L) \to \Hm_n(F, L)$ 的合成等于 $\Hm_n(H, (\psi\varphi)^* L) \to \Hm_n(F, L)$.
+	
+	类似的等式在导出范畴层次同样成立.
+\end{lemma}
+\begin{proof}
+	关于 $\Hm^n$ (或 $\Hm_n$) 的情形是泛上同调 (或同调) $\delta$-函子性质的简单应用, 归结为验证 $n=0$ 的情形.
+	
+	对于导出范畴的版本, 关于 $\Hm^n$ 的陈述应当改为
+	\[ \left[ \mathrm{R}((\cdot)^F) \to \mathrm{R}((\cdot)^G) \circ \psi^* \to \mathrm{R}((\cdot)^H) \circ \varphi^* \circ \psi^* \right] \xlongequal{\text{合成为}} \left[ \mathrm{R}((\cdot)^F) \to \mathrm{R}((\cdot)^H) \circ (\psi\varphi)^* \right]. \]
+	为此, 对左式验证 \eqref{eqn:change-of-groups-univ} 的性质即可. 问题化约为关于 $2$-胞腔合成的一则练习, 有趣而不难, 敬邀读者尝试.
+\end{proof}
+
+现在进一步推广典范同态 \eqref{eqn:change-of-group-coh}.
+
+\begin{definition}\label{def:group-equivariance}
+	设 $M$ 为 $G$-模, $N$ 为 $H$-模. 以下的 $f$ 默认为 $\Bbbk$-模同态, $h$ 是 $H$ 的任意元素.
+	\begin{itemize}
+		\item 若 $f: M \to N$ 满足 $f(\varphi(h) x) = h f(x)$, 其中 $x \in M$, 则称 $f$ 对 $\varphi$ \emph{等变}.
+		\item 若 $f: N \to M$ 满足 $f(hy) = \varphi(h)f(y)$, 其中 $y \in N$, 则称 $f$ 对 $\varphi$ \emph{等变}.
+	\end{itemize}
+\end{definition}
+
+等变性也等价于说 $f$ 给出 $H$-模同态 $\varphi^* M \to N$ 或 $N \to \varphi^* M$, 此外 $\identity_M: M \to \varphi^* M$ 和 $\identity_M: \varphi^* M \to M$ 对 $\varphi$ 皆等变.
+
+\begin{definition}\label{def:change-of-group-equiv}
+	\index{dengbiantongtai@等变同态 (equivariant homomorphism)}
+	设 $f: M \to N$ 对 $\varphi$ 等变, 定义一族典范同态
+	\[ \Hm^n(f) := \left[ \Hm^n(G, M) \to \Hm^n(H, \varphi^* M) \to \Hm^n(H, N) \right] \;\text{的合成}; \]
+	设 $f: N \to M$ 对 $\varphi$ 等变, 定义一族典范同态
+	\[ \Hm_n(f) := \left[ \Hm_n(H, N) \to \Hm_n(H, \varphi^* M) \to \Hm_n(G, M) \right] \;\text{的合成}. \]
+\end{definition}
+
+留意到上同调情形 $f$ 和 $\varphi$ 反向, 同调情形顺向. 定义 \ref{def:change-of-group-equiv} 的同态兼容长正合列. 它们包括 $\Hm^n$ 和 $\Hm_n$ 的函子性 (或自然同态 \eqref{eqn:change-of-group-coh}) 为 $\varphi = \identity_G$ (或 $f = \identity_M$) 时的特例. 这些同态同样能提升至导出范畴层次.
+
+相对于群同态的合成, 模的等变同态也能同步地合成, 定义方式是自明的.
+
+\begin{proposition}[对等变同态的函子性]\label{prop:change-of-group-composite}
+	考虑群同态 $F \xleftarrow{\psi} G \xleftarrow{\varphi} H$ 和等变的模同态 $L \xrightarrow{g} M \xrightarrow{f} N$, 其中 $L$ 是 $F$-模, $M$ 是 $G$-模, $N$ 是 $H$-模. 对所有 $n \in \Z$, 我们有 $\Hm^n(fg) = \Hm^n(f) \Hm^n(g)$.
+	
+	若考虑反向的等变模同态 $L \xleftarrow{g} M \xleftarrow{f} N$, 则我们有 $\Hm_n(gf) = \Hm_n(g) \Hm_n(f)$. 类似的合成等式在导出范畴层次同样成立.
+\end{proposition}
+\begin{proof}
+	讨论上同调情形即可. 固定 $n$. 鉴于引理 \ref{prop:change-of-group-compo}, 问题化约为验证图表
+	\[\begin{tikzcd}
+		\Hm^n(F, L) \arrow[d] & & \\
+		\Hm^n(G, \psi^* L) \arrow[r] \arrow[d] & \Hm^n(G, M) \arrow[d] & \\
+		\Hm^n(H, \varphi^* \psi^* L) \arrow[r] & \Hm^n(H, \varphi^* M) \arrow[r] & \Hm^n(H, N)
+	\end{tikzcd}\]
+	交换, 但方块部分因 \eqref{eqn:change-of-group-coh} 的函子性而交换. 导出范畴的版本全然相似.
+\end{proof}
+
+\begin{example}[共轭]\label{eg:change-of-group-conj}
+	设 $H \lhd G$. 每个 $t \in G$ 都诱导 $H$ 的自同构 $a_t: h \mapsto t^{-1} ht$. 现在设 $M$ 为 $G$-模, 为简化计, 仍将 $\Res^G_H M$ 记为 $M$. 同态 $c_t: M \xrightarrow{x \mapsto tx} M$ 对反向的群同态 $H \xleftarrow{a_t} H$ 等变. 对应的
+	\[ \Hm^n(c_t): \Hm^n(H, M) \to \Hm^n(H, M) \]
+	按定义拆解成 $\Hm^n(H, M) \to \Hm^n\left( H, a_t^* M\right) \xrightarrow{c_t} \Hm^n(H, M)$, 每段都是上同调 $\delta$-函子之间的态射.
+	\begin{itemize}
+		\item 第一段在 $n=0$ 时不过是 $\identity_M: M^H \to a_t^*(M)^H = M^H$;
+		\item 第二段在 $n=0$ 时等于 $c_t: M^H \to M^H$, 它只和陪集 $tH$ 有关.
+	\end{itemize}
+	若选定 $G$-模的内射解消 $M \to I$, 逐项取 $c_t: I^{n, H} \to I^{n, H}$ 便给出 $\Hm^n(c_t)$. 在 $G=H$ 时陪集 $tG = G$, 故我们有 $\Hm^n(c_t) = \identity$.
+	
+	同调情形与此类似, 但须将 $a_t$ 换作与同态 $c_t$ 顺向的群自同构 $b_t: h \mapsto tht^{-1}$, 请读者检验.
+\end{example}
+
+最后, 我们说明如何用命题 \ref{prop:groupcoh-cochain} (或命题 \ref{prop:grouph-chain}) 的标准复形 (或链复形) 来明确定义 \ref{def:group-equivariance} 的典范同态. 这将使一切操作变得具体.
+
+\begin{proposition}\label{prop:grp-equiv}
+	考虑群同态 $\varphi: H \to G$. 设 $M$ 为 $G$-模, $N$ 为 $H$-模, $n \in \Z_{\geq 0}$. 将 $\Hm^n(G, M)$ (或 $\Hm_n(G, M)$) 等同于标准复形 $C(G, M)$ (或链复形 $C(G, M)$) 的 $\Hm^n$ (或 $\Hm_n$); 以 $(H, N)$ 代 $(G, M)$ 亦同.
+	
+	\begin{itemize}
+		\item 设模同态 $f: M \to N$ 对 $\varphi$ 等变, 则 $\Hm^n(f)$ 来自复形的态射
+		\[\begin{tikzcd}[row sep=tiny]
+			C^m(G, M) \arrow[r] & C^m(H, N) \\
+			c \arrow[mapsto, r] & {\left[ (h_1, \ldots, h_m) \mapsto f(c(\varphi(h_1), \ldots, \varphi(h_m))) \right]}.
+		\end{tikzcd}\]
+		\item 设模同态 $f: N \to M$ 对 $\varphi$ 等变, 则 $\Hm_n(f)$ 来自链复形的态射
+		\[\begin{tikzcd}[row sep=tiny]
+			C_m(H, N) \arrow[r] & C_m(G, M) \\
+			(h_1 | \cdots | h_m)^\dagger \otimes y \arrow[mapsto, r] & (\varphi(h_1) | \cdots | \varphi(h_m))^\dagger \otimes f(y).
+		\end{tikzcd}\]
+	\end{itemize}
+	事实上, 这给出 $f$ 在导出范畴层次诱导的态射.
+	
+	上述结论也适用于注记 \ref{rem:nor-cochain} 介绍的正规化标准复形 $(\overline{C}^m(G, M))_m$ 及链复形 $(\overline{C}_m(G, M))_m$, 公式不异.
+\end{proposition}
+\begin{proof}
+	问题拆成两段: 一是 $f = \identity_M$ 的情形, 亦即明确典范同态 \eqref{eqn:change-of-group-coh}, 二是处理 $\varphi = \identity$ 的情形. 后者不难, 以下仅论前者.
+	
+	考察上同调情形. 命题 \ref{prop:trivial-mod-resolution} 给出 $G$-模 (或 $H$-模) 的投射解消 $\mathsf{L}^G \to \Bbbk$ (或 $\mathsf{L}^H \to \Bbbk$). 今考虑
+	\[ \Hom^\bullet_G \left( \mathsf{L}^G, \cdot\right) \xrightarrow{\varphi^*} \Hom^\bullet_H\left( \varphi^* (\mathsf{L}^G), \varphi^*(\cdot)\right) \to \Hom^\bullet_H\left(\mathsf{L}^H, \varphi^*(\cdot)\right), \]
+	其第二段来自态射 $\mathsf{L}^H \to \varphi^*(\mathsf{L}^G)$ (见引理 \ref{prop:Shapiro-alpha-beta}). 记其合成为 $\Theta$; 所断言之复形态射 $C(G, M) \to C(H, \varphi^*(M))$ 对应到 $\Theta$ 在 $G$-模 $M$ 上的作用.
+	
+	现在证明这确实给出先前定义的典范同态. 第一种方法是回归 \eqref{eqn:change-of-group-coh} 的定义: 它来自泛上同调 $\delta$-函子的性质. 我们只需说明 $C(G, M) \to C(H, \varphi^* M)$ 在 $\Hm^0$ 上化约为嵌入 $M^G \to (\varphi^* M)^H$, 而且兼容于长正合列即可. 细节留予读者.
+	
+	第二种方法是在导出范畴中操作. 函子 $\Hom^\bullet_H(\mathsf{L}^H, \cdot)$ 保持零调复形, 故在导出范畴层次诱导 $\cate{D}^+(H) \to \cate{D}^+(\Bbbk)$, 记法不变, 它可以等同于 $\RHom_H(\Bbbk, \cdot)$. 所以对此验证 \eqref{eqn:change-of-groups-univ} 便等价于验证关于纵合成的等式
+	\begin{equation*}
+		\begin{tikzcd}[column sep=huge, row sep=large]
+			\cate{K}^+(G) \arrow[r, "{\Hom^\bullet_G(\Bbbk, \cdot)}"] \arrow[d] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+			\cate{D}^+(G) \arrow[r, "{\Hom^\bullet_G(\mathsf{L}^G, \cdot)}", ""' {name=D}] \arrow[r, bend right=60, "" {name=U}, "{\Hom^\bullet_H(\mathsf{L}^H, \varphi^*(\cdot))}"'] & \cate{D}^+(\Bbbk) \arrow[Rightarrow, from=D, to=U, "\Theta"']
+		\end{tikzcd} = \begin{tikzcd}[column sep=huge, row sep=large]
+			\cate{K}^+(G) \arrow[d] \arrow[r, "{\varphi^*}"] \arrow[rr, bend left, "{\Hom^\bullet_G(\Bbbk, \cdot)}", "{}"' {name=U}] & \cate{K}^+(H) \arrow[d] \arrow[r, "{\Hom^\bullet_H(\Bbbk, \cdot)}"] \arrow[from=U, Rightarrow] \arrow[Rightarrow, ld, "\sim" sloped] & \cate{K}^+(\Bbbk) \arrow[d] \arrow[Rightarrow, ld] \\
+			\cate{D}^+(G) \arrow[r, "{\varphi^*}"'] & \cate{D}^+(H) \arrow[r, "{\Hom^\bullet_H(\mathsf{L}^H, \cdot)}"'] & \cate{D}^+(\Bbbk) ,
+		\end{tikzcd}
+	\end{equation*}
+	其中涉及 $\Hom^\bullet$ 的 \rotatebox[origin=c]{45}{$\Leftarrow$} 来自 $\mathsf{L}^G \to \Bbbk$ 和 $\mathsf{L}^H \to \Bbbk$. 态射 $(\cdot)^G \to (\cdot)^H \circ \varphi^*$ 的复形版本容易等同于 $\varphi^*: \Hom^\bullet_G(\Bbbk, \cdot) \to \Hom^\bullet_H(\varphi^* \Bbbk, \varphi^*(\cdot)) = \Hom^\bullet_H(\Bbbk, \varphi^*(\cdot))$, 所求等式遂归结为关于复形的交换图表 (外框部分):
+	\[\begin{tikzcd}
+		\Hom^\bullet_G(\Bbbk, \cdot) \arrow[r] \arrow[d, "{\varphi^*}"'] & \Hom^\bullet_G(\mathsf{L}^G, \cdot) \arrow[d, "{\varphi^*}"] \arrow[rd, "\Theta"] & \\
+		\Hom^\bullet_H(\Bbbk, \varphi^*(\cdot)) \arrow[r] \arrow[rr, bend right=30, "{\text{由}\; \mathsf{L}^H \to \Bbbk \;\text{诱导}}"] & \Hom^\bullet_H(\varphi^* \mathsf{L}^G, \varphi^*(\cdot)) \arrow[r] & \Hom^\bullet_H(\mathsf{L}^H, \varphi^*(\cdot)).
+	\end{tikzcd}\]
+	仅下部的弓形交换待说明, 但这正是引理 \ref{prop:Shapiro-alpha-beta} 的内容. 综之证得上同调情形. 同调情形是类似的.
+	
+	最后, 关于 $\overline{C}(G, M)$ 的版本相当于在证明中以 $\overline{\mathsf{L}}^G$ 和 $\overline{\mathsf{L}}^H$ 代替 $\mathsf{L}^G$ 和 $\mathsf{L}^H$, 其余一字不差.
+\end{proof}
+
+一旦有了命题 \ref{prop:grp-equiv} 提供的具体表达式, 命题 \ref{prop:change-of-group-composite} 的等式 $\Hm^n(fg) = \Hm^n(f) \Hm^n(g)$, $\Hm_n(gf) = \Hm_n(g) \Hm_n(f)$ 及其导出范畴版本皆可在复形层次一眼看穿.
+
+\section{重访群扩张}\label{sec:group-ext-revisited}
+为了对 \S\ref{sec:change-of-group} 定义的操作有更具体的认知, 也为了接续 \S\ref{sec:grp-low-degree} 对群扩张 (定义 \ref{def:group-ext}) 的初步讨论, 我们将焦点切回群扩张与 $\Hm^2$ 的联系. 且从群论面向入手. 以下考虑 $G$-模 $M$ 和扩张 $0 \to M \to E \xrightarrow{\pi} G \to 1$. 这类扩张带有自然的拉回, 推出和加法运算, 理路类似 \S\ref{sec:Hom-Ext}.
+
+\begin{description}
+	\item[拉回] 设 $\varphi: H \to G$ 为群同态. 取群范畴中的纤维积
+	\[ \varphi^* E := E \dtimes{G} H = \left\{ (e, h) \in E \times H: \pi(e) = \varphi(h) \right\}, \]
+	则单同态 $M \to \varphi^* E$, $x \mapsto (x, 1_H)$ 确定群扩张 $0 \to M \to \varphi^* E \xrightarrow{\text{投影}} H \to 1$. 这给出函子 $\cate{Ext}(G, M) \to \cate{Ext}(H, M)$. 若 $\varphi$ 是子群 $H$ 的嵌入, 则沿 $\varphi$ 拉回无非是取 $\pi^{-1}(H)$.
+	
+	\item[推出] 设 $\theta: M \to N$ 为 $G$-模同态. 取纤维余积
+	\[ \theta_* E := N \dsqcup{M} E = \frac{N \times E}{(y + \theta(x), e) \sim (y, xe)}, \quad x \in M, \; y \in N, \; e \in E, \]
+	并且记 $(y, e) \in N \times E$ 在其中的像为 $[y, e]$, 乘法是
+	\[ [y_1, e_1] [y_2, e_2] = [y_1 + \pi(e_1) y_2, e_1 e_2]. \]
+	我们有自然同态
+	\[ N \xrightarrow{y \mapsto [y, 1_E]} \theta_* E \xrightarrow{[y, e] \mapsto \pi(e)} G, \]
+	从而确定群扩张 $\theta_* E$. 这给出函子 $\cate{Ext}(G, M) \to \cate{Ext}(G, N)$.
+	
+	\item[取逆] 作为特例, $E$ 可沿 $G$-模同态 $M \xrightarrow{x \mapsto -x} M$ 作推出, 得到的扩张记为 $-E$.
+	
+	\item[直和] 给定 $\cate{Ext}(G_i, M_i)$ 的对象 $E_i$, 其中 $i = 1, 2$. 显然有相应的群扩张
+	\[ 0 \to M_1 \oplus M_2 \to E_1 \times E_2 \to G_1 \times G_2 \to 1, \]
+	其中 $G_1 \times G_2$ 按照 $(g_1, g_2)(x_1, x_2) = (g_1 x_1, g_2 x_2)$ 作用于 $M_1 \oplus M_2$. 记此扩张为 $E_1 \oplus E_2$.
+	
+	\item[Baer 和] 现在考虑 $\cate{Ext}(G, M)$ 的对象 $E_1$, $E_2$, 构造 $E_1 \oplus E_2$. 加法映射 $M \oplus M \to M$ 在 $G \times G$ 的对角子群 $G$ 作用下是 $G$-模同态. 因此可以先将 $E_1 \oplus E_2$ 沿着对角嵌入 $G \hookrightarrow G \times G$ 拉回, 再沿着加法同态 $M \oplus M \to M$ 推出, 得到 $\cate{Ext}(G, M)$ 的对象, 记为 $E_1 \dot{+} E_2$.
+	\index{qunkuozhang!Baer 和 (Baer sum)}
+\end{description}
+
+拉回和推出可以统合为单一的操作: 设 $\varphi: H \to G$ 为群同态, 加法群同态 $\theta: M \to N$ 对 $\varphi$ 等变 (定义 \ref{def:group-equivariance}), 则有相应的函子 $\cate{Ext}(G, M) \to \cate{Ext}(H, N)$, 其定义是先沿 $\varphi$ 拉回, 再沿 $\theta: \varphi^* M \to N$ 推出.
+
+对于正规化标准复形 $\overline{C}(G, M)$ 也有平行的操作: 给定 $\varphi$ 和 $\theta$ 如上, 命题 \ref{prop:grp-equiv} 以显式给出复形态射 $\overline{C}(G, M) \to \overline{C}(H, N)$, 由此遂可定义相应的拉回, 推出以及取逆运算. 至于直和, 其定义是
+\begin{gather*}
+	\oplus: \overline{C}^n(G_1, M_1) \oplus \overline{C}^n(G_2, M_2) \to \overline{C}^n(G_1 \times G_2, M_1 \oplus M_2), \\
+	f_1 \oplus f_2: ((g_{1, i}, g_{2, i}))_{i=1}^n \mapsto \left( f_1(g_{1,1}, \ldots, g_{1,n}), f_2(g_{2, 1}, \ldots, g_{2, n}) \right);
+\end{gather*}
+当 $n$ 变动, 这给出复形的态射 $\overline{C}(G_1, M_1) \oplus \overline{C}(G_2, M_2) \to \overline{C}(G_1 \times G_2, M_1 \oplus M_2)$. 循相同模式以直和, 拉回和推出对 $\overline{C}(G, M)$ 定义 Baer 和, 产物无非是 $\overline{C}^n(G, M)$ 中的加法.
+
+\begin{proposition}\label{prop:factor-set-operation}
+	精确到典范同构, 群扩张的拉回, 推出, 取逆, 直和与 Baer 和在定理 \ref{prop:factor-set} 的等价之下反映为复形 $\tau^{\leq 2}\overline{C}(G, M)$ (或者范畴 $\tau^{\leq 2} \overline{\cate{C}}(G, M)$) 上的相应运算.
+\end{proposition}
+\begin{proof}
+	给定群扩张 $0 \to M \to E \to G \to 1$, 选取正规化截面 $s: G \to E$ 和相应的 $f \in \overline{Z}^2(G, M)$; 详见定理 \ref{prop:factor-set} 证明. 设 $\varphi: H \to G$ 为群同态, 则 $\varphi^* E$ 的正规化截面可取为
+	\[ s': h \mapsto (s(\varphi(h)), h) \in E \dtimes{G} H. \]
+	相应地有 $s'(h_1) s'(h_2) = f'(h_1, h_2) s'(h_1 h_2)$, 其中
+	\[ f'(h_1, h_2) := f(\varphi(h_1), \varphi(h_2)), \quad h_1, h_2 \in H. \]
+	这就说明了拉回情形. 对于沿着 $G$-模同态 $\theta: M \to N$ 的推出, 按照先前符号将扩张 $\theta_* E$ 的正规化截面取为
+	\[ s'(g) := [0, s(g)] \in \theta_* E = N \dsqcup{M} E . \]
+	在 $\theta_* E$ 中计算
+	\begin{align*}
+		s'(g_1) s'(g_2) & = [0, s(g_1)] [0, s(g_2)] = [0, s(g_1) s(g_2)] \\
+		& = [0, f(g_1, g_2) s(g_1 g_2)] = [\theta f(g_1, g_2), s(g_1 g_2)] \\
+		& = [\theta f(g_1, g_2), 1_E] s'(g_1 g_2),
+	\end{align*}
+	故 $s'$ 对应的 $f'$ 无非 $\theta f$. 这说明了推出情形.
+	
+	直和情形的验证同样简单, 细节留给读者. 取逆与 Baer 和则可以分解为上述操作.
+\end{proof}
+
+作为特例, 群扩张的取逆与 Baer 和运算分别对应到群 $\Hm^2(G, M)$ 的取逆和加法运算, 精确到典范同构.
+
+\begin{definition}\label{def:central-ext}
+	\index{qunkuozhang!中心 (central)}
+	若群扩张 $0 \to A \to E \to G \to 1$ 中的 $A$ 是 $E$ 的中心子群, 则称此扩张为\emph{中心扩张}.
+	
+	给定中心扩张如上, 若对于任意中心扩张 $0 \to B \to F \to G \to 1$, 存在唯一的群同态 $\varphi: E \to F$ 使下图交换
+	\[\begin{tikzcd}
+		0 \arrow[r] & A \arrow[r] \arrow[d, "{\varphi|_A}"'] & E \arrow[d, "\varphi"] \arrow[r] & G \arrow[equal, d] \arrow[r] & 1 \\
+		0 \arrow[r] & B \arrow[r] & F \arrow[r] & G \arrow[r] & 1,
+	\end{tikzcd}\]
+	则称 $0 \to A \to E \to G \to 1$ 为 $G$ 的\emph{泛中心扩张}; 它若存在则唯一, 精确到唯一的同构.
+\end{definition}
+
+按定义, 中心扩张的内自同构皆平凡. 对所有加法群 $A$ 定义相应的中心扩张范畴
+\[ \cate{CExt}(G, A) := \cate{Ext}(G, A), \quad \text{视 $A$ 为带平凡作用的 $G$-模}. \]
+
+\begin{lemma}\label{prop:univ-central-ext-prep}
+	若群 $G$ 有泛中心扩张 $0 \to A \to E \xrightarrow{\pi} G \to 1$, 则 $G = G_{\mathrm{der}}$ 而 $E = E_{\mathrm{der}}$.
+\end{lemma}
+\begin{proof}
+	考虑 $G$ 的分裂中心扩张 $0 \to E_{\mathrm{ab}} \to E_{\mathrm{ab}} \times G \to G \to 1$; 从扩张 $E$ 到 $E_{\mathrm{ab}} \times G$ 有同态 $(0, \pi)$ 和 $(q, \pi)$, 其中 $q: E \to E_{\mathrm{ab}}$ 表商同态. 泛性质的唯一性部分蕴涵 $q = 0$, 亦即 $E = E_{\mathrm{der}}$, 由此易得 $G = G_{\mathrm{der}}$.
+\end{proof}
+
+基于推出的构造, 不难证明定义 \ref{def:central-ext} 中的 $\varphi$ 唯一地通过 $E \to (\varphi|_A)_* E$ 分解, 于是泛性质可改写如下: 对任意中心扩张 $0 \to B \to F \to G \to 1$, 存在唯一的群同态 $\theta: A \to B$ 以及 $\cate{CExt}(G, B)$ 中唯一的同构 $\theta_* E \rightiso F$. 在 $G = G_{\mathrm{der}}$ 的前提下, $\cate{CExt}(G, B)$ 不含非平凡自同构, 泛中心扩张的定义进一步改写为: 对所有交换群 $B$, 我们有
+\[\begin{tikzcd}[row sep=tiny]
+	\Hom_{\cate{Ab}}(A, B) \arrow[r, "1:1"] & \Obj\left(\cate{CExt}(G, B)\right) \big/ \simeq \\
+	\theta \arrow[mapsto, r] & \theta_* E \;\text{的同构类}.
+\end{tikzcd}\]
+左式是关于 $B$ 的函子; 右式同样给出函子 $\kappa: \cate{Ab} \to \cate{Set}$, 它对 $B$ 的函子性是扩张的推出. 泛中心扩张的存在性于是化为 $\kappa$ 是否可表的问题.
+
+\begin{theorem}
+	群 $G$ 有泛中心扩张当且仅当 $G = G_{\mathrm{der}}$; 当此条件成立时, 泛中心扩张中的中心子群 $A$ 同构于 $\Hm_2(G, \Z)$.
+\end{theorem}
+\begin{proof}
+	鉴于引理 \ref{prop:univ-central-ext-prep}, 证``当''的方向即可. 考虑函子 $\kappa$ 如上. 定理 \ref{prop:factor-set} 将 $\kappa(B)$ 等同于 $\Hm^2(G, B)$, 而命题 \ref{prop:factor-set-operation} 说明推出对应到 $\Hm^2(G, \cdot)$ 上的相应操作. 已知 $\Hm_1(G, \Z) \simeq G_{\mathrm{ab}} = 0$ (例 \ref{eg:group-H1-further}), 故在命题 \ref{prop:group-UCT} 中取 $n=2$ 可得 $\Hm^2(G, B) \simeq \Hom_{\cate{Ab}}(\Hm_2(G, \Z), B)$; 同构对 $B$ 有函子性. 综上, $\kappa$ 可表. 明所欲证.
+\end{proof}
+
+群 $\Hm_2(G, \Z)$ 也称为 $G$ 的 \emph{Schur 乘子}, 之后的推论 \ref{prop:Hopf-H2} 有助于相关计算. 实际场景中的关键往往是泛中心扩张的明确描述, 此处刻画的存在性仅只是第一步.
+\index{Schur-chengzi@Schur 乘子 (Schur multiplier)}
+
+作为 $\Hm^2$ 的另一则应用, 我们来推导一则群论结果.
+
+\begin{theorem}[Schur--Zassenhaus]\label{prop:Schur-Zassenhaus}
+	考虑群扩张 $1 \to A \to E \xrightarrow{\pi} G \to 0$, 其中 $A$ 和 $G$ 是阶互素的有限群, 则此扩张可裂.
+\end{theorem}
+\begin{proof}
+	第一步是处理 $A$ 交换的情形. 赋予 $A$ 来自群扩张的 $G$-模结构, 问题化为证 $\Hm^2(G, A)$ 平凡. 既然 $|A|$ 和 $|G|$ 互素, 问题进一步化约到以下等式在 $k=2$ 的情形.
+	\[ k \geq 1 \implies  |A| \cdot \Hm^k(G, A) = 0 = |G| \cdot \Hm^k(G, A). \]
+	
+	第一个等式不难: 对任意 $t \in \Z$, 乘以 $t$ 给出的自同态 $A \to A$ 在每个 $\Hm^k(G, A)$ 上诱导的自同态仍是乘以 $t$, 这是本章的一则平凡习题. 第二个等式则是本章另一习题的内容, 之后的推论 \ref{prop:group-coh-torsion} 将有完整但相对迂回的论证.
+
+	对于一般的 $A$, 后续目标是说明 $E$ 有某个 $|G|$ 阶子群 $H$, 这将导致 $H \cap A = \{1\}$, 而 $\pi|_H$ 将给出同构 $H \rightiso G$, 其逆给出群扩张的分裂. 我们将对 $|E|$ 递归地论证. 无妨设 $|A| > 1$.
+	
+	取整除 $|A|$ 的素数 $p$, 故 $p \nmid |G|$, 再取 $A$ 的 Sylow $p$-子群 $P$, 则 $P$ 也是 $E$ 的 Sylow $p$-子群. 既然 $A \lhd E$ 而 Sylow $p$-子群相互共轭, 它们都包含于 $A$. 分别在 $A$ 和 $E$ 中计算 Sylow $p$-子群数量可得 $(E: N_E(P)) = (A: N_A(P))$ (其中 $N_E$ 和 $N_A$ 表正规化子群), 或整理成
+	\[ (N_E(P):N_A(P)) = (E:A) = |G|. \]
+	
+	我们有 $N_A(P) \lhd N_E(P)$. 相应的群扩张 $1 \to N_A(P) \to N_E(P) \to \frac{N_E(P)}{N_A(P)} \to 1$ 仍满足定理的条件. 若 $N_E(P) \neq E$, 则递归可知存在 $N_E(P)$ 的子群 $H$ 使得 $|H| = (N_E(P):N_A(P)) = |G|$, 断言得证.
+	
+	因此以下可假设 $P \lhd E$, 从而 $P \lhd A$. 考虑群扩张
+	\[ 1 \to A/P \to E/P \to G \to 1. \]
+	递归可知存在 $E$ 的子群 $H$ 使得 $H \supset P$ 而 $|H/P| = |G|$. 群论常识说明 $P$ 的中心 $Z := Z_P$ 非平凡. 我们有 $Z \lhd H$ 而 $(H/Z : P/Z) = (H:P) = |G|$. 再度递归可知存在 $H$ 的子群 $K$ 使得 $K \supset Z$ 而 $|K/Z| = |G|$.
+	
+	现在有群扩张 $1 \to Z \to K \to K/Z \to 1$. 因为 $Z$ 是 $p$-群, 若 $K \neq E$ 则可递归地得到 $K$ 的子群使其阶为 $|K/Z| = |G|$, 此时断言得证. 以下进一步设 $K=E$, 此时必有 $H=E$, 故由 $(H:P) = |G|$ 可得 $P=A$; 此时 $Z = Z_A \lhd E$.
+	
+	继续考虑群扩张 $1 \to A/Z \to E/Z \to G \to 1$, 可得 $E$ 的子群 $Q$ 使得 $Q \supset Z$ 而 $|Q/Z| = |G|$. 若 $A$ 非交换, 则 $Z \neq A$ 而 $Q \neq E$, 打量群扩张 $1 \to Z \to Q \to Q/Z \to 1$ 即可找出 $Q$ 的 $|G|$ 阶子群. 若 $A$ 交换, 则问题已在证明开头解决. 明所欲证.
+\end{proof}
+
+当 $A$ 交换时, 定理 \ref{prop:Schur-Zassenhaus} 中扩张 $E$ 的分裂通过 $A$ 相互共轭: 诚然, 指定分裂相当于指定群扩张的同构 $A \rtimes G \simeq E$, 故任两个分裂 $s, s': G \to E$ 相差一个 $E$ 的自同构. 但引理 \ref{prop:factor-set-prep} 或定理 \ref{prop:factor-set} 说明扩张的外自同构群是 $\Hm^1(G, A)$, 而定理 \ref{prop:Schur-Zassenhaus} 证明第一步已说明 $\Hm^1(G, A)$ 平凡.
+
+分裂的共轭性质能扩及一般的 $A$, 但需要较为曲折的论证.
+
+\section{实例: 循环群与自由群}\label{sec:coh-cyclic-free}
+对于 $m \in \Z_{\geq 1}$, 本节以 $C_m$ 代表 $m$ 阶循环群, 带有选定的生成元 $\sigma$, 其中的群运算写作乘法. 首先介绍一则一般构造.
+
+\begin{definition-proposition}\label{def:group-norm}
+	\index[sym1]{nu-G@$\nu$, $\nu^G$}
+	设 $\Bbbk$ 为交换环. 若 $G$ 为有限群, 命
+	\[ \nu = \nu^G := \sum_{g \in G} g \in \Bbbk[G], \]
+	让 $G$ 左乘于 $\Bbbk[G]$, 则有 $\Bbbk[G]^G = \Bbbk \nu$. 若 $G$ 为无穷群, 则 $\Bbbk[G]^G = \{0\}$.
+\end{definition-proposition}
+\begin{proof}
+	对于 $e = \sum_{g \in G} a_g g \in \Bbbk[G]$, 条件 $e \in \Bbbk[G]^G$ 相当于说系数 $a_g$ 全相等.
+\end{proof}
+
+同理, 当 $G$ 为有限群时, $\nu$ 对 $G$ 的右乘也不变. 它属于 $\Bbbk[G]$ 的中心.
+
+\begin{convention}\label{con:G-mod-equalizer}
+	设 $A$ 为 $G$-模. 对任意 $e, e' \in \Bbbk[G]$, 记
+	\[ A^{e=e'} := \{ a \in A: ea = e'a \}. \]
+\end{convention}
+
+今起考虑系数在 $\Z$ 上的群上同调. 群代数 $\Z[C_m]$ 是交换的, 而且此处记 $1 := 1_{C_m} \in \Z[C_m]$ 并不会引起混淆. 易见 $A^{C_m} = A^{\sigma=1}$ 对所有 $C_m$-模 $A$ 成立. 此时
+\begin{equation*}
+	\nu = 1 + \sigma + \cdots + \sigma^{m-1} \in \Z[C_m],
+\end{equation*}
+而 $\Z[C_m]$ 中的等式 $(\sigma - 1)\nu = \sigma^m - 1 = 0$ 蕴涵
+\[ \nu A \subset A^{\sigma=1}, \quad (\sigma - 1)A \subset A^{\nu=0}. \]
+
+现在来说明对于特例 $A = \Z[C_m]$, 上述包含关系皆化为等式.
+
+\begin{lemma}\label{prop:cyclic-resolution-prep}
+	以 $\mathfrak{I} \subset \Z[C_m]$ 代表注记 \ref{rem:augmentation-kG} 中的增广理想. 我们有
+	\begin{align*}
+		\nu\Z[C_m] & = \Z[C_m]^{\sigma=1} = \Z \nu, \\
+		(\sigma - 1) \Z[C_m] & = \Z[C_m]^{\nu=0} = \mathfrak{I}.
+	\end{align*}
+\end{lemma}
+\begin{proof}
+	对于第一部分, 此前已说明 $\Z[C_m]^{\sigma=1} = \Z[C_m]^{C_m} = \Z\nu$. 由于 $\nu \sigma^k = \nu = \sigma^k \nu$ 对所有 $k$ 成立, $\nu\Z[C_m] = \Z\nu$.
+	
+	对于第二部分, 取 $e = \sum_{k \in \Z/m\Z} e_k \sigma^k$, 则 $\nu e = (\sum_{k \in \Z/m\Z} e_k) \nu$ 为 $0$ 当且仅当 $\sum_{k \in \Z/m\Z} e_k = 0$, 当且仅当 $e \in \mathfrak{I}$, 给出第二个等号. 此外 $\sigma^k - 1 = (\sigma - 1)(1 + \cdots + \sigma^{k-1})$ 蕴涵 $\mathfrak{I} \subset (\sigma - 1)\Z[C_m]$; 由此推知第一个等号也成立.
+\end{proof}
+
+\begin{lemma}\label{prop:cyclic-resolution}
+	平凡 $C_m$-模 $\Z$ 具有自由解消
+	\[ \cdots \xrightarrow{\nu} \Z[C_m] \xrightarrow{\sigma - 1} \Z[C_m] \xrightarrow{\nu} \Z[C_m] \xrightarrow{\sigma - 1} \Z[C_m] \to \Z \to 0, \]
+	其中 $\Z[C_m] \twoheadrightarrow \Z$ 是增广同态, 其余箭头按周期 $2$ 重复.
+\end{lemma}
+\begin{proof}
+	引理 \ref{prop:cyclic-resolution-prep} 提供短正合列
+	\begin{gather*}
+		0 \to \mathfrak{I} \to \Z[C_m] \xrightarrow{\nu} \Z \nu \to 0, \\
+		0 \to \Z \nu \to \Z[C_m] \xrightarrow{\sigma - 1} \mathfrak{I} \to 0,
+	\end{gather*}
+	此外 $\Z\nu \xrightarrow[\sim]{\nu \mapsto 1} \Z$. 两者交错嵌合给出所断言的解消.
+\end{proof}
+
+\begin{proposition}\label{prop:group-cohomology-cyclic}
+	设 $A$ 为 $C_m$-模而 $n \in \Z_{\geq 0}$, 我们有典范同态
+	\begin{align*}
+		\Hm^n(C_m, A) & \simeq \begin{cases}
+			A^{\sigma=1}, & n = 0 \\
+			A^{\nu=0} / (\sigma-1)A, & n > 0 \;\text{奇} \\
+			A^{\sigma=1} / \nu A, & n > 0 \;\text{偶},
+		\end{cases} \\
+		\Hm_n(C_m, A) & \simeq \begin{cases}
+			A/(\sigma-1)A, & n = 0 \\
+			A^{\sigma=1}/\nu A, & n > 0 \;\text{奇} \\
+			A^{\nu=0} / (\sigma-1)A, & n > 0 \;\text{偶}.
+		\end{cases}
+	\end{align*}
+\end{proposition}
+\begin{proof}
+	根据引理 \ref{prop:cyclic-resolution}, $A$ 的上同调和同调分别由单向周期 $2$ 的复形和链复形
+	\begin{gather*}
+		0 \to \underbracket{A}_{0\;\text{次}} \xrightarrow{\sigma-1} \underbracket{A}_{1\;\text{次}} \xrightarrow{\nu} A \xrightarrow{\sigma-1} \cdots , \\
+		\cdots \xrightarrow{\sigma - 1} A \xrightarrow{\nu} \underbracket{A}_{1\;\text{次}} \xrightarrow{\sigma - 1} \underbracket{A}_{0\;\text{次}} \to 0
+	\end{gather*}
+	确定.
+\end{proof}
+
+行将探讨的是自由群 \cite[定义 4.8.2]{Li1} 的同调与上同调, 包括无穷循环群 $\Z$ 的情形作为最简单的特例.
+
+集合 $X$ 上的自由群记为 $G := \mathbf{F}(X)$. 首先来明确增广理想 $\mathfrak{I} \subset \Z[G]$ 的结构.
+
+\begin{lemma}\label{prop:free-group-augmentation}
+	设 $X$ 为集合, $G := \mathbf{F}(X)$, 则 $\mathfrak{I}$ 是以 $\{x - 1_G : x \in X \}$ 为基的自由左 $\Z[G]$-模.
+\end{lemma}
+\begin{proof}
+	记 $X - 1_G := \left\{ x - 1_G : x \in X \right\} \subset \mathfrak{I}$. 首先说明它生成左 $\Z[G]$-模 $\mathfrak{I}$. 对所有 $x \in X$ 记 $G(x)$ (或 $G(x^{-1})$) 为既约表法以 $x$ (或 $x^{-1}$) 结尾的 $G$ 中元素集, 则 $G \smallsetminus \{1_G\}$ 是所有 $G(x)$ 和所有 $G(x^{-1})$ 的无交并, $x$ 取遍 $X$. 已知 $\{ h - 1_G: h \in G, \; h \neq 1_G\}$ 是 $\mathfrak{I}$ 的一组 $\Z$-基, 而
+	\begin{align*}
+		gx \in G(x) & \implies gx - 1_G = g(x - 1_G) + (g - 1_G), \\
+		& \ell(gx) = \ell(g) + 1, \\
+		gx^{-1} \in G(x^{-1}) & \implies gx^{-1} - 1_G = -(gx^{-1})(x - 1_G) + (g - 1_G), \\
+		& \ell(gx^{-1}) = \ell(g) + 1;
+	\end{align*}
+	对长度作递归即可用 $X - 1_G$ 生成 $\mathfrak{I}$.
+	
+	为了说明 $X - 1_G$ 给出基, 考虑任意 $G$-模 $A$ 和映射 $\varphi: X - 1_G \to A$, 兹断言存在 $G$-模同态 $\tilde{\varphi}: \mathfrak{I} \to A$ 使下图交换:
+	\[\begin{tikzcd}
+		X - 1_G \arrow[hookrightarrow, r, "\text{包含}"] \arrow[rd, "\varphi"'] & \mathfrak{I} \arrow[d, "{\tilde{\varphi}}"] \\
+		& A
+	\end{tikzcd}\]
+	既然 $X - 1_G$ 生成 $\mathfrak{I}$, 图中的 $\tilde{\varphi}$ 自动唯一, 由此遂可验证自由模的泛性质.
+	
+	以 $A$ 的 $G$-模结构定义半直积 $E := A \rtimes G$. 考虑集合的映射 $X \to E$, 映 $x$ 为 $(\varphi(x - 1_G), x)$. 自由群的泛性质将此唯一地延拓为群同态 $\Phi: G \to E$; 考察第二个坐标可见 $G \xrightarrow{\Phi} E \xrightarrow{\text{投影}} G$ 合成为 $\identity_G$, 因此命题 \ref{prop:crossed-semidirect-product} 蕴涵存在叉同态 $\psi: G \to A$ 使得 $\Phi(g) = (\psi(g), g)$; 又根据命题 \ref{prop:crossed-augmentation}, 叉同态 $\psi$ 对应 $G$-模同态 $\tilde{\varphi}: \mathfrak{I} \to A$, 使得 $\tilde{\varphi}(g - 1_G) = \psi(g)$. 综上,
+	\[ \tilde{\varphi}(x - 1_G) = \psi(x) = \varphi(x - 1_G), \quad x \in X. \]
+	明所欲证.
+\end{proof}
+
+\begin{proposition}\label{prop:free-group-coh}
+	设 $X$ 为集合, $G := \mathbf{F}(X)$. 增广同态给出的短正合列 $0 \to \mathfrak{I} \to \Z[G] \to \Z \to 0$ 是平凡 $G$-模 $\Z$ 的自由解消. 作为推论
+	\begin{enumerate}[(i)]
+		\item 对所有 $G$-模 $A$ 皆有
+		\[ n \geq 2 \implies \Hm^n(G, A) = 0 = \Hm_n(G, A). \]
+		\item 设 $A$ 为交换群, 赋予平凡 $G$-作用, 则 $\Hm^1(G, A) \simeq A^X$ 和 $\Hm_1(G, A) \simeq A^{\oplus X}$.
+	\end{enumerate}
+\end{proposition}
+\begin{proof}
+	前半部和断言 (i) 是引理 \ref{prop:free-group-augmentation} 的直接结论. 断言 (ii) 可从自由解消和引理 \ref{prop:free-group-augmentation} 对 $\mathfrak{I}$ 的描述读出, 请读者验证.
+\end{proof}
+
+\begin{definition}\label{def:group-dim}
+	\index{weishu!同调/上同调 (homological/cohomological)}
+	对群 $G$ 定义 $\Z_{\geq 0} \sqcup \{\infty\}$ 的元素
+	\begin{align*}
+		\mathrm{cd}(G) & := \sup\left\{ n \in \Z_{\geq 0}: \exists M \in \Obj(G\dcate{Mod}), \; \Hm^n(G, M) \neq 0 \right\}, \\
+		\mathrm{hd}(G) & := \sup\left\{ n \in \Z_{\geq 0}: \exists M \in \Obj(G\dcate{Mod}), \; \Hm_n(G, M) \neq 0 \right\}.
+	\end{align*}
+	称 $\mathrm{cd}(G)$ (或 $\mathrm{hd}(G)$) 为 $G$ 的\emph{上同调维数} (或\emph{同调维数}).
+\end{definition}
+
+鉴于命题 \ref{prop:inv-coinv-Hom}, 以上的 $\mathrm{cd}(G)$ (或 $\mathrm{hd}(G)$) 也等于平凡 $G$-模 $\Z$ 的投射维数 (或 $\Tor$-维数), 详见例 \ref{eg:Tor-dimension} 和命题 \ref{prop:id-pd-Ext}.
+
+\begin{corollary}
+	若 $G$ 是非平凡自由群, 则 $\mathrm{cd}(G) = \mathrm{hd}(G) = 1$.
+\end{corollary}
+
+对于上同调情形, 上述结果的逆命题同样成立: $\mathrm{cd}(G) = 1$ 蕴涵 $G$ 是自由群. 这被称为 Stallings--Swan 定理 \cite{Sw69}.
+
+\section{有限指数子群}\label{sec:group-finite-index}
+本节对给定的交换环 $\Bbbk$ 考虑群 $G$ 及其子群 $H$, 旨在探讨指数 $(G:H)$ 有限时的一些特殊现象.
+
+定义 \ref{def:induced-module} 对任意 $H$-模 $N$ 定义了诱导 $G$-模 $\Ind^G_H(N)$ 和 $\iInd^G_H(N)$, 本节的第一步是将它们实现为某些映射空间, 此处尚不要求 $(G:H)$ 有限.
+
+对任意 $\Bbbk$-模 $V$, 赋予映射集 $\{ f: G \to V \}$ 以下的 $G$-模结构: $\Bbbk$-模结构来自映射的逐点运算 , 而 $G$-作用是
+\[ (g f)(x) = f(xg), \quad f: G \to V, \; g, x \in G. \]
+
+对任意映射 $f: G \to V$, 记 $\Supp(f) := \{x \in G : f(x) \neq 0 \}$. 为了方便陈述, 我们选定陪集分解的代表元 $(g_i)_{i \in H}$, 使得
+\[ G = \bigsqcup_{i \in I} g_i H = \bigsqcup_{i \in I} Hg_i^{-1}. \]
+
+\begin{lemma}[诱导模作为映射空间]\label{prop:Ind-as-mappings}
+	我们有如下的典范 $G$-模同构.
+	\begin{equation*}\begin{gathered}
+		\begin{tikzcd}[column sep=small, row sep=tiny, ampersand replacement=\&]
+			\Ind^G_H(N) \arrow[leftrightarrow, r, "\sim"] \& \left\{\begin{array}{r|l}
+				f: G \to N & \forall h \in H, \forall x \in G, \\
+				& f(hx) = h \cdot f(x)
+			\end{array}\right\} \\
+			\varphi \arrow[mapsto, r] \& {\varphi|_{G \subset \Bbbk[G]}} \\
+			{\left[\sum_g a_g g \mapsto \sum_g a_g f(g)\right]} \& f, \arrow[mapsto, l]
+		\end{tikzcd} \\
+		\begin{tikzcd}[column sep=small, row sep=tiny, ampersand replacement=\&]
+			\iInd^G_H(N) \arrow[leftrightarrow, r, "\sim"] \& \left\{\begin{array}{r|l}
+				f: G \to N & \text{如上, 但要求}\; H \backslash \Supp(f) \;\text{有限}
+			\end{array}\right\} \\
+			g_i \otimes y \arrow[mapsto, r] \& {\left[ h g_i^{-1} \mapsto h y, \;\text{在 $Hg_i^{-1}$ 之外取 $0$} \right]} \\
+			\sum_i g_i \otimes f(g_i^{-1}) \& f, \arrow[mapsto, l]
+		\end{tikzcd}
+	\end{gathered}\end{equation*}
+	其中 $g \in G$, $y \in N$, $i \in I$, 同构右侧按照先前的讨论赋予 $G$-模结构. 这些映射不依赖代表元 $g_i$ 的选取.
+\end{lemma}
+\begin{proof}
+	直接验证所有映射皆良定义, $G$-等变, 互为逆, 而且不依赖代表元的选取.
+\end{proof}
+
+命题 \ref{prop:pullback-two-adjoint} 的同构容易用上述映射空间来改写, 譬如
+\begin{equation}\label{eqn:Ind-as-mappings}
+	\begin{tikzcd}[row sep=tiny]
+		\Hom_H\left(\Res^G_H M, N \right) \arrow[r, "\sim"] & \Hom_G\left(M, \Ind^G_H N \right) \\
+		\theta \arrow[mapsto, r] & {\left[ x \mapsto [g \mapsto \theta(gx)] \right]}, \\
+		\Hom_H\left(N, \Res^G_H M\right) \arrow[r, "\sim"] & \Hom_G\left(\iInd^G_H N, M\right) \\
+		\psi \arrow[mapsto, r] & {\left[ f \mapsto \sum_{\text{陪集}\; gH} g \psi(f(g^{-1})) \right]}.
+	\end{tikzcd}
+\end{equation}
+
+\begin{corollary}\label{prop:iInd-Ind}
+	对所有 $H$-模 $N$, 可以将 $\iInd^G_H(N)$ 典范地嵌入为 $\Ind^G_H(N)$ 的 $G$-子模; 当 $(G:H)$ 有限时两者相等.
+\end{corollary}
+\begin{proof}
+	引理 \ref{prop:Ind-as-mappings} 右侧的 $G$-模具有自明的包含关系, 而当 $(G:H)$ 有限时, 所有映射 $f: G \to N$ 皆满足 $H \backslash \Supp(f)$ 有限.
+\end{proof}
+
+我们接着在 $(G:H)$ 有限的前提下定义余限制映射. 为了简化符号, 对于 $G$-模 $M$, 以下将 $H$-模 $\Res^G_H(M)$ 简记为 $M$.
+
+\begin{itemize}
+	\item 称 \eqref{eqn:change-of-group-coh} 的典范同态族 (取 $\varphi$ 为包含映射 $H \hookrightarrow G$) 为\emph{限制}, 记为
+	\[ \mathrm{res}^n: \Hm^n(G, M) \to \Hm^n(H, M), \quad n \in \Z_{\geq 0}. \]
+	\item 同理, 对于同调情形有反向的典范同态
+	\[ \mathrm{res}_n: \Hm_n(H, M) \to \Hm_n(G, M), \quad n \in \Z_{\geq 0}. \]
+\end{itemize}
+若以命题 \ref{prop:grp-equiv} 从标准复形描述 $\mathrm{res}^n$, 其效果无非是将映射 $G^n \to M$ 限制到 $H^n$ 上, 因此得名; \S\ref{sec:change-of-group} 业已将这些操作提升到导出范畴.
+\index[sym1]{res-n@$\mathrm{res}_n$, $\mathrm{res}^n$}
+
+\begin{definition}\label{def:cor-zero}
+	\index[sym1]{nu-GH@$\nu_{G\mid H}$, $\nu^{G\mid H}$}
+	设 $(G:H)$ 有限. 对任意 $G$-模 $M$, 定义 $\Bbbk$-模同态如下
+	\[\begin{tikzcd}[row sep=tiny]
+		\nu^{G|H}: M^H \arrow[r] & M^G \\
+		x \arrow[mapsto, r] & \sum_{\bar{g} \in G/H} gx, \\
+		\nu_{G|H}: M_G \arrow[r] & M_H \\
+		(x \;\text{的像}) \arrow[mapsto, r] & \sum_{\bar{g} \in H \backslash G} (gx \;\text{的像}),
+	\end{tikzcd}\]
+	其中 $g \in G$ 是陪集 $\bar{g}$ 的任意代表元. 两个同态对 $M$ 皆有函子性.
+\end{definition}
+
+定义第一条的 $gx$ 显然只和陪集 $\bar{g} = gH$ 相关. 第二条需要多些说明. 当 $x \in M$ 给定, $gx$ 在 $M_H$ 中的像仅和陪集 $Hg$ 相关. 因此可以为每个陪集 $t \in H \backslash G$ 任选代表元 $\theta(t) \in G$ 来对 $\theta(t) x$ 的像求和, 其中 $t$ 遍历 $H \backslash G$. 若以 $g' x$ 代 $x$, 其中 $g' \in G$, 则因为 $(\theta(t) g')_{t \in H \backslash G}$ 依然遍历 $H \backslash G$ 的一族代表元, 我们有
+\[ \sum_t (\theta(t) g' x \;\text{的像}) = \sum_t (\theta(t) x \;\text{的像}). \]
+于是 $\nu_{G|H}$ 可以合理地定义在 $M_G$ 层次.
+
+\begin{definition-proposition}\label{def:cor}
+	\index[sym1]{cor-n@$\mathrm{cor}_n$, $\mathrm{cor}^n$}
+	\index{yuxianzhi@余限制 (corestriction)}
+	设 $(G:H)$ 有限, 设 $M$ 为 $G$-模.
+	\begin{enumerate}[(i)]
+		\item 存在一族典范同态
+		\[ \mathrm{cor}^n: \Hm^n(H, M) \to \Hm^n(G, M), \quad n \in \Z_{\geq 0}, \]
+		它们兼容长正合列, 并且在 $0$ 次项给出 $\nu^{G|H}: M^H \to M^G$.
+		\item 类似地, 存在一族兼容长正合列的典范同态
+		\[ \mathrm{cor}_n: \Hm_n(G, M) \to \Hm_n(H, M), \]
+		它们在 $0$ 次项给出 $\nu_{G|H}: M_G \to M_H$.
+	\end{enumerate}
+	两族同态皆称为\emph{余限制}, 因为它们和限制反向\footnote{许多文献不无道理地将余限制同态称为``转移'', 本书则对转移同态作较为狭义的理解, 详见稍后的讨论.}.
+\end{definition-proposition}
+\begin{proof}
+	先论上同调情形. 我们提供两种解释. 其一, $\Res^G_H: G\dcate{Mod} \to H\dcate{Mod}$ 是保持内射对象的正合函子, 因此 $M \mapsto \Hm^n(H, M)$ 是 $M \mapsto M^H$ 的第 $n$ 个右导出函子, $n \in \Z_{\geq 0}$. 根据 $\nu^{G|H}$ 的函子性, 它诱导上同调 $\delta$-函子之间的态射 $\Hm^n(H, \cdot) \to \Hm^n(G, \cdot)$.
+	
+	第二种解释涉及导出范畴. 上述论证容易升级到导出范畴层次, 但此处提供另一种基于伴随性的观点. 首先断言 $\iInd^G_H$ 和 $\Res^G_M$ 的伴随关系提升到 $\RHom$ 层次, 给出
+	\[ \RHom_G\left(\iInd^G_H(\Bbbk), M\right) \simeq \RHom_H(\Bbbk, M). \]
+	类似想法已经在定理 \ref{prop:Shapiro} 的证明中出现, 关键在于将 $\iInd^G_H$ 诠释为 $\Bbbk[H] \to \Bbbk[G]$ 诱导的环变换函子 $\Bbbk[H]\dcate{Mod} \to \Bbbk[G]\dcate{Mod}$, 留意到它正合 (命题 \ref{prop:Ind-preservation}), 然后代入例 \ref{eg:change-of-ring-adjunction}.
+	
+	进一步, $(G:H)$ 有限的条件连同推论 \ref{prop:iInd-Ind} 又导致
+	\[ \RHom_G\left(\iInd^G_H(\Bbbk), M\right) \simeq \RHom_G\left( \Ind^G_H(\Bbbk), M \right) \to \RHom_G(\Bbbk, M), \]
+	最后一段来自 $\Bbbk \to \Ind^G_H(\Bbbk)$, 它是伴随对 $(\Res^G_H, \Ind^G_H)$ 的单位态射在 $\Bbbk$ 上的反映, 也可以更具体地通过引理 \ref{prop:Ind-as-mappings} 描述如下: $t \in \Bbbk$ 被映为对应的常值映射 $G \to \Bbbk$.
+	
+	由此得到典范态射 $\RHom_H(\Bbbk, M) \to \RHom_G(\Bbbk, M)$, 两边同取 $\Hm^n$ 即所求. 探讨它在 $n=0$ 的性状相当于在上述操作中以 $\Hom$ 代 $\RHom$. 详言之, 如以映射空间实现 $\iInd^G_H \subset \Ind^G_H$ 并以 \eqref{eqn:Ind-as-mappings} 描述伴随同构, 则有
+	\[\begin{tikzcd}[row sep=tiny, column sep=small]
+		\Hom_H(\Bbbk, M) \arrow[r, "\sim"] & \Hom_G\left(\iInd^G_H \Bbbk, M\right) \arrow[equal, r] & \Hom_H\left(\Ind^G_H \Bbbk, M\right) \arrow[r] & \Hom_G(\Bbbk, M) \\
+		{[1 \mapsto x]} \arrow[mapsto, rr] & & {[f \mapsto \sum_{gH} f(g^{-1}) gx]} \arrow[mapsto, r] & {[1 \mapsto \sum_{gH} gx]}.
+	\end{tikzcd}\]
+	上式的合成显然等同于 $\nu^{G|H}: M^H \to M^G$. 明所欲证.
+\end{proof}
+
+\begin{proposition}\label{prop:res-cor}
+	设 $(G:H)$ 有限, 则对于所有 $G$-模 $M$ 和 $n \in \Z_{\geq 0}$, 以下同态
+	\begin{gather*}
+		\Hm^n(G, M) \xrightarrow{\mathrm{res}^n} \Hm^n(H, M) \xrightarrow{\mathrm{cor}^n} \Hm^n(G, M), \\
+		\Hm_n(G, M) \xrightarrow{\mathrm{cor}_n} \Hm_n(H, M) \xrightarrow{\mathrm{res}_n} \Hm_n(G, M)
+	\end{gather*}
+	的合成都是乘以 $(G:H)$ 确定的自同态.
+\end{proposition}
+\begin{proof}
+	先考察 $n=0$ 情形. 上同调情形的映射是 $M^G \hookrightarrow M^H \xrightarrow{\nu^{G|H}} M^G$, 这显然映 $x \in M^G$ 为 $(G:H) x$. 同调情形的映射是 $M_G \xrightarrow{\nu_{G|H}} M_H \twoheadrightarrow M_G$, 稍加思索可见结论仍相同.
+	
+	现在设 $n \geq 1$. 在上同调情形取嵌入 $M \hookrightarrow I$, 其中 $I$ 是内射 $G$-模, 则 $I$ 也是内射 $H$-模. 记 $L := I/M$. 限制和余限制的函子性连同长正合列给出列正合交换图表
+	\[\begin{tikzcd}
+		\Hm^{n-1}(G, L) \arrow[r, "{\mathrm{res}^{n-1}}"] \arrow[twoheadrightarrow, d] & \Hm^{n-1}(H, L) \arrow[r, "{\mathrm{cor}^{n-1}}"] \arrow[twoheadrightarrow, d] & \Hm^{n-1}(G, L) \arrow[twoheadrightarrow, d] \\
+		\Hm^n(G, M) \arrow[r, "{\mathrm{res}^n}"] & \Hm^n(H, M) \arrow[r, "{\mathrm{cor}^n}"] & \Hm^n(G, M),
+	\end{tikzcd}\]
+	递归可知第一行合成为乘以 $(G:H)$ 的自同态; 既然垂直箭头皆满, 第二行的合成亦然. 同调情形的论证相似, 取满同态 $P \twoheadrightarrow M$ 使得 $P$ 是投射 $G$-模即可.
+	
+	注意到基于 $n=0$ 的情形, 也可以在导出范畴的层次推得 $\RHom_G(\Bbbk, M) \to \RHom_H(\Bbbk, M) \to \RHom_G(\Bbbk, M)$ 合成为 $(G:H) \identity$. 同调情形同理.
+\end{proof}
+
+\begin{corollary}\label{prop:group-coh-torsion}
+	设 $|G| = m \in \Z_{\geq 1}$, 则对于所有 $G$-模 $M$, 我们有
+	\[ n \geq 1 \implies m \Hm^n(G, M) = m \Hm_n(G, M) = \{0\}. \]
+\end{corollary}
+\begin{proof}
+	在命题 \ref{prop:res-cor} 中取 $H = \{1\}$, 并利用以下的简单事实: 当 $n \geq 1$ 时 $\Hm^n(\{1\}, M)$ 和 $\Hm_n(\{1\}, M)$ 同为零.
+\end{proof}
+
+以下取 $\Bbbk = \Z$. 视 $\Z$ 为平凡 $G$-模. 例 \ref{eg:group-H1-further} 蕴涵典范同构 $\Hm_1(G, \Z) \simeq G_{\mathrm{ab}}$ 和 $\Hm_1(H, \Z) \simeq H_{\mathrm{ab}}$. 当 $(G:H)$ 有限, $\mathrm{cor}_1: \Hm_1(G, \Z) \to \Hm_1(H, \Z)$ 遂对应到群同态
+\begin{equation*}
+	\mathrm{Ver}_{G|H}: G_{\mathrm{ab}} \to H_{\mathrm{ab}},
+\end{equation*}
+称为从 $G$ 到 $H$ 的\emph{转移}同态 (德文: \textit{die Verlagerung}).
+\index{zhuanyi@转移 (transfer / Verlagerung)}
+
+关键在于给出 $\mathrm{Ver}_{G|H}$ 的群论描述. 回忆到 $G$ 右作用在 $H \backslash G$ 上, 写作右乘.
+
+\begin{proposition}
+	设 $(G:H)$ 有限. 为 $H \backslash G$ 中的每个陪集指定 $G$ 中的代表元, 表作映射 $\theta: H \backslash G \to G$. 对所有 $s \in G$ 和 $t \in H \backslash G$, 存在唯一的 $h_{t, s} \in H$ 使得
+	\[ \theta(t)s = h_{t, s} \theta(ts). \]
+	先前定义的转移同态可按此描述为
+	\[ \mathrm{Ver}_{G|H}(\underbracket{s\;\text{的像}}_{\in G_{\mathrm{ab}}}) = \prod_{t \in H \backslash G} \underbracket{h_{t, s}\;\text{的像}}_{\in H_{\mathrm{ab}}}. \]
+\end{proposition}
+\begin{proof}
+	取 $G$-模的短正合列 $0 \to \mathfrak{I}_G \to \Z[G] \to \Z \to 0$, 其中 $\mathfrak{I}_G$ 表 $\Z[G]$ 的增广理想 (例 \ref{eg:group-H1}); 由 $\Z[H] \subset \Z[G]$ 得 $H$-子模 $\mathfrak{I}_H \subset \mathfrak{I}_G$. 因为 $\mathrm{cor}_n$ 兼容长正合列, 而且 $\Z[G]$ 作为 $G$-模或 $H$-模皆投射, 综上可得交换图表:
+	\[\begin{tikzcd}
+		G_{\mathrm{ab}} \arrow[r, "\sim"'] \arrow[dd, "{\mathrm{Ver}_{G|H}}"'] &
+		\Hm_1(G, \Z) \arrow[d, "{\mathrm{cor}_1}"'] \arrow[r, "\sim"] & \Hm_0(G, \mathfrak{I}_G) \arrow[d, "{\mathrm{cor}_0}"] \arrow[equal, r] &  \mathfrak{I}_G/\mathfrak{I}_G^2 \arrow[d, "{\nu_{G|H}}"] \\
+		& \Hm_1(H, \Z) \arrow[equal, d] \arrow[hookrightarrow, r] & \Hm_0(H, \mathfrak{I}_G) \arrow[equal, r] & \mathfrak{I}_G / \mathfrak{I}_H \mathfrak{I}_G \\
+		H_{\mathrm{ab}} \arrow[r, "\sim"] & \Hm_1(H, \Z) \arrow[r, "\sim"] & \Hm_0(H, \mathfrak{I}_H) \arrow[equal, r] \arrow[u] & \mathfrak{I}_H / \mathfrak{I}_H^2 \arrow[u]
+	\end{tikzcd}\]
+
+	我们将在 $\mathfrak{I}_G / \mathfrak{I}_H \mathfrak{I}_G$ 中验证所需等式. 例 \ref{eg:group-H1-further} 结尾说明 $s \in G$ 在 $G_{\mathrm{ab}}$ 中的像通过第一行对应到 $1_G - s$ 在 $\mathfrak{I}_G/\mathfrak{I}_G^2$ 中的像, 对之取 $\nu_{G|H}$ 得到的是
+	\begin{align*}
+		\sum_{t \in H \backslash G} \theta(t)(1_G - s) & = \sum_t (\theta(t) - \theta(t)s) = \sum_t (\theta(t) - h_{t, s}\theta(ts)) \\
+		& = \sum_t \theta(t) - \sum_t h_{t, s} \theta(ts) \\
+		& = \sum_t \theta(ts) - \sum_t h_{t, s} \theta(ts) \;\in \mathfrak{I}_G
+	\end{align*}
+	在 $\mathfrak{I}_G / \mathfrak{I}_H \mathfrak{I}_G$ 中的像; 最后一个等号是因为当 $t$ 变动, $t$ 和 $ts$ 同样遍历 $H \backslash G$. 末式又等于 $\sum_t (1_G - h_{t, s}) \theta(ts)$.
+	
+	最后观察到 $(1_G - h_{t, s}) \theta(ts) \equiv 1_G - h_{t, s} \pmod{\mathfrak{I}_H \mathfrak{I}_G}$, 而右式来自 $h_{t, s} \; \bmod \mathfrak{I}_H$ 沿第三行在 $\mathfrak{I}_H / \mathfrak{I}_H^2$ 中的像. 明所欲证.
+\end{proof}
+
+以上描述的映射 $s \bmod G_{\mathrm{der}} \mapsto \prod_t h_{t, s} \bmod H_{\mathrm{der}}$ 是群论的经典构造. 我们既已将其等同于 $\mathrm{cor}_1$, 也就证明了它无关 $\theta$ 的选取.
+
+\section{Lyndon--Hochschild--Serre 谱序列}\label{sec:LHS-SS}
+本节选定交换环 $\Bbbk$, 群 $G$ 及其正规子群 $H \lhd G$. 回忆定义 \ref{def:Res-Infl} 介绍的限制函子 $\Res^G_H:  G\dcate{Mod} \to H\dcate{Mod}$ 和膨胀函子 $\mathrm{Infl}^G_{G/H}:  G/H\dcate{Mod} \to G\dcate{Mod}$. 对任意 $G$-模 $M$, 引入符号
+\[ M^{H \lhd G} := (\Res^G_H M)^H, \quad M_{H \lhd G} := (\Res^G_H M)_H. \]
+观察到 $M^{H \lhd G}$ 带有自明的左 $G/H$-作用 $(gH) \cdot x := gx$; 类似地, $M_{H \lhd G}$ 带有自明的左 $G/H$-作用. 这便给出两个函子
+\[ (\cdot)^{H \lhd G}, \; (\cdot)_{H \lhd G}: G\dcate{Mod} \to G/H\dcate{Mod}. \]
+
+\begin{lemma}
+	函子 $(\cdot)^{H \lhd G}$ 是 $\mathrm{Infl}^G_{G/H}$ 的右伴随, 而 $(\cdot)_{H \lhd G}$ 是 $\mathrm{Infl}^G_{G/H}$ 的左伴随.
+\end{lemma}
+\begin{proof}
+	这是命题 \ref{prop:inv-coinv-infl} 的简单推广, 留给读者验证.
+\end{proof}
+
+显然有关于函子的交换图表
+\[\begin{tikzcd}[column sep=tiny]
+	G\dcate{Mod} \arrow[rr, "{(\cdot)^{H \lhd G}}"] \arrow[rd, "{(\cdot)^G}"'] & & G/H\dcate{Mod} \arrow[ld, "{(\cdot)^{G/H}}"] \\
+	& \Bbbk\dcate{Mod} &
+\end{tikzcd} \quad \begin{tikzcd}[column sep=tiny]
+	G\dcate{Mod} \arrow[rr, "{(\cdot)_{H \lhd G}}"] \arrow[rd, "{(\cdot)_G}"'] & & G/H\dcate{Mod}. \arrow[ld, "{(\cdot)_{G/H}}"] \\
+	& \Bbbk\dcate{Mod} &
+\end{tikzcd}\]
+
+观察到 $(\cdot)^{H \lhd G}$ 是保持内射对象的左正合函子, 这是因为它有正合左伴随 $\mathrm{Infl}^G_{G/H}$; 同理, $(\cdot)_{H \lhd G}$ 是保持投射对象的右正合函子. 于是关于复合函子求导的定理 \ref{prop:derived-composite} 给出导出范畴 $\cate{D}(\Bbbk\dcate{Mod})$ 中的典范同构 (适当地省略括号):
+\begin{equation}\label{eqn:LHS-derived}
+	\begin{gathered}
+		\mathrm{R}(\cdot)^G \rightiso \mathrm{R}(\cdot)^{G/H} \circ \mathrm{R}(\cdot)^{H \lhd G}, \\
+		\mathrm{L}(\cdot)_G \leftiso \mathrm{L}(\cdot)_{G/H} \circ \mathrm{L}(\cdot)_{H \lhd G}.
+	\end{gathered}
+\end{equation}
+
+上式的导出函子 $\mathrm{R}(\cdot)^{H \lhd G}$ 和 $\mathrm{L}(\cdot)_{H \lhd G}$ 并非新鲜事物: 对以下每个交换图表
+\[\begin{tikzcd}
+	G\dcate{Mod} \arrow[r, "{(\cdot)^{H \lhd G}}"] \arrow[d, "{ \Res^G_H}"'] & G/H\dcate{Mod} \arrow[d, "{\text{忘却} = \Res^{G/H}_{\{1\}}}"] \\
+	H\dcate{Mod} \arrow[r, "{(\cdot)^H}"'] & \Bbbk\dcate{Mod}
+\end{tikzcd} \quad \begin{tikzcd}
+	G\dcate{Mod} \arrow[r, "{(\cdot)_{H \lhd G}}"] \arrow[d, "{ \Res^G_H}"'] & G/H\dcate{Mod} \arrow[d, "\text{忘却}"] \\
+	H\dcate{Mod} \arrow[r, "{(\cdot)_H}"'] & \Bbbk\dcate{Mod}
+\end{tikzcd}\]
+的两路合成按照定理 \ref{prop:derived-composite} 求导. 因为 $\Res^G_H$ 既正合又保持内射对象和投射对象 (命题 \ref{prop:Ind-preservation}), 而忘却函子正合, 该定理蕴涵
+\begin{gather*}
+	\text{忘却} \circ \mathrm{R}(\cdot)^{H \lhd G} \leftiso \mathrm{R}(\text{合成函子}) \rightiso \mathrm{R}(\cdot)^H \circ \Res^G_H, \\
+	\text{忘却} \circ \mathrm{L}(\cdot)^{H \lhd G} \rightiso \mathrm{L}(\text{合成函子}) \leftiso \mathrm{L}(\cdot)_H \circ \Res^G_H .
+\end{gather*}
+这相当于说: 精确到忘却 (!), 右导出函子 $\mathrm{R}(\cdot)^{H \lhd G}$ 和 $\mathrm{R}(\cdot)^H$ 是一回事, 左导出函子 $\mathrm{L}(\cdot)^{H \lhd G}$ 和 $\mathrm{L}(\cdot)_H$ 是一回事. 因此它们的上同调和同调可以合理地记为
+\begin{align*}
+	\mathrm{R}^n (\cdot)^{H \lhd G} & = \Hm^n(H, \cdot) \quad \text{配备 $G/H$-作用}, \\
+	\mathrm{L}_n (\cdot)_{H \lhd G} & = \Hm_n(H, \cdot) \quad \text{配备 $G/H$-作用}.
+\end{align*}
+注意到我们开始在符号中省略限制函子 $\Res$.
+
+这些作用的描述是简单的, 以上同调为例, 令 $M$ 为 $G$-模, $n \in \Z_{\geq 0}$, 对 $G/H$-作用至少有三种观点:
+\begin{enumerate}
+	\item 取 $M$ 的内射解消 $0 \to M \to I^0 \to \cdots$, 则它也是 $H$-模的内射解消; $G/H$ 自然地作用在复形 $\cdots \to I^{n, H} \to I^{n+1, H} \to \cdots$ 上, 从而作用在 $\Hm^n(H, M)$ 上 --- 此描述直接来自上述抽象构造;
+	\item 群 $G/H$ 作用在函子 $(\cdot)^H: G\dcate{Mod} \to \Bbbk\dcate{Mod}$ 上, 从而泛上同调 $\delta$-函子的泛性质使其作用在 $\Hm^n(H, M)$ 上, 兼容长正合列.
+	\item 例 \ref{eg:change-of-group-conj} 让每个 $t \in G/H$ 通过 $\Hm^n(c_t)$ 作用在 $\Hm^n(H, M)$ 上.
+\end{enumerate}
+请读者验证这几种描述皆一致, 要点是化约到 $n=0$ 情形作比较.
+
+关键在于从 \eqref{eqn:LHS-derived} 萃取更具体的信息. 这涉及定义 \ref{def:graded-spectral-sequence} 介绍的上同调和同调双分次谱序列, 以及下述准备工作.
+
+\begin{lemma}\label{prop:LHS-action-aux}
+	对所有 $G$-模 $M$ 和 $n$, 典范同态 $\Hm^n(G, M) \to \Hm^n(H, M)$ (见 \eqref{eqn:change-of-group-coh}) 通过 $\Hm^n(H, M)^{G/H}$ 分解; 典范同态 $\Hm_n(H, M) \to \Hm_n(G, M)$ 通过 $\Hm_n(H, M)_{G/H}$ 分解.
+\end{lemma}
+\begin{proof}
+	以上同调为例, 取内射解消 $M \to I$, 其中 $I = [I^0 \to I^1 \to \cdots]$ 是复形, 另记 $I^H := [I^{0, H} \to \cdots]$. 既然 $I$ 也是 $M$ 作为 $H$-模的内射解消, $I^G \hookrightarrow I^H$ 遂诱导 $\Hm^n(G, M) \to \Hm^n(H, M)$.
+	
+	不出所料, 注记 \ref{rem:change-of-group-coh} 确保此即所求典范同态. 再对照之前关于 $G/H$-作用的讨论即可.
+\end{proof}
+
+\begin{theorem}[R.\ Lyndon, G.\ Hochschild--J.-P.\ Serre]\label{prop:LHS-SS}
+	\index{puxulie!Lyndon--Hochschild--Serre}
+	设 $M$ 为 $G$-模, $H \lhd G$.
+	\begin{enumerate}[(i)]
+		\item 存在第一象限上同调与同调谱序列
+		\begin{align*}
+			E_2^{p, q} & \simeq \Hm^p\left(G/H, \Hm^q(H, M) \right) \Rightarrow \Hm^{p+q}(G, M), \\
+			E^2_{p, q} & \simeq \Hm_p\left(G/H, \Hm_q(H, M) \right) \Rightarrow \Hm_{p+q}(G, M).
+		\end{align*}
+		\item 选定 $n \in \Z_{\geq 1}$ 并且假定对所有 $1 \leq i < n$ 皆有 $\Hm^i(H, M) = 0$ (上同调情形) 或 $\Hm_i(H, M) = 0$ (同调情形), 则对两种情形分别有正合列
+		\begin{equation*}\begin{split}
+			0 \to \Hm^n\left(G/H, M^H\right) & \to \Hm^n(G, M) \to \Hm^n(H, M)^{G/H} \\
+			& \to \Hm^{n+1}\left(G/H, M^H\right) \to \Hm^{n+1}(G, M),
+		\end{split}\end{equation*}
+		和
+		\begin{equation*}\begin{split}
+			\Hm_{n+1}(G, M) & \to \Hm_{n+1}\left(G/H, M_H\right) \\
+			& \to \Hm_n\left(H, M\right)_{G/H} \to \Hm_n(G, M) \to \Hm_n(G/H, M_H) \to 0;
+		\end{split}\end{equation*}
+		留意到当 $n=1$ 时, 前提平凡地成立.
+		\item 承上, 在关于上同调的正合列中, 除 $\Hm^n(H, M)^{G/H} \to \Hm^{n+1}(G/H, M^H)$ 之外的态射来自等变同态 $M^H \hookrightarrow M$ (相对于 $G/H \twoheadleftarrow G$, 见定义 \ref{def:change-of-group-equiv}) 和 $M \xrightarrow{\identity} M$ (相对于 $G \hookleftarrow H$) 以及引理 \ref{prop:LHS-action-aux} 的分解. 同调正合列的情况类似. 
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	对于 (i), 仅须将 \eqref{eqn:LHS-derived} 以定理 \ref{prop:Grothendieck-ss} 的 Grothendieck 谱序列具体表达.
+	
+	现在考虑 (ii). 当 $n=1$ 时前提平凡地成立, 相应的正合列正是定理 \ref{prop:Grothendieck-ss} 中的低次项正合列, 其原理是注记 \ref{rem:edge-computing} 的边缘计算. 以下将回顾并推广这些论证至一般的 $n$, 诀窍是善用谱序列的空隙.
+
+	仅论上同调情形. 条件表明 (i) 的谱序列满足
+	\[ 1 \leq q < n \implies E_2^{p, q} = E_3^{p, q} = \cdots = E_\infty^{p, q} = 0. \]
+	
+	回忆到 $d_r$ 的走势为 $d^{p, q}_r: E_r^{p, q} \to E_r^{p+r, q-r+1}$, 而 $E_{r+1}^{p, q}$ 是 $E_r^{p, q}$ 相对于 $d_r$ 的上同调. 于是映出 $E_{n+1}^{n+1, 0}$ (或映入 $E_{n+1}^{0, n}$) 的 $d$ 全为 $0$, 给出下图水平方向的正合列
+	\[\begin{tikzcd}[row sep=small, column sep=scriptsize]
+		& E_\infty^{0, n} \arrow[phantom, d, "\simeq" description, sloped] & & & E_\infty^{n+1, 0} \arrow[phantom, d, "\simeq" description, sloped] & \\
+		& \vdots \arrow[phantom, d, "\simeq" description, sloped] & & & \vdots \arrow[phantom, d, "\simeq" description, sloped] & \\
+		0 \arrow[r] & E_{n+2}^{0, n} \arrow[r] & E_{n+1}^{0, n} \arrow[r, "{d^{0, n}_{n+1}}" inner sep=0.6em] \arrow[phantom, d, "\simeq" description, sloped] & E_{n+1}^{n+1, 0} \arrow[r] \arrow[phantom, d, "\simeq" description, sloped] & E_{n+2}^{n+1, 0} \arrow[r] & 0. \\
+		& & \vdots \arrow[phantom, d, "\simeq" description, sloped] & \vdots \arrow[phantom, d, "\simeq" description, sloped] & & \\
+		& \Hm^n(H, M)^{G/H} \arrow[r, "\sim"] & E_2^{0, n} & E_2^{n+1, 0} & \Hm^{n+1}\left(G/H, M^H\right) \arrow[l, "\sim"'] &
+	\end{tikzcd}\]
+	图中的垂直同构道理类似: 一旦出入 $E_r^{p, q}$ 的 $d$ 皆为 $0$, 则 $E_r^{p, q} \simeq E_{r+1}^{p, q}$. 同理推得
+	\[ \Hm^n\left( G/H, M^H \right) \simeq E_2^{n, 0} \simeq \cdots \simeq E_\infty^{n, 0}. \]
+	
+	其次, 回忆到谱序列的标的 $\Hm^{p+q}(G, M)$ 具备有限降滤过 $\cdots \supset \mathrm{F}^k \supset \mathrm{F}^{k+1} \supset \cdots$, 而 $E_\infty^{p, q} \simeq \gr^p \Hm^{p+q}(G, M)$. 这在第一象限的边缘遂导致
+	\begin{align*}
+		E_\infty^{n+1, 0} & \simeq \mathrm{F}^{n+1} \subset \Hm^{n+1}(G, M), \\
+		E_\infty^{0, n} & \simeq \Hm^n(G, M) / \mathrm{F}^1 .
+	\end{align*}
+	
+	如何确定 $\mathrm{F}^1 \subset \Hm^n(G, M)$? 在直线 $p+q=n$ 上, 只有 $(n, 0)$ 和 $(0, n)$ 可能满足 $E_\infty^{p, q} \neq 0$. 因此 $\Hm^n(G, M)$ 的滤过表作
+	\[ 0 = \mathrm{F}^{n+1} \underbracket{\subset}_{E_\infty^{n, 0}} \mathrm{F}^n = \cdots = \mathrm{F}^1 \underbracket{\subset}_{E_\infty^{0, n}} \mathrm{F}^0 = \Hm^n(G, M). \]
+	组装上述所有同构和正合列即为所求.
+
+	断言 (iii) 是意料之中, 但以下论证比较冗长, 读者可考虑略过. 简单起见, 仅论 $\Hm^n(G, M) \to \Hm^n(H, M)^{G/H}$; 其余情形或者类似, 或者容易. 请回顾 \S\ref{sec:double-cplx-ss} 的构造: 取内射解消 $M \to I$, 其中 $I$ 是 $G$-模的复形, 取 $G/H$-模复形 $I^H$ 的 Cartan--Eilenberg 解消 $J$ (定理 \ref{prop:CE-resolution}). 视复形 $I^G$ 等为集中在横轴上的双复形, 则有 $\Bbbk$-模的双复形构成的交换图表
+	\begin{equation}\label{eqn:LHS-SS-aux}\begin{tikzcd}
+		& J^{G/H} \arrow[hookrightarrow, r] & J \\
+		I^G \arrow[equal, r] & (I^H)^{G/H} \arrow[hookrightarrow, r] \arrow[u] & I^H . \arrow[u]
+	\end{tikzcd}\end{equation}
+	
+	按照命题 \ref{prop:double-cplx-ss} 的惯例, 先横后纵对双复形取上同调的操作被记为 $\Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(\cdot)$. 我们作若干观察.
+	\begin{itemize}
+		\item 因为 Cartan--Eilenberg 解消的横向上同调 $\Hm_{\mathrm{I}}(J)$ 在第 $p$ 列给出 $\Hm^p(I^H)$ 的内射解消 ($p \in \Z$), 故 $I^H \to J$ 诱导同构
+		\[ \Hm^n(H, M) = \Hm^n(I^H) = \Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(I^H)^{n, 0} \rightiso \Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(J)^{n, 0}. \]
+		\item 注记 \ref{rem:CE-split} 说明 $\Hm_{\mathrm{I}}(J^{G/H}) \simeq \Hm_{\mathrm{I}}(J)^{G/H}$. 既然 $\Hm_{\mathrm{I}}(J)$ 纵向解消每个 $\Hm^p(H, M)$, 而 $(\cdot)^{G/H}$ 是左正合函子, 综之可见
+		对 $J^{G/H} \hookrightarrow J$ 取 $\Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(\cdot)^{n, 0}$ 的产物对应于
+		\[ \text{包含同态}\quad \Hm^n(H, M)^{G/H} \hookrightarrow \Hm^n(H, M). \]
+		
+		\item 先前已说明 $I^G \hookrightarrow I^H$ 在 $\Hm^n$ (等价地说, $\Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(\cdot)^{n, 0}$) 上诱导的是典范同态 $\Hm^n(G, M) \to \Hm^n(H, M)$.
+	\end{itemize}
+	
+	对第一象限双复形 $J^{G/H}$ 按纵坐标取降滤过 (第 $p$ 步是纵坐标 $\geq p$ 的部分). 相应的谱序列即 $(E_r^{p, q})_{p, q}$, 其中 $r = 0, 1, \ldots$. 将全复形 $\tot(J^{G/H})$ 的 $\Ker(d^n)$ 在 $(n, 0)$ 分量的投影记为 $\Ker(d^n)_{n, 0}$. 依命题 \ref{prop:filtered-cplx-ss} 描述 $Z_r^{p, q}$, 再应用先前观察可得
+	\begin{multline}\label{eqn:LHS-SS-aux1}
+		\Ker(d^n)_{n, 0} \simeq Z_\infty^{0, n} \subset \cdots \subset Z_2^{0, n} \\
+		\twoheadrightarrow E_2^{0, n} = \Hm_{\mathrm{II}} \Hm_{\mathrm{I}}\left(J^{G/H}\right)^{n, 0} \simeq \Hm^n(H, M)^{G/H}.
+	\end{multline}
+
+	现在描述 $\Hm^n(G, M) \to \Hm^n(H, M)^{G/H}$: 取 $\Hm^n(G, M)$ 的元素在 $\Ker[I^{n, G} \to I^{n+1, G}]$ 中的代表元, 通过 $I^G \to J^{G/H}$ 映入 $\Ker(d^n)_{n, 0}$, 再循 \eqref{eqn:LHS-SS-aux1} 映至 $\Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(J^{G/H})^{n, 0}$ 即是. 进一步取它在 $\Hm^n(H, M)$ 中的像, 这相当于对 \eqref{eqn:LHS-SS-aux} 全图取 $\Hm_{\mathrm{II}} \Hm_{\mathrm{I}}(\cdot)^{n, 0}$, 并沿
+	\begin{tikzpicture}[scale=0.5, baseline=(O)]
+		\draw[->] (-1, 0) -- (0, 0) -- (0, 1) -- (1, 1);
+		\coordinate (O) at (0, 0.2);
+	\end{tikzpicture}
+	合成. 若改走
+	\begin{tikzpicture}[scale=0.5, baseline=(O)]
+		\draw[->] (-1, 0) -- (1, 0) -- (1, 1);
+		\coordinate (O) at (0, 0.2);
+	\end{tikzpicture}
+	并运用之前的三点观察, 则可知这也等于典范同态 $\Hm^n(G, M) \to \Hm^n(H, M)$. 关于 (iii) 的断言得证.
+\end{proof}
+
+注记 \ref{rem:LHS-SS-mult} 将对 Lyndon--Hochschild--Serre 谱序列给出一种典范而且兴许更自然的构造方式.
+
+\index{xianzhi-pengzhang-zhenghelie@膨胀-限制正合列 (inflation-restriction sequence)}
+以上关于上同调的正合列又称\emph{膨胀-限制正合列}, 因为典范同态 $\Hm^n \left( G/H, M^H \right) \to \Hm^n(G, M)$ 常被称为膨胀同态, 而 $\Hm^n(G, M) \to \Hm^n(H, M)^{G/H}$ 常被称为限制同态. 相较于此, 更复杂的则是
+\[ \Hm^n(H, M)^{G/H} \to \Hm^{n+1}\left( G/H, M^H \right), \quad \Hm_{n+1}(G/H, M^H) \to \Hm_n(H, M)_{G/H}, \]
+它们称为\emph{超渡}映射, 与示性类理论中的超渡映射异曲同工.
+\index{chaodu@超渡 (transgression)}
+
+作为应用, 我们简单地推导 Hopf 的一则公式, 它说明如何从群 $G$ 的展示计算 $\Hm_2(G, \Z)$; 此处取 $\Bbbk = \Z$, 赋予 $\Z$ 平凡 $G$-模结构.
+
+\begin{corollary}[H.\ Hopf]\label{prop:Hopf-H2}
+	\index[sym1]{[,]@$[\cdot, \cdot]$}
+	设 $G$ 为群, $G \simeq F/R$, 其中 $F$ 是自由群而 $R \lhd F$. 记 $[F, R]$ 为形如 $[f, r] := frf^{-1}r^{-1}$ 的元素 ($f \in F, r \in R$) 在 $R$ 中生成的子群, 它是 $R$ 的正规子群, 而且 $[F, R] \subset [F, F] := F_{\mathrm{der}}$. 我们有同构 $\Hm_2(G, \Z) \simeq (R \cap [F, F])/[F, R]$.
+\end{corollary}
+\begin{proof}
+	命题 \ref{prop:free-group-coh} 蕴涵 $\Hm_2(F, \Z) = 0$, 故定理 \ref{prop:LHS-SS} 的正合列 ($n=1$) 化作
+	\[ 0 \to \Hm_2(G, \Z) \to \Hm_1(R, \Z)_G \to \Hm_1(F, \Z) \to \Hm_1(G, \Z) \to 0. \]
+	以例 \ref{eg:group-H1-further} 诠释 $\Hm_1$, 可得
+	\[ 0 \to \Hm_2(G, \Z) \to \left(\frac{R}{[R, R]}\right)_G \to \frac{F}{[F, F]} \to \frac{G}{[G, G]} \to 0. \]
+	
+	群 $G$ 对 $R/[R, R]$ 的作用方式如下: 取 $g \in G$ 的原像 $f \in F$, 可以验证 $g$ 的作用来自 $f$ 对 $R$ 的共轭作用 (习题). 对于任意 $\bar{r} \in R/[R, R]$, 取其原像 $r \in R$, 则 $g\bar{r} - \bar{r}$ (群运算写作加法) 是
+	\[ frf^{-1} \cdot r^{-1} \in R \; \text{的像} \quad \text{(群运算写作乘法)}. \]
+	当 $f$ 和 $r$ 变动, 它们生成 $[F, R]$, 故 $(R/[R, R])_G \simeq R/[F, R]$. 其余是容易的.
+\end{proof}
+
+\begin{remark}[Lyndon--Hochschild--Serre 谱序列的乘法结构]\label{rem:LHS-SS-mult}
+	对于上同调情形, 记任意 $G$-模 $M$ 的谱序列为 $E_r^{p, q}(M)$. 行将于 \S\ref{sec:cup-product} 介绍的杯积运算 (两重, 施于群 $G/H$ 和 $H$ 的上同调) 赋予 $E_2$ 项乘法结构
+	\[ \cup: E_2^{p_1, q_1}(M_1) \otimes E_2^{p_2, q_2}(M_2) \to E_2^{p_1 + p_2, q_1 + q_2}(M_1 \otimes M_2), \]
+	而谱序列的收敛目标也具有杯积 (施于群 $G$)
+	\[ \cup: \Hm^{n_1}(G, M_1) \otimes \Hm^{n_2}(G, M_2) \to \Hm^{n_1 + n_2}(G, M_1 \otimes M_2). \]
+	问题在于: 这些结构能否定义在每一页上? $d_r$ 对之是否具有良好性质, 例如以下的 Leibniz 律?
+	\[ d_r (\alpha_1 \cup \alpha_2) = d_r(\alpha_1) \cup \alpha_2 + (-1)^{p_1 + q_1} \alpha_1 \cup (d_r \alpha_2), \quad \alpha_i \in E_r^{p_i, q_i}(M_i). \]
+		
+	Hochschild 和 Serre 在原始文献 \cite[pp.118--119]{HS53} 中直接写下了正规化标准复形 $\overline{C}(G, M)$ 的典范滤过, 使之兼容定义在 $\overline{C}(G, M)$ 层次的杯积, 从而在每一页诱导满足上述期望的乘法运算. 具体地说, 他们取降滤过 $\overline{C}(G, M) = \mathrm{F}^0 \supset \mathrm{F}^1 \supset \cdots$, 使得当 $p > n$ 时复形 $\mathrm{F}^p$ 的 $n$ 次项为 $0$, 否则 $\mathrm{F}^p$ 的 $n$ 次项为
+	\[ \left\{\begin{array}{r|l}
+		f \in \overline{C}^n(G, M) & (g_1, \ldots, g_n) \;\text{含至少}\; n-p+1 \;\text{项}\; \in H \\
+		& \implies f(g_1, \ldots, g_n) = 0
+	\end{array}\right\}. \]
+	相关细节不在话下, 归入本章习题, 有兴趣或需求的读者亦可参考原文.
+	
+	特别地, $\overline{C}(G, \Bbbk)$ 对此成为滤过微分分次代数, 谱序列 $E_r^{p, q}(\Bbbk)$ 带有相应的乘法结构 (定义 \ref{def:mult-ss} 和命题 \ref{prop:dga-mult-ss}). 就拓扑观点, 这是毫不意外的. 
+\end{remark}
+
+\section{杯积运算}\label{sec:cup-product}
+设 $G$ 为任意群. 照例记 $\otimes = \otimes_{\Bbbk}$, 它既代表 $\Bbbk$-模的张量积, 也用来表达 $G$-模的张量积.
+
+\begin{convention}
+	记 $\Ext_G^\bullet := \Ext_{\Bbbk[G]}^\bullet$, 记 $\cate{D}(G) := \cate{D}(G\dcate{Mod})$.
+\end{convention}
+
+本节的任务是对任意 $G$-模 $M_1$ 和 $M_2$ 构造上同调的杯积运算
+\[ \cup: \Hm^p(G, M_1) \otimes \Hm^q(G, M_2) \to \Hm^{p+q}(G, M_1 \otimes M_2), \quad p, q \in \Z_{\geq 0}, \]
+它在 $p=q=0$ 时给出自明的态射 $M_1^G \otimes M_2^G \to (M_1 \otimes M_2)^G$.
+
+以 $\Ext_G^\bullet$ 重述, 则目的相当于定义
+\[ \cup: \Ext^p_G(\Bbbk, M_1) \otimes \Ext^q_G(\Bbbk, M_2) \to \Ext_G^{p+q}(\Bbbk, M_1 \otimes M_2). \]
+
+回忆到 $\Ext^p_G(\Bbbk, M_1) \simeq \Hom_{\cate{D}(G)}(\Bbbk, M_1[p])$. 对杯积的第一种观点是基于导出范畴中的态射来理解. 仅关心具体复形计算的读者可移步定义--命题 \ref{def:group-cup-3}.
+
+\begin{definition}
+	记双函子 $\otimes: G\dcate{Mod} \times G\dcate{Mod} \to G\dcate{Mod}$ 的左导出双函子为 $\otimesL$. 它赋予 $\cate{D}^-(G)$ 对称幺半结构, 以平凡 $G$-模 $\Bbbk$ 为幺元.
+\end{definition}
+
+复形之间的 $\otimes$ 按惯例取全复形 $\tot_{\oplus}$ 来定义. 对称幺半结构的交换约束涉及一些正负号, 细节见命题 \ref{prop:double-cplx-swap}.
+
+投射 $G$-模作为 $\Bbbk$-模仍然投射 (命题 \ref{prop:Ind-preservation}, 取 $H$ 平凡), 因而是平坦的. 若 $X$ 和 $Y$ 是 $G$-模构成的上有界复形, $X$ 的每一项作为 $\Bbbk$-模皆平坦, 则有
+\[ X \otimes Y = X \otimesL Y, \quad Y \otimes X = Y \otimesL X; \]
+参见命题 \ref{prop:flat-K-flat}. 特别地,
+\begin{equation}\label{eqn:G-mod-tensor-unit}
+	\Bbbk \otimes Y = \Bbbk \otimesL Y \simeq Y \simeq Y \otimesL \Bbbk = Y \otimes \Bbbk.
+\end{equation}
+
+\begin{lemma}\label{prop:group-pullback-monoidal}
+	设 $\varphi: H \to G$ 为群同态, 正合函子 $\varphi^*$ 在导出范畴上诱导的函子同仍记为 $\varphi^*: \cate{D}^-(G) \to \cate{D}^-(H)$, 则 $\varphi^*$ 相对于 $\otimesL$ 是幺半函子, 见 \cite[定义 3.1.7]{Li1} 及其后注记: 换言之, 存在服从种种相容性的典范同构
+	\[ \varphi^*(\Bbbk) \simeq \Bbbk, \quad \varphi^* X_1 \otimesL \varphi^* X_2 \simeq \varphi^* (X_1 \otimesL X_2). \]
+\end{lemma}
+\begin{proof}
+	同构 $\varphi^* \Bbbk \simeq \Bbbk$ (或等式) 及其种种相容性当然是平凡的. 其次, 若 $G$-模 $M$ 作为 $\Bbbk$-模平坦, 则 $\varphi^* M$ 亦然. 因为 $\otimesL$ 可通过对 $\Bbbk$ 平坦的解消来计算, 由此得到典范同构 $\varphi^* X_1 \otimesL \varphi^* X_2 \simeq \varphi^* (X_1 \otimesL X_2)$, 方式是化约到 $X_1$ 和 $X_2$ 逐次在 $\Bbbk$ 上平坦的情形.
+\end{proof}
+
+现在可以在导出范畴中表述杯积的初始版本, 它是张量积运算的简单反映. 暂且记 \eqref{eqn:G-mod-tensor-unit} 给出的同构 $\Bbbk \rightiso \Bbbk \otimes \Bbbk = \Bbbk \otimesL \Bbbk$ 为 $\delta$.
+
+\begin{definition}\label{def:group-cup-1}
+	设 $X_1$ 和 $X_2$ 为 $\cate{D}^-(G)$ 的对象. 定义 $\Bbbk$-模同态
+	\[ \overset{\mathrm{L}}{\cup}: \Hom_{\cate{D}(G)}(\Bbbk, X_1) \otimes \Hom_{\cate{D}(G)}(\Bbbk, X_2) \to \Hom_{\cate{D}(G)}\left(\Bbbk, X_1 \otimesL X_2\right) \]
+	如下: $\alpha \overset{\mathrm{L}}{\cup} \beta$ 是合成态射
+	\[ \Bbbk \xrightarrow{\delta} \Bbbk \otimes \Bbbk = \Bbbk \otimesL \Bbbk \xrightarrow{\alpha \otimesL \beta} X_1 \otimesL X_2. \]
+\end{definition}
+
+显然 $(\alpha, \beta) \mapsto \alpha \overset{\mathrm{L}}{\cup} \beta$ 是双线性映射, 故定义合理. 它也可以理解为态射的合成运算. 诚然, 基于幺半范畴的一般性质, 容易看出 $\alpha \overset{\mathrm{L}}{\cup} \beta$ 等于以下合成
+\[\begin{tikzcd}[row sep=small]
+	\Hom_{\cate{D}(G)}(\Bbbk, X_1) \otimes \Hom_{\cate{D}(G)}(\Bbbk, X_2) \arrow[d] \\
+	\Hom_{\cate{D}(G)}\left( \Bbbk \otimes X_2, X_1 \otimesL X_2\right) \otimes \Hom_{\cate{D}(G)}(\Bbbk \otimes \Bbbk, \Bbbk \otimes X_2) \arrow[d] \\
+	\Hom_{\cate{D}(G)}\left(\Bbbk, X_1 \otimesL X_2 \right)
+\end{tikzcd}\]
+其第一段基于 \eqref{eqn:G-mod-tensor-unit}, 第二段是态射在 $\cate{D}(G)$ 中的合成.
+
+以下性质是定义 \ref{def:group-cup-1} 或上述改写的形式结论, 其中 $X_i$ 和 $X$ 皆默认为 $\cate{D}^-(G)$ 的对象.
+
+\begin{description}
+	\item[函子性] 运算 $\overset{\mathrm{L}}{\cup}$ 是关于 $X_1$ 和 $X_2$ 的函子.
+	\item[幺元] 基于 \eqref{eqn:G-mod-tensor-unit} 记录的同构, $\identity \in \End_{\cate{D}(G)}(\Bbbk)$ 通过 $\overset{\mathrm{L}}{\cup}$ 对 $\Hom_{\cate{D}(G)}(\Bbbk, X)$ 的左和右作用都是恒等.
+	\item[结合律] 设 $\alpha_i \in \Hom_{\cate{D}(G)}(\Bbbk, X_i)$, 其中 $i = 1, 2, 3$. 精确到 $\otimesL$ 的结合约束,
+	\[ \alpha_1 \overset{\mathrm{L}}{\cup} (\alpha_2 \overset{\mathrm{L}}{\cup} \alpha_3) = (\alpha_1 \overset{\mathrm{L}}{\cup} \alpha_2) \overset{\mathrm{L}}{\cup} \alpha_3 . \]
+	\item[交换律] 在交换约束 $X_1 \otimesL X_2 \rightiso X_2 \otimesL X_1$ 之下, $\alpha \overset{\mathrm{L}}{\cup} \beta$ 被映为 $\beta \overset{\mathrm{L}}{\cup} \alpha$. 为此, 应用定义 \ref{def:group-cup-1} 和下述交换图表即可
+	\[\begin{tikzcd}
+		\Bbbk \arrow[r, "\delta"] \arrow[rd, "\delta"'] & \Bbbk \otimesL \Bbbk \arrow[d] \arrow[r, "{\alpha \otimesL \beta}"] & X_1 \otimesL X_2 \arrow[d] \\
+		& \Bbbk \otimesL \Bbbk \arrow[r, "{\beta \otimesL \alpha}"] & X_2 \otimesL X_1
+	\end{tikzcd}\]
+	所有纵向箭头都是 $\otimesL$ 的交换约束. 这是关于对称幺半范畴的一般事实.
+\end{description}
+
+我们进一步在 $G$-模的上同调层次定义杯积, 这会涉及一些正负号.
+
+\begin{definition}[杯积]\label{def:group-cup-2}
+	\index{beiji@杯积 (cup product)}
+	\index[sym1]{cup@$\cup$}
+	设 $M_1$ 和 $M_2$ 是 $G$-模, $p_1, p_2 \in \Z$, 在定义 \ref{def:group-cup-1} 中取 $X_i = M_i[p_i]$, 并进一步将 $\overset{\mathrm{L}}{\cup}$ 和典范态射
+	\begin{align*}
+		M_1[p_1] \otimesL M_2[p_2] & \xrightarrow{\text{can}} M_1[p_1] \otimes M_2[p_2] \\
+		& \xrightarrow[\sim]{\theta'} (M_1[p_1] \otimes M_2) [p_2] \xrightarrow[\sim]{\theta} (M_1 \otimes M_2)[p_1 + p_2]
+	\end{align*}
+	在 $\cate{D}(G)$ 中合成, 其中
+	\begin{compactitem}
+		\item $\mathrm{can}$ 是左导出双函子自带的典范态射,
+		\item 典范同构 $\theta$ 和 $
+		\theta'$ 的定义如命题 \ref{prop:tot-shift},
+	\end{compactitem}
+	由之得到上同调的杯积
+	\[ \cup: \Ext^{p_1}_G(\Bbbk, M_1) \otimes \Ext^{p_2}_G(\Bbbk, M_2) \to \Ext^{p_1 + p_2}_G(\Bbbk, M_1 \otimes M_2), \]
+	或写作 $\cup: \Hm^{p_1}(G, M_1) \otimes \Hm^{p_2}(G, M_2) \to \Hm^{p_1 + p_2}(G, M_1 \otimes M_2)$.
+\end{definition}
+
+当 $p_1 = p_2 = 0$ 时, 杯积相当于将两个态射 $\Bbbk \to M_1$ 和 $\Bbbk \to M_2$ 在 $G\dcate{Mod}$ 中取 $\Bbbk \simeq \Bbbk \otimes \Bbbk \to M_1 \otimes M_2$, 结果不外是自明的映射 $(M_1)^G \otimes (M_2)^G \to (M_1 \otimes M_2)^G$.
+
+回查定义可见定义涉及的 $M_1[p_1] \otimes M_2[p_2] \rightiso (M_1 \otimes M_2)[p_1 + p_2]$ 有具体表法: 在唯一的非零项 $M_1[p_1]^{-p_1} \otimes M_2[p_2]^{-p_2} = M_1 \otimes M_2$ 上, 其作用是 $(-1)^{p_1 p_2}$; 正负号来自 $\theta'$.
+
+除了业已在导出范畴中表述的函子性和幺元律, 杯积还具有下述性质.
+
+\begin{description}
+	\item[结合律] 给定 $\alpha_i \in \Hm^{p_i}(G, M_i)$, 其中 $i=1,2,3$, 我们有
+	\[ (\alpha_1 \cup \alpha_2) \cup \alpha_3 = \alpha_1 \cup (\alpha_2 \cup \alpha_3). \]
+	这点容易从 $\overset{\mathrm{L}}{\cup}$ 的结合律推导, 但仍须留心之前提及的正负号; 事实上, 两边涉及的符号皆等于 $(-1)^{p_1 p_2 + p_2 p_3 + p_1 p_3}$.
+	
+	\item[分次交换律] 命 $c: M_1 \otimes M_2 \rightiso M_2 \otimes M_1$ 为 $x \otimes y \mapsto y \otimes x$ 确定的同构, 则对所有 $\alpha \in \Hm^p(G, M_1)$ 和 $\beta \in \Hm^q(G, M_2)$, 我们有
+	\[ \Hm^{p+q}(c)(\alpha \cup \beta) = (-1)^{pq} \beta \cup \alpha. \]
+	
+	诚然, 基于 $\overset{\mathrm{L}}{\cup}$ 的交换律, 问题化为验证下图交换
+	\[\begin{tikzcd}
+		{M_1[p]} \otimesL {M_2[q]} \arrow[d] \arrow[r, "\text{can}"] & {M_1[p]} \otimes {M_2[q]} \arrow[d] \arrow[r, "\text{先提出 $[q]$}" inner sep=0.6em] & (M_1 \otimes M_2){[p+q]} \arrow[d, "{(-1)^{pq} c[p+q]}"] \\
+		{M_2[q]} \otimesL {M_1[p]} \arrow[r, "\text{can}"'] & {M_2[q]} \otimes {M_1[p]} \arrow[r, "\text{先提出 $[p]$}"' inner sep=0.6em] & (M_2 \otimes M_1) {[p+q]}
+	\end{tikzcd}\]
+	其中左侧和中间的垂直箭头是张量积在导出范畴或复形范畴中的交换约束. 左方块当然地交换; 至于右方块, 命题 \ref{prop:tot-shift} 的最后一部分表明下图交换
+	\[\begin{tikzcd}[column sep=large]
+		{M_1[p]} \otimes {M_2[q]} \arrow[d] \arrow[r, "\text{先提出 $[q]$}"] & (M_1 \otimes M_2) {[p+q]} \arrow[d, "{c[p+q]}"] \\
+		{M_2[q]} \otimes {M_1[p]} \arrow[r, "\text{先提出 $[q]$}"'] & (M_2 \otimes M_1) {[p+q]}.
+	\end{tikzcd}\]
+	然而根据命题 \ref{prop:tot-shift} 的反交换图表 (及其后的简单推广), 从 $M_2[q] \otimes M_1[p]$ 先提出 $[q]$ 和先提出 $[p]$ 所给出的 $M_2[q] \otimes M_1[p] \rightiso (M_2 \otimes M_1)[p+q]$ 相差 $(-1)^{pq}$, 这就表明原图的右侧方块交换.
+
+	\item[上同调代数] 特别地, $\Hm^\bullet(G, \Bbbk) := \bigoplus_p \Hm^p(G, \Bbbk)$ 对 $\cup$ 成为分次 $\Bbbk$-代数, 其乘法服从上述分次交换律 $\beta \cup \alpha = (-1)^{pq} \alpha \cup \beta$. 事实上, 可以证明 $\Hm^\bullet(G, \Bbbk)$ 等同于定义 \ref{def:Ext-algebra} 的分次 $\Bbbk$-代数
+	\[ \Ext_G(\Bbbk) := \bigoplus_p \Ext^p_G(\Bbbk, \Bbbk) = \bigoplus_p \Hm^p(G, \Bbbk). \]
+	% Reference: Brown, Cohomology of Groups, V.4.6 Theorem.
+	
+	\item[双模结构]
+	相对于 $\cup$ 运算, $\bigoplus_p \Hm^p(G, M)$ 成为 $\Hm^\bullet(G, \Bbbk)$ 双边作用下的分次双模.
+\end{description}
+
+群同态 $\varphi: H \to G$ 诱导上同调代数的同态 $\varphi^*: \Hm^\bullet(G, \Bbbk) \to \Hm^\bullet(H, \Bbbk)$, 这是下一则结果的直接结论.
+
+\begin{proposition}[群的变换]
+	沿用定义 \ref{def:group-cup-2} 的符号. 设 $\varphi: H \to G$ 为群同态. 命 $\varphi^*: \Hm^{p_i}(G, M_i) \to \Hm^{p_i}(H, \varphi^* M_i)$ 为 \eqref{eqn:change-of-group-coh} 的典范同态 ($i=1,2$), 则
+	\[ \varphi^*(\alpha \cup \beta) = \varphi^* \alpha \cup \varphi^* \beta. \]
+	
+	作为特例, 当 $H \subset G$ 是子群时, \S\ref{sec:group-finite-index} 探讨的限制映射 $\mathrm{res}^n: \Hm^n(G, M) \to \Hm^n(H, M)$ 保杯积.
+\end{proposition}
+\begin{proof}
+	对定义 \ref{def:group-cup-1} 的每段态射取 $\varphi^*$, 然后运用 $\varphi^*$ 是幺半函子这一事实 (命题 \ref{prop:group-pullback-monoidal}), 可于 $\Ext^{p_1 + p_2}_H(\Bbbk, \varphi^* M_1 \otimes \varphi^* M_2)$ 中得到
+	\begin{multline*}
+		\varphi^*(\alpha \cup \beta) \xlongequal{\text{等同于}} \;\text{合成态射} \\
+		\left[ \Bbbk \xrightarrow{\delta} \Bbbk \otimesL \Bbbk \xrightarrow{\varphi^* \alpha \otimesL \varphi^* \beta} \varphi^* M_1[p_1] \otimesL \varphi^* M_2[p_2] \to (\varphi^* M_1 \otimes \varphi^* M_2)[p_1 + p_2] \right].
+	\end{multline*}
+	上式的 $\varphi^* \alpha \in \Ext^{p_1}_H(\Bbbk, \varphi^* M_1) \simeq \Hom_H(\varphi^* \Bbbk, \varphi^* M_1[p_1])$ 是对态射 $\alpha$ 应用函子 $\varphi^*$ 的产物, 但根据注记 \ref{rem:change-of-group-Yoneda}, 它也是 $\alpha$ 对典范同态 \eqref{eqn:change-of-group-coh} 的像; 对 $\varphi^* \beta$ 亦同. 综上即得 $\varphi^* \alpha \cup \varphi^* \beta$.
+\end{proof}
+
+下一个目标是以命题 \ref{prop:groupcoh-cochain} 的标准复形 $C(G, M)$ 描述杯积. 这不仅更具体, 还能将杯积典范地提升到复形层次. 首先给出定义, 稍后的命题 \ref{prop:std-cplx-cup} 将说明它和先前版本等同.
+
+\begin{definition-proposition}[标准复形上的杯积]\label{def:group-cup-3}
+	\index{beiji}
+	设 $M_1$ 和 $M_2$ 为 $G$-模. 对所有 $p_1, p_2 \in \Z$ 定义同态
+	\[\begin{tikzcd}[row sep=small, column sep=small]
+		\cup: C^{p_1}(G, M_1) \otimes C^{p_2}(G, M_2) \arrow[r] & C^{p_1 + p_2}(G, M_1 \otimes M_2) \\
+		f_1 \otimes f_2 \arrow[mapsto, r] & f_1(g_1, \ldots, g_{p_1}) \otimes (g_1 \cdots g_{p_1} f_2(g_{p_1 + 1}, \ldots, g_{p_1 + p_2}))
+	\end{tikzcd}\]
+	其中 $g_1, \ldots, g_{p_1 + p_2} \in G$.
+	\begin{enumerate}[(i)]
+		\item 它们满足结合律 (考虑 $M_1$, $M_2$, $M_3$) 以及 Leibniz 律
+		\[ d(f_1 \cup f_2) = df_1 \cup f_2 + (-1)^{p_1} f_1 \cup d f_2; \]
+		特别地, $\cup$ 给出复形之间的态射 $\cup: C(G, M_1) \otimes C(G, M_2) \to C(G, M_1 \otimes M_2)$.
+		\item 注记 \ref{rem:nor-cochain} 介绍的正规化标准复形对 $\cup$ 封闭, 这给出态射
+		\[ \cup: \overline{C}(G, M_1) \otimes \overline{C}(G, M_2) \to \overline{C}(G, M_1 \otimes M_2). \]
+	\end{enumerate}
+\end{definition-proposition}
+\begin{proof}
+	结合律从 $\cup$ 的公式一眼看穿, 而 Leibniz 律也不难检验: 设
+	\[ \varphi \in C^p(G, M_1), \quad \psi \in C^q(G, M_2), \]
+	则在
+	\begin{multline*}
+		(d\varphi \cup \psi)(g_1, \ldots, g_{p+q+1}) = \\
+		\left( g_1 \varphi(g_2, \ldots, g_{p+1}) + \sum_{k=1}^p (-1)^k \varphi(\ldots, g_k g_{k+1}, \ldots) + (-1)^{p+1} \varphi(g_1, \ldots, g_p) \right) \\
+		\otimes (g_1 \cdots g_{p+1}) \psi(g_{p+2}, \ldots, g_{p+q+1})
+	\end{multline*}
+	和
+	\begin{multline*}
+		(-1)^p (\varphi \cup d\psi)(g_1, \ldots, g_{p+q+1}) = \varphi(g_1, \ldots, g_p) \otimes \\
+		(g_1 \cdots g_p) \bigg( (-1)^p g_{p+1} \psi(g_{p+2}, \ldots, g_{p+q+1}) + \sum_{k=p+1}^{p+q} (-1)^k \psi(\ldots, g_k g_{k+1}, \ldots) \\
+		+ (-1)^{p+q+1} \psi(g_{p+1}, \ldots, g_{p+q}) \bigg)
+	\end{multline*}
+	中, $\varphi(g_1, \ldots, g_p) \otimes (g_1 \cdots g_{p+1}) \psi(g_{p+2}, \ldots)$ 分别作为末项和首项相互抵消. 两式的和遂等于 $d(\varphi \cup \psi)(g_1, \ldots, g_{p+q+1})$.
+	
+	注意到 Leibniz 律等价于说当 $p_1, p_2$ 变动, $\cup$ 给出复形的态射. 综之 (i) 得证.
+	
+	若 $f_1$ 或 $f_2$ 来自正规化标准复形, 则当 $g_1, \ldots, g_{p_1 + p_2}$ 其中任一者为 $1_G$ 时, 定义蕴涵 $(f_1 \cup f_2)(g_1, \ldots, g_{p_1 + p_2}) = 0$. 这也完成了 (ii) 的证明.
+\end{proof}
+
+忆及标准复形 $C(G, M)$ 的实质是以自由解消 $\mathsf{L} \to \Bbbk$ 来计算 $\RHom_G(\Bbbk, M) = \Hom^\bullet_G(\mathsf{L}, M)$, 其中 $M$ 是 $G$-模. 更精确地说, 我们对 $\mathsf{L}$ 采用定义 \ref{def:resolution-trivial-module} 中的链复形 $(\mathsf{L}_n, \partial_n)_n$; 若取 $\mathsf{L}^n := \mathsf{L}_{-n}$ 但保持态射 $\partial_n$ 不变, 便能将 $\mathsf{L}$ 视同复形.
+
+\begin{lemma}\label{prop:cup-resolution}
+	记定义 \ref{def:resolution-trivial-module} 提供的自由解消为 $\epsilon: \mathsf{L} \to \Bbbk$, 则:
+	\begin{enumerate}[(i)]
+		\item $\epsilon \otimes \epsilon: \mathsf{L} \otimes \mathsf{L} \to \Bbbk \otimes \Bbbk \simeq \Bbbk$ 是 $G$-模 $\Bbbk$ 的投射解消;
+		\item 可定义复形的态射 $\Delta: \mathsf{L} \to \mathsf{L} \otimes \mathsf{L}$, 使得它在 $-n$ 次项是
+		\[\begin{tikzcd}[row sep=tiny]
+			\Delta_n: \mathsf{L}_n \arrow[r] & \bigoplus_{p=0}^n \mathsf{L}_p \otimes \mathsf{L}_{n-p} \\
+			(g_0, \ldots, g_n) \arrow[mapsto, r] & \left( (-1)^{p(n-p)} (g_0, \ldots, g_p) \otimes (g_p, \ldots, g_n) \right)_{p=0}^n
+		\end{tikzcd}\]
+		而且使下图交换:
+		\[\begin{tikzcd}
+			\mathsf{L} \arrow[r, "\Delta"] \arrow[d, "\epsilon"'] & \mathsf{L} \otimes \mathsf{L} \arrow[d, "{\epsilon \otimes \epsilon}"] \\
+			\Bbbk \arrow[r, "\sim", "\delta"'] & \Bbbk \otimes \Bbbk .
+		\end{tikzcd}\]
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	对于 (i), 观察到 $\mathsf{L} \otimes \mathsf{L}$ 的每一项依然是投射 $G$-模 (可用命题 \ref{prop:group-tensor-proj}). 为了证 $\epsilon \otimes \epsilon$ 是拟同构, 将之分解为
+	\[ \mathsf{L} \otimes \mathsf{L} \to \mathsf{L} \otimes \Bbbk \to \Bbbk \otimes \Bbbk. \]
+	因为 $\mathsf{L}$ 由平坦 $\Bbbk$-模构成, 两段皆是拟同构.
+	
+	对于 (ii), 显然每个 $\Delta_n$ 皆是 $G$-模同态. 分不同情况直接计算足以验证 $\Delta$ 确实是复形之间的态射. 图表交换性则是平凡的.
+\end{proof}
+
+和拓扑学中的杯积相对照, 此处的 $\Delta$ 不妨类比于空间的``对角嵌入''. 它也可以从 \S\ref{sec:bisimplicial} 将要介绍的 Alexander--Whitney 映射来诠释, 详见\CHref{sec:simplicial}习题.
+
+注意到由于 $\epsilon \otimes \epsilon$ 是拟同构, 复形的一般理论说明必存在使 (ii) 的图表交换的态射 $\mathsf{L} \to \mathsf{L} \otimes \mathsf{L}$, 而且它精确到同伦是唯一的 (定理 \ref{prop:resolution-homotopy}). 引理 \ref{prop:cup-resolution} (ii) 的价值在于其明确公式.
+
+回到定义 \ref{def:group-cup-1} 对 $\overset{\mathrm{L}}{\cup}$ 的描述. 将 $\cate{D}(G)$ 的态射 $\alpha$ 和 $\beta$ 分别以复形的态射 $\mathsf{L} \to X_1$ 和 $\mathsf{L} \to X_2$ 表出, 此处 $X_i$ 为上有界复形, 并且以引理 \ref{prop:cup-resolution} 将 $\delta$ 提升到 $\Delta$. 于是 $\alpha \overset{\mathrm{L}}{\cup} \beta \in \Hom_{\cate{D}(G)}(\Bbbk, X_1 \otimesL X_2)$ 和典范态射 $X_1 \otimesL X_2 \xrightarrow{\text{can}} X_1 \otimes X_2$ 的合成具体表为复形态射的合成
+\[\begin{tikzcd}[row sep=small]
+	\mathsf{L} \arrow[r, "\Delta"] & \mathsf{L} \otimes \mathsf{L} \arrow[r, "{\alpha \otimes \beta}"] & X_1 \otimes X_2. \\
+	& \mathsf{L} \otimesL \mathsf{L} \arrow[equal, u] &
+\end{tikzcd}\]
+
+对于 $G$-模 $M_i$ 和 $p_i \in \Z$, 我们有 $\Hm^{p_i} \Hom^\bullet(\mathsf{L}, M_i) \simeq \Hm^{p_i}(G, M_i)$, 其中 $i=1,2$.
+
+接着以 $\Hom$ 复形诠释杯积. 对任意由 $G$-模构成的复形 $X, Y, X', Y'$ 和 $m, n \in \Z$ 定义 $\Bbbk$-模同态
+\begin{equation}\label{eqn:group-cup-3-aux}
+	\mu^{m, n}: \Hom_G^m(X, Y) \otimes \Hom_G^n(X', Y') \to \Hom_G^{m+n}(X \otimes X', Y \otimes Y'),
+\end{equation}
+方式如下: 给定左侧的元素 $f \otimes g$, 命
+\begin{gather*}
+	\mu^{m, n}(f \otimes g)(x \otimes x') := (-1)^{pn} f(x) \otimes g(x') \; \in Y^{p+m} \otimes (Y')^{q+n}, \\
+	x \otimes x' \in X^p \otimes (X')^q .
+\end{gather*}
+琐碎而不困难的验证说明全体 $\mu^{m, n}$ 给出复形的同态
+\[ \mu: \Hom_G^\bullet(X, Y) \otimes \Hom_G^\bullet(X', Y') \to \Hom_G^\bullet(X \otimes X', Y \otimes Y'), \]
+换言之 \eqref{eqn:group-cup-3-aux} 满足 Leibniz 律. 定义涉及的符号 $(-1)^{pn}$ 可由 \S\ref{sec:alg-in-monoidal-cat} 和\CHref{sec:monads}习题将讨论的 Koszul 符号律来解释, 这是因为公式涉及 $g$ 和 $x$ 的换位操作.
+
+\begin{lemma}\label{prop:std-cplx-cup-aux}
+	将上述操作施于 $X = X' = \mathsf{L}$ 和 $Y = M_1$, $Y' = M_2$, 则复形的态射
+	\begin{multline}\label{eqn:group-cup-3-aux1}
+		\Hom^\bullet_G(\mathsf{L}, M_1) \otimes \Hom^\bullet_G(\mathsf{L}, M_2) \xrightarrow{\mu} \Hom^\bullet_G(\mathsf{L} \otimes \mathsf{L}, M_1 \otimes M_2) \\
+		\xrightarrow{\Delta^*} \Hom^\bullet(\mathsf{L}, M_1 \otimes M_2)
+	\end{multline}
+	在上同调层次给出定义 \ref{def:group-cup-2} 的杯积.
+\end{lemma}
+\begin{proof}
+	对 $i=1,2$ 以引理 \ref{prop:Hom-cplx-d-translate} 将 $\Hom^{p_i}_G(\mathsf{L}, M_i)$ 等同于 $\Hom^0_G(\mathsf{L}, M_i[p_i])$, 选定其中满足 $d_{\Hom^\bullet} f_i = 0$ 的 $f_i$, 并考察 $f_1 \otimes f_2$ 对 \eqref{eqn:group-cup-3-aux} 的像. 由于 $f_i$ 只在 $\mathsf{L}_{p_i}$ 上方能非零, 此像涉及的正负号是 $(-1)^{p_1 p_2}$, 恰好符合定义 \ref{def:group-cup-2} 的正负号. 其余验证是平凡的.
+\end{proof}
+
+回忆到 $\Hom^\bullet(\mathsf{L}, M_i) \simeq C(G, M_i)$, 从而 $\Hm^{p_i}(G, M_i) \simeq \Hm^{p_i}(C(G, M_i))$, 具体映法如命题 \ref{prop:groupcoh-cochain} 证明所示 ($i=1,2$).
+
+\begin{proposition}\label{prop:std-cplx-cup}
+	定义 \ref{def:group-cup-2} 的杯积等于合成同态
+	\begin{multline*}
+		\Hm^{p_1}(G, M_1) \otimes \Hm^{p_2}(G, M_2) \simeq \Hm^{p_1}(C(G, M_1)) \otimes \Hm^{p_2}(C(G, M_2)) \\
+		\xrightarrow{\kappa} \Hm^{p_1 + p_2}\left( C(G, M_1) \otimes C(G, M_2) \right) \\
+		\xrightarrow{\Hm^{p_1 + p_2}(\cup)} \Hm^{p_1 + p_2}(C(G, M_1 \otimes M_2)) \simeq \Hm^{p_1 + p_2}(G, M_1 \otimes M_2),
+	\end{multline*}
+	其中的典范态射 $\kappa$ 详见定理 \ref{prop:Kunneth-homology} 之上的说明. 若改用正规化标准复形, 结论相同.
+\end{proposition}
+\begin{proof}
+	按照引理 \ref{prop:std-cplx-cup-aux} 的方式诠释杯积. 考虑 $f_i \in C^{p_i}(G, M_i)$. 对于 $g_1, \ldots, g_{p_1 + p_2} \in G$, 元素
+	\[ (g_1 | \cdots | g_{p_1 + p_2}) := \left(1_G, g_{[1, 1]}, \ldots, g_{[1, p_1 + p_2]} \right) \in \mathsf{L}_{p_1 + p_2} \]
+	取 $\Delta$ 后在 $\mathsf{L}_{p_1} \otimes \mathsf{L}_{p_2}$ 中的分量是
+	\begin{multline*}
+		(-1)^{p_1 p_2} \left( 1_G, \ldots, g_{[1, p_1]}\right) \otimes \left(g_{[1, p_1]}, \ldots, g_{[1, p_1 + p_2]} \right) \\
+		= (-1)^{p_1 p_2} (g_1 | \cdots | g_p) \otimes g_1 \cdots g_{p_1} \left( g_{p_1 + 1} |\cdots| g_{p_1 + p_2} \right).
+	\end{multline*}
+
+	相对于 \eqref{eqn:group-cup-3-aux} 给出的 $\mu^{p_1, p_2}(f_1 \otimes f_2)$, 此元素被映为
+	\[ f_1(g_1, \ldots, g_{p_1}) \otimes g_1 \cdots g_{p_1} f_2(g_{p_1 + 1}, \cdots, g_{p_1 + p_2}). \]
+	因此 \eqref{eqn:group-cup-3-aux1} 的操作确实兼容于 $C(G, M)$ 上的 $\cup$. 正规化标准复形的版本无异.
+\end{proof}
+
+注意到尽管杯积在标准复形上的描述直接明了, 但是分次交换律难以由此直接推导, 在标准复形的框架下需要比较迂回的证明. 本书不采取这一进路.
+
+\begin{remark}
+	定义--命题 \ref{def:group-cup-3} 所揭示的结构严格丰富于定义 \ref{def:group-cup-2} 的上同调版本, 因为它向整个标准复形赋予微分分次结构; 因此 $C(G, \Bbbk)$ 对 $\cup$ 成为定义 \ref{def:dg-algebra-preview} 或 \ref{def:dg-algebra} 所谓的微分分次代数; 改取 $\overline{C}(G, \Bbbk)$ 亦同. 上同调版本的杯积仅是对之取 $\Hm^\bullet$ 的产物, 有分次无微分.
+\end{remark}
+
+标准复形上的杯积具有函子性: 设 $\varphi: H \to G$ 为群同态, $M_i$ (或 $N_i$) 为 $G$-模 (或 $H$-模), 同态 $f_i: M_i \to N_i$ 对 $\varphi$ 等变 ($i=1,2$, 见定义 \ref{def:group-equivariance}), 则下图交换:
+\[\begin{tikzcd}
+	C(G, M_1) \otimes C(G, M_2) \arrow[r, "\cup"] \arrow[d] & C(G, M_1 \otimes M_2) \arrow[d] \\
+	C(H, N_1) \otimes C(H, N_2) \arrow[r, "\cup"'] & C(H, N_1 \otimes N_2);
+\end{tikzcd}\]
+垂直箭头来自于等变同态 $f_1, f_2$ 和 $f_1 \otimes f_2$, 见 命题 \ref{prop:grp-equiv}. 正规化标准复形继承此性质.
+
+\begin{corollary}\label{prop:cup-ses}
+	设有 $G$-模短正合列 $0 \to M'_1 \xrightarrow{f} M_1 \xrightarrow{g} M''_1 \to 0$, 使得相应的
+	\[ 0 \to M'_1 \otimes M_2 \to M_1 \otimes M_2 \to M''_1 \otimes M_2 \to 0 \]
+	仍然短正合. 记上同调的连接同态为 $\delta^p: \Hm^p(G, M''_1) \to \Hm^{p+1}(G, M'_1)$, 依此类推, 则
+	\[ (\delta^p \alpha) \cup \beta = \delta^{p+q}(\alpha \cup \beta), \quad \alpha \in \Hm^p(G, M''_1), \; \beta \in \Hm^q(G, M_2). \]
+
+	若改取短正合列 $0 \to M'_2 \to M_2 \to M''_2 \to 0$ 使得
+	\[ 0 \to M_1 \otimes M'_2 \to M_1 \otimes M_2 \to M_1 \otimes M''_2 \to 0 \]
+	仍然正合, 则有
+	\[ \alpha \cup (\delta^q \beta) = (-1)^p \delta^{p+q} (\alpha \cup \beta). \]
+\end{corollary}
+\begin{proof}
+	以标准复形上的杯积处理第一种情形. 取 $\alpha$ 的代表元 $a'' \in C^p(G, M''_1)$. 回顾 $\delta^p \alpha$ 的具体构造 (蛇形引理): 存在 $a \in C^p(G, M_1)$ 使得 $a \mapsto a''$, 而 $da'' = 0$ 蕴涵 $da$ 来自某个 $a' \in C^{p+1}(G, M'_1)$, 后者的上同调类即 $\delta^p \alpha$. 示意图:
+	\[\begin{tikzcd}
+		& a \arrow[mapsto, r] \arrow[mapsto, d, "d"'] & a'' \\
+		a' \arrow[mapsto, r] & da &
+	\end{tikzcd}\]
+	
+	接着取 $\beta$ 的代表元 $b \in C^q(G, M_2)$. 由 $db = 0$ 和 Leibniz 律可得 $d(a'' \cup b) = 0$ 和
+	\[\begin{tikzcd}
+		& a \cup b \arrow[mapsto, r] \arrow[mapsto, d, "d"'] & a'' \cup b \\
+		a' \cup b \arrow[mapsto, r] & da \cup b &
+	\end{tikzcd}\]
+	这蕴涵 $a' \cup b$ 的上同调类即 $\delta^{p+q}(\alpha \cup \beta)$.
+	
+	第二种情形的论证是类似的, 或由分次交换律化约到前一种情形.
+\end{proof}	
+
+作为应用, 现在来阐明定义--命题 \ref{def:cor} 介绍的余限制 $\mathrm{cor}^n$ 和杯积的关系.
+
+\begin{proposition}[投影公式]
+	设 $M_1$ 和 $M_2$ 为 $G$-模, $H$ 为 $G$ 的子群, $(G:H)$ 有限. 对所有 $\alpha \in \Hm^p(G, M_1)$ 和 $\beta \in \Hm^q(H, M_2)$, 我们有 $\Hm^{p+q}(G, M_1 \otimes M_2)$ 中的等式
+	\begin{equation*}
+		\mathrm{cor}^{p+q}(\mathrm{res}^p(\alpha) \cup \beta) = \alpha \cup \mathrm{cor}^q(\beta);
+	\end{equation*}
+	左右位置交换亦同.
+\end{proposition}
+\begin{proof}
+	首先处理 $p=q=0$ 情形. 回忆到 $\mathrm{cor}^0$ 化为 $\nu^{G|H}: M_i^H \to M_i^G$, 映 $x \in M_i^H$ 为 $\sum_{gH} gx \in M_i^G$. 问题遂化为证下图交换
+	\[\begin{tikzcd}
+		M_1^G \otimes M_2^H \arrow[rr, "{\identity \otimes \nu^{G|H}}"] \arrow[d] & & M_1^G \otimes M_2^G \arrow[d, "\text{自明}"] \\
+		M_1^H \otimes M_2^H \arrow[r, "\text{自明}"'] & (M_1 \otimes M_2)^H \arrow[r, "{\nu^{G|H}}"'] & (M_1 \otimes M_2)^G .
+	\end{tikzcd}\]
+	
+	这再容易不过: 设 $x \in M_1^G$ 而 $y \in M_2^H$, 则 $\nu^{G|H}(x \otimes y) = \sum_{gH} gx \otimes gy = \sum_{gH} x \otimes gy = x \otimes \nu^{G|H}(y)$.
+	
+	对于 $p \geq 1$ 或 $q \geq 1$ 的情形, 我们用移维递归地论证. 兹以 $p \geq 1$ 情形为例, 考虑 $G$-模的短正合列
+	\[ 0 \to M_1 \to \Ind^G_{\{1\}} M_1 \to M'_1 \to 0, \]
+	第一段映 $x$ 为 $[g \mapsto gx]$, 其中 $g \in G$, 它作为 $\Bbbk$-模同态有左逆 $\varphi \mapsto \varphi(1_G)$, 于是对短正合列取 $\otimes M_2$ 依然正合. 另一方面, 当 $n \geq 1$ 时 $\Hm^n(G, \Ind^G_{\{1\}} (M_1)) \simeq \Hm^n(\{1\}, M_1) = 0$ (定理 \ref{prop:Shapiro}), 故连接同态给出满射
+	\[ \delta_G^{p-1}: \Hm^{p-1}(G, M'_1) \twoheadrightarrow \Hm^p(G, M_1). \]
+	
+	若将短正合列限制到 $H$ 上, 则仍有连接同态 $\delta_H^{p-1}: \Hm^{p-1}(H, M'_1) \to \Hm^p(H, M_1)$, 依此类推. 留意到 $\Res^G_H$ 和 $\otimes M_2$ 是相交换的操作.
+	
+	于是不妨设 $\alpha = \delta_G^{p-1}(\alpha')$. 应用 $\mathrm{res}$ 和 $\mathrm{cor}$ 与连接同态的兼容性可得
+	\begin{multline*}
+		\mathrm{cor}^{p+q}\left( \mathrm{res}^p(\delta_G^{p-1} \alpha') \cup \beta \right) = \mathrm{cor}^{p+q}\left( \delta_H^{p-1} (\mathrm{res}^{p-1} \alpha') \cup \beta \right) \\
+		\xlongequal{\text{推论 \ref{prop:cup-ses}}} \mathrm{cor}^{p+q} \delta_H^{p+q-1} \left( (\mathrm{res}^{p-1} \alpha') \cup \beta \right) \\
+		= \delta^{p+q-1}_G \mathrm{cor}^{p+q-1} \left( (\mathrm{res}^{p-1} \alpha') \cup \beta \right)
+		\xlongequal{\text{递归}} \delta^{p+q-1}_G \left(\alpha' \cup \mathrm{cor}^q \beta\right) \\
+		\xlongequal{\text{推论 \ref{prop:cup-ses}}} (\delta^{p-1}_G \alpha') \cup \mathrm{cor}^q \beta .
+	\end{multline*}
+	
+	对 $q$ 的递归是全然相似的. 至于左右交换的版本则可从分次交换律来推导.
+\end{proof}
+
+\begin{example}\label{eg:cup-periodicity}
+	令 $C_m$ 为 $m$ 阶循环群 ($m \in \Z_{\geq 1}$). 取系数环为 $\Bbbk = \Z$, 以下说明如何以杯积来理解命题 \ref{prop:group-cohomology-cyclic} 蕴涵的周期同构 $\Hm^n(C_m, A) \simeq \Hm^{n+2}(C_m, A)$, 其中 $A$ 是任意 $C_m$-模而 $n \geq 1$.
+	
+	取 $t$ 为 $\Hm^2(C_m, \Z) \simeq \Z/m\Z$ 的任意生成元. 兹断言当 $n \geq 1$ 时, 杯积诱导同构
+	\[ t \cup (\cdot): \Hm^n(C_m, A) \rightiso \Hm^{n+2}(C_m, \Bbbk \otimes A) = \Hm^{n+2}(C_m, A). \]
+	
+	选定 $C_m$ 的生成元 $\sigma$, 我们有以下短正合列
+	\[\begin{array}{cc}
+		0 \to \mathfrak{I} \to \Z[C_m] \to \Z \to 0, & 0 \to \mathfrak{I} \otimes A \to \Z[C_m] \otimes A \to A \to 0, \\
+		0 \to \Z \xrightarrow{\nu} \Z[C_m] \xrightarrow{\sigma - 1} \mathfrak{I} \to 0, & 0 \to A \xrightarrow{\nu \otimes \identity} \Z[C_m] \otimes A \xrightarrow{(\sigma-1) \otimes \identity} \mathfrak{I} \otimes A \to 0.
+	\end{array}\]
+	左边来自引理 \ref{prop:cyclic-resolution-prep}, 其每项都是自由 $\Z$-模, 故 $\otimes A$ 得到的右边也正合. 由此首先得出
+	\[ \Z = \Hm^0(C_m, \Z) \twoheadrightarrow \Hm^1(C_m, \mathfrak{I}) \rightiso \Hm^2(C_m, \Z) = \Z/m\Z, \]
+	两段映射都是长正合列的连接同态. 对此取 $t$ 在 $\Z$ 中的原像 $\tilde{t}$, 它必与 $m$ 互素. 推论 \ref{prop:cup-ses} 给出交换图表
+	\[\begin{tikzcd}[column sep=large]
+		\Hm^n(C_m, A) \arrow[r, "\text{连接同态}"] & \Hm^{n+1}(C_m, \mathfrak{I} \otimes A) \arrow[r, "\text{连接同态}"] & \Hm^{n+2}(C_m, A). \\
+		& \Hm^n(C_m, A) \arrow[lu, "{\tilde{t} \cup (\cdot)}"] \arrow[u] \arrow[ru, "{t \cup (\cdot)}"'] & 
+	\end{tikzcd}\]
+
+	本章习题将说明第一行的合成是周期同构. 故问题简化为证 $\tilde{t} \cup (\cdot)$ 为同构, 此为显然: 它无非是乘以 $\tilde{t} \in \Z$ 倍映射, 而 $m\Hm^n(C_m, A) = \{0\}$ (推论 \ref{prop:group-coh-torsion}). 事实上, 若 $t$ 对应 $1 \bmod m$, 则取 $\tilde{t} = 1$ 立见周期同构严格等同于 $t \cup (\cdot)$.
+\end{example}
+
+\begin{remark}[帽积]\label{rem:cap-product}
+	\index{maoji@帽积 (cap product)}
+	一如拓扑场景, 群上同调与同调之间还有一种称为帽积的运算
+	\[ \cap: \Hm^p(G, M_1) \otimes \Hm_q(G, M_2) \to \Hm_{q-p}(G, M_1 \otimes M_2), \quad M_1, M_2: G\text{-模}. \]
+	由于本书不用帽积, 姑且一笔带过. 将 $\Hm^p(G, M_1)$ 的元素 $\alpha$ 视同 $\cate{D}(G)$ 的态射 $\Bbbk \to M_1[p]$. 它诱导 $\cate{D}^-(G)$ 的态射
+	\begin{multline*}
+		\Bbbk \otimesL[{\Bbbk[G]}] M_2 \rightiso \Bbbk \otimesL[{\Bbbk[G]}] (\Bbbk \otimesL M_2) \xrightarrow{\identity \otimes \alpha \otimes \identity} \Bbbk \otimesL[{\Bbbk[G]}] (M_1[p] \otimesL M_2) \\
+		\xrightarrow{\identity \otimesL \mathrm{can}} \Bbbk \otimesL[{\Bbbk[G]}] (M_1[p] \otimes M_2) \xrightarrow{\identity \otimesL \theta} \Bbbk \otimesL[{\Bbbk[G]}] \left( (M_1 \otimes M_2)[p] \right) \xrightarrow{\theta'} \left(\Bbbk \otimesL[{\Bbbk[G]}] (M_1 \otimes M_2)\right) [p].
+	\end{multline*}
+	最后再对其合成取 $\Hm^{-q}$, 即得
+	\[ \alpha \cap (\cdot): \Hm_q(G, M_2) \to \Hm_{q-p}(G, M_1 \otimes M_2). \]
+	对特例 $p=q$, 我们便得到配对
+	\[ \lrangle{\cdot, \cdot}: \Hm^p(G, M_1) \otimes \Hm_p(G, M_2) \to \left( M_1 \otimes M_2 \right)_G . \]
+\end{remark}
+
+\section{Tate 上同调}\label{sec:Tate-coh}
+对于有限群 $G$ 和交换环 $\Bbbk$, 定义--命题 \ref{def:group-norm} 引入了 $\Bbbk[G]^G$ 的元素 $\nu = \sum_{g \in G} g$. 它是 $\Bbbk[G]$ 的中心元. 对于任意 $G$-模 $M$, 乘法映射 $x \mapsto \nu x$ 因而给出 $G$-模同态 $M \to M$, 仍记为 $\nu$.
+
+鉴于恒等式 $\nu g = \nu = g \nu$, 我们有 $\nu M \subset M^G$ 和 $\mathfrak{I}M \subset M^{\nu = 0}$, 此处 $\mathfrak{I}$ 是 $\Bbbk[G]$ 的增广理想, $M^{\nu=0}$ 如约定 \ref{con:G-mod-equalizer}. 于是 $\nu$ 诱导 $\Bbbk$-模同态
+\begin{equation}\label{eqn:nu-coinv-inv}
+	\nu: M_G \to M^G .
+\end{equation}
+
+既然群的同调 (或上同调) 可以设想为 $M_G$ (或 $M^G$) 的导出版本, 典范同态 $M_G \to M^G$ 遂提示了同调与上同调之间的一道桥梁. 比方说, 何不考虑它在某种导出意义\footnote{按拓扑学的观点来说: 同伦意义.}下的余核? 我们暂且搁置这个思路, 以经典方式来定义相应的上同调.
+
+\begin{definition}[Tate 上同调]\label{def:TaHm}
+	\index{Tate shangtongdiao@Tate 上同调 (Tate cohomology)}
+	\index[sym1]{HnGMTate@$\TaHm^n(G, M)$}
+	设 $G$ 为有限群, $M$ 为 $G$-模. 对所有 $n \in \Z$ 定义
+	\begin{align*}
+		\TaHm^n(G, M) & := \Hm^n(G, M) \quad (n \geq 1), \\
+		\TaHm^0(G, M) & := M^G / \nu M \\
+		& = \Coker\left[ \nu: M_G \to M^G \right] \twoheadleftarrow \Hm^0(G, M), \\
+		\TaHm^{-1}(G, M) & := M^{\nu=0} / \mathfrak{I} M \\
+		& = \Ker\left[ \nu: M_G \to M^G \right] \hookrightarrow \Hm_0(G, M), \\
+		\TaHm^{-n}(G, M) & := \Hm_{n-1}(G, M) \quad (n \geq 2).
+	\end{align*}
+	它们对 $M$ 都有函子性.
+\end{definition}
+
+Tate 上同调常用于 Galois 理论和代数数论的研究中, 譬如 \cite[定义 9.6.3]{Li1} 曾出现的 $\TaHm^{-1}$. 功劳归于 J.\ Tate.
+
+实用的上同调理论往往具有长正合列, Tate 上同调亦然.
+
+\begin{theorem}\label{prop:Tate-coh-long}
+	设 $0 \to M' \to M \to M'' \to 0$ 是 $G$-模的短正合列, 则有长正合列
+	\[ \cdots \to \TaHm^n(G, M) \to \TaHm^n(G, M'') \xrightarrow{\delta^n} \TaHm^{n+1}(G, M') \to \TaHm^{n+1}(G, M) \to \cdots \]
+	两侧无穷延伸, 其中的连接同态 $\delta^n$ 对于短正合列之间的态射, 亦即对如下的行正合交换图表
+	\[\begin{tikzcd}
+		0 \arrow[r] & M' \arrow[d] \arrow[r] & M \arrow[d] \arrow[r] & M'' \arrow[d] \arrow[r] & 0 \\
+		0 \arrow[r] & L' \arrow[r] & L \arrow[r] & L'' \arrow[r] & 0
+	\end{tikzcd}\]
+	具有函子性.
+\end{theorem}
+\begin{proof}
+	将同调和上同调的长正合列按照以下方式接合
+	\[\begin{tikzcd}[column sep=small, every cell/.append style={font = \footnotesize}]
+		\cdots \arrow[r] & \Hm_1(G, M'') \arrow[r] \arrow[d] & \Hm_0(G, M') \arrow[r] \arrow[d, "{N_1}"] & \Hm_0(G, M) \arrow[r] \arrow[d, "N_2"] & \Hm_0(G, M'') \arrow[r] \arrow[d, "N_3"] & 0 \arrow[d] & \\
+		& 0 \arrow[r] & \Hm^0(G, M') \arrow[r] & \Hm^0(G, M) \arrow[r] & \Hm^0(G, M'') \arrow[r] & \Hm^1(G, M') \arrow[r] & \cdots
+	\end{tikzcd}\]
+	其中的 $N_1, N_2, N_3$ 都是先前记为 $\nu$ 的同态. 上图是行正合交换图表: 唯一待说明的是触及 $0$ 的两个方块交换. 这点可以借助于标准复形和链复形, 并回忆连接态射 $\Hm_1 \to \Hm_0$ 和 $\Hm^0 \to \Hm^1$ 来具体地验证, 留给读者练习.
+	
+	蛇形引理遂给出正合列
+	\[\begin{tikzcd}[row sep=small, column sep=small, every cell/.append style={font = \footnotesize}]
+		\Ker(N_1) \arrow[r] & \Ker(N_2) \arrow[r] & \Ker(N_3) \arrow[r, "{\delta^{-1}}"] & \Coker(N_1) \arrow[r] & \Coker(N_2) \arrow[r] & \Coker(N_3) \\
+		\TaHm^{-1}(G, M') \arrow[equal, u] & \TaHm^{-1}(G, M) \arrow[equal, u] & \TaHm^{-1}(G, M'') \arrow[equal, u] & \TaHm^0(G, M') \arrow[equal, u] & \TaHm^0(G, M) \arrow[equal, u] & \TaHm^0(G, M'') \arrow[equal, u]
+	\end{tikzcd}\]
+	这是所求正合列的一段, 连接同态 $\delta^{-1}$ 的函子性已由蛇形引理料理. 正合列的其他部分则归结为群同调和群上同调的长正合列, 以及证明第一步的行正合交换图表.
+\end{proof}
+
+接着陈述 Shapiro 引理 (定理 \ref{prop:Shapiro}) 的 Tate 上同调版本. 回忆到当 $G$ 有限时, 对于任何子群 $H$, 两种诱导函子 $\Ind^G_H, \iInd^G_H: H\dcate{Mod} \to G\dcate{Mod}$ 相同, 见推论 \ref{prop:iInd-Ind}, 今后统一记为 $\Ind^G_H$.
+
+\begin{proposition}
+	\index{Shapiro yinli}
+	对于有限群 $G$, 其子群 $H$ 以及 $H$-模 $N$, 我们有典范同构
+	\[ \TaHm^n(H, N) \simeq \TaHm^n\left( G, \Ind^G_H(N)\right), \quad n \in \Z. \]
+\end{proposition}
+\begin{proof}
+	当 $n \geq 1$ 或 $n \leq -2$ 时, 断言化约为定理 \ref{prop:Shapiro}. 接着处理 $n = -1, 0$ 情形. 以引理 \ref{prop:Ind-as-mappings} 将 $\Ind^G_H(N)$ 实现在映射空间上. 记 $G$ (或 $H$) 对应的 $\nu$ 为 $\nu^G$ (或 $\nu^H$). 问题归结为证下图交换:
+	\[\begin{tikzcd}
+		\Ind^G_H(N)_G \arrow[r, "{\nu^G}"] & \Ind^G_H(N)^G \arrow[d, "\sim" sloped] \\
+		N_H \arrow[u, "\sim" sloped] \arrow[r, "{\nu^H}"'] & N^H
+	\end{tikzcd}\]
+	垂直同构来自推论 \ref{prop:Ind-invariant}. 设 $y \in N$, 记它在 $N_H$ 中的像为 $[y]$, 则 $[y]$ 在 $\Ind^G_H(N)_G$ 中的像是 $[f]$, 其中 $f \in \Ind^G_H(N)$ 满足 $f(1_G) = y$ 和 $\Supp(f) \subset H$. 于是 $\nu^G f: x \mapsto \sum_{g \in G} f(xg)$ 在 $N^H$ 中的像是 $(\nu^G f)(1_G) = \sum_g f(g)$. 但这也等于 $\sum_{h \in H} f(h) = \sum_h hf(1_G) = \nu^H y$. 证毕.
+\end{proof}
+
+论证可以进一步强化, 以说明典范同构和两边的长正合列兼容.
+
+\begin{corollary}\label{prop:Tate-ind-vanishing}
+	设 $G$ 为有限群. 对所有 $\Bbbk$-模 $N$ 皆有
+	\[ \TaHm^n\left(G, \Ind^G_{\{1\}}(N)\right) = 0, \quad n \in \Z. \]
+\end{corollary}
+\begin{proof}
+	显然对所有 $n \in \Z$ 皆有 $\TaHm^n(\{1\}, N) = 0$.
+\end{proof}
+
+\begin{example}\label{eg:additive-90-finite}
+	\index{Hilbert 90@Hilbert 第 90 定理}
+	设 $E|F$ 为域的有限 Galois 扩张, Galois 群 $\Gal(E|F)$ 作用在 $E$ 上. 取系数环为 $\Bbbk = F$ 或 $\Z$, 则正规基定理 \cite[定理 9.5.6]{Li1} 相当于说 $E \simeq \Ind^{\Gal(E|F)}_{\{1\}}(F)$, 故推论 \ref{prop:Tate-ind-vanishing} 蕴涵
+	\[ \TaHm^n(\Gal(E|F), E) = 0, \quad n \in \Z; \]
+	因此 $n \geq 1 \implies \Hm^n(\Gal(E|F), E) = 0$. 对于 $E|F$ 为循环扩张而 $n = -1$ 的情形, 这为 \cite[定理 9.6.10]{Li1} 提及的加性版本 Hilbert 第 90 定理提供了另一证明. 乘性版本请见例 \ref{eg:multiplicative-90-finite}.
+\end{example}
+
+对于一般的 $H \subset G$ 和 $G$-模 $M$, 限制的左右伴随给出典范态射
+\[ \epsilon_M: \iInd^G_H(\Res^G_H(M)) \to M, \quad \eta_M: M \to \Ind^G_H(\Res^G_H(M)). \]
+
+基于伴随对的具体给法 (命题 \ref{prop:pullback-two-adjoint}), $\epsilon_M(g \otimes x) = gx$ 而 $\eta_M(x) = [g \mapsto gx]$. 于是 $\epsilon_M$ 满而 $\eta_M$ 单. 现在回到有限群的情形, $\iInd^G_{\{1\}} = \Ind^G_{\{1\}}$. 运用 $\epsilon_M$ 和 $\eta_M$ 可见推论 \ref{prop:Tate-ind-vanishing} 的消没性质蕴涵每个 $\TaHm^n(G, \cdot)$ 既是可拭的, 又是余可拭的 (定义 \ref{def:erasable}). 有鉴于此, 命题 \ref{prop:dimension-shifting} 的移维技巧也有简化的表述如下.
+
+\begin{corollary}[移维]\label{prop:Tate-dim-shift}
+	对所有 $G$-模 $M$, 照例简记 $\Res^G_{\{1\}} M$ 为 $M$, 并考虑短正合列
+	\begin{gather*}
+		0 \to M' \to \Ind^G_{\{1\}}(M) \xrightarrow{\epsilon_M} M \to 0, \\
+		0 \to M \xrightarrow{\eta_M} \Ind^G_{\{1\}}(M) \to M'' \to 0.
+	\end{gather*}
+	长正合列中相应的连接同态给出典范同构
+	\[ \TaHm^{n-1}(G, M'') \rightiso \TaHm^n(G, M) \rightiso \TaHm^{n+1}(G, M'), \quad n \in \Z. \]
+\end{corollary}
+\begin{proof}
+	结合长正合列 (定理 \ref{prop:Tate-coh-long}) 和推论 \ref{prop:Tate-ind-vanishing} 的消没性质.
+\end{proof}
+
+关于 Tate 上同调的许多性质都能通过移维化到 $n=0$ 情形来讨论.
+
+回归定义. 任取 $G$-模 $M$ 的投射解消 $P \to M$ 和内射解消 $M \to I$, 两者都视为复形, 然后考察复形之间的态射 $P_G \to I^G$, 写作图表
+\[\begin{tikzcd}
+	\cdots \arrow[r] & 0 \arrow[r] & 0 \arrow[r] & I^{0, G} \arrow[r] & I^{1, G} \arrow[r] & I^{2, G} \arrow[r] & \cdots \\
+	\cdots \arrow[r] & P_{2, G} \arrow[r] \arrow[u] & P_{1, G} \arrow[r] \arrow[u] & P_{0, G} \arrow[u, "\Omega"] \arrow[r] & 0 \arrow[r] \arrow[u] & 0 \arrow[r] \arrow[u] & \cdots
+\end{tikzcd}\]
+其中的 $\Omega$ 是 $P_{0, G} \twoheadrightarrow M_G \xrightarrow{\nu} M^G \hookrightarrow I^{0, G}$ 的合成, 交换性是明白的. 取映射锥 $\Cone\left[P_G \to I^G\right]$, 或者说取上图的全复形 (置 $P_G$ 于纵坐标 $-1$); 请读者验证
+\begin{equation}\label{eqn:Tate-cone-1}
+	\Hm^n\left( \Cone\left[P_G \to I^G\right] \right) = \TaHm^n(G, M).
+\end{equation}
+
+上式实际说明了如何在 $G$-模的导出范畴 $\cate{D}(G)$ 中定义典范态射 $\Bbbk \otimesL[{\Bbbk[G]}] M \to \RHom_G(\Bbbk, M)$. 将此态射扩充为 $\cate{D}(G)$ 的好三角
+\[ \Bbbk \otimesL[{\Bbbk[G]}] M \to \RHom_G(\Bbbk, M) \to \mathrm{Tate}(G, M) \xrightarrow{+1}, \]
+则 $\Hm^n(\mathrm{Tate}(G, M)) \simeq \TaHm^n(G, M)$. 此构造的问题在于好三角中 $\mathrm{Tate}(G, M)$ 的不同选法尽管同构, 这些同构却不是典范的, 这是导出范畴理论的一个突出缺陷; 见推论 \ref{prop:Cone-uniqueness} 及其后的说明.
+
+话虽如此, 若 $\Bbbk \otimesL[{\Bbbk[G]}] M$ (或 $\RHom_G(\Bbbk, M)$) 被选定的, 集中在非正 (或非负) 项的复形表出, 包括但不限于 \eqref{eqn:Tate-cone-1} 中的 $P_G$ (或 $I^G$), 则仍然能定义态射 $\Omega$ 并将 $\mathrm{Tate}(G, M)$ 取为映射锥, 从而将之诠释为注记 \ref{rem:homotopy-kernel-cokernel} 所谓的同伦余核\footnote{改取 $\Bbbk \otimesL[{\Bbbk[G]}] M \to \RHom_G(\Bbbk, M)$ 的同伦核并不给出新结构, 它和同伦余核仅差一个平移.}. 习题将说明如何改以 $\Bbbk$ 的标准解消来处理, 从而提供更多计算 Tate 上同调的手段.
+
+现在对有限循环群的特例作进一步的讨论.
+
+\begin{example}\label{eg:TaHm-periodic}
+	设 $m \in \Z_{\geq 1}$ 而 $C_m$ 为 $m$ 阶循环群; 任取 $C_m$ 的生成元 $\sigma$. 对于所有 $C_m$-模 $A$, 兹断言 $\TaHm^n(C_m, A)$ 是以下复形的 $\Hm^n$ (其中 $n \in \Z$):
+	\[ \cdots \xrightarrow{\sigma-1} A \xrightarrow{\nu} \underbracket{A}_{\text{零次项}} \xrightarrow{\sigma-1} A \xrightarrow{\nu} A \xrightarrow{\sigma-1} \to \cdots \]
+	按周期 $2$ 重复. 这是因为命题 \ref{prop:group-cohomology-cyclic} 的证明已经具体写下计算同调与上同调的复形, 两者以 $\nu$ 接合给出先前提到的映射锥 $\mathrm{Tate}(G, M)$, 形式如上. 由此立得典范同构
+	\[ \TaHm^n(C_m, A) \simeq \begin{cases}
+		A^{\nu=0} / (\sigma-1) A, & n\;\text{奇} \\
+		A^{\sigma=1} / \nu A, & n\;\text{偶}.
+	\end{cases}\]
+
+	周期性告诉我们: 若 $0 \to A' \to A \to A'' \to 0$ 是 $C_m$-模的短正合列, 则定理 \ref{prop:Tate-coh-long} 的长正合列收纳为正合六边形
+	\begin{equation}\label{eqn:Herbrand-hexagon}
+		\begin{tikzcd}[column sep=small]
+			& \TaHm^{\text{偶}}(C_m, A') \arrow[r, "f_1"] & \TaHm^{\text{偶}}(C_m, A) \arrow[rd, "f_2"] & \\
+			\Hm^{\text{奇}}(C_m, A'') \arrow[ru, "f_6"] & & & \TaHm^{\text{偶}}(C_m, A'') \arrow[ld, "f_3"] . \\
+			& \TaHm^{\text{奇}}(C_m, A) \arrow[lu, "f_5"] & \TaHm^{\text{奇}}(C_m, A') \arrow[l, "f_4"] &
+		\end{tikzcd}
+	\end{equation}
+\end{example}
+
+\begin{definition}
+	\index{Herbrand shang@Herbrand 商 (Herbrand quotient)}
+	设 $A$ 为 $C_m$-模 ($m \in \Z_{\geq 1}$). 在 $\TaHm^n(C_m, A)$ 对所有 $n$ 皆有限的前提下, 定义正整数
+	\[ h(C_m, A) := \frac{\left|\TaHm^{\text{偶}}(C_m, A)\right|}{\left|\TaHm^{\text{奇}}(C_m, A)\right|}, \]
+	称为 $A$ 的 \emph{Herbrand 商}.
+\end{definition}
+
+当 $A$ 有限时 $\TaHm^n(C_m, A)$ 显然有限. 注意到其元素个数无关系数环 $\Bbbk$ 的选取; 不妨就取 $\Bbbk = \Z$. 在代数数论中, 以下的 Herbrand 定理是一则基础而关键的结果.
+
+\begin{theorem}[J.\ Herbrand]
+	设 $m \in \Z_{\geq 1}$, 而 $C_m$ 为 $m$ 阶循环群.
+	\begin{enumerate}[(i)]
+		\item 设 $0 \to A' \to A \to A'' \to 0$ 为 $C_m$-模的短正合列, 则一旦 $h(C_m, A')$, $h(C_m, A)$ 和 $h(C_m, A'')$ 之中任两项有定义, 剩余项也自动有定义, 此时
+		\[ h(C_m, A) = h(C_m, A') h(C_m, A''). \]
+		\item 若 $A$ 是有限 $C_m$-模, 则 $h(C_m, A) = 1$.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	对于 (i), 请打量 \eqref{eqn:Herbrand-hexagon} 的正合六边形. 记 $n_i := |\Image(f_i)|$; 在基数乘法的意义下, 图中六项的阶数分别是
+	\begin{center}\begin{tikzpicture}[commutative diagrams/every diagram,
+		one/.style={draw, rectangle, minimum size=6mm, rounded corners=3mm},
+		two/.style={draw, rectangle, minimum size=6mm}
+		]
+		\node[one] (P0) at (60:1.75cm) {$n_1 n_2$};
+		\node[two] (P1) at (60+60:1.75cm) {$n_6 n_1$} ;
+		\node[one] (P2) at (60+2*60:1.75cm) {$n_5 n_6$};
+		\node[two] (P3) at (60+3*60:1.75cm) {$n_4 n_5$};
+		\node[one] (P4) at (60+4*60:1.75cm) {$n_3 n_4$};
+		\node[two] (P5) at (0:1.75cm) {$n_2 n_3$};
+	\end{tikzpicture}\end{center}
+
+	三个 Herbrand 商对应到上图对角项的商. 断言 (i) 遂翻译为以下观察:
+	\begin{itemize}
+		\item 若某两条对角线两端的基数皆有限, 则剩下一条对角线两端亦然;
+		\item 方框项乘积等于圆框项乘积.
+	\end{itemize}
+	
+	至于 (ii), 存在有限 $\Z$-模的短正合列
+	\[ 0 \to A^{\sigma=1} \to A \xrightarrow{\sigma-1} \mathfrak{I} A \to 0, \quad 0 \to A^{\nu=0} \to A \xrightarrow{\nu} \nu A \to 0; \]
+	此处 $(\sigma - 1)A = \mathfrak{I}A$ 是引理 \ref{prop:cyclic-resolution-prep} 的应用. 于是
+	\[ |A^{\sigma=1}| \cdot |\mathfrak{I} A| = |A^{\nu=0}| \cdot |\nu A|, \]
+	此式又整理为 $|\TaHm^0(C_m, A)| = |\TaHm^{-1}(C_m, A)|$. 明所欲证.
+\end{proof}
+
+\section{pro-有限群的上同调}\label{sec:profinite-cohomology}
+本节预设 \S\ref{sec:profinite-groups} 关于 pro-有限群的基本定义和结果.
+
+设 $G$ 为 pro-有限群而 $M$ 为 $G$-模. 不难验证下述条件相互等价:
+\begin{enumerate}[(i)]
+	\item $M = \bigcup_K M^K$, 其中 $K$ 遍历 $G$ 的正规开子群;
+	\item 对所有 $x \in M$, 稳定化子群 $\Stab_G(x)$ 是开的;
+	\item 作用映射 $G \times M \to M$ 连续, 前提是赋 $M$ 离散拓扑.
+\end{enumerate}
+
+\begin{definition}
+	\index{Gmo!光滑 (smooth)}
+	\index[sym1]{G-Mod-infty@$G\dcate{Mod}^\infty$}
+	设 $G$ 为 pro-有限群. 当以上任一条件成立时, 我们称 $G$-模 $M$ 是\emph{光滑}的\footnote{鉴于 (iii), 许多文献也称之为离散的.}. 全体光滑 $G$-模构成 $G\dcate{Mod}$ 的全子范畴 $G\dcate{Mod}^\infty$.
+\end{definition}
+
+虽然 $G$ 本身的条件涉及拓扑, 但光滑 $G$-模的刻画 (i) 或 (ii) 纯然是代数的, 它是 $G$-模的一种性质, 而非额外结构. 由此易见 $G\dcate{Mod}^\infty$ 是 $G\dcate{Mod}$ 的子 Abel 范畴. 定义 \ref{def:Res-Infl} 的操作在此有自然的类比.
+
+\begin{definition-proposition}
+	设 $\varphi: H \to G$ 为 pro-有限群之间的连续同态, $M$ 为光滑 $G$-模, 则 $H$-模 $\varphi^* M$ 仍光滑. 这给出函子
+	\[ \varphi^*: G\dcate{Mod}^\infty \to H\dcate{Mod}^\infty. \]
+\end{definition-proposition}
+\begin{proof}
+	对所有正规开子群 $K \lhd G$, 仍有相应的正规开子群 $\varphi^{-1}(K) \lhd H$. 若 $x \in M^K$, 则 $x \in (\varphi^* M)^{\varphi^{-1} K}$, 这说明 $\varphi^* M = \bigcup_{L \lhd H: \text{开}} (\varphi^* M)^L$. 故 $\varphi^* M$ 光滑.
+\end{proof}
+
+留意到函子 $\varphi^*$ 总是正合的. 在此拈出两类特例:
+\begin{description}
+	\item[限制] 设 $H$ 是 $G$ 的闭子群. 取 $\varphi$ 为包含同态 $H \hookrightarrow G$, 对应的函子记为
+	\[ \Res^G_H: G\dcate{Mod}^\infty \to H\dcate{Mod}^\infty. \]
+	\item[膨胀] 对于正规闭子群 $H \lhd G$, 取 $\varphi$ 为商同态 $G \twoheadrightarrow G/H$, 对应的函子记为
+	\[ \mathrm{Infl}^G_{G/H}: G/H\dcate{Mod}^\infty \to G\dcate{Mod}^\infty. \]
+	
+	以上提及的群 $H$ 和 $G/H$ 自动是 pro-有限的, 故定义合理.
+\end{description}
+\index[sym1]{ResGH}
+\index[sym1]{InflGH}
+
+\begin{definition-proposition}\label{def:smooth-part}
+	对任意 $G$-模 $M$, 定义 $M^\infty := \bigcup_K M^K$, 其中 $K$ 遍历 $G$ 的正规开子群. 这是光滑 $G$-模, 而 $M$ 光滑当且仅当 $M = M^\infty$.
+	
+	对于任意光滑 $G$-模 $M'$, 我们有
+	\[ \Hom_G(M', M) = \Hom_G(M', M^\infty); \]
+	换言之, $\text{包含}: G\dcate{Mod}^\infty \leftrightarrows G\dcate{Mod}: (\cdot)^\infty$ 是伴随对. 
+\end{definition-proposition}
+\begin{proof}
+	显然.
+\end{proof}
+
+我们也称 $M^\infty$ 的元素为 $M$ 的\emph{光滑元素}. 既然 $(\cdot)^\infty$ 是正合函子的右伴随, 它保持内射对象 (命题 \ref{prop:adjoint-injective-projective}).
+
+\begin{corollary}
+	Abel 范畴 $G\dcate{Mod}^\infty$ 有足够的内射对象.
+\end{corollary}
+\begin{proof}
+	设 $M$ 为光滑 $G$-模, 将它嵌入内射 $G$-模 $I$, 则 $M = M^\infty \hookrightarrow I^\infty$ 而 $I^\infty$ 是内射光滑 $G$-模.
+\end{proof}
+
+\begin{remark}
+	一般而言 $G\dcate{Mod}^\infty$ 无足够的投射对象, 这是本节探讨上同调而非同调的主要原因.
+\end{remark}
+
+已知 $G\dcate{Mod}^\infty$ 有足够内射对象, 自然就可以谈论不变量函子 $(\cdot)^G$ 的右导出函子. 本节的进路是先表述化到有限群情形的直接定义, 随后在命题 \ref{prop:profinite-cohomology-identification} 将其等同于右导出函子. 以下仅用经典语言, 不论导出范畴.
+
+首先考虑 pro-有限群 $G$ 及其正规开子群 $K$. 对任意光滑 $G$-模 $M$, 其中的 $K$-不变量 $M^K = (\Res^G_K M)^K$ 自然地成为 $G/K$-模, 由此得到函子 $(\cdot)^K: G\dcate{Mod}^\infty \to G/K\dcate{Mod}$. 我们有明白的伴随对
+\begin{equation}\label{eqn:invariant-adjunction-profinite}
+	\begin{tikzcd}[row sep=tiny]
+		\mathrm{Infl}^G_{G/K}: G/K\dcate{Mod} \arrow[shift left, r] & G\dcate{Mod}^\infty : (\cdot)^K \arrow[shift left, l] \\
+		\Hom_G\left(\mathrm{Infl}^G_{G/K}(M'), M\right) \arrow[equal, r] & \Hom_{G/K}\left( M', M^K \right).
+	\end{tikzcd}
+\end{equation}
+
+若 $G$ 的正规开子群 $K$ 和 $K'$ 满足 $K' \supset K$, 则包含同态 $M^{K'} \hookrightarrow M^K$ 对反向的商同态 $G/K' \twoheadleftarrow G/K$ 等变 (定义 \ref{def:group-equivariance}), 于是对每个 $n \in \Z_{\geq 0}$ 都有典范同态
+\[ \rho^{K'}_K: \Hm^n\left(G/K', M^{K'} \right) \to \Hm^n\left( G/K, M^K \right). \]
+
+若 $K_1 \subset K_2 \subset K_3$ 是 $G$ 的正规开子群, 则 $\rho^{K_2}_{K_1} \rho^{K_3}_{K_2} = \rho^{K_3}_{K_1}$. 这表明以下定义合理.
+
+\begin{definition}
+	\index{quntongdiao!pro-有限情形}
+	\index[sym1]{HnGM}
+	设 $G$ 为 pro-有限群, $M$ 为光滑 $G$-模. 对所有 $n \in \Z_{\geq 0}$ 定义
+	\[ \Hm^n(G, M) := \varinjlim_K \Hm^n\left(G/K, M^K \right), \quad n \in \Z_{\geq 0}, \]
+	其中 $K$ 遍历 $G$ 的正规开子群, 而 $\varinjlim$ 按照 $K' \preceq K \iff K \subset K'$ 定义的偏序和 $\rho^{K'}_K$ 来定义.
+\end{definition}
+
+所有正规开子群构成滤过偏序集: 它们对有限交封闭. 若 $G$ 有限, 则 $\{1\}$ 是此偏序集的唯一极大元, 此时 $\Hm^n(G, M)$ 复归 \S\ref{sec:group-coh-sub} 的原始版本. 对于一般情形,
+\[ \Hm^0(G, M) = \varinjlim_K \left(M^K\right)^{G/K} = M^G. \]
+
+设 $f: M_1 \to M_2$ 为光滑 $G$-模之间的同态. 对所有正规开子群 $K$, 它限制为 $f_K: M_1^K \to M_2^K$. 显然 $K' \supset K$ 蕴涵 $\Hm^n(f_K) \rho^{K'}_K = \rho^{K'}_K \Hm^n(f_{K'})$, 对所有 $n \in \Z_{\geq 0}$ 遂有
+\[ \Hm^n(f): \Hm^n(G, M_1) \to \Hm^n(G, M_2) \]
+
+\begin{example}
+	设 $E|F$ 为域的 Galois 扩张. 由于 $E = \bigcup_{L|F} E^{\Gal(E|L)} = \bigcup_{L|F} L$, 其中 $L|F$ 遍历有限 Galois 子扩张, 故 $\Gal(E|F)$ 对 $E$ 的作用光滑. 对每个 $L|F$ 运用例 \ref{eg:additive-90-finite} 可得
+	\[ n \geq 1 \implies \Hm^n(\Gal(E|F), E) = \varinjlim_{L|F} \Hm^n(\Gal(L|F), L) = 0. \]
+\end{example}
+
+一如 $G$ 不带拓扑时的命题 \ref{prop:groupcoh-cochain} 和注记 \ref{rem:nor-cochain}, pro-有限群的上同调也可以由标准复形或其正规化版本来计算, 差异在于连续性条件.
+
+\begin{definition}
+	\index{biaozhunfuxing}
+	\index[sym1]{CGM}
+	对任意光滑 $G$-模 $M$, 赋予 $M$ 离散拓扑并定义其\emph{标准复形} $C(G, M) = (C^n(G, M))_n$ 如下:
+	\begin{gather*}
+		C^n(G, M) := \left\{ \text{连续映射}\; f: G^n \to M \right\}, \quad n \in \Z_{\geq 0},
+	\end{gather*}
+	负次项定义为 $0$, 而 $d^n: C^n(G, M) \to C^{n+1}(G, M)$ 定义为
+	\begin{multline*}
+		(d^n f)(g_1, \ldots, g_{n+1}) = g_1 f(g_2, \ldots, g_{n+1}) \\
+		+ \sum_{k=1}^n (-1)^k f(\ldots, g_k g_{k+1}, \ldots) + (-1)^{n+1} f(g_1, \ldots, g_n).
+	\end{multline*}
+
+	\index[sym1]{CGMbar}
+	定义\emph{正规化标准复形}为 $C(G, M)$ 的子复形 $\overline{C}(G, M)$ 如下 (见注记 \ref{rem:nor-cochain})
+	\[ \overline{C}^n(G, M) = \left\{\begin{array}{r|l}
+		f \in C^n(G, M) & \exists 1 \leq k \leq n, \; g_k = 1_G \\
+		& \implies f(g_1, \ldots, g_n) = 0
+	\end{array}\right\}. \]
+\end{definition}
+
+对于所有正规开子群 $K \lhd G$, 我们有复形之间的自明嵌入 $C(G/K, M^K) \hookrightarrow C(G, M)$ 和 $\overline{C}(G/K, M^K) \hookrightarrow \overline{C}(G, M)$.
+
+由于 $M$ 离散, 映射 $f: G^n \to M$ 连续相当于说它是局部常值映射, 故由 $G$ 紧可得正规开子群 $K_1 \lhd G$ 使得 $f$ 分解为 $(G/K_1)^n \to M$; 特别地, $f$ 取有限多个值, 故光滑性导致存在正规开子群 $K_2 \lhd G$ 使得 $f$ 取值在 $M^{K_2}$. 命 $K := K_1 \cap K_2$, 综上可知,
+\[ C^n(G, M) \simeq \varinjlim_{K \lhd G\; \text{开}} C^n\left(G/K, M^K\right), \quad \overline{C}^n(G, M) \simeq \varinjlim_{K \lhd G\; \text{开}} \overline{C}^n\left(G/K, M^K\right), \]
+当 $n$ 变动, 这给出复形之间的同构.
+
+依照往例, 定义 $C^n(G, M)$ 的子模
+\[ Z^n(G, M) := \Ker(d^n), \quad B^n(G, M) := \Image(d^{n-1}), \]
+此处规定 $B^0(G, M) := \{0\}$. 于是 $\Hm^n(C(G, M)) = Z^n(G, M) / B^n(G, M)$. 以类似手法定义正规化版本 $\overline{Z}^n(G, M)$ 和 $\overline{B}^n(G, M)$.
+
+\begin{theorem}\label{prop:profinite-group-standard}
+	设 $G$ 为 pro-有限群. 对所有 $n \in \Z_{\geq 0}$ 和光滑 $G$-模, 存在典范同构 $\Hm^n(C(G, M)) \simeq \Hm^n(G, M) \simeq \Hm^n(\overline{C}(G, M))$.
+\end{theorem}
+\begin{proof}
+	上同调取值在 $\cate{Ab}$ 或 $\Bbbk\dcate{Mod}$ (若另选系数环 $\Bbbk$); 滤过 $\varinjlim$ 在这些范畴中是正合的 \cite[定理 6.2.2]{Li1}, 故
+	\[ Z^n(G, M) = \varinjlim_K Z^n(G/K, M^K), \quad B^n(G, M) = \varinjlim_K B^n(G/K, M^K), \]
+	继而
+	\begin{multline*}
+		\Hm^n(C(G, M)) = \dfrac{\varinjlim_K Z^n(G/K, M^K)}{\varinjlim_K B^n(G/K, M^K)} \simeq \\
+		\varinjlim_K \frac{Z^n(G/K, M^K)}{B^n(G/K, M^K)} = \varinjlim_K \Hm^n(C(G/K, M^K)).
+	\end{multline*}
+	对末项应用命题 \ref{prop:groupcoh-cochain} 以得到 $\varinjlim_K \Hm^n(G/K, M^K)$, 即 $\Hm^n(G, K)$.
+	
+	关于 $\overline{C}(G, M)$ 的情形是类似的.
+\end{proof}
+
+\begin{theorem}\label{prop:profinite-cohomology-long}
+	设 $G$ 为 pro-有限群. 设 $0 \to M' \xrightarrow{f} M \xrightarrow{f'} M'' \to 0$ 是光滑 $G$-模的短正合列, 则有相应的长正合列
+	\begin{multline*}
+		\cdots \to \Hm^{n-1}(G, M'') \xrightarrow{\delta^{n-1}} \Hm^n(G, M') \xrightarrow{\Hm^n(f)} \Hm^n(G, M) \\
+		\xrightarrow{\Hm^n(g)} \Hm^n(G, M'') \xrightarrow{\delta^n} \Hm^{n+1}(G, M') \to \cdots ,
+	\end{multline*}
+	其中规定 $n <0 $ 时 $\Hm^n(G, \cdot) = 0$. 连接同态 $\delta^n$ 对短正合列之间的态射具有函子性; 换言之, 它们给出上同调 $\delta$-函子.
+\end{theorem}
+\begin{proof}
+	我们将在标准复形上操作; 正规化版本的论证是类似的. 鉴于熟知的命题 \ref{prop:long-exact-sequence-ses}, 要点归结为说明
+	\[ 0 \to C^n(G, M') \to C^n(G, M) \to C^n(G, M'') \to 0 \]
+	是短正合列. 唯一相对不平凡的是 $C^n(G, M) \to C^n(G, M'')$ 的满性: 设 $f: G^n \to M''$ 为连续映射, 如前所见, 存在正规开子群 $K \lhd G$ 使得 $f$ 在 $K^n \lhd G^n$ 的每个陪集上都取常值, 然后在每个陪集上任意指定此常值在 $M$ 中的原像即可.
+\end{proof}
+
+取光滑 $G$-模 $M$, 赋予离散拓扑. 复形 $C(G, M)$ 或 $\overline{C}(G, M)$ 的低次项仍然有直接的诠释.
+\begin{description}
+	\item[($n=0$)] 显然 $C^0(G, M) = M$ 而 $\Hm^0(G, M) = Z^0(G, M) = M^G$. 正规化标准复形的版本无异.
+	\item[($n=1$)] $Z^1(G, M) = \overline{Z}^1(G, M)$ 的元素是连续叉同态 $G \to M$, 等价地说则是满足 $\pi \sigma = \identity_G$ 的连续同态 $\sigma: G \to M \rtimes G$, 如命题 \ref{prop:crossed-semidirect-product}; 在此 $\pi: M \rtimes G \to G$ 是投影, 而 $M \rtimes G$ 带乘积拓扑. 另一方面, $B^1(G, M)$ 的元素由形如 $f_m: g \mapsto gm - m$ 的叉同态生成, 它们自动连续.
+	
+	\item[($n=2$)] 设 $M$ 有限, 则 $\Hm^2(G, M) \simeq \frac{Z^2(G, M)}{B^2(G, M)} \simeq \frac{\overline{Z}^2(G, M)}{\overline{B}^2(G, M)}$ 的元素一一对应于 pro-有限群扩张
+	\[ 0 \to M \to E \xrightarrow{\pi} G \to 0 \quad \text{(群的短正合列)} \]
+	的等价类, 要求 $G$ 对 $M$ 的共轭作用来自 $M$ 的 $G$-模结构; 相较于定义 \ref{def:group-ext} 和 \eqref{eqn:group-ext-diagram} 的版本, 所谓的 ``pro-有限群扩张''及其分类问题进一步要求:
+	\begin{compactitem}
+		\item $E$ 是 pro-有限群, $\pi$ 连续, 而 $M$ 嵌入为 $E$ 的闭子群;
+		\item 扩张的等价或曰同构由连续的群同态 $E \to E'$ 定义, 扩张的分裂同样以拓扑方式定义.
+	\end{compactitem}
+
+	此外, 扩张的自同构群同构于 $\overline{Z}^1(G, M)$. 这些证明并不难, 但是需要一些拓扑语言, 故留作本章习题; $M$ 有限的条件是关键的.
+\end{description}
+
+现在回头探讨 $(\cdot)^G$ 的右导出函子 $\left(\mathrm{R}^n (\cdot)^G\right)_{n \geq 0}$. 尽管可以探讨它在任意下有界复形上的取值 \footnote{换言之, 探讨 pro-有限群的超上同调.}, 乃至于导出范畴中的操作等, 但本节只论光滑 $G$-模的情形, 其余划入习题.
+
+\begin{proposition}\label{prop:profinite-cohomology-identification}
+	我们有上同调 $\delta$-函子的同构 $\left( \Hm^n(G, \cdot) \right)_{n \geq 0} \simeq \left(\mathrm{R}^n (\cdot)^G\right)_{n \geq 0}$.
+\end{proposition}
+\begin{proof}
+	定理 \ref{prop:profinite-cohomology-long} 说明两者都是上同调 $\delta$-函子, 而且在 $n=0$ 时同样化为不变量函子 $(\cdot)^G$. 鉴于命题 \ref{prop:erasable-univ-delta}, 问题归结为说明当 $n > 0$ 时 $\Hm^n(G, \cdot)$ 是定义 \ref{def:erasable} 所谓的可拭函子. 设 $M$ 为光滑 $G$-模, 将其嵌入内射光滑 $G$-模 $I$. 对于所有正规开子群 $K \lhd G$, 伴随关系 \eqref{eqn:invariant-adjunction-profinite} 蕴涵 $(\cdot)^K$ 保持内射对象, 故 $I^K$ 是内射 $G/K$-模. 因此
+	\[ n > 0 \implies \Hm^n(G, I) = \varinjlim_K \Hm^n\left( G/K, I^K\right) = 0. \]
+	可拭性质得证.
+\end{proof}
+
+基于命题 \ref{prop:profinite-cohomology-identification}, 照搬 \S\ref{sec:change-of-group} 的方法即可对 pro-有限群的连续同态 $\varphi: H \to G$ 定义上同调的``拉回''运算
+\[ \Hm^n(G, M) \to \Hm^n(H, \varphi^* M), \quad M: \text{光滑 $G$-模}, \; n \in \Z_{\geq 0}, \]
+它们兼容长正合列. 一如既往地, 方法是运用 $\varphi^*$ 的正合性以及泛上同调 $\delta$-函子的性质, 将问题归结为 $n=0$ 情形的自明嵌入 $M^G \hookrightarrow (\varphi^* M)^H$.
+
+作为特例, 对所有 $n$ 和闭子群 $H$ 都有限制映射 $\mathrm{res}^n: \Hm^n(G, M) \to \Hm^n(H, M)$, 此处将 $\Res^G_H M$ 简记为 $M$.
+
+上述同态也可以构造为诸
+\begin{align*}
+	\Hm^n\left( G/K, M^K\right) & \xrightarrow{\eqref{eqn:change-of-group-coh}} \Hm^n\left(H/\varphi^{-1}(K), \; \varphi_K^*(M^K)\right) \\
+	& \xrightarrow{M^K \subset (\varphi^* M)^{\varphi^{-1} K}} \Hm^n\left( H/\varphi^{-1}(K), \; (\varphi^* M)^{\varphi^{-1} K}\right)
+\end{align*}
+确定的 $\Hm^n(G, M) \to \Hm^n(H, \varphi^* M)$, 其中 $K$ 遍历 $G$ 的正规开子群. 化约到有限群情形可见此同态在标准复形上由命题 \ref{prop:grp-equiv} 的公式计算. 为了说明它确实等于之前按照泛性质构造的同态, 仅须比较 $n=0$ 情形, 并说明同态兼容长正合列即可. 标准复形足以处理这些问题.
+
+类似地, 定义--命题 \ref{def:cor} 的余限制同态也扩展到 pro-有限群情形. 设 $H$ 为 $G$ 的开子群, 此时它自动闭, 而且 $(G: H)$ 有限 (见 \S\ref{sec:profinite-groups}). 今将定义同态
+\[ \mathrm{cor}^n: \Hm^n(H, M) \to \Hm^n(G, M), \quad M: \text{光滑 $G$-模}, \; n \in \Z_{\geq 0}, \]
+使得它们兼容长正合列, 并且在 $n=0$ 时给出 $\nu^{G|H}: M^H \to M^G$.
+
+构造依旧基于泛上同调 $\delta$-函子的性质, 但此处需要知道 $\Res^G_H: G\dcate{Mod}^\infty \to H\dcate{Mod}^\infty$ 保持内射对象, 这是稍后的推论 \ref{prop:Res-injective-profinite} 的内容. 一旦承认这点, 则命题 \ref{prop:res-cor} 仍然有类比: 对所有 $n$ 皆有
+\[ \mathrm{cor}^n \circ \mathrm{res}^n = (G:H) \cdot \identity_{\Hm^n(G, M)}. \]
+方法照旧, 化约到 $n=0$ 来验证.
+
+现在来探讨 pro-有限情形的诱导模. 默认 $G$ 为 pro-有限群. 为了区别, 记不带拓扑情形的诱导函子 (定义 \ref{def:induced-module}) 为 $\Ind^{G, \mathrm{alg}}_H$ 以资区分; 我们按照引理 \ref{prop:Ind-as-mappings} 将其实现为一个映射空间.
+
+\begin{definition}
+	\index{Gmo!诱导 (induced)}
+	对于 $G$ 的闭子群 $H$ 连同光滑 $H$-模 $N$, 赋予映射空间 $\mathrm{Maps}(G, N) := \{f: G \to N \}$ 逐点的加法和纯量乘法运算, 连同以下的左 $G$-作用
+	\[ (gf)(x) = f(xg), \quad g, x \in G. \]
+	由此定义光滑 $G$-模
+	\begin{align*}
+		\Ind^G_H(N) & := \left\{ f \in \mathrm{Maps}(G, N)^\infty : \forall h \in H, \; \forall x \in G, \; f(hx) = hf(x) \right\} \\
+		& = \left( \Ind^{G, \mathrm{alg}}_H(N)\right)^\infty
+	\end{align*}
+	符号 $(\cdot)^\infty$ 见定义--命题 \ref{def:smooth-part}. 这称为 $N$ 的诱导 $G$-模.
+\end{definition}
+
+因为 $G$ 紧, $f \in \Ind^{G, \mathrm{alg}}_H(N)$ 的光滑性等价于它作为映射 $G \to N$ 的连续性, 前提是赋予 $N$ 离散拓扑.
+
+\begin{proposition}\label{prop:Ind-injective-profinite}
+	对于 $G$ 的所有闭子群 $H$ 都有伴随对
+	\[ \Res^G_H: G\dcate{Mod}^\infty \leftrightarrows H\dcate{Mod}^\infty : \Ind^G_H; \]
+	作为推论, $\Ind^G_H$ 保持内射对象.
+	
+	若 $H$ 是 $G$ 的开子群, 则还有伴随对
+	\[ \Ind^G_H : H\dcate{Mod}^\infty \leftrightarrows G\dcate{Mod}^\infty : \Res^G_H ; \]
+	此时 $\Ind^G_H$ 也保持投射对象.
+\end{proposition}
+\begin{proof}
+	基于无拓扑情形的伴随关系和定义--命题 \ref{def:smooth-part}, 对所有光滑 $G$-模 $M$ 和光滑 $H$-模 $N$ 皆有典范同构
+	\begin{multline*}
+		\Hom_H\left( \Res^G_H(M), N \right) \simeq \Hom_G\left(M, \Ind^{G, \mathrm{alg}}_H(N) \right) \\
+		= \Hom_G\left(M, \Ind^{G, \mathrm{alg}}_H(N)^\infty \right) = \Hom_G\left(M, \Ind^G_H(N) \right).
+	\end{multline*}
+	
+	现在假设 $H$ 是开子群, 于是 $(G:H)$ 有限. 我们从推论 \ref{prop:iInd-Ind} 得到无拓扑情形的伴随关系
+	\[ \Hom_H\left(N, \Res^G_H(M)\right) \simeq \Hom_G\left( \Ind^{G, \mathrm{alg}}_H(N) , M\right). \]
+	兹断言 $\Ind^{G, \mathrm{alg}}_H(N) = \Ind^G_H(N)$. 给定 $f \in \Ind^{G, \mathrm{alg}}_H(N)$ 和 $x \in G$, 取 $H$ 的开子群 $K_0$ 使得 $f(x) \in N^{K_0}$; 命 $K := x^{-1} K_0 x$, 这是 $G$ 的开子群, 于是有
+	\[ g \in K \implies xg = xgx^{-1} x \in K_0 x \implies f(xg) = f(x). \]
+	既然 $x$ 任意, 这说明 $f: G \to N$ 是局部常值映射, 故 $f \in \Ind^G_H(N)$. 第二个伴随对得证.
+	
+	最后, 关于保持内射或投射对象的断言不外是 $\Res^G_H$ 的正合性连同命题 \ref{prop:adjoint-injective-projective} 的应用.
+\end{proof}
+
+\begin{lemma}\label{prop:Ind-exact-profinite}
+	设 $H$ 是 $G$ 的闭子群, 则 $\Ind^G_H: H\dcate{Mod}^\infty \to G\dcate{Mod}^\infty$ 是正合函子.
+\end{lemma}
+\begin{proof}
+	已知 $\Ind^G_H$ 有左伴随, 故左正合. 问题归结为证明 $N_1 \twoheadrightarrow N_2 \implies \Ind^G_H(N_1) \twoheadrightarrow \Ind^G_H(N_2)$. 以引理 \ref{prop:profinite-section} 取商同态 $\pi: G \to H \backslash G$ 的连续截面 $s$, 于是对所有光滑 $H$-模 $N$ 皆有 $\Bbbk$-模同构
+	\[\begin{tikzcd}[row sep=tiny]
+		\Ind^G_H(N) \arrow[leftrightarrow, r, "\sim"] & \left\{\text{连续映射}\; H\backslash G \to N \right\} \\
+		f \arrow[mapsto, r] & {[x \mapsto f(s(x)) ]} \\
+		{[h s(x) \mapsto hf'(x) ]} & f' , \arrow[mapsto, l]
+	\end{tikzcd}\]
+	其中 $x \in H \backslash G$ 而 $h \in H$. 虽然同构不保持 $G$-作用, 但它对 $N$ 具有函子性.
+	
+	由于连续映射 $H \backslash G \to N$ 总是局部常值的, 在上式右侧操作, 便不难说明映射 $\Ind^G_H(N_1) \to \Ind^G_H(N_2)$ 为满.
+\end{proof}
+
+\begin{corollary}\label{prop:Res-injective-profinite}
+	设 $H$ 是 $G$ 的开子群, 则 $\Res^G_H: G\dcate{Mod}^\infty \to H\dcate{Mod}^\infty$ 保持内射对象.
+\end{corollary}
+\begin{proof}
+	基于前两则结果, 它有正合的左伴随 $\Ind^G_H$.
+\end{proof}
+
+现在得到定理 \ref{prop:Shapiro} 的 pro-有限群版本.
+
+\begin{proposition}
+	\index{Shapiro yinli}
+	设 $H$ 为 pro-有限群 $G$ 的闭子群, $N$ 为 $H$-模. 我们有同构
+	\[ \Hm^n\left(G, \Ind^G_H(N)\right) \simeq \Hm^n(H, N), \quad n \in \Z_{\geq 0}. \]
+\end{proposition}
+\begin{proof}
+	基于 $\Ind^G_H$ 正合而且保持内射对象这一事实 (引理 \ref{prop:Ind-exact-profinite}), 定理 \ref{prop:Shapiro} 中涉及可拭上同调 $\delta$-函子的论证全盘照搬. 回忆到该处论证的关键是 $n=0$ 情形, 相当于
+	\[ \Ind^G_H(N)^G = \left(\Ind^{G, \mathrm{alg}}_H(N)^\infty \right)^G = \left(\Ind^{G, \mathrm{alg}}_H(N)\right)^G \rightiso N^H; \]
+	第一个等号是定义, 第二个等号是容易的, 而末段同构来自推论 \ref{prop:Ind-invariant}.
+\end{proof}
+
+除此之外,
+\begin{itemize}
+	\item 上同调的 Lyndon--Hochschild--Serre 谱序列 (见 \S\ref{sec:LHS-SS}) 可以推广到 $G$ 为 pro-有限群而 $H$ 为正规闭子群的情形;
+	\item 杯积 (见 \S\ref{sec:cup-product}) 也可以推广到 pro-有限群, 方法是采用标准复形上的直接定义, 参看定义--命题 \ref{def:group-cup-3}.
+	\index{beiji}
+\end{itemize}
+表述无异, 不再赘述.
+
+\section{非交换上同调}\label{sec:nonabelian-coh}
+设 $G$ 为群. 先前讨论的上同调 $\Hm^n(G, M)$ 总要求其``系数'' $M$ 具有模结构, 或者至少是 $\Z$-模, 亦即交换群. 本节旨在探讨系数为非交换群的情形. 今起改用符号 $A$ 代替 $M$.
+
+\begin{definition}\label{def:G-group}
+	\index[sym1]{G-Grp@$G\dcate{Grp}$}
+	\index{G-qun@$G$-群}
+	设 $A$ 为群, 二元运算写作乘法, 幺元记为 $1$. 如果 $A$ 带有群 $G$ 的左作用, 写作
+	\[ G \times A \to A, \quad (g, a) \mapsto {}^g a . \]
+	使得群作用兼容 $A$ 的乘法结构:
+	\[ {}^g (a_1 a_2) = {}^g a_1 {}^g a_2, \quad {}^g 1 = 1, \]
+	则称 $A$ 是带 $G$-作用的群, 简称 $G$-群. 定义 $G$-群之间的同态为保持 $G$-作用的群同态. 它们构成的范畴记为 $G\dcate{Grp}$.
+\end{definition}
+
+即将看到, 对于 $G$-群 $A$, 在缺少额外结构或交换性的前提下, 能合理而且实用地定义的只有 $\Hm^0$ 和 $\Hm^1$. 此时 $\Hm^1$ 未必是群, 而是带基点集.
+
+\begin{definition}\label{def:pointed-set}
+	\index{daijidianji@带基点集 (pointed set)}
+	\index[sym1]{Set-pt@$\cate{Set}_\bullet$, $G\dcate{Set}_\bullet$}
+	所谓带基点集, 意谓资料 $(X, x_0)$, 其中 $X$ 是集合而 $x_0 \in X$ (称为基点); 从 $(X, x_0)$ 到 $(Y, y_0)$ 的态射意谓满足 $f(x_0) = y_0$ 的映射 $f: X \to Y$. 这些资料构成范畴 $\cate{Set}_\bullet$.
+	
+	设 $(X, x_0)$ 是带基点集. 若群 $G$ 左作用在 $X$ 上, 写作 $(g, x) \mapsto {}^g x$, 而且 ${}^g x_0 = x_0$ 恒成立, 则称 $G$ 作用在 $(X, x_0)$ 上. 此时可定义带基点的不变量子集
+	\[ (X, x_0)^G := \left\{ x \in X: \forall g \in G, \; gx = x \right\}, \quad \text{基点} = x_0. \]
+	全体具有 $G$-作用的带基点集对兼容于 $G$-作用的态射构成范畴, 记为 $G\dcate{Set}_\bullet$.
+\end{definition}
+
+不致混淆时, 我们经常将 $\cate{Set}_\bullet$ 的对象 $(X, x_0)$ 记为 $X$, 在 $G\dcate{Set}_\bullet$ 的场合将 $(X, x_0)^G$ 记为 $X^G$.
+
+群当然地成为带基点集, 基点取为群的幺元, 这给出不言自明的函子 $\cate{Grp} \to \cate{Set}_\bullet$; 同理也有 $G\dcate{Grp} \to G\dcate{Set}_\bullet$. 请留意到 $G$-群 $A$ 的不变量子集 $A^G$ 是其子群.
+
+\begin{definition}\label{def:pointed-exact}
+	\index{zhenghelie}
+	设 $(X, x_0) \xrightarrow{f} (Y, y_0) \xrightarrow{g} (Z, z_0)$ 为 $\cate{Set}_\bullet$ (或 $G\dcate{Set}_\bullet$) 中的态射. 若 $g^{-1}(z_0) = \Image(f)$, 则称此列态射正合. 由之可在 $\cate{Set}_\bullet$ (或 $G\dcate{Set}_\bullet$) 中定义何谓正合列.
+\end{definition}
+
+这在交换群的情形回归熟知的正合性. 现在可以对任意 $G$-群 $A$ 陈述 $\Hm^0$ 和 $\Hm^1$ 的定义.
+
+\begin{definition}\label{def:nonabelian-H}
+	\index{quntongdiao!非交换情形}
+	设 $A$ 为 $G\dcate{Set}_\bullet$ 的对象. 定义带基点集
+	\[ \Hm^0(G, A) = Z^0(G, A) := A^G. \]
+	
+	当 $A$ 是 $G$-群时 $\Hm^0(G, A)$ 成群. 此时进一步定义
+	\begin{align*}
+		Z^1(G, A) & := \left\{\begin{array}{r|l}
+			c: G \to A & \forall g_1, g_2 \in G, \\
+			& c(g_1 g_2) = c(g_1) \cdot {}^{g_1} c(g_2)
+		\end{array}\right\}, \\
+		\Hm^1(G, A) & := Z^1(G, A) / \sim ,
+	\end{align*}
+	等价关系 $c \sim c'$ 意谓存在 $a \in A$ 使得对所有 $g \in G$ 皆有
+	\[ c'(g) = a^{-1} \cdot c(g) \cdot {}^g a . \]
+	易见这确实为等价关系 (它来自某个右 $A$-作用), 而 $\Hm^1(G, A)$ 自然地成为带基点集, 以常值映射 $c(g) = 1$ 决定的等价类为其基点.
+\end{definition}
+
+留意到在 $Z^1(G, A)$ 的条件中代入 $g_1 = g_2 = 1_G$ 可得 $c(1_G) = 1$. 今后以 $[c]$ 代表 $c \in Z^1(G, A)$ 的等价类.
+
+\begin{remark}[$\Hm^1$ 作为截面的共轭类]\label{rem:Z1-vs-section}
+	从 $G$-群 $A$ 构造半直积 $A \rtimes G$, 记投影同态 $A \rtimes G \to G$ 为 $\pi$, 则, $Z^1(G, A)$ 的元素一一对应于满足 $\pi \sigma = \identity_G$ 的群同态 $\sigma: G \to A \rtimes G$ (亦即 $\pi$ 的``截面''), 方法是映 $c \in Z^1(G, A)$ 为 $\sigma(g) = (c(g), g)$. 进一步, $[c'] = [c]$ 等价于存在 $a \in A$ 使得 $\sigma' = a^{-1} \sigma a$, 其中 $A$ 嵌入为 $A \rtimes G$ 的子群, 逐点作共轭.
+\end{remark}
+
+当 $A$ 是交换群时, 这些构造化为基于标准复形对 $\Hm^0$ 和 $\Hm^1$ 作出的描述 (命题 \ref{prop:groupcoh-cochain}). 它们在非交换情形依然具有函子性, 细说如下.
+\begin{itemize}
+	\item 任何态射 $f: A_1 \to A_2$ 都诱导
+	\begin{gather*}
+		\Hm^0(f): \Hm^0(G, A_1) \to \Hm^0(G, A_2), \quad
+		\Hm^1(f): \Hm^1(G, A_1) \to \Hm^1(G, A_2);
+	\end{gather*}
+	前者显然, 后者的映法则是 $\Hm^1(f)([c]) = [f \circ c]$.
+	
+	\item 设 $\varphi: H \to G$ 为群同态. 将 $G$-群 $A$ 的 $G$-作用拉回到 $H$ 上, 给出 $H$-群 $\varphi^* A$.
+	\begin{compactitem}
+		\item 定义典范态射 $\Hm^0(G, A) \to \Hm^0(H, \varphi^* A)$ 	为自明嵌入 $A^G \hookrightarrow A^{\varphi(H)} = (\varphi^* A)^H$.
+		\item 以 $[c] \mapsto [c \circ \varphi]$ 定义带基点集的典范态射
+		\[ \Hm^1(G, A) \to \Hm^1(H, \varphi^* A). \]
+	\end{compactitem}
+\end{itemize}
+
+这些典范映射具有如 \S\ref{sec:change-of-group} 所见的诸般性质. 它们还可以统合如下: 给定 $\varphi: H \to G$, 设 $A_1$ 是 $G\dcate{Set}_\bullet$ (或 $G\dcate{Grp}$) 的对象, $A_2$ 是 $H\dcate{Set}_\bullet$ (或 $H\dcate{Grp}$) 的对象, 而态射 $f: A_1 \to A_2$ 对 $\varphi$ 等变 (一如定义 \ref{def:group-equivariance}), 则有相应的 $\Hm^i(f): \Hm^i(G, A_1) \to \Hm^i(H, A_2)$, 使得命题 \ref{prop:grp-equiv} 有如下类比:
+\begin{itemize}
+	\item $\Hm^0(f)$ 是 $f$ 限制而成的 $A_1^G \to A_2^H$,
+	\item $\Hm^1(f)$ 映 $[c]$ 为 $[f \circ c \circ \varphi]$.
+\end{itemize}
+
+\begin{convention}
+	记独点集在 $\cate{Set}_\bullet$ 或 $G\dcate{Set}_\bullet$ 中确定的零对象为 $1$.
+\end{convention}
+
+进入正题. 今起考虑 $G\dcate{Set}_\bullet$ 中的短正合列 (定义 \ref{def:pointed-exact})
+\[ 1 \to A \xrightarrow{u} B \xrightarrow{v} C \to 1, \]
+其中默认 $A$ 和 $B$ 是 $G$-群, $u$ 是群同态, 故正合性蕴涵 $u$ 单 $v$ 满; 我们进一步要求:
+\begin{equation}\label{eqn:pointed-ses-condition}
+	\begin{gathered}
+		\forall b, b' \in B, \; \left[ v(b) = v(b') \iff \exists a \in A, \; b' = b u(a) \right], \\
+		\text{换言之: $C$ 等同于 $B/u(A)$, 基点 $= 1 \cdot u(A)$.}
+	\end{gathered}
+\end{equation}
+
+假若 $C$ 是群而 $v$ 是群同态, 则考虑 $b^{-1} b' \in v^{-1}(1) = \Image(u)$ 可知 \eqref{eqn:pointed-ses-condition} 自动成立, 而且此时 $u(A) \lhd B$; 然而许多应用场景并非如此.
+
+眼下目标是为这些资料建立一个``尽可能长''正合列和对应的连接态射. 我们将不加说明地将 $A$ 等同于 $B$ 的子群, 同时省略符号 $u$.
+
+\textbf{零次情形.}\;
+首先定义连接态射 $\delta^0: \Hm^0(G, C) \to \Hm^1(G, A)$. 设 $c \in C^G$. 任取 $b \in v^{-1}(c)$. 因为 $v$ 保持 $G$-作用, 由 \eqref{eqn:pointed-ses-condition} 可知对所有 $g \in G$ 皆存在唯一的 $a(g) \in A$ 使得 ${}^g b = ba(g)$. 于是 $g \mapsto a(g)$ 给出 $Z^1(G, A)$ 的元素 $a$, 这是因为
+\[ a(g_1 g_2) = b^{-1} \cdot {}^{g_1 g_2} b = b^{-1} \cdot {}^{g_1} b \cdot {}^{g_1} (b^{-1} \cdot {}^{g_2} b) = a(g) \cdot {}^{g_1} a(g_2). \]
+若 $b', b \in v^{-1}(c)$, 则存在 $\alpha \in A$ 使得 $b' = b\alpha$, 于是
+\[ (b')^{-1} \cdot {}^g b' = \alpha^{-1} \cdot b^{-1} \cdot {}^g b \cdot {}^g \alpha. \]
+这说明类 $[a] \in \Hm^1(G, A)$ 仅由 $c$ 确定. 如果 $c$ 是 $C$ 的基点, 则可取 $b = 1 \in B$. 综上可得 $\cate{Set}_\bullet$ 中的态射 $\delta^0: \Hm^0(G, C) \to \Hm^1(G, A)$.
+
+\textbf{零次情形: 中心子群.}\;
+假定 $C$ 是群, $v$ 是群同态, 而 $A$ 包含于群 $B$ 的中心 $Z_B$; 特别地, $A$ 是交换群. 此时 $\Hm^0(G, C) = C^G$ 和 $\Hm^1(G, A)$ 都是群. 根据 $\delta^0$ 的定义和条件 $A \subset Z_B$, 容易验证 $\delta^0$ 是群同态.
+
+\textbf{一次情形.}\;
+继续假定 $C$ 是群而 $v$ 是群同态, $A \subset Z_B$; 于是 $\Hm^2(G, A)$ 可由标准复形描述. 今将定义 $\delta^1: \Hm^1(G, C) \to \Hm^2(G, A)$. 设 $c \in Z^1(G, C)$. 对每个 $g \in G$ 选取 $b(g) \in v^{-1}(c(g))$. 由于 \eqref{eqn:pointed-ses-condition} 总成立, 而 $v$ 保持 $G$-作用, 存在唯一的映射 $a: G^2 \to A$ 使得
+\[ b(g_1) \cdot {}^{g_1} b(g_2) = a(g_1, g_2) b(g_1 g_2). \]
+
+现在验证 $a \in Z^2(G, A)$. 这等价于
+\[ a(g_1, g_2)^{-1} \cdot a(g_1, g_2 g_3) \cdot a(g_1 g_2, g_3)^{-1} \cdot {}^{g_1} a(g_2, g_3) = 1. \]
+将左式展开成 $B$ 中的表达式
+\begin{multline*}
+	\underbracket{b(g_1 g_2) \cdot {}^{g_1} b(g_2)^{-1} \cdot b(g_1)^{-1}}_{a(g_1, g_2)^{-1}} \cdot \underbracket{b(g_1) \cdot {}^{g_1} b(g_2 g_3) b(g_1 g_2 g_3)^{-1}}_{a(g_1, g_2 g_3)} \\
+	\underbracket{b(g_1 g_2 g_3) \cdot {}^{g_1 g_2} b(g_3)^{-1} \cdot b(g_1 g_2)^{-1}}_{a(g_1 g_2, g_3)^{-1}} \; \cdot \; {}^{g_1} a(g_2, g_3),
+\end{multline*}
+再用 $A \subset Z_B$ 化简为
+\begin{multline*}
+	b(g_1 g_2) \cdot {}^{g_1} b(g_2)^{-1} \cdot {}^{g_1} b(g_2 g_3) \cdot {}^{g_1 g_2} b(g_3)^{-1}  b(g_1 g_2)^{-1} \cdot {}^{g_1} a(g_2, g_3) \\
+	= b(g_1 g_2) \cdot {}^{g_1} b(g_2)^{-1} \cdot \underbracket{{}^{g_1} b(g_2) \cdot {}^{g_1 g_2} b(g_3) \cdot {}^{g_1} b(g_2 g_3)^{-1}}_{{}^{g_1} a(g_2, g_3)} \cdot {}^{g_1} b(g_2 g_3) \cdot {}^{g_1 g_2} b(g_3)^{-1}  b(g_1 g_2)^{-1} .
+\end{multline*}
+至此可见末式确实等于 $1$, 故 $a \in Z^2(G, A)$.
+
+若改变各个 $b(g)$ 的选取, 表作 $b'(g) = \alpha(g) b(g)$, 其中 $\alpha: G \to A$ 是任意映射, 则对应之 $a'(g_1, g_2)$ 等于
+\begin{align*}
+	a'(g_1, g_2) & = \alpha(g_1) \cdot b(g_1) \cdot {}^{g_1} \alpha(g_2) \cdot {}^{g_1} b(g_2) b(g_1 g_2)^{-1} \alpha(g_1 g_2)^{-1} \\
+	& = \alpha(g_1) \cdot {}^{g_1} \alpha(g_2) \cdot \alpha(g_1 g_2)^{-1} \cdot a(g_1, g_2) \quad (\because\; A \subset Z_B).
+\end{align*}
+于是 $a, a' \in Z^2(G, A)$ 仅差一个 $B^2(G, A)$ 的元素.
+
+最后考虑 $c$ 被代换为 $c'(g) = \gamma^{-1} \cdot c(g) \cdot {}^g \gamma$ 的情形, $\gamma \in C$. 任取 $\beta \in v^{-1}(\gamma)$, 则对应于 $c'$ 的 $b'$ 不妨取为 $b'(g) = \beta^{-1} \cdot b(g) \cdot {}^g \beta$. 从 $b'$ 构作 $a': G^2 \to A$, 它表作
+\begin{align*}
+	a'(g_1, g_2) & = \left( \beta^{-1} \cdot b(g_1) \cdot {}^{g_1} \beta \right) \cdot {}^{g_1} \left( \beta^{-1} \cdot b(g_2) \cdot {}^{g_2} \beta \right) \cdot \left( {}^{g_1 g_2} \beta^{-1} \cdot b(g_1 g_2)^{-1} \cdot \beta \right) \\
+	& = \beta^{-1} \cdot \underbracket{b(g_1) \cdot {}^{g_1} b(g_2) \cdot b(g_1 g_2)^{-1}}_{= a(g_1, g_2)} \cdot \beta \\
+	& = a(g_1, g_2).
+\end{align*}
+
+综上可见 $a$ 在 $\Hm^2(G, A)$ 中的类由 $[c] \in \Hm^1(G, C)$ 确定. 若 $c$ 取常值 $1$, 则 $b$ 也可以选为常值 $1$, 对应之 $a$ 亦然. 综上可得 $\cate{Set}_\bullet$ 的态射 $\delta^1: \Hm^1(G, C) \to \Hm^2(G, A)$.
+
+\begin{theorem}\label{prop:nonabelian-long}
+	设 $1 \to A \xrightarrow{u} B \xrightarrow{v} C \to 1$ 为 $G\dcate{Set}_\bullet$ 中的短正合列, $A$ 和 $B$ 是 $G$-群而 $u$ 是群同态.
+	\begin{enumerate}[(i)]
+		\item 若条件 \eqref{eqn:pointed-ses-condition} 成立, 则有 $\cate{Set}_\bullet$ 中的正合列
+		\begin{equation*}\begin{tikzcd}[row sep=large]
+			1 \arrow[r] & \Hm^0(G, A) \arrow[r, "{\Hm^0(u)}"] & \Hm^0(G, B) \arrow[r, "{\Hm^0(v)}"] \arrow[phantom, d, ""{coordinate, name=A}] & \Hm^0(G, C) \arrow[dll, rounded corners, "{\delta^0}" description, to path={
+				-- ([xshift=2ex]\tikztostart.east)
+				|- (A) [near end]\tikztonodes
+				-| ([xshift=-2ex]\tikztotarget.west)
+				-- (\tikztotarget)}] \\
+			& \Hm^1(G, A) \arrow[r, "{\Hm^1(u)}"] & \Hm^1(G, B). &
+		\end{tikzcd}\end{equation*}
+		\item 除上述假设之外, 要求 $C$ 也是群而 $v$ 是群同态 (这自动蕴涵 \eqref{eqn:pointed-ses-condition}), 则正合列延长为
+		\begin{equation*}\begin{tikzcd}[row sep=large]
+			1 \arrow[r] & \Hm^0(G, A) \arrow[r, "{\Hm^0(u)}"] & \Hm^0(G, B) \arrow[r, "{\Hm^0(v)}"] \arrow[phantom, d, ""{coordinate, name=A}] & \Hm^0(G, C) \arrow[dll, rounded corners, "{\delta^0}" description, to path={
+				-- ([xshift=2ex]\tikztostart.east)
+				|- (A) [near end]\tikztonodes
+				-| ([xshift=-2ex]\tikztotarget.west)
+				-- (\tikztotarget)}] \\
+			& \Hm^1(G, A) \arrow[r, "{\Hm^1(u)}"] & \Hm^1(G, B) \arrow[r, "{\Hm^1(v)}"] & \Hm^1(G, C).
+		\end{tikzcd}\end{equation*}
+		\item 若进一步要求 $u(A)$ 包含于 $B$ 的中心 $Z_B$, 则 $\delta^0$ 是群同态, 正合列延长为
+		\begin{equation*}\begin{tikzcd}[row sep=large]
+			1 \arrow[r] & \Hm^0(G, A) \arrow[r, "{\Hm^0(u)}"] & \Hm^0(G, B) \arrow[r, "{\Hm^0(v)}"] \arrow[phantom, d, ""{coordinate, name=A}] & \Hm^0(G, C) \arrow[dll, rounded corners, "{\delta^0}" description, to path={
+				-- ([xshift=2ex]\tikztostart.east)
+				|- (A) [near end]\tikztonodes
+				-| ([xshift=-2ex]\tikztotarget.west)
+				-- (\tikztotarget)}] \\
+			& \Hm^1(G, A) \arrow[r, "{\Hm^1(u)}"] & \Hm^1(G, B) \arrow[r, "{\Hm^1(v)}"] \arrow[phantom, d, ""{coordinate, name=B}] & \Hm^1(G, C) \arrow[dll, rounded corners, "{\delta^1}" description, to path={
+				-- ([xshift=2ex]\tikztostart.east)
+				|- (B) [near end]\tikztonodes
+				-| ([xshift=-2ex]\tikztotarget.west)
+				-- (\tikztotarget)}] \\
+			& \Hm^2(G, A) . & {} & {}
+		\end{tikzcd}\end{equation*}
+	\end{enumerate}
+
+	连接态射 $\delta^0$ 和 $\delta^1$ 的定义如前所述. 它们都是典范的, 亦即与短正合列之间的态射兼容.
+\end{theorem}
+\begin{proof}
+	先前关于 $\delta^0$ 和 $\delta^1$ 的详细构造已足够说明它们是典范的, 同时对 (iii) 的情形业已说明 $\delta^0$ 为群同态. 以下检验正合性. 今后将 $A$ 视同 $B$ 的子群, 省略 $u$.
+	
+	在 (i) 的情境, $\Hm^0(G, A)$ 和 $\Hm^0(G, B)$ 处的正合性均显然. 在 $\Hm^0(G, C)$ 处, 设 $c \in C^G$. 按照定义, 它被映为 $\Hm^1(G, A)$ 的基点当且仅当存在 $\alpha \in A$ 和 $b \in B$, 使得
+	\[ v(b) = c, \quad \forall g \in G,\; b^{-1} \cdot {}^g b = \alpha^{-1} \cdot {}^g \alpha. \]
+	然而这又等价于说存在 $\alpha \in A$ 和 $b \in B$ 使得 $v(b) = c$ 而 $b\alpha^{-1} \in B^G$, 进一步还等价于 $c \in \Image(\Hm^0(u))$.
+	
+	在 $\Hm^1(G, A)$ 处, 设 $a \in Z^1(G, A)$, 则 $[a] \in \Hm^1(G, A)$ 被映为基点当且仅当存在 $b \in B$ 使得 $b^{-1} \cdot a(g) \cdot {}^g b = 1$ 恒成立. 若此式成立, 命 $c := v(b^{-1})$, 则对 ${}^g b^{-1} = b^{-1} \cdot a(g)$ 取 $v$ 可见 $c \in C^G$ 而且 $[a] = \delta^0([c])$. 反向论证是类似的.
+	
+	情境 (ii) 需要的是 $\Hm^1(G, B)$ 处的正合性. 设 $b \in Z^1(G, B)$, 它的类 $[b]$ 被映为基点当且仅当存在 $\beta \in B$ 使得 $\beta^{-1} \cdot b(g) \cdot {}^g \beta \in A$ 恒成立. 显然这相当于说精确到 $\sim$, 它来自 $Z^1(G, A)$.
+	
+	考虑情境 (iii). 设 $c \in Z^1(G, C)$, 它的类 $[c]$ 被映为基点当且仅当存在映射 $b: G \to B$ 和 $\alpha: G \to A$ 使得 $v \circ b = c$ 而且
+	\[ b(g_1) \cdot {}^{g_1} b(g_2) = \alpha(g_1) \cdot {}^{g_1} \alpha(g_2) \cdot \alpha(g_1 g_2)^{-1} \cdot  b(g_1 g_2). \]
+	因为 $A \subset Z_B$, 如以逐点乘法定义 $\alpha^{-1} b: G \to B$, 上式也等价于
+	\[ (\alpha^{-1} b)(g_1) \cdot {}^{g_1} (\alpha^{-1} b)(g_2) = (\alpha^{-1} b)(g_1 g_2), \]
+	亦即 $\alpha^{-1} b \in Z^1(G, B)$. 易见这相当于说 $[c]$ 来自于 $\Hm^1(G, B)$. 明所欲证.
+\end{proof}
+
+若进一步要求 $A$ 和 $B$ 皆交换, 则 $C \simeq B/u(A)$ 也是交换群, 从而回到系数为交换群的熟悉版本.
+
+注意到定理 \ref{prop:nonabelian-long} (i) 的正合列描述了基点对 $\Hm^1(u)$ 的原像, 但一般而言它无法判定 $\Hm^1(G, A)$ 的两个元素对 $\Hm^1(u)$ 的像是否相同. 本章习题将介绍的``扭曲''构造有助于处理这个问题.
+
+\begin{example}
+	设 $B$ 为 $G$-群, $A$ 为对 $G$-作用封闭的子群. 集合 $B/A$ 带有基点 $1 \cdot A$ 连同左 $G$-作用. 我们由此得到 $G\dcate{Set}_\bullet$ 中的短正合列
+	\[ 1 \to A \xrightarrow{\text{包含}} B \xrightarrow{\text{商}} B/A \to 1. \]
+	条件 \eqref{eqn:pointed-ses-condition} 当然地成立, 故定理 \ref{prop:nonabelian-long} (i) 给出 $\cate{Set}_\bullet$ 的正合列
+	\[ 1 \to A^G \to B^G \to (B/A)^G \xrightarrow{\delta^0} \Hm^1(G, A) \to \Hm^1(G, B). \]
+	
+	自明的映射 $B^G / A^G \hookrightarrow (B/A)^G$ 是单的, 然而它往往非双射: $G$-作用下封闭的陪集未必包含 $G$-不动点, 习题将给出实例. 尽管如此, 正合列对之明确了上同调障碍: 对 $\cate{Set}_\bullet$ 的态射 $f$, 定义 $\Ker(f)$ 为基点的原像, 则
+	\begin{align*}
+		\text{陪集}\; bA \in (B/A)^G \;\text{来自}\; B^G & \iff bA \in \Ker(\delta_0), \\
+		(B/A)^G = B^G/A^G & \iff \Ker[\Hm^1(G, A) \to \Hm^1(G, B)] = 1.
+	\end{align*}
+\end{example}
+
+本节以 Shapiro 引理 (定理 \ref{prop:Shapiro}) 的非交换版本收尾. 作为预备, 先以映射空间定义诱导模的非交换版本, 参见引理 \ref{prop:Ind-as-mappings}. 它适用于 $H\dcate{Grp}$ 或 $H\dcate{Set}_\bullet$ 的对象, 其中 $H \subset G$ 为子群; 群作用记如 $(h, a) \mapsto {}^h a$.
+
+\begin{definition}
+	设 $H$ 为 $G$ 的子群, $A$ 为 $H\dcate{Grp}$ (或 $H\dcate{Set}_\bullet$) 的对象. 定义 $G\dcate{Grp}$ (或 $G\dcate{Set}_\bullet$) 的对象 $\Ind^G_H(A)$ 如下: 它作为 $G\dcate{Set}$ 的对象是
+	\begin{gather*}
+		\Ind^G_H(A) := \left\{\begin{array}{r|l}
+			f: G \to A & \forall h \in H, \; \forall x \in G \\
+			& f(hx) = {}^h f(x).
+		\end{array}\right\}, \\
+		({}^g f)(x) := f(xg), \quad f \in \Ind^G_H(A), \; x, g \in G,
+	\end{gather*}
+	群运算 (或基点) 是映射的逐点运算 (或映至基点的常值映射). 我们称 $A \mapsto \Ind^G_H(A)$ 为诱导.
+\end{definition}
+
+诱导构造显然以相容的方式给出函子 $H\dcate{Grp} \to G\dcate{Grp}$ 和 $H\dcate{Set}_\bullet \to G\dcate{Set}_\bullet$.
+
+\begin{theorem}\label{prop:Shapiro-noncommutative}
+	\index{Shapiro yinli}
+	设 $H$ 为 $G$ 的子群, $A$ 为 $H\dcate{Set}_\bullet$ 或 $H\dcate{Grp}$ 的对象. 存在 $\cate{Set}_\bullet$ 中的典范同构
+	\[ \Hm^i\left(G, \Ind^G_H(A)\right) \rightiso \Hm^i(H, A), \]
+	其中 $i=0$ (当 $A$ 来自 $H\dcate{Set}_\bullet$) 或 $i=0,1$ (当 $A$ 来自 $H\dcate{Grp}$), 其映法为:
+	\begin{description}
+		\item[($i=0$)] 取 $f \mapsto f(1_G)$ 确定的映射 $Z^0\left(G, \Ind^G_H(A)\right) = \Ind^G_H(A)^G \to A^H = Z^0(H, A)$.
+		\item[($i=1$)] 取 $Z^1\left(G, \Ind^G_H(A)\right) \to Z^1(H, A)$, 映 $c: G \to \Ind^G_H(A)$ 为
+		\begin{align*}
+			(c|_H)(\cdot)(1_G): H & \to A \\
+			h & \mapsto c(h)(1_G).
+		\end{align*}
+	\end{description}
+	两者都诱导 $\Hm^i$ 层面的态射. 当 $A$ 来自 $H\dcate{Grp}$ 时, $i=0$ 的同构还是群同构.
+\end{theorem}
+\begin{proof}
+	例行的论证说明两种情形的映射皆良定义, 并且保持基点或群结构, 细节留给读者.
+	
+	当 $i=0$ 时, 不难看出 $\Ind^G_H(A)^G \to A^H$ 确实为双射, 并且在 $A$ 为 $H$-群时给出群同构. 以下专注于 $A$ 为 $H\dcate{Grp}$ 的对象而 $i=1$ 的情形.
+	
+	设 $r, s \in Z^1(G, \Ind^G_H(A))$ 在 $\Hm^1(H, A)$ 中有相同的像, 今将往证 $r \sim s$. 前提相当于说存在 $\alpha \in A$ 使得
+	\[ r(h)(1_G) = \alpha^{-1} \cdot s(h)(1_G) \cdot {}^h \alpha \]
+	对所有 $h \in H$ 恒成立. 存在 $\zeta \in \Ind^G_H(A)$ 使得 $\zeta(1_G) = \alpha$, 以 $\zeta$ 在等价类中调整 $s$, 则可以确保 $r(h)(1_G) = s(h)(1_G)$ 恒成立.
+	
+	关于 $Z^1(G, \Ind^G_H(A))$ 的定义蕴涵 $A$ 中的等式
+	\begin{gather*}
+		r(g_1 g_2)(x) =r(g_1)(x) \cdot r(g_2)(xg_1), \quad s(g_1 g_2)(x) = s(g_1)(x) \cdot s(g_2)(xg_1)
+	\end{gather*}
+	对所有 $x, g_1, g_2 \in G$ 成立. 一方面, 代入 $g_1 = g \in G$ 和 $g_2 = g^{-1} x^{-1}$ 整理可得
+	\begin{equation}\label{eqn:Shapiro-noncommutative-aux0}
+		\begin{aligned}
+			r(g)(x) & = r(x^{-1})(x) \cdot r(g^{-1} x^{-1})(xg)^{-1}, \\
+			s(g)(x) & = s(x^{-1})(x) \cdot s(g^{-1} x^{-1})(xg)^{-1}.
+		\end{aligned}
+	\end{equation}
+	另一方面, 代入 $g_1 = x^{-1}$ 和 $g_2 = h \in H$ 则能够推得
+	\begin{equation}\label{eqn:Shapiro-noncommutative-aux1}
+		s(x^{-1} h)(x) \cdot r(x^{-1} h)(x)^{-1} = s(x^{-1})(x) \cdot r(x^{-1})(x)^{-1}.
+	\end{equation}
+	
+	对所有 $x \in G$ 定义 $t(x) := s(x^{-1})(x) \cdot r(x^{-1})(x)^{-1}$. 兹断言 $t: G \to A$ 属于 $\Ind^G_H(A)$. 这是因为当 $h \in H$ 而 $x \in G$ 时
+	\begin{multline*}
+		t(hx) = s(x^{-1} h^{-1})(hx) \cdot r(x^{-1} h^{-1})(hx)^{-1} \\
+		= {}^h \left( s(x^{-1}h^{-1})(x) \cdot r(x^{-1} h^{-1})(x)^{-1} \right) \\
+		\xlongequal{\text{\eqref{eqn:Shapiro-noncommutative-aux1}}} {}^h \left( s(x^{-1})(x) \cdot r(x^{-1})(x)^{-1} \right) = {}^h t(x).
+	\end{multline*}
+
+	为了说明 $r \sim s$, 问题归结为验证 $\Ind^G_H(A)$ 中的恒等式 $t^{-1} \cdot s(g) \cdot {}^g t = r(g)$. 诚然, 左式在 $x \in G$ 的取值是
+	\[ r(x^{-1})(x) \cdot s(x^{-1})(x)^{-1} \cdot s(g)(x) \cdot s(g^{-1} x^{-1})(xg) \cdot r(g^{-1} x^{-1})(xg)^{-1}; \]
+	以 \eqref{eqn:Shapiro-noncommutative-aux0} 展开 $s(g)(x)$ 和 $r(g)(x)$, 易见上式等于 $r(g)(x)$. 单性得证.
+	
+	最后说明满性. 设 $s^\flat \in Z^1(H, A)$. 记商映射 $G \twoheadrightarrow H \backslash G$ 为 $\pi$, 任取映射 $\sigma: H \backslash G \to G$ 使得 $\pi\sigma = \identity$; 不失一般性可设 $\sigma(H \cdot 1_G) = 1_G$. 所有 $g \in G$ 都有唯一表达式
+	\[ g = \tau(g) \sigma(Hg), \quad \tau(g) \in H. \]
+
+	观察到 $\tau(1_G) = 1_G$. 对所有 $g, x \in G$ 定义
+	\[ s(g)(x) := {}^{\tau(x)} s^\flat\left( \tau(\sigma(Hx)g) \right) \; \in A. \]
+	设 $h \in H$, 由 $\tau(hx) = h\tau(x)$ 易见 $s(g)(hx) = {}^h s(g)(x)$, 故 $s(g) \in \Ind^G_H(A)$. 下一步是说明 $s \in Z^1(G, \Ind^G_H(A))$. 请读者先验证
+	\begin{equation}\label{eqn:Shapiro-noncommutative-aux2}
+		\tau(uv) = \tau(u) \tau(\sigma(Hu)v), \quad u, v \in G.
+	\end{equation}
+
+	目标是证明 $s(g_1 g_2)(x) = s(g_1)(x) \cdot s(g_2)(xg_1)$ 对所有 $g_1, g_2, x \in G$ 成立. 由 $Z^1(H, A)$ 定义可见左式等于
+	\begin{multline*}
+		{}^{\tau(x)} s^\flat\left( \tau(\sigma(Hx)g_1 g_2) \right) \xlongequal{\text{\eqref{eqn:Shapiro-noncommutative-aux2}}} {}^{\tau(x)} s^\flat\left( \tau(\sigma(Hx)g_1) \tau(\sigma(Hx g_1)g_2) \right) \\
+		= {}^{\tau(x)} s^\flat\left( \tau(\sigma(Hx)g_1) \right) \cdot {}^{\tau(x)\tau(\sigma(Hx)g_1)} s^\flat\left( \tau(\sigma(Hxg_1)g_2) \right) \\
+		\xlongequal{\text{\eqref{eqn:Shapiro-noncommutative-aux2}}} {}^{\tau(x)} s^\flat\left( \tau(\sigma(Hx)g_1) \right) \cdot {}^{\tau(xg_1)} s^\flat\left( \tau(\sigma(Hxg_1)g_2) \right),
+	\end{multline*}
+	这就抵达了右式.
+
+	此外, 当 $h \in H$ 时 $s(h)(1_G) = s^\flat(h)$, 故 $s$ 被映为 $s^\flat$. 满性得证.
+\end{proof}
+
+显然定理 \ref{prop:Shapiro-noncommutative} 写下的同构在 $A$ 为交换 $G$-群的情形化为命题 \ref{prop:Shapiro-std-coh} 的特例. 此外, 例行的操作足以说明这些同构和定理 \ref{prop:nonabelian-long} 中的连接态射兼容, 这些内容留作练习.
+
+\begin{remark}[pro-有限群的非交换上同调]\label{rem:pro-finite-coh-nonabelian}
+	\index{G-qun!光滑 (smooth)}
+	考虑 pro-有限群 $G$. 若 $G\dcate{Set}_\bullet$ 或 $G\dcate{Grp}$ 的对象 $A$ 满足 $A = \bigcup_K A^K$, 其中 $K$ 遍历 $G$ 的正规开子群, 则称 $A$ 为光滑的; 此时赋予 $A$ 离散拓扑. 由于本节论证都基于标准复形的类比, 先前一切结果皆适用于 pro-有限群 $G$ 和光滑的 $A$, 差别仅在于须要求 $c \in Z^i(G, A)$ 作为从 $G$ 到 $A$ 的映射是连续的, 亦即局部常值的. 由此可以定义 $\Hm^i(G, A)$ 和各种典范态射 ($i=0,1$), 而
+	\begin{align*}
+		Z^i(G, A) & = \varinjlim_K Z^i(G/K, A^K), \\
+		\Hm^i(G, A) & = \varinjlim_K \Hm^i(G/K, A^K), \quad i = 0, 1.
+	\end{align*}
+
+	此外, $\Ind^G_H(A)$ 的定义须要求 $f: G \to A$ 是局部常值的, 而定理 \ref{prop:Shapiro-noncommutative} 证明中需要引理 \ref{prop:profinite-section}, 以确保单性部分的 $\zeta: G \to A$ 可取为局部常值的, 而满性部分的 $\sigma: H \backslash G \to G$ 连续.
+	
+	最后, 注记 \ref{rem:Z1-vs-section} 对 pro-有限群 $G$ 仍然成立: $Z^1(G, A)$ 对应到投影同态 $\pi: A \rtimes G \to G$ 的连续截面集, $\Hm^1(G, A)$ 则是连续截面集对 $A$-共轭作用的商.
+\end{remark}
+
+
+
+\begin{Exercises}
+	\item 选定交换环 $\Bbbk$ 和 $t \in \Bbbk$. 对任意 $\Bbbk$-模, 记 $m_t$ 为乘以 $t$ 给出的自同态. 设 $M$ 为 $G$-模, 说明 $m_t \in \End_G(M)$ 在 $\Hm^n(G, M)$ 和 $\Hm_n(G, M)$ 上诱导的自同态也不外是 $m_t$.
+	
+	\begin{hint}
+		以上同调为例, 或者用标准复形写下诱导自同态, 或者对 $M$ 取内射解消 $0 \to M \to I^0 \to \cdots$, 然后说明诱导自同态来自下图.
+		\[\begin{tikzcd}
+			0 \arrow[r] & M \arrow[r] \arrow[d, "{m_t}"] & I^0 \arrow[r] \arrow[d, "{m_t}"] & I^1 \arrow[r] \arrow[d, "{m_t}"] & \cdots \\
+			0 \arrow[r] & M \arrow[r] & I^0 \arrow[r] & I^1 \arrow[r] & \cdots
+		\end{tikzcd}\]
+	\end{hint}
+
+	\item 设 $G$-模 $M$ 作为 $\Bbbk$-模是投射的. 证明 $\mathsf{L} \otimes M \to \Bbbk \otimes M \simeq M$ 给出 $G$-模 $M$ 的投射解消; 以 $\overline{\mathsf{L}}$ 代 $\mathsf{L}$ 亦同.
+	
+	\begin{hint}
+		应用命题 \ref{prop:group-tensor-proj}.
+	\end{hint}
+	
+	\item 以链复形的上同调泛系数定理证明命题 \ref{prop:group-UCT}.
+	
+	% Another candidate: Rotman, Homological Algebra. Duality Theorem 9.73. Think about it.
+	
+	\item 设 $p$ 为素数, $G$ 为 $p$-群, $M$ 为满足 $pM = 0$ 的 $G$-模. 证明以下性质等价:
+	\begin{inparaenum}[(i)]
+		\item $M = 0$,
+		\item $M^G = 0$,
+		\item $M_G = 0$.
+	\end{inparaenum}
+
+	\begin{hint}
+		为了证明 (ii) $\implies$ (i), 设有 $x \in M \smallsetminus \{0\}$, 考虑 $\{gx: g \in G \}$ 在 $M$ 中生成的 $\F_p$-向量子空间 $E$. 从 $|E^G| \equiv |E| \pmod{p}$ 说明 $M^G \neq 0$.
+		
+		为了证明 (iii) $\implies$ (i), 取 $M^\vee := \Hom_{\F_p}(M, \F_p)$ 并赋予自然的 $G$-模结构. 观察到 $(M^\vee)^G \simeq \Hom_{\F_p}(M_G, \F_p)$, 以此推导 $M_G = 0 \implies M^\vee = 0 \implies M = 0$.
+	\end{hint}
+
+	\item 给定域 $F$. 群 $G$ 的\emph{表示}是指资料 $(\rho, V)$, 其中 $V$ 是 $F$-向量空间, 其线性自同构群记为 $\GL(V)$, 而 $\rho: G \to \GL(V)$ 是群同态; 显然, 这也相当于系数在 $F$ 上的 $G$-模. 所谓\emph{射影表示}则是指资料 $(\pi, V)$, 其中考虑群同态 $\pi: G \to \PGL(V) := \GL(V) / F^\times \identity$. 表示或射影表示之间的同构按自明的方式定义. 今后等同 $F^\times$ 与 $F^\times \identity$.
+	\index{biaoshi@表示 (representation)}
+	\index{sheyingbiaoshi@射影表示 (projective representation)}
+	
+	\begin{enumerate}[(i)]
+		\item 给定 $G$ 的射影表示 $(\pi, V)$, 假设对每个 $g \in G$ 选定了 $\pi(g)$ 在 $\GL(V)$ 中的原像 $\tilde{\pi}(g)$. 验证
+		\[ \tilde{\pi}(g_1) \tilde{\pi}(g_2) = c(g_1, g_2) \tilde{\pi}(g_1 g_2) \]
+		确定了 $c \in Z^2(G, F^\times)$, 此处赋 $F^\times$ 平凡 $G$-作用; 若 $\tilde{\pi}(1_G) = \identity_V$ 则 $c \in \overline{Z}^2(G, F^\times)$.
+		\item 证明 (i) 中的 $c$ 在 $\Hm^2(G, F^\times)$ 中的像只关乎 $(\pi, V)$ 的同构类, 不依赖任何选取.
+		\item 考虑群的中心扩张 $1 \to F^\times \to \tilde{G} \to G \to 1$ (定义 \ref{def:central-ext}), 其中
+		\[ \tilde{G} := \left\{ (g, \tilde{\pi}) \in G \times \GL(V): \pi(g) = \tilde{\pi} \bmod F^\times \right\}, \]
+		第一段同态映 $t \in F^\times$ 为 $(1_G, t)$, 第二段是投影. 说明它同构于 (ii) 中的上同调类所确定的中心扩张.
+		\item 承上, 给出双射
+		\[ \left\{ \text{表示}\; (\sigma, V): \;\text{提升}\; (\pi, V) \right\} \xleftrightarrow{1:1} \left\{ \text{中心扩张}\; \tilde{G} \;\text{的分裂} \right\}. \]
+		进一步说明 $(\pi, V)$ 能提升为表示当且仅当 (ii) 的上同调类平凡.
+		\item 具体写下一个群 $G$ 及其射影表示 $(\pi, V)$, 使得它无法提升为表示. 试找出 $\pi: G \to \PGL(V)$ 非平凡的例子.
+	\end{enumerate}
+
+	\item 对于子群 $G_1 \subset G_2 \subset G_3$, 证明函子之间的典范同构 $\Ind^{G_3}_{G_2} \Ind^{G_2}_{G_1} \simeq \Ind^{G_3}_{G_1}$ 和 $\iInd^{G_3}_{G_2} \iInd^{G_2}_{G_1} \simeq \iInd^{G_3}_{G_1}$. 尽量明确地描述之.
+
+	\item 证明若 $H$ 是 $G$ 的子群, 则 $\mathrm{cd}(H) \leq \mathrm{cd}(G)$ 而 $\mathrm{hd}(H) \leq \mathrm{hd}(G)$, 见定义 \ref{def:group-dim}.
+	\begin{hint}
+		应用定理 \ref{prop:Shapiro}.
+	\end{hint}
+
+	\item 说明当 $m \in \Z_{\geq 1}$ 时 $\mathrm{cd}(C_m) = \mathrm{hd}(C_m) = \infty$. 证明 $\mathrm{cd}(G) < \infty$ 蕴涵 $G$ 无挠; 证明 $\mathrm{cd}(G) = 0$ 当且仅当 $G$ 是平凡群.
+	\begin{hint}
+		对第一部分应用命题 \ref{prop:group-cohomology-cyclic}, 取 $A = \Z/m\Z$; 至于其余部分, 考虑 $G$ 的循环子群.
+	\end{hint}
+
+	\item 试以标准复形上的操作直接证明推论 \ref{prop:group-coh-torsion}.
+
+	% Reference: Cohomology of Number Fields, (1.5.6) and (1.5.7)	
+	\item 设 $U$ 和 $V$ 是群 $G$ 的子群, $(G:V)$ 有限. 记上同调的限制映射为 $\mathrm{res}^G_U$, 余限制映射为 $\mathrm{cor}^V_G$, 依此类推 (符号中省略上同调的次数 $n$). 取定双陪集分解
+	\[ G = \bigsqcup_{\sigma \in S} U \sigma V, \]
+	其中有限集 $S \subset G$ 由双陪集的一族代表元构成. 取定 $G$-模 $M$.
+	\begin{enumerate}[(i)]
+		\item 对每个 $\sigma \in G$ 和 $n \in \Z_{\geq 0}$, 合理地定义 $\mathcal{T}_\sigma: \Hm^n(V \cap \sigma^{-1} U \sigma, M) \to \Hm^n(U \cap \sigma V \sigma^{-1}, M)$, 使得当 $n=0$ 时它化为
+		\[ M^{V \cap \sigma^{-1} U \sigma} \rightiso M^{U \cap \sigma V \sigma^{-1}}, \quad x \mapsto \sigma x. \]
+		\item 承上, 证明
+		\[ \mathrm{res}^G_U \circ \mathrm{cor}^V_G = \sum_{\sigma \in S} \mathrm{cor}^{U \cap \sigma V \sigma^{-1}}_U \circ \mathcal{T}_\sigma \circ \mathrm{res}^V_{V \cap \sigma^{-1} U \sigma}. \]
+		\item 在 $U = V \lhd G$ 时描述 $\mathrm{res}^G_U \circ \mathrm{cor}^U_G$ 的作用.
+	\end{enumerate}
+	
+	\item 设 $G$ 为交换群, 视同 $\Z$-模; 定义 $G \wedge G$ 为 $G \dotimes{\Z} G$ 对 $\{g \otimes g : g \in G \}$ 生成的子模的商, 并且记 $x \otimes y$ 的像为 $x \wedge y$. 证明 $\Hm_2(G, \Z) \simeq G \wedge G$.
+	
+	\begin{hint}
+		\index[sym1]{[,]}
+		群的展示 $G = F/R$ 一旦取定, Hopf 公式 (推论 \ref{prop:Hopf-H2}) 蕴涵 $\Hm_2(G, \Z) \simeq [F, F]/[F, R]$. 由于 $G$ 交换, $[F, F] \subset R$. 鉴于 $[xy, z] = x[y, z]x^{-1} \cdot [x, z]$, 映射
+		\[ \psi_0: G \times G \to [F, F]/[F, R], \quad (f_1 R, f_2 R) \mapsto [f_1, f_2] \bmod [F, R] \]
+		是 $\Z$-双线性的, 它诱导满同态 $\psi: G \wedge G \to [F, F]/[F, R]$. 现在取 $F$ 的基 $\{x_i\}_{i \in I}$, 赋予 $I$ 全序, 我们需要以下群论事实: $H := [F, F]/[[F, F], F]$ 是自由交换群, 以诸 $[x_i, x_j]$ 的陪集为基 ($i < j$). 于是可定义同态 $\phi_0: H \to G \wedge G$, 映 $[x_i, x_j]$ 的陪集为 $x_i R \wedge x_j R$. 说明
+		\[ f_1, f_2 \in F \implies \phi_0([f_1, f_2] \;\text{的陪集}) = f_1 R \wedge f_2 R. \]
+		由此将 $\phi_0$ 下降为同态 $\phi: [F, F]/[F, R] \to G \wedge G$. 说明 $\phi$ 和 $\psi$ 互逆.
+
+		上述群论事实在 $I$ 有限的情形见诸 \cite[Theorem 11.2.4]{Ha76}, 由之可得一般情形.
+	\end{hint}
+	
+	\item 设 $H \lhd G$ 而 $M$ 是 $G$-模. 赋予标准复形 $C(H, M^H)$ 自然的 $G/H$-作用, 使之给出 $G/H$ 对每个 $\Hm^n(H, M^H)$ 的典范作用 (见引理 \ref{prop:LHS-action-aux} 之上的说明).
+	
+	\item 对注记 \ref{rem:LHS-SS-mult} 写下的滤过, 描述其谱序列的 $E_2$ 页, 说明定理 \ref{prop:LHS-SS} 的性质对之依然成立. 尽可能地说明谱序列和杯积的兼容性.
+
+	\item 考虑 $m$ 阶有限循环群 $C_m$. 对于所有 $C_m$-模 $A$ 和 $n \in \Z_{\geq 1}$, 证明命题 \ref{prop:group-cohomology-cyclic} 的周期同构 $\Hm^n(C_m, A) \to \Hm^{n+2}(C_m, A)$ 等于循着例 \ref{eg:cup-periodicity} 的典范短正合列
+	\begin{gather*}
+		0 \to \mathfrak{I} \otimes A \to \Z[C_m] \otimes A \to A \to 0, \\
+		0 \to A \xrightarrow{\nu \otimes \identity} \Z[C_m] \otimes A \xrightarrow{(\sigma-1) \otimes \identity} \mathfrak{I} \otimes A \to 0.
+	\end{gather*}
+	取两次连接同态的产物.
+	
+	\begin{hint}
+		以命题 \ref{prop:group-cohomology-cyclic} 证明中的周期复形 $A \xrightarrow{\sigma - 1} A \xrightarrow{\nu} A \to \cdots$ (从零次项开始) 确定上同调, 并以之描述连接同态. 分奇偶性讨论, 需要一些计算.
+	\end{hint}
+
+	\item 令 $\Bbbk$ 为任意交换环, $m \in \Z_{\geq 1}$. 确定上同调代数 $\Hm^\bullet(C_m, \Bbbk)$ 作为分次 $\Bbbk$-代数的结构.
+%	\begin{hint}
+%		在例 \ref{eg:cup-periodicity} 中代入 $A = \Bbbk$ 或许有所帮助.
+%	\end{hint}
+
+	% Reference: Spanier, p.254
+	% According to May (p.155), it is rather $\lrangle{\alpha \cup \beta, \gamma} = \lrangle{\beta, \alpha \cap \gamma}$
+	\item 对于注记 \ref{rem:cap-product} 介绍的帽积, 证明它和杯积有如下伴随关系
+	\[ \lrangle{\alpha \cup \beta, \gamma} = \lrangle{\alpha, \beta \cap x} \; \in (M_1 \otimes M_2 \otimes M_3)_G , \]
+	其中 $M_1$, $M_2$, $M_3$ 是 $G$-模, 而 $\alpha \in \Hm^p(G, M_1)$, $\beta \in \Hm^q(G, M_2)$, $x \in \Hm_{p+q}(G, M_3)$.
+	
+	\item 本题设 $G$ 为有限群, 上同调和同调理论中的系数环取为 $\Z$; 自由 $G$-模意谓自由 $\Z[G]$-模. 记 $G$-模 $M$ 的逆步模为 $M^* := \Hom_{\Z}(M, \Z)$.
+	\begin{enumerate}[(i)]
+		\item 取平凡 $G$-模的自由解消 $\epsilon: P \to \Z$, 此处 $P := [\cdots \to P_n \to P_{n-1} \to \cdots]$, 其中每个 $P_n$ 都有限生成. 命 $P^* := [\cdots \to P_n^* \to P_{n+1}^* \to \cdots]$. 说明 $\epsilon^*: \Z \to P^*$ 是拟同构.
+		\begin{hint}
+			每个 $P_n$ 都是自由 $\Z$-模. 若自由 $\Z$-模的链复形 $(C_n, \partial_n)_{n \in \Z}$ 正合, $Z_n := \Ker(\partial_n)$, 则短正合列 $0 \to Z_{n+1} \to C_{n+1} \xrightarrow{\partial_n} Z_n \to 0$ 对所有 $n$ 皆分裂.
+		\end{hint}
+		\item 承上, 证明每个 $P_n^*$ 都是有限生成投射 $G$-模.
+		\begin{hint}
+			说明 $\Z[G]^* \simeq \Z[G]$ 即可.
+		\end{hint}
+
+		\item 设 $Q$ 为有限生成投射 $G$-模. 对所有 $G$-模 $M$ 证明 \eqref{eqn:nu-coinv-inv} 的典范态射 $\nu: (Q \otimes M)_G \to (Q \otimes M)^G$ 是同构.
+
+		\begin{hint}
+			以直和分解将问题化约到 $Q = \Z[G]$ 情形直接验证. 为了简化, 还可以进一步以自同构 $(\sum_{g \in G} a_g g) \otimes x \mapsto \sum_{g \in G} a_g (g \otimes g^{-1} x)$ 将 $\Z[G] \otimes M$ 上的对角 $G$-作用调整为左乘.
+		\end{hint}
+		
+		\item 命 $P_{-n} := P^*_{n-1}$, 将 $P$ 和 $P^*$ 接合为链复形
+		\[ \mathcal{P} := \left[ \cdots \to P_1 \to P_0 \xrightarrow{\epsilon^* \epsilon} P_{-1} \to P_{-2} \to \cdots \right]. \]
+		证明对于任何 $G$-模 $M$, 我们有典范同构
+		\[ \Hm^n \Hom_G(\mathcal{P}, M) \simeq \text{Tate 上同调}\; \TaHm^n(G, M), \quad n \in \Z. \]
+		
+		\begin{hint}
+			当 $n \geq 1$ 时显然, 当 $n \leq -2$ 时运用下述性质: 设 $Q$ 为有限生成投射 $G$-模, 则 $Q \otimes M \rightiso \Hom(Q^*, M)$. 由此推导
+			\[ (Q \otimes M)_G \xrightarrow[\nu]{\sim} (Q \otimes M)^G \rightiso \Hom(Q^*, M)^G = \Hom_G(Q^*, M). \]
+			对于 $n = 0, -1$ 情形, 将 $\Hom_G(P_{-1}, M) \to \Hom_G(P_0, M)$ 以上述同构等同于
+			\[ (P_0 \otimes M)_G \xrightarrow{(\epsilon \otimes \identity)_G} M_G \xrightarrow{\nu} M^G \xrightarrow{\epsilon^*} \Hom_G(P_0, M). \]
+		\end{hint}
+		
+		\item 以此直接证明 Tate 上同调的长正合列.
+		
+		\item 取 $\epsilon: P \to \Z$ 为命题 \ref{prop:trivial-mod-nor-resolution} 提供的自由解消, 为每个 $P_n$ 选取自然的基, 然后具体地描述 (iv) 的链复形 $\mathcal{P}$.
+	\end{enumerate}
+
+	基于 (vi), 可比照引理 \ref{prop:cup-resolution} 的方式对 Tate 上同调定义杯积, 方法是合适地定义 $\Delta: \mathcal{P} \to \mathcal{P} \otimes \mathcal{P}$; 具体公式详见 \cite[Chapter IV, \S 7]{CF67}.
+	\index{beiji}
+	\index{Tate shangtongdiao}
+	\index[sym1]{HnGMTate}
+
+	\item 设 $G$ 为有限群而 $H$ 为其子群. 对于 $G$-模 $M$, 将 \S\ref{sec:group-finite-index} 的典范态射 $\mathrm{res}^n: \TaHm^n(G, M) \to \TaHm^n(H, M)$ 和 $\mathrm{res}_n: \TaHm^{-n-1}(H, M) \to \TaHm^{-n-1}(G, M)$ 通过移维 (推论 \ref{prop:Tate-dim-shift}) 的手法从 $n \geq 1$ 情形延拓到所有 $n \in \Z$. 姑且记前者为 $\mathrm{res}_+$, 记后者为 $\mathrm{res}_-$.
+	\begin{enumerate}[(i)]
+		\item 描述 $\mathrm{res}_+$ 在 $\TaHm^0$ 上的作用, 以及 $\mathrm{res}_-$ 在 $\TaHm^{-1}$ 上的作用.
+		\item 证明 $\mathrm{res}_+$ 在 $\TaHm^{-1}$ 上由 $\nu_{G|H}: M_G \to M_H$ 诱导 (定义 \ref{def:cor-zero}), 在 $\TaHm^{< -1}$ 的部分是 $\mathrm{cor}_n$ (定义--命题 \ref{def:cor}).
+		\item 证明 $\mathrm{res}_-$ 在 $\TaHm^0$ 上由 $\nu^{G|H}: M^H \to M^G$ 诱导, 在 $\TaHm^{> 0}$ 的部分是 $\mathrm{cor}^n$.
+	\end{enumerate}
+
+	\item 对于群 $G$ 和 $G$-模的下有界复形 $M = [\cdots \to M^p \to M^{p+1} \to \cdots]$, 让标准复形 $C(G, M^p)$ 中的 $p$ 变动, 作成双复形, 其全复形记为 $C(G, M) := \tot\left((C^q(G, M^p))_{p, q}\right)$. 证明典范同构
+	\[ \Hm^n(C(G, M)) \simeq \Hm^n\left(G, [\cdots \to M^p \to M^{p+1} \to \cdots]\right), \quad n \in \Z, \]
+	右式按照 \S\ref{sec:derived-primer} 的方式定义, 又称为群的超上同调.
+	
+	\begin{hint}
+		右式按定义是先取内射解消 $M \to I$ (回忆: $I$ 是下有界复形, 每个 $I^q$ 都是内射 $G$-模, $M \to I$ 是拟同构) 再取 $\Hom$ 复形 $\Hom^\bullet_G(\Bbbk, I)$ 所确定的上同调. 说明它同样可以由 $\Hom^\bullet_G(\mathsf{L}, M)$ 来确定.
+	\end{hint}
+	
+	\item 承上, 对 $G$ 为 pro-有限群的情形证明相应的结果, 前提是要求每个 $M^p$ 都是光滑 $G$-模, 并且取连续版本的标准复形 $C(G, M^p)$.
+	
+	\begin{hint}
+		定义从 $\cate{C}^+(G\dcate{Mod}^\infty)$ 到 $\cate{C}^+(\Bbbk\dcate{Mod})$ 的函子 $C(G, \cdot)$, 说明它诱导 $\cate{K}^+(\cdots)$ 层次的三角函子, 而且保持零调对象, 从而诱导 $\cate{D}^+(\cdots)$ 层次的三角函子, 仍记为 $C(G, \cdot)$. 通过自然态射 $(\cdot)^G \to C(G, \cdot)$ 和右导出函子的泛性质, 可得三角函子之间的态射 $\mathrm{R}(\cdot)^G \to C(G, \cdot)$. 为了证明它是同构, 可用出口引理 (命题 \ref{prop:wayout}) 化约到定理 \ref{prop:profinite-group-standard} 处理过的情形.
+	\end{hint}
+
+	\item 对于 pro-有限群 $G$ 和有限 $G$-模 $M$, 完整证明 \S\ref{sec:profinite-cohomology} 提及的 pro-有限群扩张等价类和 $\Hm^2(G, M)$ 的一一对应.
+	
+	\begin{hint}
+		照搬 \S\ref{sec:grp-low-degree} 的论证. 在 pro-有限群的情形, 需要的观察是: (i) 任何 $f \in \overline{Z}^2(G, M)$ 在乘积空间 $M \times G$ 上定义的群结构都是 pro-有限群; (ii) 给定 pro-有限群扩张 $E$, 我们有拓扑群的同构 $E/M \rightiso G$; (iii) 承上, 引理 \ref{prop:profinite-section} 给出 $E \twoheadrightarrow G$ 的连续截面 $s$, 可调整为正规化的.
+	\end{hint}
+
+	\item 对任意域 $F$, 定义 $\GL(n, F)$ 为 $F$ 上的 $n \times n$ 可逆矩阵群, 定义 $\SL(n, F)$ 为 $\det = 1$ 截出的子群. 观察到 $G := \Gal(\CC|\R)$ 作用在 $\GL(n, \CC)$ 和 $\SL(n, \CC)$ 上, 不动点分别是 $\GL(n, \R)$ 和 $\SL(n, \R)$.
+	\begin{enumerate}[(i)]
+		\item 取 $n=2$. 让 $B := \SL(2, \CC)$ 以共轭作用在所有 $2 \times 2$ 矩阵构成的空间上. 命 $A := \Stab\bigl(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\bigr)$. 说明此子群在 $G$-作用下不变, 并描述 $A^G$.
+		\item 说明 $B/A$ (或 $B^G/A^G$) 自然地等同于 $\bigl(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\bigr)$ 在 $\SL(2, \CC)$ (或 $\SL(2, \R)$) 共轭作用下的轨道; 对于 $B/A$, 说明 $G$ 作用如何反映在轨道上.
+		\item 说明 $(B/A)^G \neq B^G/A^G$. 换言之, 存在 $2 \times 2$ 实矩阵, 使得它通过 $\SL(2, \CC)$ 共轭于 $\bigl(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\bigr)$, 但无法通过 $\SL(2, \R)$ 共轭.
+		\item 说明若以 $\GL$ 代替 $\SL$, 以上现象不发生.
+	\end{enumerate}
+
+	\item 陈述并证明定理 \ref{prop:Shapiro-noncommutative} 中的同构与定理 \ref{prop:nonabelian-long} 中的连接态射的兼容性.
+	
+	\item (群上同调的``扭曲'') 沿用 \S\ref{sec:nonabelian-coh} 的符号. 设 $A$ 为 $G$-群.
+	\begin{enumerate}[(i)]
+		\item 给定 $c \in Z^1(G, A)$. 定义新的群作用 $G \times A \to A$ 如下
+		\[ {}^{c, g} a := c(g) \cdot {}^g a \cdot c(g)^{-1} , \quad g \in G, \; a \in A, \]
+		说明这确实给出 $G$-群, 另记为 ${}^c A$ 以资区别. 此外, 证明若 $c \sim c'$ 则有 $G$-群同构 ${}^{c'} A \simeq {}^c A$; 具体描述之.
+		\item 证明每个 $c \in Z^1(G, A)$ 都诱导双射
+		\begin{align*}
+			\nu_c: Z^1(G, {}^c A) & \xrightarrow{1:1} Z^1(G, A) \\
+			c' & \longmapsto c' c \;\text{(逐点乘法)},
+		\end{align*}
+		它诱导双射 ${\bm\nu}_c: \Hm^1(G, {}^c A) \xrightarrow{1:1} \Hm^1(G, A)$, 映基点为 $[c]$. 对于 $A$ 交换的情形给出简化的描述.
+		\item 设有如定理 \ref{prop:nonabelian-long} (i) 的短正合列 $1 \to A \to B \to B/A \to 1$. 给定 $c \in Z^1(G, A)$, 证明下图交换
+		\[\begin{tikzcd}
+			\Hm^1(G, {}^c A) \arrow[r] \arrow[d, "{{\bm\nu}_c}"'] & \Hm^1(G, {}^c B) \arrow[d, "{\bm{\nu}_c}"] \\
+			\Hm^1(G, A) \arrow[r] & \Hm^1(G, B);
+		\end{tikzcd}\]
+		以此描述 $\Hm^1(G, A) \to \Hm^1(G, B)$ 的所有纤维.
+		\item 对于 $G$ 是 pro-有限群的情形, 指出必要的修改.
+	\end{enumerate}
+	\index{quntongdiao!扭曲 (twist)}
+\end{Exercises}

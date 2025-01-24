@@ -1,0 +1,110 @@
+% Copyright 2024  李文威 (Wen-Wei Li).
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the Creative Commons
+% Attribution 4.0 International (CC BY 4.0)
+% http://creativecommons.org/licenses/by/4.0/
+
+% 《代数学方法》卷二自订封面页, 由主档引入.
+
+\setCJKfamilyfont{coverfont}{Noto Serif CJK SC Bold}	% 设置书名字体
+\setCJKfamilyfont{cover-author-font}{Noto Sans CJK SC}	% 设置作者字体
+\colorlet{prism}{red!50!gray}	% Color for the prism
+
+\begin{titlepage}\begin{tikzpicture}[remember picture, overlay, pencildraw/.style={
+		color=prism, thick,
+		decorate,
+		decoration={random steps, segment length=1pt, amplitude=0.7pt}
+	}]
+
+	\node[anchor=center] (title) at ([xshift=19em, yshift=-10em] current page.north west)
+		{ \fontsize{45}{45}\CJKfamily{coverfont}代数学方法};
+
+	\node[anchor=center] (volume) at ([yshift=-7em] title.center) {\fontsize{30}{30}\CJKfamily{coverfont}卷二：线性代数};
+
+	\node[anchor=west] (author) at ([yshift=-5em, xshift=4pt] volume.south west) {\fontsize{18}{18}\CJKfamily{cover-author-font}李文威};
+	\node[anchor=west] at ([xshift=2.4em] author.east) {\fontsize{18}{18}\CJKfamily{cover-author-font}著};
+
+	\draw[line width=2pt, color=black!70!gray] ([xshift=-2.5em, yshift=1em] author.north west) -- ++(25em,0);
+	\shade[top color=gray, bottom color=black,] ([xshift=-1em, yshift=1em] title.north west) rectangle ++(-1em,-20em);
+
+	% The anchors for the pictures at lower-right corner.
+	\coordinate (pic) at ([xshift=-25em, yshift=25em] current page.south east);
+	\coordinate (pic2) at ([xshift=3em] pic);
+	
+	% The snake lemma
+	\begin{scope}[shift = (pic2), scale=2, opacity=0.8]
+		\matrix (S) [matrix of math nodes, nodes in empty cells, column sep=1cm, row sep=1.4cm]{
+			&[1cm] \Ker' & \Ker & \Ker'' & \\
+			& X' & X & X'' & 0 \\
+			0 & Y' & Y & Y'' & \\
+			& \Coker' & \Coker & \Coker'' & \\
+		};
+		% Horizontal arrows manually
+		\draw[->] (S-1-2) to (S-1-3); \draw[->] (S-1-3) to (S-1-4);
+		\draw[->] (S-2-2) to (S-2-3); \draw[->] (S-2-3) to (S-2-4); \draw[->] (S-2-4) to (S-2-5);
+		\draw[->] (S-3-1) to (S-3-2); \draw[->] (S-3-2) to (S-3-3); \draw[->] (S-3-3) to (S-3-4);
+		\draw[->] (S-4-2) to (S-4-3); \draw[->] (S-4-3) to (S-4-4);
+		% Vertical arrows manually and put anchors
+		\draw[->] (S-1-2) to (S-2-2); \draw[->] (S-2-2) to (S-3-2); \draw[->] (S-3-2) to (S-4-2);
+		\draw[->] (S-1-3) to (S-2-3); \draw[->] (S-2-3) to (S-3-3); \draw[->] (S-3-3) to (S-4-3);
+		\draw[->] (S-1-4) to (S-2-4); \draw[->] (S-2-4) to[edge node={coordinate (Z)}] (S-3-4); \draw[->] (S-3-4) to (S-4-4);
+		
+		% Connecting arrow drawn twice to make it cross over
+		\path[draw, color=white, opacity=1, line width=1.5ex] (S-4-2) -- ([xshift=-2ex]S-4-2.west) |- (Z) -| ([xshift=2ex]S-1-4.east) -- (S-1-4);
+		\path[draw, dashed, <-, rounded corners] (S-4-2) -- ([xshift=-2ex]S-4-2.west) |- (Z) -| ([xshift=2ex]S-1-4.east) -- (S-1-4);
+	\end{scope}
+	
+	% The simplicial decomposition of the prism
+	\begin{scope}[shift=(pic), rotate=10, xscale=2.2, yscale=1.4, opacity=0.6]
+		\coordinate (A) at (0, 0);
+		\coordinate (B) at (2.2, 0.5);
+		\coordinate (C) at (0.8, -0.5);
+		\coordinate (P) at ($(A) + (0, -3)$);
+		\coordinate (Q) at ($(B) + (0, -3)$);
+		\coordinate (R) at ($(C) + (0, -3)$);
+		
+		% The upper piece
+		\draw[pencildraw, fill=prism!8] (A) -- (B) -- (C) --cycle;
+		\draw[pencildraw] (A) -- (P) -- (C);
+		\draw[pencildraw] (P) -- (B);
+		\draw[pencildraw, fill=prism!8] (A) -- (P) -- (C) --cycle; % -> 8
+		\fill[pencildraw, shading=axis, left color=prism!30, right color=white] (C) -- (B) -- (P) --cycle;
+		
+		% The lower piece + compilation date
+		\draw[pencildraw, fill, shading=axis, bottom color=prism!50, top color=white] ($(P) + (0.2, -1.2)$) -- ($(B) + (0.2, -1.2)$) -- ($(R) + (0.2, -1.2)$) --cycle;
+		\draw[pencildraw, shading=axis, bottom color=prism!50, top color=prism!20] ($(R) + (0.2, -1.2)$) -- node[sloped, below] {\small\sffamily \today} ($(Q) + (0.2, -1.2)$) -- ($(B) + (0.2, -1.2)$) --cycle;
+		
+		% The middle piece
+		\draw[pencildraw, fill=prism!10] ($(P) + (0.1, -0.6)$) -- ($(R) + (0.1, -0.6)$) -- ($(C) + (0.1, -0.6)$) --cycle;
+		\draw[pencildraw, fill=prism!20] ($(R) + (0.1, -0.6)$) -- ($(B) + (0.1, -0.6)$) -- ($(C) + (0.1, -0.6)$) --cycle;
+		\draw[pencildraw, loosely dotted] ($(P) + (0.1, -0.6)$) -- ($(B) + (0.1, -0.6)$);
+	\end{scope}
+\end{tikzpicture}
+
+\clearpage	% 进入内页
+\begin{center}
+	\Large{\sffamily\bfseries\thmheiti 网络版 \\ 2024 年 5 月} \\ \vspace{2em}
+	\Large{\sffamily\bfseries\thmheiti 编译日期: \today} \\ \vspace{1em}
+%	版面: B5 (176×250mm) \\ \vspace{1em}
+	本书将由高等教育出版社发行
+%	(2019 年 1 月第 1 版) \\
+%	\texttt{ISBN: 978-7-04-050725-6}
+\end{center}
+\vfill
+
+\begin{flushleft} \small
+	李文威 \\
+	个人主页: \href{https://www.wwli.asia}{www.wwli.asia} \\
+	(含勘误表等信息)
+\end{flushleft}
+\vspace{1.5em}
+\begin{tabular*}{\textwidth}{ccc}
+	\includegraphics{ccby.png}
+	& \begin{minipage}[b]{0.6\textwidth}
+		\small\sffamily
+		本作品采用知识共享 署名 4.0 国际 许可协议进行许可. 访问 \url{http://creativecommons.org/licenses/by/4.0/} 查看该许可协议.
+	\end{minipage}
+\end{tabular*}
+
+\cleardoublepage
+\end{titlepage}
