@@ -2689,7 +2689,7 @@ Hochschild 同调和上同调有丰富的内涵, 它与求导和微分形式的�
 	
 	进入正题. 设短正合列 $0 \to \underbracket{(A_n, f_n)_n}_{= A} \xrightarrow{\varphi} \underbracket{(B_n, g_n)_n}_{= B} \xrightarrow{\psi} \underbracket{(C_n, h_n)}_{= C} \to 0$ 中的 $A$ 是 Mittag-Leffler 的. 目标是证 $\varprojlim \psi$ 满. 鉴于引理 \ref{prop:ML-nonempty} (ii), 问题化为对每个 $c = (c_n)_{n \geq 0} \in \varprojlim C$ 证非空集的映射列
 	\[ \cdots \to \psi_2^{-1}(c_2) \xrightarrow{g_1} \psi_1^{-1}(c_1) \xrightarrow{g_0} \psi_0^{-1}(c_0) \]
-	是 Mittag-Leffler 的, 因为由此可说明 $\psi^{-1}(c)$ 非空.
+	是 Mittag-Leffler 的, 因为由此可说明 $(\varprojlim \psi)^{-1}(c)$ 非空.
 	
 	给定 $k \geq 0$, 取 $N \geq k$ 充分大, 使得 $n \geq N$ 时 $\Image f^n_k = \Image f^N_k$. 设 $b_N \in \psi_N^{-1}(c_N)$; 为了验证 Mittag-Leffler 条件, 以下说明对每个 $n \geq N$ 皆存在 $b_n \in \psi_n^{-1}(c_n)$ 使得 $g^n_k(b_n) = g^N_k(b_N)$.
 	
@@ -2838,7 +2838,7 @@ Hochschild 同调和上同调有丰富的内涵, 它与求导和微分形式的�
 
 鉴于推论 \ref{prop:acyclic-resolution} 和上述观察, $\Tor^R_n(X,Y)$ 亦可用 $X$ 或 $Y$ 的平坦解消来计算. 这是计算 $\Tor$ 的实际技术, 而投射解消主要是在理论层面起作用.
 
-这类计算自然也可以``平衡''. 任取平坦解消 $\cdots \to P_1 \to P_0 \to X \to 0$ 和 $\cdots \to Q_1 \to Q_0 \to X \to 0$. 构造链复形意义下的双复形 $P_\bullet \dotimes{R} Q_\bullet$, 并且简记其全复形为 $P \otimes Q$. 注记 \ref{rem:balanced-primer} 的同调版本表明 $\Tor_n^R(X, Y) \simeq \Hm_n(P \otimes Q)$; 该处论证所需的性质只有 $P_p \dotimes{R} (\cdot)$ 和 $(\cdot) \dotimes{R} Q_q$ 的正合性, 这正是平坦性所保证的.
+这类计算自然也可以``平衡''. 任取平坦解消 $\cdots \to P_1 \to P_0 \to X \to 0$ 和 $\cdots \to Q_1 \to Q_0 \to Y \to 0$. 构造链复形意义下的双复形 $P_\bullet \dotimes{R} Q_\bullet$, 并且简记其全复形为 $P \otimes Q$. 注记 \ref{rem:balanced-primer} 的同调版本表明 $\Tor_n^R(X, Y) \simeq \Hm_n(P \otimes Q)$; 该处论证所需的性质只有 $P_p \dotimes{R} (\cdot)$ 和 $(\cdot) \dotimes{R} Q_q$ 的正合性, 这正是平坦性所保证的.
 
 \begin{remark}[双模结构]\label{rem:ExtTor-bimodule}
 	选定环 $A$, $B$; 设 $X$ 是 $(A, R)$-双模, $Y$ 是 $(R, B)$-双模. 由于 $\Tor^R_n$ 是双函子, $\Tor^R_n(X, Y)$ 具有典范的 $(A, B)$-双模结构. 以 $A$ 的左乘为例, 每个 $a \in A$ 都给出 $X$ 作为右 $R$-模的自同态, 因而诱导 $\Tor^R_n(X, Y)$ 的自同态 $L_a$; 它们满足 $L_a L_{a'} = L_{aa'}$ 和 $L_1 = \identity$. 对 $B$ 的右乘也在第二个变元作类似处理. 取 $n=0$ 便回到 $X \dotimes{R} Y$ 上的自然双模结构.
