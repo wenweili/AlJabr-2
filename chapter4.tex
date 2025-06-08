@@ -1274,8 +1274,8 @@ $\begin{tikzcd}[row sep=small, column sep=tiny]
 		(i = 1, 2) .
 	\end{array}\]
 	我们希望说明这给出 $n$-扩张的等价. 按照先前的技巧, 首先和 $\tau^{\leq 0} W \to W$ 作合成以化约到 $W \in \Obj(\cate{C}^{\leq 0}(\mathcal{A}))$. 再以截断的伴随关系让所有态射在 $\cate{C}(\mathcal{A})$ 中通过 $W \twoheadrightarrow \tau^{\geq -n} W$ 分解; 记 $K$ 为 $W \twoheadrightarrow \tau^{\geq -n} W$ 的核, 由于对所有 $V \in \Obj(\cate{C}^{[-n, 0]}(\mathcal{A}))$ 都有 $\Hom^{-1}(K, V) = 0$, 态射之间的同伦也相应地分解, 故此操作不改变图表在 $\cate{K}(\mathcal{A})$ 中的交换性. 以此化约到 $W \in \Obj(\cate{C}^{[-n, 0]}(\mathcal{A}))$ 的情形.
-	
-	同理可见 $\Hom^{-1}(W, X) = 0$, 故图表左半部已在 $\cate{C}(\mathcal{A})$ 中交换. 至于图表右半部, 我们重复证明满性时的推出操作, 化约到 $W^{-n} = Z_i^{-n} = Y$ 而 $b^{-n} = a_i^{-n} = \identity_Y$ 的情形; 这使右半部在 $\cate{C}(\mathcal{A})$ 中平凡地交换, 同时左半部情况保持不变 (请验证). 综上可见 $(W; t, b)$ 也对应到 $n$-扩张, 而交换图表见证定义 \ref{def:Yoneda-Ext} 的等价关系 $\sim$. 这就给出所求的单性.
+
+	同理可见 $\Hom^{-1}(W, X) = 0$, 故图表左半部已在 $\cate{C}(\mathcal{A})$ 中交换. 至于图表右半部, 基于 $a_i^{-n} = \identity_Y$, 可用同伦适当修改 $W \to Z_i$ 以确保右半部在 $\cate{C}(\mathcal{A})$ 中交换, 然后重复证明满性时的推出操作, 化约到 $W^{-n} = Y$ 而 $b^{-n} = \identity_Y$ 的情形, 同时左半部情况保持不变 (请验证). 综上可见 $(W; t, b)$ 也对应到 $n$-扩张, 而交换图表见证定义 \ref{def:Yoneda-Ext} 的等价关系 $\sim$. 这就给出所求的单性.
 	
 	关于合成, 直和, 拉回和推出在此双射下的匹配都是例行公事. 至于 Baer 和 $\dot{+}$, 命题 \ref{prop:additive-cat-addition} 将 $\Ext^n(X, Y) := \Hom_{\cate{D}(\mathcal{A})}(X, Y[n])$ 中的加法 $f+g$ 实现为合成 $X \to X \oplus X \xrightarrow{f \oplus g} (Y \oplus Y)[n] \to Y[n]$, 正好匹配 $\dot{+}$ 的定义.
 \end{proof}
