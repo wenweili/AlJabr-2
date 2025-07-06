@@ -334,7 +334,7 @@
 	现在回到更一般的 Abel 范畴 $\mathcal{A}$ 和如上的 $(I, +, \epsilon)$, 为了推广上述构造, 所需的是将 $\mathcal{A}$ 扩充为对称幺半范畴 $(\mathcal{A}, \otimes)$, 使得
 	\begin{itemize}
 		\item $\mathcal{A}$ 是 Abel 范畴, 形如 \eqref{eqn:graded-module} 的余积 (亦即直和) 存在,
-		\item $\otimes: \mathcal{A} \times \mathcal{A} \to \mathcal{A}$ 对每个变元都是加性函子.
+		\item $\otimes: \mathcal{A} \times \mathcal{A} \to \mathcal{A}$ 对每个变元都是保持上述余积的加性函子.
 	\end{itemize}
 	此时 $\mathcal{A}^I$ 上的 $\otimes$ 和 Koszul 辫结构仍可按相同方式定义, 使 $(\mathcal{A}^I, \otimes)$ 成为对称幺半范畴. 它的幺元仍由 $\mathcal{A}$ 的幺元 $\munit$ 给出, 视作集中在零次项的 $I$-分次对象.
 	
@@ -431,7 +431,7 @@
 
 对于 $\mathcal{A} = \Bbbk\dcate{Mod}$ 的实例, 复形 (或等价地说, 微分对象) 的微分态射 $d = d_{M \otimes N}$ 在元素的层次写作
 \begin{equation*}
-	d(x \otimes y) = (d_M x) + (-1)^a x (d_N y), \quad x \in M^a, \; y \in N^b.
+	d(x \otimes y) = (d_M x) \otimes y + (-1)^a x \otimes (d_N y), \quad x \in M^a, \; y \in N^b.
 \end{equation*}
 这些定义使 Koszul 辫结构 \eqref{eqn:Koszul-braiding} 给出复形之间的态射; 请读者直接验证, 或归结为命题 \ref{prop:double-cplx-swap}.
 
