@@ -29,8 +29,8 @@ clean:
 
 
 tarball:
-	@rm -f ../AlJabr-2.tar.gz
-	@tar cvfzh ../AlJabr-2.tar.gz .
+	@rm -f ../AlJabr-2.tar.zst
+	@tar --zstd -cf ../AlJabr-2.tar.zst .
 
 zip:
 	@rm -f ../AlJabr-2.zip
