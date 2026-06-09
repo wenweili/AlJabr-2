@@ -1,10 +1,10 @@
 This is the LaTeX source for the textbook **Methods of Algebra** (in Chinese: 代数学方法), Volume 2.
 
-The book is originally published in 2024 by Higher Education Press (Beijing), ISBN 978-7-04-062754-1.
+The book was originally published in 2024 by Higher Education Press (Beijing), ISBN 978-7-04-062754-1.
 
 The PDF version and the errata are available on the author's web page. The spotted mistakes will be corrected in the next revision.
 
-It is hoped that these files will be of some help to those professors, students as well as amateurs who wish to write serious Chinese books in Mathematics or Physics without too much TeXnical trouble.
+It is hoped that these files will be of some help to those professors, students, as well as amateurs who wish to write serious Chinese books in Mathematics or Physics without too much TeXnical trouble.
 
 # How to compile
 
@@ -52,7 +52,7 @@ make clean
 ```
 
 # The document class AJbook
-The book is written in the **AJbook2** class (AJbook2.cls). This is a general-purpose document class, based its predecessor AJbook.cls used for the volume 1. Its basic usage is illustrated in Template-AJbook.tex; type
+The book is written in the **AJbook2** class (AJbook2.cls). This is a general-purpose document class, based on its predecessor AJbook.cls used for the volume 1. Its basic usage is illustrated in Template-AJbook.tex; type
 ```
 latexmk -pdf -pdflatex="xelatex -shell-escape -interaction=nonstopmode %O %S" Template-AJbook
 ```
@@ -62,7 +62,7 @@ make template
 ```
 to compile the template.
 
-The fonts and other apppearances are customizable through several config files; please read the source files carefully for further details. The Template-AJbook.tex file follows the original configurations of the book.
+The fonts and other appearances are customizable through several config files; please read the source files carefully for further details. The Template-AJbook.tex file follows the original configurations of the book.
 
 # The errata
 The errata is produced from **Errata-Al-jabr-2.tex**, which is based on the really simple document class file **AJerrata.cls**. Apart from the standard fonts bundled with TeX, it also depends on **Noto Serif CJK SC** and **Noto Sans CJK SC**; you can install them from [Noto CJK fonts](https://github.com/googlei18n/noto-cjk).
