@@ -666,12 +666,8 @@ $Z(\mathcal{A}) := \End(\identity_{\mathcal{A}})$, 其元素是恒等函子 $\id
 	给定 $F: \mathcal{C} \to \mathcal{D}$ 和函子 $\alpha: I \to \mathcal{C}$, 考虑锥范畴之间的函子 $(\alpha/\Delta) \to (F\alpha/\Delta)$.
 	\begin{itemize}
 		\item 称 $F$ \emph{保}此 $\varinjlim$, 如果 $(\alpha/\Delta) \to (F\alpha/\Delta)$ 映始对象 (假如存在) 为始对象.
-		\item 称 $F$ \emph{返}此 $\varinjlim$, 如果仅 $(\alpha/\Delta)$ 的始对象 (假如存在) 方能被映为 $(F\alpha/\Delta)$ 的始对象.
-		\item 称 $F$ \emph{生}此 $\varinjlim$, 如果
-		\begin{compactitem}
-			\item $\varinjlim F\alpha \;\text{存在} \implies \varinjlim \alpha \;\text{存在}$;
-			\item $F$ 保此 $\varinjlim$, 返此 $\varinjlim$.
-		\end{compactitem}
+		\item 称 $F$ \emph{返}此 $\varinjlim$, 如果仅 $(\alpha/\Delta)$ 的始对象方能被映为 $(F\alpha/\Delta)$ 的始对象.
+		\item 称 $F$ \emph{生}此 $\varinjlim$, 如果一旦 $\varinjlim F\alpha$ 存在, 则 $\varinjlim \alpha$ 存在, 而且此时 $F$ 保此 $\varinjlim$ 也返此 $\varinjlim$.
 	\end{itemize}
 	对于 $\varprojlim$ 同样有相应的概念, 以 $\mathcal{C}^{\opp}$ 和 $\mathcal{D}^{\opp}$ 代 $\mathcal{C}$ 和 $\mathcal{D}$ 即可相互过渡.
 \end{definition}
