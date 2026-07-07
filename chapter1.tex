@@ -1391,7 +1391,7 @@ Gabriel--Zisman 局部化, 在此简称局部化, 是向范畴中的一族态射
 		{[Z; s, a]} \arrow[mapsto, r] & {\left[ Z \xrightarrow{a} Y \right]}
 	\end{tikzcd} \quad
 	\begin{tikzcd}[row sep=tiny, column sep=small]
-		M_{X, Y}^r /\sim \arrow[r, "1:1"] & \displaystyle\varinjlim_{\substack{[Y \rightarrowtail Z] \\ \in \Obj(S_{/Y})}} \Hom(X, Z) \\
+		M_{X, Y}^r /\sim \arrow[r, "1:1"] & \displaystyle\varinjlim_{\substack{[Y \rightarrowtail Z] \\ \in \Obj(S_{Y/})}} \Hom(X, Z) \\
 		{[Z; a, s]} \arrow[mapsto, r] & {\left[ X \xrightarrow{a} Z \right]}
 	\end{tikzcd}\]
 	其中 $[Z; s, a]$ (或 $[Z; a, s]$) 代表含 $(Z; s, a)$ (或 $(Z; a, s)$) 的等价类.
@@ -1401,7 +1401,7 @@ Gabriel--Zisman 局部化, 在此简称局部化, 是向范畴中的一族态射
 	\[ M_{X, Y}^l = \bigsqcup_{X \leftarrowtail Z} \alpha(X \leftarrowtail Z), \]
 	而因为 $S_{/X}^{\opp}$ 滤过 (引理 \ref{prop:S-filtered}), 不难检验 $M_{X, Y}^l$ 上来自 \eqref{eqn:localization-sim} 的二元关系 $\sim$ 转译为命题 \ref{prop:filtered-union} 中的等价关系, 这也顺带证出与 $\varinjlim$ 的双射. 关于 $M_{X,Y}^r$ 的版本论证相同.
 
-	注意到 \S\ref{sec:filtered-indlim} 在探讨集合的滤过 $\varinjlim$ 时默认 $\varinjlim$ 是小的, 从而对应的 $\varinjlim$ 仍落在 $\cate{Set}$ 中; 此处的 $S_{/X}$ 和 $S_{/Y}$ 未必是小范畴. 然而欲证断言不涉及集合的大小, 论证也可以适当地表述, 使其不依赖 Grothendieck 宇宙的选取.
+	注意到 \S\ref{sec:filtered-indlim} 在探讨集合的滤过 $\varinjlim$ 时默认 $\varinjlim$ 是小的, 从而对应的 $\varinjlim$ 仍落在 $\cate{Set}$ 中; 此处的 $S_{/X}$ 和 $S_{Y/}$ 未必是小范畴. 然而欲证断言不涉及集合的大小, 论证也可以适当地表述, 使其不依赖 Grothendieck 宇宙的选取.
 \end{proof}
 
 等价类 $[Z; s, a]$ (或 $[Z; a, s]$) 应理解为行将构造的 $\mathcal{C}[S^{-1}]$ 中的态射 $as^{-1}$ (或 $s^{-1} a$).

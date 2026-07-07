@@ -255,7 +255,7 @@
 \begin{proof}
 	必须对 $c(A, B)$ 验证两个交换图表. 第一个图表是
 	\[\begin{tikzcd}[row sep=tiny]
-		& \munit \otimes \munit \arrow[ld, "\sim" sloped] \arrow[dd, "{c(\munit, \munit)}"] \arrow[r, "{\eta_A \otimes_B}"] & A \otimes B \arrow[dd, "{c(A, B)}"] \\
+		& \munit \otimes \munit \arrow[ld, "\sim" sloped] \arrow[dd, "{c(\munit, \munit)}"] \arrow[r, "{\eta_A \otimes \eta_B}"] & A \otimes B \arrow[dd, "{c(A, B)}"] \\
 		\munit & & \\
 		& \munit \otimes \munit \arrow[lu, "\sim"' sloped] \arrow[r, "{\eta_B \otimes \eta_A}"'] & B \otimes A
 	\end{tikzcd}\]
@@ -2292,7 +2292,7 @@ $\begin{tikzcd}
 	\overline{a}: M \dotimes{K} L & \to L \dotimes{K} M \\
 	m \otimes \ell & \mapsto \sum_{i=1}^n \ell_i \otimes \ell m_i ,
 \end{align*}
-其中仍假设 $a(m) = \sum_{i=1}^n \ell_i \otimes m_i$. 这是从 \eqref{eqn:flat-descent-map-aux} 适当地缩并张量积的产物, 它至少具有更简洁的外观. 对 $\tilde{a}_{ij}$ 有类似的缩并版本, 不在话下.
+其中仍假设 $a(m) = \sum_{i=1}^n \ell_i \otimes m_i$. 这是从 \eqref{eqn:flat-descent-map-aux} 适当地缩并张量积的产物, 它至少具有更简洁的外观. 对 $\tilde{a}_{ji}$ 有类似的缩并版本, 不在话下.
 
 \begin{remark}[代数和模的平坦下降]\label{rem:flat-descent-alg}
 	我们能进一步讨论 $L$-代数或这些代数上的模如何下降到 $K$. 具体言之, 设 $(M, a), (M', a') \in \Obj\left(L\dcate{Mod}^{\mathbf{L}}\right)$ 是 $N, N' \in \Obj\left(K\dcate{Mod}\right)$ 的像. 忆及 $L \dotimes{K} (\cdot): K\dcate{Mod} \to L\dcate{Mod}$ 是幺半函子 \cite[命题 6.6.10]{Li1}, 亦即存在诸如
