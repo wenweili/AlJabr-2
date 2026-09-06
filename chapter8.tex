@@ -7,7 +7,7 @@
 
 % To be included
 \chapter{单纯形方法}\label{sec:simplicial}
-命 $\simpDelta$ 为非零有限序数范畴. 范畴 $\mathcal{C}$ 中的单纯形对象按定义是从 $\simpDelta^{\opp}$ 到 $\mathcal{C}$ 的函子 $X$, 它们也可以等价地描述为一列对象 $X_0, X_1, \ldots$ 及其间的态射 $d_i: X_n \to X_{n-1}$ (面) 和 $s_j: X_n \to X_{n+1}$ (退化), $0 \leq i, j \leq n$, 服从于一族等式 \eqref{eqn:simplicial-identity}; 这些函子构成范畴 $\cate{s}\mathcal{C}$. 对于 $\mathcal{C} = \cate{Set}$ 的特例, 它们也称为单纯形集. 相关的基本理论是 \S\S\ref{sec:simplicial-method}---\ref{sec:simplicial-set} 的内容. 命 $\cate{FinOrd}$ 为有限序数范畴, 若单纯形对象 $X$ 作为函子延拓为 $\cate{FinOrd} \to \mathcal{C}$, 则称之为增广单纯形对象, 这相当于在资料 $(X_n, d_i, s_j)_{n, i, j}$ 中添入 $-1$ 次项 $X_{-1}$.
+命 $\simpDelta$ 为非零有限序数范畴. 范畴 $\mathcal{C}$ 中的单纯形对象按定义是从 $\simpDelta^{\opp}$ 到 $\mathcal{C}$ 的函子 $X$, 它们也可以等价地描述为一列对象 $X_0, X_1, \ldots$ 及其间的态射 $d_i: X_n \to X_{n-1}$ (面) 和 $s_j: X_n \to X_{n+1}$ (退化), $0 \leq i, j \leq n$, 服从于一族等式 \eqref{eqn:simplicial-identity}; 这些函子构成范畴 $\cate{s}\mathcal{C}$. 对于 $\mathcal{C} = \cate{Set}$ 的特例, 它们也称为单纯形集. 相关的基本理论是 \S\S\ref{sec:simplicial-method}---\ref{sec:simplicial-set} 的内容. 命 $\cate{FinOrd}$ 为有限序数范畴, 若单纯形对象 $X$ 作为函子延拓为 $\cate{FinOrd}^{\opp} \to \mathcal{C}$, 则称之为增广单纯形对象, 这相当于在资料 $(X_n, d_i, s_j)_{n, i, j}$ 中添入 $-1$ 次项 $X_{-1}$.
 
 单纯形集源于拓扑学, 想法是将空间剖分为单纯形的黏贴; 单纯形 (点, 线段, 三角形, 四面体...) 的直观图像是
 \begin{center}\begin{tabular}{ccccc}
@@ -38,7 +38,7 @@
 	\Gamma: \cate{s}\mathcal{A} \arrow[shift left, r] & \cate{Ch}_{\geq 0}(\mathcal{A}): \mathrm{N}, \arrow[shift left, l]
 \end{tikzcd}\]
 其中 $\cate{Ch}_{\geq 0}(\mathcal{A})$ 代表 $\mathcal{A}$ 上的非负次链复形所成之 Abel 范畴. 函子 $\mathrm{N}$ 映单纯形对象 $X$ 为相应的正规化链复形 $\mathrm{N}X$; 更精确地说, 定义 $X \in \Obj(\cate{s}\mathcal{A})$ 的非正规化链复形为
-\[ \mathrm{C}X := \left( X_n, \partial_n\right)_{n \geq 0}, \quad \partial_n := \sum_{i=0}^n (-1)^n d_i : X_n \to X_{n-1}, \]
+\[ \mathrm{C}X := \left( X_n, \partial_n\right)_{n \geq 0}, \quad \partial_n := \sum_{i=0}^n (-1)^i d_i : X_n \to X_{n-1}, \]
 则 $\mathrm{N}X$ 既可以按 $(\mathrm{N}X)_n := \bigcap_{i=1}^n \Ker(d_i)$ 取为 $\mathrm{C}X$ 的子链复形, 也可以理解为 $\mathrm{C}X$ 对退化部分的商, 两者之间的同构是命题 \ref{prop:Dold-Kan-v} 的内容; 事实上, 定理 \ref{prop:Dold-Kan-N-C} 说明嵌入态射 $u: \mathrm{N}X \to \mathrm{C}X$ 是链复形之间的拟同构.
 
 Dold--Kan 对应使得单纯形理论不只在历史上, 而且在思想和技术两方面都成为同调代数的根源. 单纯形方法能够解释并升级复形或链复形上的基本操作, 例如同伦或可缩性质都有单纯形的版本, 从而获取拓扑诠释, 这部分讨论见诸 \S\ref{sec:homology-computation}.
@@ -210,7 +210,7 @@ $\begin{tikzcd}
 
 空集给出的常值单纯形集 $\mathrm{const}(\emptyset)$ 简记为 $\emptyset$. 于是 $\partial \Delta^0 = \emptyset$.
 
-我们将在 \S\ref{sec:geom-realization} 给出单纯形集的直观解释, 特别地, 我们将描绘 $\Delta^n \supset \Lambda^n_i \supset \partial \Delta^n$ 这三者的几何图像.
+我们将在 \S\ref{sec:geom-realization} 给出单纯形集的直观解释, 特别地, 我们将描绘 $\Delta^n \supset \partial \Delta^n \supset \Lambda^n_i$ 这三者的几何图像.
 
 米田引理 (定理 \ref{prop:Yoneda}) 直接蕴涵以下典范同构, 其中 $n \in \Z_{\geq 0}$, $X \in \Obj\left( \cate{sSet} \right)$:
 \begin{equation}\begin{gathered}
@@ -454,7 +454,7 @@ $\begin{tikzcd}
 \section{几何实现函子}\label{sec:geom-realization}
 现在着手为 \S\ref{sec:simplicial-set} 介绍的单纯形集建立几何图像. 先从标准 $n$-单纯形入手 ($n \in \Z_{\geq 0}$). 记 $\R^{n+1}$ 的标准有序基为 $e_0, \ldots, e_n$. 定义
 \[
-|\Delta^n| := \left\{ (x_0, \ldots, x_n) \in (\R_{\geq 0})^{n+1} : \sum_{i=0}^m x_i = 1 \right\} \quad
+|\Delta^n| := \left\{ (x_0, \ldots, x_n) \in (\R_{\geq 0})^{n+1} : \sum_{i=0}^n x_i = 1 \right\} \quad
 \begin{tikzpicture}[baseline=(O)]
 	\coordinate (O) at (0, 0);
 	\draw[-Latex] (0, 0) -- (-0.7, -0.7) node[left] {$e_0$};
@@ -1107,7 +1107,7 @@ $\begin{tikzcd}
 	\begin{gather*}
 		\Z = \mathrm{N}(\Z \Delta^0) \xrightarrow{\mathrm{N}i} \mathrm{N}(\Z S) \xrightarrow{\mathrm{N}q} \Z,
 	\end{gather*}
-	其中 $\Z$ 视同链复形, 置于 $0$ 次项. 我们断言 $\mathrm{N}i$ 和 $\mathrm{N}q$ 在链复形的同伦范畴中互逆; 特别地 $\Hm_0(Q; M) \simeq \Z$, 而 $n \neq 0$ 时 $\Hm_n(Q; M) = \{0\}$.
+	其中 $\Z$ 视同链复形, 置于 $0$ 次项. 我们断言 $\mathrm{N}i$ 和 $\mathrm{N}q$ 在链复形的同伦范畴中互逆; 特别地 $\Hm_0(Q; M) \simeq M$, 而 $n \neq 0$ 时 $\Hm_n(Q; M) = \{0\}$.
 	
 	既然 $qi = \identity$, 问题只在给出从 $\mathrm{N}i\mathrm{N}q$ 到 $\identity$ 的同伦. 对所有 $n \geq 0$, 观察到 $S_n^{\mathrm{nd}}$ 的元素是 $Q$ 中形如 $q_0 < \cdots < q_n$ 的链; 命
 	\begin{align*}
@@ -1142,10 +1142,10 @@ $\begin{tikzcd}
 	\end{align*}
 \end{definition}
 
-% Reference: Weibel, Theorem 8.3.12
+% Reference: Weibel, Theorem 8.3.12; see also the clarification from https://ncatlab.org/nlab/show/simplicial+homotopy
 上述定义是组合的, 然而它在 $\mathcal{C} = \cate{Set}$ 情形和基于拓扑直观的 \eqref{eqn:simplicial-homotopy-prep} 是一回事. 何以故? 对所有 $n \in \Z_{\geq 0}$, 将 $(\Delta^1)_n$ 具体表作 $\{\alpha_{-1}, \ldots, \alpha_n\}$, 其中 $\alpha_i: [n] \to [1]$ 映 $\leq i$ 的数为 $0$, 其余映为 $1$, 因此指定 $H_n: (X \times \Delta^1)_n \to Y_n$ 相当于指定 $H^n_{-1}, \ldots, H^n_n: X_n \to Y_n$.
 \begin{itemize}
-	\item 给定单纯形同伦的资料 $(h^n_i)_{i, n}$, 定义 $H^n_{-1} = g$, $H^n_n = f$, 并且对 $0 \leq i \leq n-1$ 定义 $H^n_i = d_{n+1} h^n_i$.
+	\item 给定单纯形同伦的资料 $(h^n_i)_{i, n}$, 定义 $H^n_{-1} = f$, $H^n_n = g$, 并且对 $0 \leq i \leq n-1$ 定义 $H^n_i = d_{i+1} h^n_i$.
 	\item 给定交换图表 \eqref{eqn:simplicial-homotopy-prep} 的资料 $H$, 定义 $h^n_i := H^{n+1}_{i} s_i: X_n \to Y_{n+1}$.
 \end{itemize}
 例行的验证说明双向映射良定义, 互为逆.
@@ -1187,7 +1187,7 @@ $\begin{tikzcd}
 	\end{equation*}
 \end{definition}
 
-从 $d_0 \epsilon = d_1 \epsilon$ 可见 $\mathrm{C}^{\mathrm{aug}} X$ 确实是 $\cate{Ch}_{\geq -1}(\mathcal{A})$ 的对象; 它也能视同 $\cate{Ch}_{\geq 0}(\mathcal{A})$ 中的态射
+从 $\epsilon d_0 = \epsilon d_1$ 可见 $\mathrm{C}^{\mathrm{aug}} X$ 确实是 $\cate{Ch}_{\geq -1}(\mathcal{A})$ 的对象; 它也能视同 $\cate{Ch}_{\geq 0}(\mathcal{A})$ 中的态射
 \[ \epsilon: \mathrm{C} X \to \underbracket{X_{-1}}_{\text{置于 $0$ 次}}, \quad \text{在 $0$ 次项为 $\epsilon$, 其余为 $0$.} \]
 
 \begin{definition}\label{def:contractible-aug}
@@ -1205,7 +1205,7 @@ $\begin{tikzcd}
 请读者验证左和右可缩性在注记 \ref{rem:simpDelta-order-reversal} 的意义下是倒序对偶的. 此外, 两者都是``绝对''性质: 若 $X$ 左 (或右) 可缩, 相应的资料取为 $(k_n)_{n \geq -1}$, 则对任何函子 $F: \mathcal{C} \to \mathcal{D}$, 资料 $(Fk_n)_{n \geq -1}$ 使得 $X$ 对 $F$ 的像左 (或右) 可缩.
 
 \begin{example}\label{eg:classifying-contractible}
-	对于任意幺半群 $\Gamma$, 将例 \ref{eg:classifying-space} 介绍的 $\mathrm{E}\Gamma$ 作成增广单纯形集, 使得 $(\mathrm{E}\Gamma)_{-1} = \{1\}$, 增广态射 $\epsilon: (\mathrm{E}\Gamma)_0 \to (\mathrm{E}\Gamma)_{-1}$ 是常值映射. 这是右可缩的: 对 $n \geq -1$ 定义 $k_n: (\mathrm{E}\Gamma)_n \to (\mathrm{E}\Gamma)_{n+1}$ 为 $(g_1, \ldots, g_{n+1}) \mapsto (g_1, \ldots, g_n, 1)$. 它平凡地满足 $\epsilon k_{-1} = \identity$; 只要展开定义, $d_{n+1} k_n = \identity$, $d_i k_n = k_{n-1} d_i$ (当 $0 \leq i \leq n$, $n \geq 1$) 和 $d_0 k_0 = k_{-1} \epsilon$ 的验证也都毫无困难.
+	对于任意幺半群 $\Gamma$, 将例 \ref{eg:classifying-space} 介绍的 $\mathrm{E}\Gamma$ 作成增广单纯形集, 使得 $(\mathrm{E}\Gamma)_{-1} = \{1\}$, 增广态射 $\epsilon: (\mathrm{E}\Gamma)_0 \to (\mathrm{E}\Gamma)_{-1}$ 是常值映射. 这是右可缩的: 对 $n \geq -1$ 定义 $k_n: (\mathrm{E}\Gamma)_n \to (\mathrm{E}\Gamma)_{n+1}$ 为 $(g_1, \ldots, g_{n+1}) \mapsto (g_1, \ldots, g_{n+1}, 1)$. 它平凡地满足 $\epsilon k_{-1} = \identity$; 只要展开定义, $d_{n+1} k_n = \identity$, $d_i k_n = k_{n-1} d_i$ (当 $0 \leq i \leq n$, $n \geq 1$) 和 $d_0 k_0 = k_{-1} \epsilon$ 的验证也都毫无困难.
 	
 	若取交换环 $\Bbbk$, 并以例 \ref{eg:classifying-space-std-cplx} 等同链复形 $\mathrm{C}(\Bbbk\mathrm{E}\Gamma)$ 和定义 \ref{def:resolution-trivial-module} 的链复形 $\mathsf{L} = (\mathsf{L}_n, \partial'_n)_n$, 则增广给出的 $\mathsf{L} \to \Bbbk$ 无非命题 \ref{prop:trivial-mod-resolution} 给出的解消. 鉴于下一则结果, $\mathrm{E}\Gamma$ (从而 $\Bbbk\mathrm{E}\Gamma$) 的可缩性便为 $\mathsf{L} \to \Bbbk$ 为拟同构这一事实提供了拓扑解释.
 \end{example}
