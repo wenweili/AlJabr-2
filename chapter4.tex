@@ -1989,7 +1989,7 @@ $\begin{tikzcd}[row sep=small, column sep=tiny]
 \end{theorem}
 \begin{proof}
 	取复形的投射解消 $P \to X$ 和内射解消 $Y \to I$. 代入定理 \ref{prop:RHom} 遂有
-	\[ \RHom_{\mathcal{A}}(\mathrm{L}F(QX), QY) \simeq Q\Hom^\bullet\left( \cate{K}F(P), I \right). \]
+	\[ \RHom_{\mathcal{A}'}(\mathrm{L}F(QX), QY) \simeq Q\Hom^\bullet\left( \cate{K}F(P), I \right). \]
 	然而 $\cate{K}F(P)$ 是 $F$ 对复形逐次地作用给出的, 按 $\Hom$ 复形的定义和伴随性, 可见右式同构于 $Q\Hom^\bullet\left( P, \cate{K}G(I) \right)$, 此即 $\RHom_{\mathcal{A}}(QX, \mathrm{R}G(QY))$.
 	
 	定理 \ref{prop:resolution-homotopy} 表明 $X$ 的投射解消在 $\cate{K}^-(\mathcal{A})$ 中精确到唯一同构是唯一的, 而且 $\cate{D}^-(\mathcal{A})$ 的态射唯一地提升到投射解消上 (命题 \ref{prop:Hom-D-injective}). 对 $Y$ 的内射解消亦同. 这就足以说明以上构造的同构对 $(X, Y)$ 有函子性.
@@ -2529,7 +2529,7 @@ $\begin{tikzcd}[row sep=small, column sep=tiny]
 	\[ a(X,Y,Z): (X \otimesL[R] Y) \otimesL[S] Z \rightiso X \otimesL[R] (Y \otimesL[S] Z). \]
 \end{proposition}
 \begin{proof}
-	固定 $Y$. 基于命题 \ref{prop:K-flat},	不妨设 $X_R$ 和 ${}_R Z$ 为 K-平坦的. 于是所有 $\otimesL[R]$ 都可以在复形的层次计算, 一切回归张量积的结合约束 \cite[命题 6.5.12]{Li1}.
+	固定 $Y$. 基于命题 \ref{prop:K-flat},	不妨设 $X_R$ 和 ${}_S Z$ 为 K-平坦的. 于是所有 $\otimesL[R]$ 都可以在复形的层次计算, 一切回归张量积的结合约束 \cite[命题 6.5.12]{Li1}.
 \end{proof}
 
 在平坦性的前提下, 三个以上的对象按种种次序取 $\otimesL$, 得到的结果依照结合约束两两同构; 这些同构也服从融贯性, 具体可以仿照幺半范畴的五角形公理来表述, 见 \cite[定义 3.1.1]{Li1}. 方法仍是取 K-平坦解消, 化到复形层次去验证. 本书省墨, 仅拈出交换环的特例.
