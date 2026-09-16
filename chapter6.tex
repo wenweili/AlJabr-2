@@ -253,7 +253,7 @@ Tate 上同调在 $n \geq 1$ (或 $n \leq -2$) 时等于 $\Hm^n(G, M)$ (或 $\Hm
 	以上定义的 $\mathsf{L} \to \Bbbk$ 给出平凡 $G$-模 $\Bbbk$ 的自由解消.
 \end{proposition}
 \begin{proof}
-	当 $(h_1, \ldots, h_n) \in G^n$ 变动, $(1_G, h_1, \ldots, h_n)$ 描绘 $\mathsf{L}^n$ 作为左 $\Bbbk[G]$-模的基.
+	当 $(h_1, \ldots, h_n) \in G^n$ 变动, $(1_G, h_1, \ldots, h_n)$ 描绘 $\mathsf{L}_n$ 作为左 $\Bbbk[G]$-模的基.
 \end{proof}
 
 对 $\Bbbk$ 还能取到一个更紧凑的典范自由解消, 它有时比 $\mathsf{L}$ 更实用.
@@ -471,7 +471,7 @@ Tate 上同调在 $n \geq 1$ (或 $n \leq -2$) 时等于 $\Hm^n(G, M)$ (或 $\Hm
 \begin{proposition}[以标准链复形计算群同调]\label{prop:grouph-chain}
 	对任意 $G$-模 $M$ 和 $n \in \Z_{\geq 0}$, 我们有典范同构
 	\[ \Hm_n(G, M) \simeq \Hm_n\left( \mathsf{L} \dotimes{\Bbbk[G]} M\right), \quad n \in \Z_{\geq 0}, \]
-	此处采用 $(\mathsf{L}_n, \partial'_n)_n$ 作为右 $G$-模链复形的结构. 按照 \eqref{eqn:L-basis-right} 取右 $\Bbbk[G]$-模 $\mathsf{L}_n$ 的基 $(g_1 | \cdots | g_n)^\dagger$. 于是 $\mathsf{L}^n \dotimes{\Bbbk[G]} M$ 等同于直和 $M^{\oplus G^n}$, 其中 $(g_1, \ldots, g_n) \in G^n$ 对应的直和项其元素唯一地表为
+	此处采用 $(\mathsf{L}_n, \partial'_n)_n$ 作为右 $G$-模链复形的结构. 按照 \eqref{eqn:L-basis-right} 取右 $\Bbbk[G]$-模 $\mathsf{L}_n$ 的基 $(g_1 | \cdots | g_n)^\dagger$. 于是 $\mathsf{L}_n \dotimes{\Bbbk[G]} M$ 等同于直和 $M^{\oplus G^n}$, 其中 $(g_1, \ldots, g_n) \in G^n$ 对应的直和项其元素唯一地表为
 	\[ (g_1 | \cdots | g_n)^\dagger \otimes x, \quad x \in M, \]
 	而根据 \eqref{eqn:L-basis-partial-right}, $\partial'_n \otimes \identity_M: \mathsf{L}_n \dotimes{\Bbbk[G]} M \to \mathsf{L}_{n-1} \dotimes{\Bbbk[G]} M$ 表作
 	\begin{multline*}
@@ -537,7 +537,7 @@ Tate 上同调在 $n \geq 1$ (或 $n \leq -2$) 时等于 $\Hm^n(G, M)$ (或 $\Hm
 		0 \arrow[r] & C_1(G, \mathfrak{I}) \arrow[r] \arrow[d] & C_1(G, \Bbbk[G]) \arrow[r] \arrow[d, "{\partial'_1 \otimes \identity_{\Bbbk[G]}}"] & C_1(G, \Bbbk) \arrow[r] \arrow[d, "{\partial'_0 \otimes \identity_{\Bbbk[G]} = 0}"] & 0 \\
 		0 \arrow[r] & C_0(G, \mathfrak{I}) \arrow[r] & C_0(G, \Bbbk[G]) \arrow[r] & C_0(G, \Bbbk) \arrow[r] & 0 ,
 	\end{tikzcd}\]
-	而 $\partial'_1 \otimes \identity_{\Bbbk[G]}$ 映 $(g)^\dagger \otimes 1_{\Bbbk[G]}$ 为 $1_G - g \in C^0(G, \mathfrak{I}) = \mathfrak{I}$, 从而确定 $\mathfrak{I}/\mathfrak{I}^2 \simeq \Hm^0(G, \mathfrak{I})$ 的元素. 这正是蛇形引理的构造.
+	而 $\partial'_1 \otimes \identity_{\Bbbk[G]}$ 映 $(g)^\dagger \otimes 1_{\Bbbk[G]}$ 为 $1_G - g \in C_0(G, \mathfrak{I}) = \mathfrak{I}$, 从而确定 $\mathfrak{I}/\mathfrak{I}^2 \simeq \Hm_0(G, \mathfrak{I})$ 的元素. 这正是蛇形引理的构造.
 \end{example}
 
 \begin{remark}\label{rem:Gmod-k}
