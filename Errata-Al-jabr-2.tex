@@ -56,7 +56,6 @@
 \usepackage{mathrsfs}
 \usepackage{stmaryrd} \SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}	% 避免警告 (stmryd 不含粗体故)
 % \usepackage{array}
-% \usepackage{tikz-cd}  % 使用 TikZ 绘图
 \usetikzlibrary{positioning, patterns, calc, matrix, shapes.arrows, shapes.symbols}
 
 \usepackage{myarrows}				% 使用自定义的可伸缩箭头
@@ -262,9 +261,43 @@
 		\Orig 定义从 $g$ 到 $f$ 的同伦为态射 $H: X \times \Delta^1 \to X$...
 		\Corr 定义从 $g$ 到 $f$ 的同伦为态射 $H: X \times \Delta^1 \to Y$...
 		
+		\item[定义 8.5.4 陈述]
+		删除``和 $0 \leq k \leq n$''; 此外, 显示公式之后的``连同...''不应起新段.
+		
+		\item[引理 8.5.6 证明, 整体重写如下]
+		定义 8.5.3 蕴涵 $A_n \subset \mathrm{N}\Gamma(A)_n$, 对应到 $\identity: [n] \to [n]$ 在 $\Gamma(A)_n$ 中确定的直和项, 而且 $\mathrm{N}\Gamma(A)_n \to \mathrm{N}\Gamma(A)_{n-1}$ 限制为 $\partial_n: A_n \to A_{n-1}$. 记 $\Gamma(A)_n$ 中其它项之和与 $\mathrm{N}\Gamma(A)_n$ 的交为 $\mathrm{N}'\Gamma(A)_n$, 问题化为证 $\mathrm{N}'\Gamma(A)_n = 0$. 为了方便陈述, 以下设 $\mathcal{A} = \cate{Ab}$, 不影响实质.
+		
+		设有 $x \in \mathrm{N}'\Gamma(A)_n \smallsetminus \{0\}$, 取 $t: [n] \twoheadrightarrow [k]$ 使得以下条件依序成立: $x_t \neq 0$, $k$ 极大, $\sum_{j=0}^n t(j)$ 极大; 由于 $k < n$, 可取 $1 \leq i \leq n$ 使得 $t(i-1) = t(i)$, 因此 $t \mathrm{d}^i: [n-1] \twoheadrightarrow [k]$.
+		
+		鉴于 $d_i x = 0$ 和 $k$ 极大, 代入定义 8.5.3 并且对所有满足 $t' \mathrm{d}^i = t \mathrm{d}^i$ 的 $t': [n] \twoheadrightarrow [k]$ 应用分解
+		\[\begin{tikzcd}[row sep=tiny]
+			& {[n]} \arrow[twoheadrightarrow, rd, "{t'}"] & \\
+			{[n-1]} \arrow[ru, "{\mathrm{d}^i}"] \arrow[twoheadrightarrow, rd, "{t'\mathrm{d}^i}"'] & & {[k]} \\
+			& {[k]} \arrow[ru, "{\identity}"'] &
+		\end{tikzcd}\]
+		可得 $\sum_{t' \;\text{如上}} x_{t'} = 0$. 由于 $t'$ 和 $t$ 仅在 $i$ 处有别, 而 $\sum_{j=0}^n t(j)$ 极大, 易见唯一可能非零项来自 $t' = t$, 故 $x_t = 0$, 矛盾.
+		
+		\item[引理 8.5.8 证明]
+		\Orig ...属于 $S$ 的 $t: [m] \twoheadrightarrow [k]$...
+		\Corr ...属于 $S$ 的 $t: [n] \twoheadrightarrow [k]$...
+		
+		\item[定理 8.5.9 证明倒数第二段]
+		\Orig ...$\simeq h_{\mathcal{A}}(X)_n$ 的直和项
+		\Corr ...$\simeq \tilde{h}_{\mathcal{A}}(X)_n$ 的直和项
+		
+		\item[定理 8.5.12 陈述]
+		将``引理''改为``命题''
+		
+		\item[定义 8.6.3 之前一行]
+		\Orig $X_n \dotimes{\Z} Y_n$
+		\Corr $\Z X_n \dotimes{\Z} \Z Y_n$
+		
 		\item[例 8.6.4]
 		\Orig 特别地 $\Hm_0(Q; M) \simeq \Z$
 		\Corr 特别地 $\Hm_0(Q; M) \simeq M$
+		
+		\item[定义 8.6.5 的公式倒数第三行]
+		$h_j d_{i-1}$ 之后缺逗号.
 		
 		\item[定义 8.6.5 之下的列表第一项]
 		\Orig 定义 $H^n_{-1} = g$, $H^n_n = f$ ... $H^n_i = d_{n+1} h^n_i$

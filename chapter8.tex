@@ -827,12 +827,11 @@ $\begin{tikzcd}
 \begin{definition}\label{def:normalized-cplx}
 	\index{zhengguihualianfuxing@正规化链复形 (normalized chain complex)}
 	\index[sym1]{NX@$\mathrm{N}X$}
-	设 $\mathcal{A}$ 是 Abel 范畴. 对 $\mathcal{A}$ 中的半单纯形对象 $X$ 和所有 $n \in \Z_{\geq 0}$ 和 $0 \leq k \leq n$ 定义
+	设 $\mathcal{A}$ 是 Abel 范畴. 对 $\mathcal{A}$ 中的半单纯形对象 $X$ 和所有 $n \in \Z_{\geq 0}$ 定义
 	\begin{align*}
 		(\mathrm{N} X)_n & := \bigcap_{i=1}^n \Ker\left[ d_i: X_n \to X_{n-1} \right], \quad n \geq 1, \\
 		(\mathrm{N} X)_0 & := X_0.
 	\end{align*}
-
 	连同 $X_n \xrightarrow{d_0} X_{n-1}$ 所诱导的态射族 $\mathrm{N}X_n \to \mathrm{N}X_{n-1}$ (请用 \eqref{eqn:simplicial-identity} 验证), 合理地记为 $\partial_n$, 它们构成 $\cate{Ch}_{\geq 0}(\mathcal{A})$ 的对象 $\mathrm{N}X$, 称为 $X$ 对应的\emph{正规化链复形}.
 \end{definition}
 
@@ -849,13 +848,17 @@ $\begin{tikzcd}
 	设 $\mathcal{A}$ 是 Abel 范畴, 则对所有 $A \in \Obj(\cate{Ch}_{\geq 0}(\mathcal{A}))$ 和 $n \geq 0$ 皆有 $\mathrm{N}\Gamma(A)_n = A_n$. 这给出函子的同构 $\eta: \identity_{\cate{Ch}_{\geq 0}(\mathcal{A})} \rightiso \mathrm{N}\Gamma$.
 \end{lemma}
 \begin{proof}
-	给定 $t: [n] \twoheadrightarrow [k]$, 注意到当 $k < n$ 时, 总可以取 $1 \leq i \leq n$ 使得 $t^{-1}(t(i))$ 至少有两个元素, 从而 $t \mathrm{d}^i$ 满, 使下图交换:
+	定义 \ref{def:DK-Gamma} 蕴涵 $A_n \subset \mathrm{N}\Gamma(A)_n$, 对应到 $\identity: [n] \to [n]$ 在 $\Gamma(A)_n$ 中确定的直和项, 而且 $\mathrm{N}\Gamma(A)_n \to \mathrm{N}\Gamma(A)_{n-1}$ 限制为 $\partial_n: A_n \to A_{n-1}$. 记 $\Gamma(A)_n$ 中其它项之和与 $\mathrm{N}\Gamma(A)_n$ 的交为 $\mathrm{N}'\Gamma(A)_n$, 问题化为证 $\mathrm{N}'\Gamma(A)_n = 0$. 为了方便陈述, 以下设 $\mathcal{A} = \cate{Ab}$, 不影响实质.
+	
+	设有 $x \in \mathrm{N}'\Gamma(A)_n \smallsetminus \{0\}$, 取 $t: [n] \twoheadrightarrow [k]$ 使得以下条件依序成立: $x_t \neq 0$, $k$ 极大, $\sum_{j=0}^n t(j)$ 极大; 由于 $k < n$, 可取 $1 \leq i \leq n$ 使得 $t(i-1) = t(i)$, 因此 $t \mathrm{d}^i: [n-1] \twoheadrightarrow [k]$.
+	
+	鉴于 $d_i x = 0$ 和 $k$ 极大, 代入定义 \ref{def:DK-Gamma} 并且对所有满足 $t' \mathrm{d}^i = t \mathrm{d}^i$ 的 $t': [n] \twoheadrightarrow [k]$ 应用分解
 	\[\begin{tikzcd}[row sep=tiny]
-		& {[n]} \arrow[twoheadrightarrow, rd, "t"] & \\
-		{[n-1]} \arrow[ru, "{\mathrm{d}^i}"] \arrow[twoheadrightarrow, rd, "{t\mathrm{d}^i}"'] & & {[k]} \\
+		& {[n]} \arrow[twoheadrightarrow, rd, "{t'}"] & \\
+		{[n-1]} \arrow[ru, "{\mathrm{d}^i}"] \arrow[twoheadrightarrow, rd, "{t'\mathrm{d}^i}"'] & & {[k]} \\
 		& {[k]} \arrow[ru, "{\identity}"'] &
 	\end{tikzcd}\]
-	代入定义 \ref{def:DK-Gamma} 遂知 $\mathrm{N}\Gamma(A)_n$ 包含于 $\identity: [n] \to [n]$ 对应的直和项 $A_n$. 然而易证该定义进一步蕴涵 $\mathrm{N}\Gamma(A)_n = A_n$, 而且 $\mathrm{N}\Gamma(A)_{n+1} \to \mathrm{N}\Gamma(A)_n$ 正是 $\partial_{n+1}: A_{n+1} \to A_n$. 证毕.
+	可得 $\sum_{t' \;\text{如上}} x_{t'} = 0$. 由于 $t'$ 和 $t$ 仅在 $i$ 处有别, 而 $\sum_{j=0}^n t(j)$ 极大, 易见唯一可能非零项来自 $t' = t$, 故 $x_t = 0$, 矛盾.
 \end{proof}
 
 \begin{lemma}\label{prop:GammaN-adjunction}
@@ -900,7 +903,7 @@ $\begin{tikzcd}
 	\end{align*}
 	它满足 $ts = \identity_{[k]}$. 现在假定 $x \neq 0$, 记
 	\[ S := \left\{t: x_t \neq 0 \right\} \neq \emptyset. \]
-	取最小的 $k$ 使得存在属于 $S$ 的 $t: [m] \twoheadrightarrow [k]$, 再取如此之 $t$ 使 $\sum_{i=0}^k \min t^{-1}(i)$ 尽量小, 并构造 $s$. 今将往证 $s^*(\epsilon_{X, n}(x)) = x_t \in X_k$, 以此说明 $\epsilon_{X, n}(x) \neq 0$.
+	取最小的 $k$ 使得存在属于 $S$ 的 $t: [n] \twoheadrightarrow [k]$, 再取如此之 $t$ 使 $\sum_{i=0}^k \min t^{-1}(i)$ 尽量小, 并构造 $s$. 今将往证 $s^*(\epsilon_{X, n}(x)) = x_t \in X_k$, 以此说明 $\epsilon_{X, n}(x) \neq 0$.
 	
 	基于 $\epsilon_{X, n}$ 的具体描述, 仅须对 $t': [n] \twoheadrightarrow [k']$ 证明 $s^* (t')^*(x_{t'}) \neq 0$ 蕴涵 $t = t'$ 即可. 命 $u := t's: [k] \to [k']$. 当 $t' \notin S$ 时 $x_{t'} = 0$, 故以下设 $t' \in S$ 满足 $s^* (t')^*(x_{t'}) = u^* (x_{t'}) \neq 0$.
 	
@@ -951,7 +954,7 @@ $\begin{tikzcd}
 	对于任意函子 $F: \mathcal{C} \to \mathcal{C}'$, 我们称 $X' \in \Obj(\mathcal{C}')$ 属于 $F$ 的本质像, 如果存在 $X \in \cate{Obj}(\mathcal{C})$ 使得 $X' \simeq FX$. 搭配引理 \ref{prop:DK-Ab} 对 $\cate{Ch}_{\geq 0}(\cate{Ab}) \to \cate{s}\cate{Ab}$ 的拟逆的描述, 便能得到以下结论: $X \in \Obj(\cate{s}\mathcal{A})$ 属于 $\Gamma$ 的本质像当且仅当 $\mathrm{N} \tilde{h}_{\mathcal{A}}(X)_n$ 对每个 $n \geq 0$ 皆属于 $\tilde{h}_{\mathcal{A}}: \mathcal{A} \to \tilde{\mathcal{A}}^\wedge$ 的本质像.
 	
 	注意到 $\tilde{h}_{\mathcal{A}}: \mathcal{A} \to \tilde{\mathcal{A}}^\wedge$ 保有限直和.
-	当 $\mathcal{A}$ 是 Karoubi 范畴时, $\mathcal{A} \to \tilde{\mathcal{A}}^\wedge$ 的本质像因而对萃取直和项保持封闭; 既然 $\mathrm{N} \tilde{h}_{\mathcal{A}}(X)_n$ 是 $\Gamma\mathrm{N} \tilde{h}_{\mathcal{A}}(X)_n \simeq h_{\mathcal{A}}(X)_n$ 的直和项, 此时 $\Gamma$ 全忠实本质满, 从而是等价.
+	当 $\mathcal{A}$ 是 Karoubi 范畴时, $\mathcal{A} \to \tilde{\mathcal{A}}^\wedge$ 的本质像因而对萃取直和项保持封闭; 既然 $\mathrm{N} \tilde{h}_{\mathcal{A}}(X)_n$ 是 $\Gamma\mathrm{N} \tilde{h}_{\mathcal{A}}(X)_n \simeq \tilde{h}_{\mathcal{A}}(X)_n$ 的直和项, 此时 $\Gamma$ 全忠实本质满, 从而是等价.
 	
 	最后, 伴随等价定理 \cite[定理 2.6.12]{Li1} 确保 $\Gamma: \cate{Ch}_{\geq 0}(\mathcal{A}) \to \cate{s}\mathcal{A}$ 的拟逆总能扩充为其右伴随. 当 $\mathcal{A}$ 是 Abel 范畴时, 引理 \ref{prop:GammaN-adjunction} 已经说明 $\mathrm{N}$ 是 $\Gamma$ 的右伴随, 因而是 $\Gamma$ 的拟逆. 明所欲证.
 \end{proof}
@@ -992,7 +995,7 @@ $\begin{tikzcd}
 下一个目标是对 Abel 范畴的情形更精密地比较 $\mathrm{C}$ 和 $\mathrm{N}$. 对于链复形之间的态射有同伦的概念, 见定义 \ref{def:homotopy} 和注记 \ref{rem:Hom-chain-cplx}. 链复形之间的态射若在同调层次诱导同构, 则称为拟同构.
 
 \begin{theorem}\label{prop:Dold-Kan-N-C}
-	设 $\mathcal{A}$ 为 Abel 范畴, $X \in \Obj(\cate{s}\mathcal{A})$, 则引理 \ref{prop:Dold-Kan-u} 的 $u: \mathrm{N}X \to \mathrm{C}X$ 和命题 \ref{prop:Dold-Kan-v} 的 $v: \mathrm{C}X \to \mathrm{N}X$ 皆是拟同构.
+	设 $\mathcal{A}$ 为 Abel 范畴, $X \in \Obj(\cate{s}\mathcal{A})$, 则命题 \ref{prop:Dold-Kan-u} 的 $u: \mathrm{N}X \to \mathrm{C}X$ 和命题 \ref{prop:Dold-Kan-v} 的 $v: \mathrm{C}X \to \mathrm{N}X$ 皆是拟同构.
 \end{theorem}
 \begin{proof}
 	已知 $vu = \identity_{\mathrm{N}X}$, 证 $v$ 是拟同构即可. 由于 $v$ 有右逆, 因而满, 链复形的长正合列 (命题 \ref{prop:long-exact-sequence-ses}) 将问题化为证 $\Ker(v)$ 零调. 鉴于定理 \ref{prop:Dold-Kan}, 以下不妨设 $X = \Gamma A$, 其中 $A \in \Obj(\cate{Ch}_{\geq 0}(\mathcal{A}))$. 因此
@@ -1075,7 +1078,7 @@ $\begin{tikzcd}
 
 对于所有 $X \in \Obj(\cate{sAb})$, 指定态射 $\Z\Delta^n \to X$ 因而便相当于指定 $X_n$ 的元素.
 
-此外, $\Z(X \times Y) \simeq \Z X \otimes \Z Y$, 右式的 $\otimes$ 代表逐次地取 $X_n \dotimes{\Z} Y_n$.
+此外, $\Z(X \times Y) \simeq \Z X \otimes \Z Y$, 右式的 $\otimes$ 代表逐次地取 $\Z X_n \dotimes{\Z} \Z Y_n$.
 
 \begin{definition}\label{def:simplicial-set-homology}
 	\index[sym1]{Hn}
@@ -1133,7 +1136,7 @@ $\begin{tikzcd}
 		d_i h_j & = \begin{cases}
 			h_{j-1} d_i, & 0 \leq i < j \\
 			d_i h_{i-1}, & 1 \leq i = j \\
-			h_j d_{i-1} & i > j+1,
+			h_j d_{i-1}, & i > j+1,
 		\end{cases} \\
 		s_i h_j & = \begin{cases}
 			h_{j+1} s_i, & i \leq j \\
