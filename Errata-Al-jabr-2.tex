@@ -221,6 +221,9 @@
 		\Orig 对 $\mathsf{L}_n$ 的描述
 		\Corr 对 $\overline{\mathsf{L}}_n$ 的描述
 		
+		\item[命题 6.4.6 陈述]
+		将第一则显示公式中的 $\Ind^G_H(N)$ 改为 $\iInd^G_H(N)$.
+		
 		\item[引理 7.1.8 证明]
 		将图表中的 $\eta_A \otimes_B$ 改为 $\eta_A \otimes \eta_B$
 		\Thx{感谢黄良伟指正}
@@ -247,7 +250,16 @@
 		\item[第八章引言]
 		将第一段的 ``延拓为 $\cate{FinOrd} \to \mathcal{C}$'' 改为 ``延拓为 $\cate{FinOrd}^{\opp} \to \mathcal{C}$''.
 		
-		将中部的显示公式 $\partial_n := \sum_{i=0}^n (-1)^n d_i$ 改为 $\partial_n := \sum_{i=0}^n (-1)^i d_i$.
+		将第二个显示公式
+		$\begin{tikzcd}
+			\Gamma: \cate{s}\mathcal{A} \arrow[shift left, r] & \cate{Ch}_{\geq 0}(\mathcal{A}): \mathrm{N} \arrow[shift left, l]
+		\end{tikzcd}$
+		两边的范畴对调, 改为:
+		\[\begin{tikzcd}
+			\Gamma: \cate{Ch}_{\geq 0}(\mathcal{A}) \arrow[shift left, r] & \cate{s}\mathcal{A}: \mathrm{N}, \arrow[shift left, l]
+		\end{tikzcd}\]
+		
+		将第三个显示公式 $\partial_n := \sum_{i=0}^n (-1)^n d_i$ 改为 $\partial_n := \sum_{i=0}^n (-1)^i d_i$.
 		
 		\item[例 8.2.3 最后]
 		\Orig $\Delta^n \supset \Lambda^n_i \supset \partial \Delta^n$
@@ -265,7 +277,7 @@
 		删除``和 $0 \leq k \leq n$''; 此外, 显示公式之后的``连同...''不应起新段.
 		
 		\item[引理 8.5.6 证明, 整体重写如下]
-		定义 8.5.3 蕴涵 $A_n \subset \mathrm{N}\Gamma(A)_n$, 对应到 $\identity: [n] \to [n]$ 在 $\Gamma(A)_n$ 中确定的直和项, 而且 $\mathrm{N}\Gamma(A)_n \to \mathrm{N}\Gamma(A)_{n-1}$ 限制为 $\partial_n: A_n \to A_{n-1}$. 记 $\Gamma(A)_n$ 中其它项之和与 $\mathrm{N}\Gamma(A)_n$ 的交为 $\mathrm{N}'\Gamma(A)_n$, 问题化为证 $\mathrm{N}'\Gamma(A)_n = 0$. 为了方便陈述, 以下设 $\mathcal{A} = \cate{Ab}$, 不影响实质.
+		定义 8.5.3 蕴涵 $A_n \subset \mathrm{N}\Gamma(A)_n$, 对应到 $\identity_{[n]}$ 在 $\Gamma(A)_n$ 中确定的直和项, 而且 $\mathrm{N}\Gamma(A)_n \to \mathrm{N}\Gamma(A)_{n-1}$ 限制为 $\partial_n: A_n \to A_{n-1}$. 记 $\Gamma(A)_n$ 中其它项之和与 $\mathrm{N}\Gamma(A)_n$ 的交为 $\mathrm{N}'\Gamma(A)_n$, 问题化为证 $\mathrm{N}'\Gamma(A)_n = 0$. 为了方便陈述, 以下设 $\mathcal{A} = \cate{Ab}$, 不影响实质.
 		
 		设有 $x \in \mathrm{N}'\Gamma(A)_n \smallsetminus \{0\}$, 取 $t: [n] \twoheadrightarrow [k]$ 使得以下条件依序成立: $x_t \neq 0$, $k$ 极大, $\sum_{j=0}^n t(j)$ 极大; 由于 $k < n$, 可取 $1 \leq i \leq n$ 使得 $t(i-1) = t(i)$, 因此 $t \mathrm{d}^i: [n-1] \twoheadrightarrow [k]$.
 		
@@ -303,6 +315,9 @@
 		\Orig 定义 $H^n_{-1} = g$, $H^n_n = f$ ... $H^n_i = d_{n+1} h^n_i$
 		\Corr 定义 $H^n_{-1} = f$, $H^n_n = g$ ... $H^n_i = d_{i+1} h^n_i$
 		
+		\item[定义 8.6.7 第一则显示公式]
+		将 $\partial_{-1} := \epsilon$ 改为 $\partial_0 := \epsilon$.
+		
 		\item[定义 8.6.7 之下]
 		\Orig 从 $d_0 \epsilon = d_1 \epsilon$ 可见...
 		\Corr 从 $\epsilon d_0 = \epsilon d_1$ 可见...
@@ -310,6 +325,13 @@
 		\item[例 8.6.9 中 $k_n$ 的定义]
 		\Orig $\mapsto (g_1, \ldots, g_n, 1)$
 		\Corr $\mapsto (g_1, \ldots, g_{n+1}, 1)$
+		
+		\item[例 8.7.2 最后]
+		在 $[d^i: GL^n \to GL^{n+1}] = \cdots$ 右边的描述中, 将第一个分支的条件改为 $0 < i \leq n$, 将第二个分支的条件改为 $i = 0$.
+		
+		\item[例 8.7.7, ``目光转向特例...''之上]
+		\Orig 即 $\mathrm{C}^{\mathrm{aug}}(\mathrm{Bar}(R))$
+		\Corr 即 $\mathrm{C}^{\mathrm{aug}}(\mathrm{Bar}(M))$
 		
 		\item[第八章习题 2 提示]
 		\Orig $y' = \tilde{D}y$
@@ -323,5 +345,11 @@
 		\Orig 当 $\kappa$ 越大, 条件便越松弛, ...
 		\Corr 当 $\kappa'$ 相对于 $\kappa$ 充分大, 相应的条件便比 $\kappa$ 松弛; ...
 		\Thx{感谢黄行知指正}
+		
+		\item[引理 B.6.1 证明]
+		在证明开头插入一句: ``不妨设 $O \neq \emptyset$.''
+		
+		\item[定理 B.6.3 证明]
+		将最后一则显示公式 $R := \End_{\ProC\mathcal{C}}(S)$ 改为 $R := \End_{\ProC(\mathcal{A})}(S)$, 然后将结尾处``...可知 $G$ 全忠实 ... 明所欲证.'' 改为``... 可知 $F$ 全忠实. 明所欲证.''
 	\end{Errata}
 \end{document}

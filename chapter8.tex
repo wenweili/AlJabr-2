@@ -35,7 +35,7 @@
 
 相对于本书的主题, 更重要的是考虑 Abel 范畴 $\mathcal{A}$ 中的单纯形对象, 此时 $\cate{s}\mathcal{A}$ 也是 Abel 范畴; 例如单纯形 Abel 群构成 Abel 范畴 $\cate{sAb}$. 这方面的根本结果是 \S\ref{sec:Dold-Kan} 探讨的 Dold--Kan 对应 (定理 \ref{prop:Dold-Kan}), 它对 Abel 范畴 $\mathcal{A}$ 给出一对伴随等价
 \[\begin{tikzcd}
-	\Gamma: \cate{s}\mathcal{A} \arrow[shift left, r] & \cate{Ch}_{\geq 0}(\mathcal{A}): \mathrm{N}, \arrow[shift left, l]
+	\Gamma: \cate{Ch}_{\geq 0}(\mathcal{A}) \arrow[shift left, r] & \cate{s}\mathcal{A}: \mathrm{N}, \arrow[shift left, l]
 \end{tikzcd}\]
 其中 $\cate{Ch}_{\geq 0}(\mathcal{A})$ 代表 $\mathcal{A}$ 上的非负次链复形所成之 Abel 范畴. 函子 $\mathrm{N}$ 映单纯形对象 $X$ 为相应的正规化链复形 $\mathrm{N}X$; 更精确地说, 定义 $X \in \Obj(\cate{s}\mathcal{A})$ 的非正规化链复形为
 \[ \mathrm{C}X := \left( X_n, \partial_n\right)_{n \geq 0}, \quad \partial_n := \sum_{i=0}^n (-1)^i d_i : X_n \to X_{n-1}, \]
@@ -848,7 +848,7 @@ $\begin{tikzcd}
 	设 $\mathcal{A}$ 是 Abel 范畴, 则对所有 $A \in \Obj(\cate{Ch}_{\geq 0}(\mathcal{A}))$ 和 $n \geq 0$ 皆有 $\mathrm{N}\Gamma(A)_n = A_n$. 这给出函子的同构 $\eta: \identity_{\cate{Ch}_{\geq 0}(\mathcal{A})} \rightiso \mathrm{N}\Gamma$.
 \end{lemma}
 \begin{proof}
-	定义 \ref{def:DK-Gamma} 蕴涵 $A_n \subset \mathrm{N}\Gamma(A)_n$, 对应到 $\identity: [n] \to [n]$ 在 $\Gamma(A)_n$ 中确定的直和项, 而且 $\mathrm{N}\Gamma(A)_n \to \mathrm{N}\Gamma(A)_{n-1}$ 限制为 $\partial_n: A_n \to A_{n-1}$. 记 $\Gamma(A)_n$ 中其它项之和与 $\mathrm{N}\Gamma(A)_n$ 的交为 $\mathrm{N}'\Gamma(A)_n$, 问题化为证 $\mathrm{N}'\Gamma(A)_n = 0$. 为了方便陈述, 以下设 $\mathcal{A} = \cate{Ab}$, 不影响实质.
+	定义 \ref{def:DK-Gamma} 蕴涵 $A_n \subset \mathrm{N}\Gamma(A)_n$, 对应到 $\identity_{[n]}$ 在 $\Gamma(A)_n$ 中确定的直和项, 而且 $\mathrm{N}\Gamma(A)_n \to \mathrm{N}\Gamma(A)_{n-1}$ 限制为 $\partial_n: A_n \to A_{n-1}$. 记 $\Gamma(A)_n$ 中其它项之和与 $\mathrm{N}\Gamma(A)_n$ 的交为 $\mathrm{N}'\Gamma(A)_n$, 问题化为证 $\mathrm{N}'\Gamma(A)_n = 0$. 为了方便陈述, 以下设 $\mathcal{A} = \cate{Ab}$, 不影响实质.
 	
 	设有 $x \in \mathrm{N}'\Gamma(A)_n \smallsetminus \{0\}$, 取 $t: [n] \twoheadrightarrow [k]$ 使得以下条件依序成立: $x_t \neq 0$, $k$ 极大, $\sum_{j=0}^n t(j)$ 极大; 由于 $k < n$, 可取 $1 \leq i \leq n$ 使得 $t(i-1) = t(i)$, 因此 $t \mathrm{d}^i: [n-1] \twoheadrightarrow [k]$.
 	
@@ -1184,7 +1184,7 @@ $\begin{tikzcd}
 	对于加性范畴 $\mathcal{A}$ 上的增广半单纯形对象 $X$, 对应的 $\mathrm{C}X$ 可以扩充为链复形
 	\begin{equation*}
 		\begin{gathered}
-			\mathrm{C}^{\mathrm{aug}} X := \left[ \cdots \xrightarrow{\partial_3} X_2 \xrightarrow{\partial_2} X_1 \xrightarrow{\partial_1} X_0 \xrightarrow{\partial_{-1} := \epsilon} X_{-1} \to 0 \to \cdots \right] , \\
+			\mathrm{C}^{\mathrm{aug}} X := \left[ \cdots \xrightarrow{\partial_3} X_2 \xrightarrow{\partial_2} X_1 \xrightarrow{\partial_1} X_0 \xrightarrow{\partial_0 := \epsilon} X_{-1} \to 0 \to \cdots \right] , \\
 			\partial_n := \sum_{i=0}^n (-1)^i d_i : X_n \to X_{n-1}, \quad n \geq 1.
 		\end{gathered}
 	\end{equation*}
@@ -1298,8 +1298,8 @@ $\begin{tikzcd}
 	\begin{gather*}
 		\left[ d^i: GL^n \to GL^{n+1} \right] =
 		\begin{cases}
-			GL^{i-1} \delta L^{n-i}, & 0 \leq i < n \\
-			\eta GL^n , & i = n,
+			GL^{i-1} \delta L^{n-i}, & 0 < i \leq n \\
+			\eta GL^n , & i = 0,
 		\end{cases} \\
 		\left[ s^j: GL^{n+2} \to GL^{n+1} \right] =
 		GL^j \epsilon L^{n-j+1}, \quad 0 \leq j \leq n.
@@ -1451,7 +1451,7 @@ $\begin{tikzcd}
 		\partial_n: r_0 \otimes \cdots \otimes r_n \otimes x \mapsto \\
 		\sum_{k=0}^{n-1} (-1)^k \cdots \otimes r_k r_{k+1} \otimes \cdots \otimes x + (-1)^n r_0 \otimes \cdots \otimes r_{n-1} \otimes r_n x,
 	\end{multline*}
-	其中 $x \in M$ 而 $r_i \in R$. 上式在 $n=0$ 时也有意义 ($r_0 \otimes x \mapsto r_0 x$), 于是得到增广版本 $\epsilon: \mathrm{C}(\mathrm{Bar}(M)) \to M$, 即 $\mathrm{C}^{\mathrm{aug}}(\mathrm{Bar}(R))$.
+	其中 $x \in M$ 而 $r_i \in R$. 上式在 $n=0$ 时也有意义 ($r_0 \otimes x \mapsto r_0 x$), 于是得到增广版本 $\epsilon: \mathrm{C}(\mathrm{Bar}(M)) \to M$, 即 $\mathrm{C}^{\mathrm{aug}}(\mathrm{Bar}(M))$.
 	
 	目光转向特例 $M = R$. 此时
 	\begin{align*}

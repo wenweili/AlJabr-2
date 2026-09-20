@@ -610,7 +610,7 @@
 	设 $\mathcal{C}$ 是具有投射生成元的余完备 Abel 范畴, 而 $O$ 是 $\Obj(\mathcal{C})$ 的小子集, 则存在 $\mathcal{C}$ 的投射生成元 $S$, 使得每个 $X \in O$ 都能表作 $S$ 的商对象.
 \end{lemma}
 \begin{proof}
-	任取 $\mathcal{C}$ 的投射生成元 $s$. 以余完备的条件取直和
+	不妨设 $O \neq \emptyset$. 任取 $\mathcal{C}$ 的投射生成元 $s$. 以余完备的条件取直和
 	\[ S := \bigoplus_{X \in O} s^{\oplus \Hom(s, X)}. \]
 	它依然是投射对象. 对任意 $X \in O$, 定义典范态射 $S \twoheadrightarrow X$ 使得它拉回 $f \in \Hom(s, X)$ 对应的直和项 $s$ 上等于 $f$, 其余直和项上为 $0$. 从生成元的性质易见这是满态射, 详阅定理 \ref{prop:identify-ModR} 证明.
 \end{proof}
@@ -647,8 +647,8 @@
 	我们推知 $\ProC(\mathcal{A})$ 有投射生成元. 此外 $\mathcal{A} \to \ProC(\mathcal{A})$ 是 Abel 范畴之间的全忠实正合函子 (定理 \ref{prop:Ind-Abel}).
 	
 	视 $\mathcal{A}$ 为 $\ProC(\mathcal{A})$ 的全子范畴. 应用引理 \ref{prop:FM-prep-1} (取 $O = \Obj(\mathcal{A})$) 可得 $\ProC(\mathcal{A})$ 的投射生成元 $S$, 使得 $\mathcal{A}$ 的每个对象都能表为 $S$ 的商. 现在考虑函子
-	\[ \mathcal{A} \to \ProC(\mathcal{A}) \xrightarrow{G} \cated{Mod}R , \quad G := \Hom_{\ProC(\mathcal{A})}(S, \cdot), \; R := \End_{\ProC\mathcal{C}}(S). \]
-	记其合成为 $F$. 因为每段皆正合, $F$ 是正合函子. 应用引理 \ref{prop:FM-prep-2} 可知 $G$ 全忠实, 故 $F$ 全忠实. 明所欲证.
+	\[ \mathcal{A} \to \ProC(\mathcal{A}) \xrightarrow{G} \cated{Mod}R , \quad G := \Hom_{\ProC(\mathcal{A})}(S, \cdot), \; R := \End_{\ProC(\mathcal{A})}(S). \]
+	记其合成为 $F$. 因为每段皆正合, $F$ 是正合函子. 应用引理 \ref{prop:FM-prep-2} 可知 $F$ 全忠实. 明所欲证.
 \end{proof}
 
 \begin{corollary}
