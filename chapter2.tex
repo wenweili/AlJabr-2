@@ -1297,7 +1297,7 @@ Abel 范畴中的态射 $f: X \to Y$ 皆有唯一的满--单分解 (命题 \ref{
 	\[\begin{tikzcd}
 		0 \arrow[r] & \Ker(d^n) \arrow[r, "{\iota^n}"] & X^n \arrow[r, "{\mathbf{d}^n}"] & \Ker(d^{n+1}) \arrow[r] & 0
 	\end{tikzcd}\]
-	其中的态射 $\mathbf{d}^n$ 由 $d^n = \iota^{n+1} \mathbf{d}^n$ 刻画; 上标 $n$ 可任取, 但 $X^n$ 不能是正合列的右端点.
+	上式容许 $X^{n+1}$ 为右端点, 此时 $\Ker(d^{n+1}) := \Image(d^n) \stackrel{\iota^{n+1}}{\hookrightarrow} X^{n+1}$; 态射 $\mathbf{d}^n$ 由 $d^n = \iota^{n+1} \mathbf{d}^n$ 刻画.
 
 	按假设 $0 \to F(\Ker(d^n)) \xrightarrow{F\iota^n} F(X^n) \xrightarrow{F \mathbf{d}^n} F (\Ker(d^{n+1})) \to 0$ 依然正合, $Fd^n = F\iota^{n+1} F \mathbf{d}^n$.
 	于是这些短正合列重新组装为 $\mathcal{B}$ 中的正合列 $(FX^\bullet, Fd^\bullet)$.

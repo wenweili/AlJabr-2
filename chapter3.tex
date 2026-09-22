@@ -24,7 +24,7 @@
 基于 \S\ref{sec:truncation-functors} 介绍的截断函子, 我们将在 \S\ref{sec:double-cplx-coh} 说明如何联系双复形的纵向或横向上同调以及全复形的上同调, 这部分要求双复形具备某些有界性条件. 一些教材选择以谱序列来处理这些性质, 本书则效法 \cite{KS06}, 迂回地予以直接证明.
 
 对于 Abel 范畴 $\mathcal{A}$ 的对象 $X$, 所谓 $X$ 的解消分成左右两种版本, 具体写作正合列
-\[ 0 \to X \to I^0 \to I^2 \to \cdots \quad \text{或} \quad \cdots \to P_1 \to P_0 \to X \to 0. \]
+\[ 0 \to X \to I^0 \to I^1 \to \cdots \quad \text{或} \quad \cdots \to P_1 \to P_0 \to X \to 0. \]
 这也相当于通过拟同构 $X \to I := (I^n)_n$ 或 $P := (P_n)_n \to X$ 将 $X$ 代换为一个具有更好性质的复形 $I$ 或链复形 $P$; 所谓拟同构, 是指在上同调或同调层次诱导出同构的态射. 如要求所有 $I^n$ (或 $P_n$) 为内射 (或投射) 对象, 便称之为 $X$ 的内射 (或投射) 解消. 我们将在 \S\ref{sec:resolutions} 深入地探讨解消. 解消还具有同伦意义下的函子性和唯一性: 以内射解消为例, 若在 $\mathcal{A}$ 中有实线部分图表
 \[\begin{tikzcd}
 	0 \arrow[r] & X' \arrow[r] & (I')^0 \arrow[r] & (I')^1 \arrow[r] & (I')^2 \arrow[r] & \cdots \\
@@ -2315,7 +2315,7 @@ Hochschild 同调和上同调有丰富的内涵, 它与求导和微分形式的�
 	因为每个 $I^n$ 和 $(I')^n$ 皆是内射对象, 上图取 $\cate{C}F$ 之后依然行正合. 故 $\delta^n$ 的函子性化约为命题 \ref{prop:long-exact-sequence-ses} 的相应陈述.
 \end{proof}
 
-在经典场景下, 主要考虑的是函子 $\mathrm{R}^n F$ 或 $\mathrm{L}_n F$ 在 $\mathcal{A}$ 上的限制, 仍写作 $\mathrm{R}^n F(X)$ 或 $\mathrm{L}_n F(X)$ 的形式, $X \in \Obj(\mathcal{A})$. 这是通过``摊平''为正合列的内射解消 $0 \to X \to I^0 \to I^1 \to \cdots$ (或投射解消 $\cdots \to P^1 \to P^0 \to X \to 0$) 来计算的; 见例 \ref{eg:resolution-single} 的说明. 对复形定义的导出函子在早期文献中称为\emph{超导出函子}, 更适合以导出范畴或谱序列来处理. 是故以下聚焦于 $X \in \Obj(\mathcal{A})$ 的经典情形.
+在经典场景下, 主要考虑的是函子 $\mathrm{R}^n F$ 或 $\mathrm{L}_n F$ 在 $\mathcal{A}$ 上的限制, 仍写作 $\mathrm{R}^n F(X)$ 或 $\mathrm{L}_n F(X)$ 的形式, $X \in \Obj(\mathcal{A})$. 这是通过``摊平''为正合列的内射解消 $0 \to X \to I^0 \to I^1 \to \cdots$ (或投射解消 $\cdots \to P_1 \to P_0 \to X \to 0$) 来计算的; 见例 \ref{eg:resolution-single} 的说明. 对复形定义的导出函子在早期文献中称为\emph{超导出函子}, 更适合以导出范畴或谱序列来处理. 是故以下聚焦于 $X \in \Obj(\mathcal{A})$ 的经典情形.
 \index{chaodaochuhanzi@超导出函子 (hyper-derived functor)}
 
 第一步是将定理 \ref{prop:long-exact-sequence-primer} 的长正合列提炼为 $\delta$-函子的概念.
