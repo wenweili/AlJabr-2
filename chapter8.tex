@@ -1957,7 +1957,7 @@ $\begin{tikzcd}
 
 综上, 链复形的映射锥是来自单纯形集 (或拓扑) 的映射锥对一份 $\Z$ 的商, 这份 $\Z$ 来自锥的顶点 $\mathrm{pt}$. 在链复形的研究中, 映射锥的主要意义是任何映射 $\phi: A \to B$ 都拓展为列:
 \begin{equation}\label{eqn:cofiber-comparison-A}
-	A \xrightarrow{\phi} B \to \Cone(\phi) \to A[-1] \xrightarrow{-f[-1]} B[-1] \to \cdots
+	A \xrightarrow{\phi} B \to \Cone(\phi) \to A[-1] \xrightarrow{-\phi[-1]} B[-1] \to \cdots
 \end{equation}
 
 在拓扑情境下, 对应到 $\Cone(\phi) \to A[-1]$ 的映射是将 $\Cone_{\mathrm{top}}(F)$ 的底 $\mathcal{Y}$ 缩为一点, 收缩的产物记为 $S\mathcal{X}$; 这与 $\mathcal{Y}$ 无关 (见下图), 给出函子 $S$. 对应的映射列如
@@ -1992,7 +1992,7 @@ $\begin{tikzcd}
 \end{equation*}
 称之为 $f$ 生成的\emph{上纤维列} (精确地说, 不带基点的版本). 若在 $\cate{sSet}$ 中操作, 对相应的列取链复形, 得到的大致是 \eqref{eqn:cofiber-comparison-A}. 之所以说``大致'', 缘由在于:
 \begin{itemize}
-	\item 映射 $S\mathcal{X} \to S\mathcal{Y}$ 不能单纯地取为 $S(F)$, 而须适当地翻转垂直坐标, 这在线性代数的层次对应到 \eqref{eqn:cofiber-comparison-A} 中的 $-f[-1]$; 详见拓扑学相关教材.
+	\item 映射 $S\mathcal{X} \to S\mathcal{Y}$ 不能单纯地取为 $S(F)$, 而须适当地翻转垂直坐标, 这在线性代数的层次对应到 \eqref{eqn:cofiber-comparison-A} 中的 $-\phi[-1]$; 详见拓扑学相关教材.
 	\item 如命题 \ref{prop:Cone-comparison} 所见, 各种链复形包含多余的 $\Z$, 对应到 $\Cone_{\mathrm{top}}(F)$ 和 $S\mathcal{X}$ 等空间的顶点. 拓扑学中摆脱这些问题的方式是考虑带基点的空间, 然后在锥的拓扑构造中缩掉和基点相连的部分.
 \end{itemize}
 
