@@ -420,7 +420,7 @@ $\begin{tikzcd}[row sep=small, column sep=tiny]
 \begin{definition-proposition}[子预三角范畴]\label{def:triangulated-subcat}
 	\index{yusanjiaofanchou!子预三角范畴}
 	\index{sanjiaofanchou!子三角范畴}
-	设 $\mathcal{D}'$ 为预三角范畴 $\mathcal{D}$ 的加性全子范畴, 对平移函子 $T$ 封闭. 记包含函子为 $\iota: \mathcal{D}' \to \mathcal{D}$.
+	设 $\mathcal{D}'$ 为预三角范畴 $\mathcal{D}$ 的加性全子范畴, 对平移函子 $T^{\pm 1}$ 封闭. 记包含函子为 $\iota: \mathcal{D}' \to \mathcal{D}$.
 	\begin{enumerate}[(i)]
 		\item 在 $\mathcal{D}'$ 上使得 $\iota$ 为三角函子的预三角结构若存在则是唯一的, 此时 $\mathcal{D}'$ 的三角 $X \to Y \to Z \xrightarrow{+1}$ 是好三角当且仅当它是 $\mathcal{D}$ 的好三角.
 		\item 上述预三角结构存在的充要条件为: 若 $X \to Y \to Z \xrightarrow{+1}$ 是 $\mathcal{D}$ 的好三角, 任两项属于 $\Obj(\mathcal{D}')$, 则另一项同构于 $\mathcal{D}'$ 的对象.
@@ -2135,7 +2135,7 @@ $\begin{tikzcd}[row sep=small, column sep=tiny]
 	则 $\mathcal{K}_2^G$ 是饱和子三角范畴. 如将变元位置调换, 相应的叙述对 $\mathcal{K}_1^G \subset \mathcal{D}_1$ 依然成立.
 \end{lemma}
 \begin{proof}
-	由 $G(X_1, X_2[1]) \simeq G(X_1, X_2)[1]$ 可知 $\mathcal{K}_2^G$ 对平移封闭. 同理, 设有好三角 $I \to J \to K \xrightarrow{+1}$, 其中 $I, K \in \Obj(\mathcal{K}_2^G)$, 则从好三角
+	由 $G(X_1, X_2[\pm 1]) \simeq G(X_1, X_2)[\pm 1]$ 可知 $\mathcal{K}_2^G$ 对平移封闭. 同理, 设有好三角 $I \to J \to K \xrightarrow{+1}$, 其中 $I, K \in \Obj(\mathcal{K}_2^G)$, 则从好三角
 	\[ G(X_1, I) \to G(X_1, J) \to G(X_1, K) \xrightarrow{+1} \]
 	容易看出 $X_1 \in \Obj(\mathcal{N}_1) \implies G(X_1, J) \in \Obj(\mathcal{N}')$. 饱和性质是自明的.
 \end{proof}
