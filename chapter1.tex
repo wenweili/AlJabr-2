@@ -835,7 +835,7 @@ $Z(\mathcal{A}) := \End(\identity_{\mathcal{A}})$, 其元素是恒等函子 $\id
 \begin{definition}
 	\index{fanchou!滤过 (filtered)}
 	\index{jixian!滤过 (filtered)}
-	根据 \cite[定义 2.7.6]{Li1}, 具备以下条件的范畴 $I$ 称为\emph{滤过}的.
+	根据 \cite[定义 2.7.6]{Li1}, 具备以下条件的非空范畴 $I$ 称为\emph{滤过}的.
 	\begin{compactitem}
 		\item 对所有 $i, j \in \Obj(I)$, 存在 $k \in \Obj(I)$ 和态射 $i \rightarrow k \leftarrow j$.
 		\item 对 $I$ 中任一对态射 $f, g: i \to j$, 存在态射 $k \in \Obj(I)$ 和态射 $h: j \to k$, 使得 $hf = hg$.
@@ -846,7 +846,7 @@ $Z(\mathcal{A}) := \End(\identity_{\mathcal{A}})$, 其元素是恒等函子 $\id
 
 \begin{example}\label{eg:filtered-poset}
 	\index{pianxuji!滤过 (filtered)}
-	一类常见的滤过范畴来自滤过偏序集\footnote{在作为极限的下标来运用时, 经常可以用滤过偏序集来代替滤过范畴, 详见注记 \ref{rem:filtered-poset} 和\CHref{sec:app-Abel}习题的说明.}. 任何偏序集 $(P, \leq)$ 都给出相应的范畴 $\mathcal{P}$, 使得 $x \leq y  \iff \Hom_{\mathcal{P}}(x, y) \neq \emptyset$. 如果 $\mathcal{P}$ 是滤过范畴, 则称 $(P, \leq)$ 为\emph{滤过偏序集}. 偏序集滤过当且仅当任两个元素 $i, j$ 都有共同上界 $k$. 全序集显然滤过.
+	一类常见的滤过范畴来自滤过偏序集\footnote{在作为极限的下标来运用时, 经常可以用滤过偏序集来代替滤过范畴, 详见注记 \ref{rem:filtered-poset} 和\CHref{sec:app-Abel}习题的说明.}. 任何偏序集 $(P, \leq)$ 都给出相应的范畴 $\mathcal{P}$, 使得 $x \leq y  \iff \Hom_{\mathcal{P}}(x, y) \neq \emptyset$. 如果 $\mathcal{P}$ 是滤过范畴, 则称 $(P, \leq)$ 为\emph{滤过偏序集}. 偏序集滤过当且仅当其非空且任两个元素 $i, j$ 都有共同上界 $k$. 全序集显然滤过.
 \end{example}
 
 \begin{proposition}\label{prop:cofinal-filtered}
